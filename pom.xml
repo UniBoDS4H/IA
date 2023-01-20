@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>31.1.0</version>
+		<relativePath />
+	</parent>
+
+	<groupId>com.mycompany</groupId>        <!-- FIXME: Your organization groupId here -->
+	<artifactId>Process_Pixels</artifactId> <!-- FIXME: Your project artifactId here   -->
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>Process Pixels</name>                                                   <!-- FIXME: Your project name here          -->
+	<description>A Maven project implementing an ImageJ 1.x plugin.</description> <!-- FIXME: Your project description here   -->
+	<url>https://mycompany.com/imagej/process-pixels/</url>                       <!-- FIXME: Your project website here       -->
+	<inceptionYear>2012</inceptionYear>                                           <!-- FIXME: Your project starting year here -->
+	<organization>
+		<name>My Company</name>           <!-- FIXME: Your organization name here    -->
+		<url>https://mycompany.com/</url> <!-- FIXME: Your organization website here -->
+	</organization>
+	<licenses>
+		<license>                         <!-- FIXME: Your license here -->
+			<name>CC0</name>
+			<url>https://creativecommons.org/publicdomain/zero/1.0/</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<!-- See https://imagej.net/contribute/governance#scijava-team-roles -->
+		<developer>
+			<id>octocat</id>                                          <!-- FIXME: Your GitHub handle here -->
+			<name>Noma Onomatopoeia</name>                            <!-- FIXME: Your name here          -->
+			<url>https://mycompany.com/people/noma-onomatopoeia</url> <!-- FIXME: Your website here       -->
+			<roles>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>None</name>
+		</contributor>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>Image.sc Forum</name>
+			<archive>https://forum.image.sc/tag/imagej</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:https://github.com/imagej/example-legacy-plugin</connection>
+		<developerConnection>scm:git:git@github.com:imagej/example-legacy-plugin</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/imagej/example-legacy-plugin</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/imagej/example-legacy-plugin/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>None</system>
+	</ciManagement>
+
+	<properties>
+		<package-name>com.mycompany.imagej</package-name>                   <!-- FIXME: Your project package prefix here -->
+		<main-class>com.mycompany.imagej.Process_Pixels</main-class>        <!-- FIXME: Your project main class here, or delete for none -->
+		<license.licenseName>cc0</license.licenseName>                      <!-- FIXME: Your license-maven-plugin license code here -->
+		<license.copyrightOwners>My Company, Inc.</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+	</dependencies>
+</project>
