@@ -1,10 +1,12 @@
 package com.ds4h.view;
+import com.ds4h.view.StandardGUI.StandardGUI;
+
 import java.awt.*;
 import java.awt.event.*;
 
-public class MainMenuGUI extends Frame {
+public class MainMenuGUI extends Frame implements StandardGUI {
 
-    private Button button1, button2;
+    private Button manualAlignment, automaticAlignment;
     private MenuBar menuBar;
     private Menu menu;
     private MenuItem aboutItem, settingsItem;
@@ -18,16 +20,16 @@ public class MainMenuGUI extends Frame {
         setSize((int) (screenSize.width / 2), (int) (screenSize.height / 2));
 
         // Create button1
-        button1 = new Button("Button 1");
+        manualAlignment = new Button("Button 1");
         // Create button2
-        button2 = new Button("Button 2");
+        automaticAlignment = new Button("Button 2");
 
         // Create a panel to hold the buttons
         // Set the layout of the panel to be a vertical box layout
         Panel buttonPanel = new Panel();
         buttonPanel.setLayout(new GridLayout(2,1));
-        buttonPanel.add(button1);
-        buttonPanel.add(button2);
+        buttonPanel.add(manualAlignment);
+        buttonPanel.add(automaticAlignment);
 
 
         // Add the button panel to the left side of the frame
@@ -47,17 +49,7 @@ public class MainMenuGUI extends Frame {
         settingsItem = new MenuItem("Settings");
         menu.add(settingsItem);
 
-        // Add event listener to the menu items
-        aboutItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Handle "About" menu item event
-            }
-        });
-        settingsItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Handle "Settings" menu item event
-            }
-        });
+        this.addListeners();
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -66,5 +58,24 @@ public class MainMenuGUI extends Frame {
         });
 
         setVisible(true);
+    }
+
+    @Override
+    public void addListeners() {
+        // Add event listener to the menu items
+        this.aboutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Handle "About" menu item event
+            }
+        });
+        this.settingsItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Handle "Settings" menu item event
+            }
+        });
+
+        this.manualAlignment.addActionListener(event -> {
+            System.out.println("Ciao");
+        });
     }
 }

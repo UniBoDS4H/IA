@@ -47,11 +47,6 @@ public class Process_Pixels implements PlugIn {
 
 		// start ImageJ
 		new ImageJ();
-
-		// open the Clown sample
-		ImagePlus image = IJ.openImage("http://imagej.net/images/clown.jpg");
-		image.show();
-
 		// run the plugin
 		IJ.runPlugIn(Process_Pixels.class.getName(), "");
 	}
