@@ -12,22 +12,22 @@
 		<relativePath />
 	</parent>
 
-	<groupId>com.mycompany</groupId>        <!-- FIXME: Your organization groupId here -->
-	<artifactId>Process_Pixels</artifactId> <!-- FIXME: Your project artifactId here   -->
+	<groupId>com.ds4h</groupId>        <!-- FIXME: Your organization groupId here -->
+	<artifactId>Image_Alignment</artifactId> <!-- FIXME: Your project artifactId here   -->
 	<version>0.1.0-SNAPSHOT</version>
 
-	<name>Process Pixels</name>                                                   <!-- FIXME: Your project name here          -->
+	<name>Image Alignment</name>                                                   <!-- FIXME: Your project name here          -->
 	<description>A Maven project implementing an ImageJ 1.x plugin.</description> <!-- FIXME: Your project description here   -->
-	<url>https://mycompany.com/imagej/process-pixels/</url>                       <!-- FIXME: Your project website here       -->
-	<inceptionYear>2012</inceptionYear>                                           <!-- FIXME: Your project starting year here -->
+	<url>https://filippopiccinini.altervista.org/DS4H-IA.html</url>                       <!-- FIXME: Your project website here       -->
+	<inceptionYear>2023</inceptionYear>                                           <!-- FIXME: Your project starting year here -->
 	<organization>
-		<name>My Company</name>           <!-- FIXME: Your organization name here    -->
+		<name>DS4H</name>           <!-- FIXME: Your organization name here    -->
 		<url>https://mycompany.com/</url> <!-- FIXME: Your organization website here -->
 	</organization>
 	<licenses>
 		<license>                         <!-- FIXME: Your license here -->
 			<name>CC0</name>
-			<url>https://creativecommons.org/publicdomain/zero/1.0/</url>
+			<url>https://www.gnu.org/licenses/gpl-3.0.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -35,8 +35,22 @@
 	<developers>
 		<!-- See https://imagej.net/contribute/governance#scijava-team-roles -->
 		<developer>
-			<id>octocat</id>                                          <!-- FIXME: Your GitHub handle here -->
-			<name>Noma Onomatopoeia</name>                            <!-- FIXME: Your name here          -->
+			<id>matteoiorio11</id>                                          <!-- FIXME: Your GitHub handle here -->
+			<name>Matteo Iorio</name>                            <!-- FIXME: Your name here          -->
+			<url>https://mycompany.com/people/noma-onomatopoeia</url> <!-- FIXME: Your website here       -->
+			<roles>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>fabiovincenzi</id>                                          <!-- FIXME: Your GitHub handle here -->
+			<name>Fabio Vincenzi</name>                            <!-- FIXME: Your name here          -->
 			<url>https://mycompany.com/people/noma-onomatopoeia</url> <!-- FIXME: Your website here       -->
 			<roles>
 				<role>founder</role>
