@@ -1,14 +1,9 @@
-package com.ds4h.view;
-import com.ds4h.view.StandardGUI.StandardGUI;
-
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.gui.ImageCanvas;
-import ij.io.Opener;
-import ij.process.ImageProcessor;
+package com.ds4h.view.mainGUI;
+import com.ds4h.view.CornerSelectorGUI;
+import com.ds4h.view.aboutGUI.aboutGUI;
+import com.ds4h.view.standardGUI.StandardGUI;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 
 public class MainMenuGUI extends Frame implements StandardGUI {
@@ -16,7 +11,8 @@ public class MainMenuGUI extends Frame implements StandardGUI {
     private MenuBar menuBar;
     private Menu menu;
     private MenuItem aboutItem, loadImages,settingsItem;
-    private Panel leftPanel, rightPanel;
+    private Panel leftPanel;
+    private CornerSelectorGUI rightPanel;
 
     private static int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -35,13 +31,12 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         this.leftPanel.setLayout(new GridLayout(2, 1));
         this.leftPanel.add(manualAlignment);
         this.leftPanel.add(automaticAlignment);
-        add(this.leftPanel);
+        add(this.leftPanel, BorderLayout.WEST);
 
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
 
         //Adding the Right Panel, where all the images are loaded
-        this.rightPanel = new Panel();
-        this.rightPanel.setLayout(new BorderLayout());
+        this.rightPanel = new CornerSelectorGUI();
         add(this.rightPanel);
 
         //Init of the Menu Bar and all the Menu Items
@@ -57,20 +52,15 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         setVisible(true);
     }
 
-
+    /**
+     * Add all the components of the MainMenu
+     */
     @Override
     public void addComponents(){
 
         // Create a panel to hold the buttons
         // Set the layout of the panel to be a vertical box layout
-        Panel buttonPanel = new Panel();
-        buttonPanel.setLayout(new GridLayout(2,1));
-        buttonPanel.add(manualAlignment);
-        buttonPanel.add(automaticAlignment);
 
-
-        // Add the button panel to the left side of the frame
-        add(buttonPanel, BorderLayout.WEST);
 
         // Create menu bar and add it to the frame
         setMenuBar(this.menuBar);
@@ -84,50 +74,51 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         this.menu.add(this.settingsItem);
     }
 
+    /**
+     * Add all the listeners to the components of the MainMenu
+     */
     @Override
     public void addListeners() {
         // Add event listener to the menu items
-        this.aboutItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-            }
+        this.aboutItem.addActionListener(event -> {
+            new aboutGUI();
         });
 
         this.loadImages.addActionListener(event ->{
             this.pickImages();
         });
-        this.settingsItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
 
-            }
+        this.settingsItem.addActionListener(event ->{
+
         });
 
         this.manualAlignment.addActionListener(event -> {
-            System.out.println("Ciao");
         });
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
+
     }
 
+    /**
+     * Open a File dialog in order to choose all the images for our tool
+     */
     private void pickImages(){
-        FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
         fd.setMultipleMode(true);
         fd.setVisible(true);
-        File[] files = fd.getFiles();
-
+        File[] files = fd.getFiles();//Get all the files
+        //this.rightPanel.loadImages(files);
     }
 
+    /**
+     * Method used to set the Min dimension of the Frame, based on the Users monitor dimension
+     */
     private void setFrameSize(){
         // Get the screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int min_width = (int) (screenSize.width / 2);
-        int min_heigth =(int) (screenSize.height / 2);
+        int min_height =(int) (screenSize.height / 2);
         // Set the size of the frame to be half of the screen width and height
-        setSize(min_width, min_heigth);
-        setMinimumSize(new Dimension(min_width,min_heigth));
+        setSize(min_width, min_height);
+        setMinimumSize(new Dimension(min_width,min_height));
     }
 }

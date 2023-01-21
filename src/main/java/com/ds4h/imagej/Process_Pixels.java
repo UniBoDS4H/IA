@@ -11,11 +11,8 @@ package com.ds4h.imagej;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
-import com.ds4h.view.MainMenuGUI;
-import ij.gui.GenericDialog;
+import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.plugin.PlugIn;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ImageProcessor;
 
 /**
  * A template for processing each pixel of either
