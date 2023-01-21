@@ -1,11 +1,6 @@
-package com.ds4h.view;
-import com.ds4h.view.StandardGUI.StandardGUI;
-
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.gui.ImageCanvas;
-import ij.io.Opener;
-import ij.process.ImageProcessor;
+package com.ds4h.view.mainGUI;
+import com.ds4h.view.aboutGUI;
+import com.ds4h.view.standardGUI.StandardGUI;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -57,7 +52,9 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         setVisible(true);
     }
 
-
+    /**
+     * Add all the components of the MainMenu
+     */
     @Override
     public void addComponents(){
 
@@ -84,43 +81,43 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         this.menu.add(this.settingsItem);
     }
 
+    /**
+     * Add all the listeners to the components of the MainMenu
+     */
     @Override
     public void addListeners() {
         // Add event listener to the menu items
-        this.aboutItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-            }
+        this.aboutItem.addActionListener(event -> {
+            new aboutGUI();
         });
 
         this.loadImages.addActionListener(event ->{
             this.pickImages();
         });
-        this.settingsItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
 
-            }
+        this.settingsItem.addActionListener(event ->{
+
         });
 
         this.manualAlignment.addActionListener(event -> {
-            System.out.println("Ciao");
         });
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
+
     }
 
+    /**
+     * Open a File dialog in order to choose all the images for our tool
+     */
     private void pickImages(){
-        FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
         fd.setMultipleMode(true);
         fd.setVisible(true);
-        File[] files = fd.getFiles();
-
+        File[] files = fd.getFiles();//Get all the files
     }
 
+    /**
+     * Method used to set the Min dimension of the Frame, based on the Users monitor dimension
+     */
     private void setFrameSize(){
         // Get the screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
