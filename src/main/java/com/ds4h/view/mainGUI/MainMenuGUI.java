@@ -1,6 +1,6 @@
 package com.ds4h.view.mainGUI;
 import com.ds4h.view.CornerSelectorGUI;
-import com.ds4h.view.aboutGUI.aboutGUI;
+import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import java.awt.*;
@@ -83,7 +83,7 @@ public class MainMenuGUI extends Frame implements StandardGUI {
     public void addListeners() {
         // Add event listener to the menu items
         this.aboutItem.addActionListener(event -> {
-            new aboutGUI();
+            new AboutGUI();
         });
 
         this.loadImages.addActionListener(event ->{
