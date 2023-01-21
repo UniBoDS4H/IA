@@ -106,7 +106,7 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         fd.setMultipleMode(true);
         fd.setVisible(true);
         File[] files = fd.getFiles();//Get all the files
-        //this.rightPanel.loadImages(files);
+        this.rightPanel.loadImages(files);
     }
 
     /**
