@@ -1,4 +1,4 @@
-package com.ds4h.view;
+package com.ds4h.view.aboutGUI;
 
 import com.ds4h.view.standardGUI.StandardGUI;
 
