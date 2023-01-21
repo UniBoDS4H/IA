@@ -14,7 +14,8 @@ public class aboutGUI extends Frame implements StandardGUI {
         setLayout(new BorderLayout());
         this.label = new Label("This is My Program. It is a program that does something cool.");
         this.panel = new Panel();
-
+        this.addComponents();
+        this.addListeners();
 
         pack();
         setVisible(true);
@@ -24,7 +25,7 @@ public class aboutGUI extends Frame implements StandardGUI {
     public void addListeners() {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-
+                dispose();
             }
         });
     }

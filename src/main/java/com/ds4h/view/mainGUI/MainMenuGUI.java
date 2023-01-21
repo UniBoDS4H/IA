@@ -4,6 +4,8 @@ import com.ds4h.view.aboutGUI.aboutGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 public class MainMenuGUI extends Frame implements StandardGUI {
@@ -95,6 +97,11 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
         });
 
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
 
     }
 
