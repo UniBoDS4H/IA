@@ -1,48 +1,33 @@
 package com.ds4h.view;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import ij.ImagePlus;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import java.awt.Panel;
-import java.awt.FlowLayout;
-import java.awt.Button;
+import java.awt.Image;
 
-public class CornerSelectorGUI extends Panel implements ActionListener {
+public class CornerSelectorGUI extends Panel {
 
-    private List<ImagePlus> images = new ArrayList<>();
-    private int currentImageIndex = 0;
-    private Button[] buttons;
+    private Image image;
 
     public CornerSelectorGUI() {
-        setLayout(new FlowLayout());
     }
 
-    public void loadImages(ImagePlus[] images) {
-        for (ImagePlus image : images) {
-            this.images.add(image);
-            Button button = new Button(image.getTitle());
-            button.addActionListener(this);
-            add(button);
+    public void loadImages(File[] files) {
+        try {
+            if(files.length>0){
+                image = ImageIO.read(files[0]);
+                setPreferredSize(new Dimension(image.getWidth(this), image.getHeight(this)));
+                repaint();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        setPreferredSize(new Dimension(images[0].getWidth(), images[0].getHeight()));
-        repaint();
     }
 
     public void paint(Graphics g) {
-        g.drawImage(images.get(currentImageIndex).getBufferedImage(), 0, 0, this);
+        g.drawImage(image, 0, 0, this);
     }
 
-    public void actionPerformed(ActionEvent e) {
-        Button button = (Button) e.getSource();
-        for (int i = 0; i < images.size(); i++) {
-            if (button.getLabel().equals(images.get(i).getTitle())) {
-                currentImageIndex = i;
-                repaint();
-                break;
-            }
-        }
-    }
 }
