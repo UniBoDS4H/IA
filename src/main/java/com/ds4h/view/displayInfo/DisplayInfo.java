@@ -14,6 +14,7 @@ public final class DisplayInfo {
         return screenSize.width;
     }
     public static Dimension getScaledImageDimension(Dimension imgDimension, Dimension containerDimension){
+        System.out.println(imgDimension);
         Dimension dimension = new Dimension();
         if(DisplayInfo.isVertical(imgDimension)){
             final double newWidth = imgDimension.getWidth()*containerDimension.getHeight()/imgDimension.getHeight();
@@ -24,7 +25,7 @@ public final class DisplayInfo {
         }
         return dimension;
     }
-    private static boolean isVertical(Dimension dimension){
+    public static boolean isVertical(Dimension dimension){
         return dimension.getHeight() > dimension.getWidth();
     }
 }

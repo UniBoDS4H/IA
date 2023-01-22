@@ -33,11 +33,14 @@ public class CornerSelectorGUI extends JPanel implements MouseListener {
     }
 
     public void paint(Graphics g) {
-        Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getHeight(this), image.getWidth(this)),new Dimension(this.getHeight(), this.getWidth()));
-        g.drawImage(image,0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
-        g.setColor(Color.RED);
-        for (Integer[] point : points) {
-            g.fillOval(point[0]-5, point[1]-5, 10, 10);
+        if(image != null){
+            System.out.println(DisplayInfo.isVertical(new Dimension(image.getWidth(this), image.getHeight(this))));
+            Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getWidth(this), image.getHeight(this)),new Dimension(this.getWidth(), this.getHeight()));
+            g.drawImage(image,0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
+            g.setColor(Color.RED);
+            for (Integer[] point : points) {
+                g.fillOval(point[0]-5, point[1]-5, 10, 10);
+            }
         }
     }
 
