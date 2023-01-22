@@ -1,20 +1,20 @@
 package com.ds4h.view.mainGUI;
-import bunwarpj.bUnwarpJ_;
 import com.ds4h.view.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
-import com.ds4h.view.settingsGUI.SettingsGUI;
+import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-public class MainMenuGUI extends Frame implements StandardGUI {
-    private final Button manualAlignment, automaticAlignment;
-    private final MenuBar menuBar;
-    private final Menu menu;
-    private final MenuItem aboutItem, loadImages,settingsItem;
-    private final Panel leftPanel;
+public class MainMenuGUI extends JFrame implements StandardGUI {
+    private final JButton manualAlignment, automaticAlignment;
+    private final JMenuBar menuBar;
+    private final JMenu menu;
+    private final JMenuItem aboutItem, loadImages,settingsItem;
+    private final JPanel leftPanel;
     private final CornerSelectorGUI rightPanel;
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
@@ -26,11 +26,11 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         setTitle("DS4H Image Alignment");
         this.setFrameSize();
         //Init of the two buttons
-        this.manualAlignment = new Button("Manual Alignment");
-        this.automaticAlignment = new Button("Automatic Alignment");
+        this.manualAlignment = new JButton("Manual Alignment");
+        this.automaticAlignment = new JButton("Automatic Alignment");
 
         //Adding the Left Panel, where are stored the buttons for the transformations
-        this.leftPanel = new Panel();
+        this.leftPanel = new JPanel();
         this.leftPanel.setLayout(new GridLayout(2, 1));
         this.leftPanel.add(manualAlignment);
         this.leftPanel.add(automaticAlignment);
@@ -43,11 +43,11 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         add(this.rightPanel);
 
         //Init of the Menu Bar and all the Menu Items
-        this.menuBar = new MenuBar();
-        this.menu = new Menu("Navigation");
-        this.aboutItem = new MenuItem("About");
-        this.loadImages = new MenuItem("Load Images");
-        this.settingsItem = new MenuItem("Settings");
+        this.menuBar = new JMenuBar();
+        this.menu = new JMenu("Navigation");
+        this.aboutItem = new JMenuItem("About");
+        this.loadImages = new JMenuItem("Load Images");
+        this.settingsItem = new JMenuItem("Settings");
 
         this.addComponents();
         this.addListeners();
@@ -66,7 +66,7 @@ public class MainMenuGUI extends Frame implements StandardGUI {
 
 
         // Create menu bar and add it to the frame
-        setMenuBar(this.menuBar);
+        setJMenuBar(this.menuBar);
 
         // Create menu and add it to the menu bar
         this.menuBar.add(this.menu);
@@ -92,7 +92,7 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         });
 
         this.settingsItem.addActionListener(event ->{
-            new SettingsGUI();
+            new BunwarpjGUI();
         });
 
         this.manualAlignment.addActionListener(event -> {
