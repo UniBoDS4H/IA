@@ -1,4 +1,5 @@
 package com.ds4h.view.mainGUI;
+import bunwarpj.bUnwarpJ_;
 import com.ds4h.view.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.settingsGUI.SettingsGUI;
@@ -8,16 +9,15 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-
 public class MainMenuGUI extends Frame implements StandardGUI {
-    private Button manualAlignment, automaticAlignment;
-    private MenuBar menuBar;
-    private Menu menu;
-    private MenuItem aboutItem, loadImages,settingsItem;
-    private Panel leftPanel;
-    private CornerSelectorGUI rightPanel;
+    private final Button manualAlignment, automaticAlignment;
+    private final MenuBar menuBar;
+    private final Menu menu;
+    private final MenuItem aboutItem, loadImages,settingsItem;
+    private final Panel leftPanel;
+    private final CornerSelectorGUI rightPanel;
 
-    private static int MIN_IMAGES = 0, MAX_IMAGES = 3;
+    private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
     /**
      * Constructor of the MainMenu GUI

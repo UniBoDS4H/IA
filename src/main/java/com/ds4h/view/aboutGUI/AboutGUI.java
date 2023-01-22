@@ -8,10 +8,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class AboutGUI extends Frame implements StandardGUI {
-    private Panel panel;
-    private JTextArea area;
+    private final Panel panel;
+    private final JTextArea area;
 
-    private static String INFORMATIONS = "DS4H Image Alignment\n" +
+    private static final String INFORMATIONS = "DS4H Image Alignment\n" +
             "Head of the Project : Prof.ssa Carbonaro Antonella - antonella.carbonaro@unibo.it\n" +
             "Prof. Piccinini Filippo  - f.piccinini@unibo.it\n" +
             "Made By\n" +
@@ -19,7 +19,7 @@ public class AboutGUI extends Frame implements StandardGUI {
             "Vincenzi Fabio : fabio.vincenzi2001@gmail.com\n" +
             "Copyright (©) 2019 Data Science for Health (DS4H) Group. All rights reserved\n" +
             "License: GNU General Public License version 3.";
-    private static Font FONT = new Font("Arial", Font.PLAIN, 20);
+    private static final Font FONT = new Font("Arial", Font.PLAIN, 20);
     public AboutGUI(){
         System.out.println(AboutGUI.INFORMATIONS);
         setTitle("About DS4H Image Alignment");
