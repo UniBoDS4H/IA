@@ -2,6 +2,7 @@ package com.ds4h.view.mainGUI;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
+import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -122,7 +123,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      */
     private void setFrameSize(){
         // Get the screen size
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension screenSize = DisplayInfo.getDisplaySize();
         int min_width = (int) (screenSize.width / 2);
         int min_height =(int) (screenSize.height / 2);
         // Set the size of the frame to be half of the screen width and height
