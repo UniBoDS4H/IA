@@ -1,6 +1,7 @@
 package com.ds4h.view.mainGUI;
 import com.ds4h.view.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
+import com.ds4h.view.settingsGUI.SettingsGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import java.awt.*;
@@ -91,7 +92,7 @@ public class MainMenuGUI extends Frame implements StandardGUI {
         });
 
         this.settingsItem.addActionListener(event ->{
-
+            new SettingsGUI();
         });
 
         this.manualAlignment.addActionListener(event -> {
