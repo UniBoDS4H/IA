@@ -97,10 +97,20 @@
 		<license.copyrightOwners>My Company, Inc.</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>bunwarp repo</id>
+			<url>https://maven.imagej.net/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>bUnwarpJ_</artifactId>
 		</dependency>
 	</dependencies>
 </project>
