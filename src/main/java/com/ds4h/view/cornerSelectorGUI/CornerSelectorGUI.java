@@ -1,14 +1,17 @@
-package com.ds4h.view;
+package com.ds4h.view.cornerSelectorGUI;
+import com.ds4h.view.displayInfo.DisplayInfo;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class CornerSelectorGUI extends Panel implements MouseListener {
+public class CornerSelectorGUI extends JPanel implements MouseListener {
 
     private Image image;
     private List<Integer[]> points = new ArrayList<>();
@@ -21,7 +24,7 @@ public class CornerSelectorGUI extends Panel implements MouseListener {
         try {
             if(files.length>0){
                 image = ImageIO.read(files[0]);
-                setPreferredSize(new Dimension(image.getWidth(this), image.getHeight(this)));
+                setPreferredSize(new Dimension(400, 400));
                 repaint();
             }
         } catch (IOException e) {
@@ -30,7 +33,8 @@ public class CornerSelectorGUI extends Panel implements MouseListener {
     }
 
     public void paint(Graphics g) {
-        g.drawImage(image, 0, 0, this);
+        Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getHeight(this), image.getWidth(this)),new Dimension(this.getHeight(), this.getWidth()));
+        g.drawImage(image,0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
         g.setColor(Color.RED);
         for (Integer[] point : points) {
             g.fillOval(point[0]-5, point[1]-5, 10, 10);

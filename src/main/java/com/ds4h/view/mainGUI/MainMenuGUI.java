@@ -1,5 +1,5 @@
 package com.ds4h.view.mainGUI;
-import com.ds4h.view.CornerSelectorGUI;
+import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
