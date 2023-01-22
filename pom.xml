@@ -112,5 +112,10 @@
 			<groupId>sc.fiji</groupId>
 			<artifactId>bUnwarpJ_</artifactId>
 		</dependency>
+		<dependency>
+    			<groupId>org.openpnp</groupId>
+    			<artifactId>opencv</artifactId>
+    			<version>4.6.0-0</version>
+		</dependency>
 	</dependencies>
 </project>
