@@ -1,6 +1,5 @@
 package com.ds4h.view.displayInfo;
 
-import jdk.jfr.Percentage;
 
 import java.awt.*;
 

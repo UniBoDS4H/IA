@@ -102,15 +102,80 @@
 			<id>bunwarp repo</id>
 			<url>https://maven.imagej.net/content/repositories/releases/</url>
 		</repository>
+		<repository>
+			<id>MVN Public repository</id>
+			<url>https://maven.scijava.org/content/repositories/public/</url>
+		</repository>
+
+		<!--
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+		<repository>
+			<id>MVN Bytedeco</id>
+			<url>https://mvnrepository.com/artifact/org.bytedeco/javac</url>
+		</repository>
+		<repository>
+				<id>MVN IJ-OpenCV</id>
+				<url>https://mvnrepository.com/artifact/io.github.joheras/IJ-OpenCV</url>
+		</repository>
+		<repository>
+			<id>MVN EDU</id>
+			<url> https://mvnrepository.com/artifact/edu.ucar/udunits</url>
+		</repository>
+		<repository>
+			<id>MVN Imagej2</id>
+			<url>https://mvnrepository.com/artifact/net.imagej/imagej</url>
+		</repository>
+		<repository>
+			<id>Unidata-releases</id>
+			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://mvnrepository.com/artifact/com.github.sbridges.object-inspector/object-inspector</url>
+		</repository>
+		-->
 	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.github.sbridges.object-inspector</groupId>
+			<artifactId>object-inspector</artifactId>
+			<version>0.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bUnwarpJ_</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
+		<!--
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>udunits</artifactId>
+			<version>4.3.18</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.joheras</groupId>
+			<artifactId>IJ-OpenCV</artifactId>
+			<version>1.2.1-SNAPSHOT</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>org.openpnp</groupId>
+			<artifactId>opencv</artifactId>
+			<version>4.6.0-0</version>
+		</dependency>
+
 	</dependencies>
 </project>
