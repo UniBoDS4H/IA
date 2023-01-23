@@ -53,10 +53,14 @@ public class HomographyAlignment {
     }
 
     private ImagePlus convertToImage(final File file, final Mat matrix){
-        final String fileName = "File";//file.getName() + "_Aligned";
+        final String fileName = file.getName();
+        final String[] parts = file.getName().split("\\.");
+        final String fileNameWithoutExtension = parts[0];
+        final String fileExtension = parts[1];
+        final String imgFinalName = fileNameWithoutExtension+"_Aligned"+fileExtension;
         ImagePlus impOutput = new ImagePlus();
-        if(Imgcodecs.imwrite(fileName, matrix)){
-            impOutput = IJ.openImage(fileName);
+        if(Imgcodecs.imwrite(imgFinalName, matrix)){
+            impOutput = IJ.openImage(imgFinalName);
         }
         return impOutput;
     }
