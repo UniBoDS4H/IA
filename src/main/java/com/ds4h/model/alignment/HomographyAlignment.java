@@ -8,12 +8,12 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
@@ -39,19 +39,25 @@ public class HomographyAlignment {
                 final Mat h = Imgproc.getAffineTransform( new MatOfPoint2f(pointsReference), new MatOfPoint2f(image.getValue()));
                 final Mat warpedMat = new Mat();
                 Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
+                // TODO : Add the image inside the list output
                 //ImagePlus imp2Warped
-
                 /*
                 ImagePlusMatConverter b = new ImagePlusMatConverter();
+                ImagePlusMatConverter.toMat(new ImagePlus().get)
                 ImageJ2OpenCVConverter a = new ImageJ2OpenCVConverter();
+                */
 
-                 */
             }
         }
         return null;
     }
 
-    private ImagePlus convertToImage(final Mat matrix){
-        return null;
+    private ImagePlus convertToImage(final File file, final Mat matrix){
+        final String fileName = "File";//file.getName() + "_Aligned";
+        ImagePlus impOutput = new ImagePlus();
+        if(Imgcodecs.imwrite(fileName, matrix)){
+            impOutput = IJ.openImage(fileName);
+        }
+        return impOutput;
     }
 }
