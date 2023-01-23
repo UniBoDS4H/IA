@@ -4,14 +4,11 @@ import com.ds4h.model.util.CheckImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
-import nu.pattern.OpenCV;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-
-import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,8 +41,17 @@ public class HomographyAlignment {
                 Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
                 //ImagePlus imp2Warped
 
+                /*
+                ImagePlusMatConverter b = new ImagePlusMatConverter();
+                ImageJ2OpenCVConverter a = new ImageJ2OpenCVConverter();
+
+                 */
             }
         }
+        return null;
+    }
+
+    private ImagePlus convertToImage(final Mat matrix){
         return null;
     }
 }
