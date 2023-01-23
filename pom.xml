@@ -117,5 +117,10 @@
     			<artifactId>opencv</artifactId>
     			<version>4.6.0-0</version>
 		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-legacy</artifactId>
+			<version>1.0.0-rc-71</version>
+		</dependency>
 	</dependencies>
 </project>
