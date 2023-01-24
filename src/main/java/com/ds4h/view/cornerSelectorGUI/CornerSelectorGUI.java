@@ -1,5 +1,7 @@
 package com.ds4h.view.cornerSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.standardGUI.StandardGUI;
+
 import ij.ImagePlus;
 import ij.io.Opener;
 
@@ -25,8 +27,8 @@ public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMot
     private List<Integer> offsetY = new ArrayList<>();
     private boolean isDragging;
     public CornerSelectorGUI() {
-        addMouseListener(this);
-        addMouseMotionListener(this);
+        this.addComponents();
+        this.addListeners();
     }
 
     public void setCurrentImage(ImagePlus image){
@@ -110,4 +112,20 @@ public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMot
     public void mouseExited(MouseEvent e) {}
     @Override
     public void mouseMoved(MouseEvent e) {}
+
+    @Override
+    public void showDialog() {
+
+    }
+
+    @Override
+    public void addListeners() {
+        addMouseListener(this);
+        addMouseMotionListener(this);
+    }
+
+    @Override
+    public void addComponents() {
+
+    }
 }

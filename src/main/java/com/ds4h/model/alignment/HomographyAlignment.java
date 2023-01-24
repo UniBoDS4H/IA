@@ -1,19 +1,20 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.util.CheckImage;
-import ij.IJ;
+import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.NameBuilder;
 import ij.ImagePlus;
-import ij.process.ImageProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
@@ -52,16 +53,8 @@ public class HomographyAlignment {
         return null;
     }
 
-    private ImagePlus convertToImage(final File file, final Mat matrix){
-        final String fileName = file.getName();
-        final String[] parts = file.getName().split("\\.");
-        final String fileNameWithoutExtension = parts[0];
-        final String fileExtension = parts[1];
-        final String imgFinalName = fileNameWithoutExtension+"_Aligned"+fileExtension;
-        ImagePlus impOutput = new ImagePlus();
-        if(Imgcodecs.imwrite(imgFinalName, matrix)){
-            impOutput = IJ.openImage(imgFinalName);
-        }
+    private Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
+        final Optional<ImagePlus> impOutput = ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
         return impOutput;
     }
 }

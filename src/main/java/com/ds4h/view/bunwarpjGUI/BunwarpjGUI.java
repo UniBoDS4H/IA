@@ -80,6 +80,17 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         this.buttonCancel = new JButton("Cancel");
         this.addComponents();
         this.addListeners();
+    }
+
+    @Override
+    public void showDialog() {
+        this.divWeight.setValue(String.valueOf(this.parDivWeigth));
+        this.curlWeight.setValue(String.valueOf(this.parCurlWeigth));
+        this.landmarkWeight.setValue(String.valueOf(this.parLandmarkWeigth));
+        this.imageWeight.setValue(String.valueOf(this.parImageWeigth));
+        this.consistencyWeight.setValue(String.valueOf(this.parConsistencyWeigth));
+        this.thresholdWeight.setValue(String.valueOf(this.parThreshold));
+
         setVisible(true);
     }
 
