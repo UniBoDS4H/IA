@@ -1,0 +1,47 @@
+package com.ds4h.model.cornerManager;
+
+import org.opencv.core.Point;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+public class CornerManager {
+    final Map<Image, List<Point>> images = new HashMap<>();
+
+    public CornerManager(){
+
+    }
+
+    public void loadImages(List<Image> loadingImages){
+        loadingImages.forEach(image -> {
+            this.images.put(image, new ArrayList<>());
+        });
+    }
+
+    public List<Point> getCorners(Image image){
+        return this.images.get(image);
+    }
+
+    public void addCorner(Image image, Point corner){
+            List<Point> points =  this.images.containsKey(image)?images.get(image):new ArrayList<>();
+            points.add(corner);
+            this.images.put(image, points);
+    }
+    public void removeCorner(Image image, Point corner){
+        if(this.images.containsKey(image)){
+            List<Point> points = this.images.get(image);
+            points.remove(corner);
+            this.images.put(image, points);
+        }else{
+            throw new IllegalArgumentException("given image was not found");
+        }
+    }
+    public void moveCorner(Image image, Point corner, Point newCorner){
+
+    }
+}
