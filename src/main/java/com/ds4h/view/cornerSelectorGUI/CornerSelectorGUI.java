@@ -4,6 +4,7 @@ import ij.ImagePlus;
 import ij.io.Opener;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMotionListener {
-
-    private ImagePlus image;
+    private JPanel listPanel;
+    private ImagePlus currentImage;
+    private JScrollPane listScroller;
     private List<Point> points = new ArrayList<>();
     private List<Point> selectedPoints = new ArrayList<>();
     private List<Integer> offsetX = new ArrayList<>();
@@ -27,28 +29,30 @@ public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMot
         addMouseMotionListener(this);
     }
 
+    public void setCurrentImage(ImagePlus image){
+        this.currentImage = image;
+    }
+
     public void loadImages(File[] files) {
+
         if(files.length>0){
             Opener opener = new Opener();
-            image = opener.openImage(files[0].getPath());
-            setPreferredSize(new Dimension(400, 400));
+            ImagePlus image = opener.openImage(files[0].getPath());
+            setCurrentImage(image);
             repaint();
         }
+
     }
     @Override
     public void paintComponent(Graphics g) {
-        if(this.image != null){
+        if(this.currentImage != null){
             super.paintComponent(g);
-            Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getBufferedImage().getWidth(this), image.getBufferedImage().getHeight(this)),new Dimension(this.getWidth(), this.getHeight()));
-            g.drawImage(image.getBufferedImage(),0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
-            for (Point point : points) {
-                if (selectedPoints.contains(point)) {
-                    g.setColor(Color.RED);
-                } else {
-                    g.setColor(Color.BLACK);
-                }
-                g.fillOval(point.x - 5, point.y - 5, 10, 10);
-            }
+            //scaling the dimension of the image
+            Dimension newDimension = DisplayInfo.getScaledImageDimension(
+                    new Dimension(this.currentImage.getBufferedImage().getWidth(this),
+                    this.currentImage.getBufferedImage().getHeight(this)),
+                    new Dimension(this.getWidth(), this.getHeight()));
+            g.drawImage(this.currentImage.getBufferedImage(),0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
         }
     }
 
