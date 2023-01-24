@@ -4,8 +4,10 @@ import java.io.File;
 
 public class CheckImage {
 
-    private static final String EXTENSIONS ="jpg, jpeg, png, gif, bmp, tiff, tif, webp, svg, heif, heic, " +
-            "raw, arw, cr2, nef, orf, rw2, dng, psd";
+    private static final String EXTENSIONS ="jpg, jpeg, png, gif, bmp, tiff, tif, webp, svg, heif," +
+            " heic, raw, arw, cr2, nef, orf, " +
+            "rw2, dng, psd, pcx," +
+            " ppm, pgm, pbm, dds, hdr, exr, pfm, icns, xbm, xpm, pict, jp2, jpx, pcd";
     private CheckImage(){}
     public static boolean checkImage(final File file){
         final String fileName = file.getName();
