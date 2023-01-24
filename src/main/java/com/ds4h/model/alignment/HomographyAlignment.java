@@ -1,6 +1,7 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.util.CheckImage;
+import com.ds4h.model.util.ImagingConverion;
 import com.ds4h.model.util.NameBuilder;
 import ij.IJ;
 import ij.ImagePlus;
@@ -15,6 +16,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
@@ -53,12 +56,8 @@ public class HomographyAlignment {
         return null;
     }
 
-    private ImagePlus convertToImage(final File file, final Mat matrix){
-        final String imgFinalName = new NameBuilder().parseName(file.getName()).splitBy("\\.").getFinalName();
-        ImagePlus impOutput = new ImagePlus();
-        if(Imgcodecs.imwrite(imgFinalName, matrix)){
-            impOutput = IJ.openImage(imgFinalName);
-        }
+    private Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
+        final Optional<ImagePlus> impOutput = ImagingConverion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
         return impOutput;
     }
 }
