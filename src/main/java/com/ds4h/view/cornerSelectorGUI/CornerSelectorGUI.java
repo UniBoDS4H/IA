@@ -1,7 +1,7 @@
 package com.ds4h.view.cornerSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
-
 import java.awt.*;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,13 +11,17 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class CornerSelectorGUI extends JPanel implements MouseListener {
+public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMotionListener {
 
     private Image image;
-    private List<Integer[]> points = new ArrayList<>();
-
+    private List<Point> points = new ArrayList<>();
+    private List<Point> selectedPoints = new ArrayList<>();
+    private List<Integer> offsetX = new ArrayList<>();
+    private List<Integer> offsetY = new ArrayList<>();
+    private boolean isDragging;
     public CornerSelectorGUI() {
         addMouseListener(this);
+        addMouseMotionListener(this);
     }
 
     public void loadImages(File[] files) {
@@ -31,28 +35,75 @@ public class CornerSelectorGUI extends JPanel implements MouseListener {
             e.printStackTrace();
         }
     }
-
-    public void paint(Graphics g) {
-        if(image != null){
-            System.out.println(DisplayInfo.isVertical(new Dimension(image.getWidth(this), image.getHeight(this))));
+    @Override
+    public void paintComponent(Graphics g) {
+        if(this.image != null){
+            super.paintComponent(g);
             Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getWidth(this), image.getHeight(this)),new Dimension(this.getWidth(), this.getHeight()));
             g.drawImage(image,0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
-            g.setColor(Color.RED);
-            for (Integer[] point : points) {
-                g.fillOval(point[0]-5, point[1]-5, 10, 10);
+            for (Point point : points) {
+                if (selectedPoints.contains(point)) {
+                    g.setColor(Color.RED);
+                } else {
+                    g.setColor(Color.BLACK);
+                }
+                g.fillOval(point.x - 5, point.y - 5, 10, 10);
             }
         }
     }
 
-    public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-        points.add(new Integer[]{x, y});
+
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        for (Point point : points) {
+            if (e.getX() >= point.x - 5 && e.getX() <= point.x + 5 && e.getY() >= point.y - 5 && e.getY() <= point.y + 5) {
+                if (!selectedPoints.contains(point)) {
+                    selectedPoints.add(point);
+                    offsetX.add(e.getX() - point.x);
+                    offsetY.add(e.getY() - point.y);
+                } else {
+                    int index = selectedPoints.indexOf(point);
+                    selectedPoints.remove(point);
+                    offsetX.remove(index);
+                    offsetY.remove(index);
+                }
+                isDragging = true;
+                repaint();
+                return;
+            }
+        }
+        points.add(new Point(e.getX(), e.getY()));
+        isDragging = false;
         repaint();
     }
 
-    public void mousePressed(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (isDragging) {
+            for (int i = 0; i < selectedPoints.size(); i++) {
+                Point point = selectedPoints.get(i);
+                int x = e.getX() - offsetX.get(i);
+                int y = e.getY() - offsetY.get(i);
+                point.x = x;
+                point.y = y;
+            }
+            repaint();
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        isDragging = false;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    @Override
     public void mouseEntered(MouseEvent e) {}
+    @Override
     public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mouseMoved(MouseEvent e) {}
 }

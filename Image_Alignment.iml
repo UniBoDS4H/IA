@@ -11,6 +11,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: net.imagej:ij:1.53f" level="project" />
+    <orderEntry type="library" name="Maven: com.github.sbridges.object-inspector:object-inspector:0.1" level="project" />
     <orderEntry type="library" name="Maven: sc.fiji:bUnwarpJ_:2.6.13" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openpnp:opencv:4.6.0-0" level="project" />
   </component>
 </module>

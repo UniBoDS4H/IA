@@ -45,7 +45,7 @@ public class HomographyAlignment {
                 ImagePlusMatConverter b = new ImagePlusMatConverter();
                 ImagePlusMatConverter.toMat(new ImagePlus().get)
                 ImageJ2OpenCVConverter a = new ImageJ2OpenCVConverter();
-                */
+*/
 
             }
         }
