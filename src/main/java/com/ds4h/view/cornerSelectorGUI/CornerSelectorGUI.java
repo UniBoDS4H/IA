@@ -1,5 +1,8 @@
 package com.ds4h.view.cornerSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import ij.ImagePlus;
+import ij.io.Opener;
+
 import java.awt.*;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
@@ -13,7 +16,7 @@ import java.awt.event.MouseListener;
 
 public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMotionListener {
 
-    private Image image;
+    private ImagePlus image;
     private List<Point> points = new ArrayList<>();
     private List<Point> selectedPoints = new ArrayList<>();
     private List<Integer> offsetX = new ArrayList<>();
@@ -25,22 +28,19 @@ public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMot
     }
 
     public void loadImages(File[] files) {
-        try {
-            if(files.length>0){
-                image = ImageIO.read(files[0]);
-                setPreferredSize(new Dimension(400, 400));
-                repaint();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(files.length>0){
+            Opener opener = new Opener();
+            image = opener.openImage(files[0].getPath());
+            setPreferredSize(new Dimension(400, 400));
+            repaint();
         }
     }
     @Override
     public void paintComponent(Graphics g) {
         if(this.image != null){
             super.paintComponent(g);
-            Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getWidth(this), image.getHeight(this)),new Dimension(this.getWidth(), this.getHeight()));
-            g.drawImage(image,0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
+            Dimension newDimension = DisplayInfo.getScaledImageDimension(new Dimension(image.getBufferedImage().getWidth(this), image.getBufferedImage().getHeight(this)),new Dimension(this.getWidth(), this.getHeight()));
+            g.drawImage(image.getBufferedImage(),0,0,(int)newDimension.getHeight(),(int)newDimension.getWidth(),this);
             for (Point point : points) {
                 if (selectedPoints.contains(point)) {
                     g.setColor(Color.RED);
