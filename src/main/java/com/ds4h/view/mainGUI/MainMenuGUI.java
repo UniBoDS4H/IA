@@ -159,7 +159,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void showPreviewImages(){
         Opener opener = new Opener();
         for (ImagePlus image : this.cornerControler.getImages()) {
-            JLabel imageLabel = new JLabel(new ImageIcon(image.getBufferedImage().getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
+            JLabel imageLabel = new JLabel(new ImageIcon(image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
             imageLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -169,6 +169,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             });
             this.previewImagesList.add(imageLabel);
         }
+        this.repaint();
     }
 
 

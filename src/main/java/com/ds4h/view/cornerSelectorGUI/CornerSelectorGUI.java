@@ -27,24 +27,14 @@ public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMot
     private List<Integer> offsetY = new ArrayList<>();
     private boolean isDragging;
     public CornerSelectorGUI() {
-        this.addComponents();
-        this.addListeners();
     }
 
     public void setCurrentImage(ImagePlus image){
         this.currentImage = image;
+        repaint();
     }
 
-    public void loadImages(File[] files) {
 
-        if(files.length>0){
-            Opener opener = new Opener();
-            ImagePlus image = opener.openImage(files[0].getPath());
-            setCurrentImage(image);
-            repaint();
-        }
-
-    }
     @Override
     public void paintComponent(Graphics g) {
         if(this.currentImage != null){
@@ -113,19 +103,5 @@ public class CornerSelectorGUI extends JPanel implements MouseListener, MouseMot
     @Override
     public void mouseMoved(MouseEvent e) {}
 
-    @Override
-    public void showDialog() {
 
-    }
-
-    @Override
-    public void addListeners() {
-        addMouseListener(this);
-        addMouseMotionListener(this);
-    }
-
-    @Override
-    public void addComponents() {
-
-    }
 }
