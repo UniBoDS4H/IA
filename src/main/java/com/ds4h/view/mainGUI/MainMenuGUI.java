@@ -16,6 +16,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JMenu menu;
     private final JMenuItem aboutItem, loadImages,settingsItem;
     private final JPanel leftPanel;
+    private final JScrollPane scroolPane;
     private final CornerSelectorGUI rightPanel;
     private final AboutGUI aboutGUI;
     private final BunwarpjGUI settingsBunwarpj;
@@ -34,12 +35,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.automaticAlignment = new JButton("Automatic Alignment");
 
 
-
+        this.scroolPane = new JScrollPane();
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.leftPanel = new JPanel();
-        this.leftPanel.setLayout(new GridLayout(2, 1));
-        this.leftPanel.add(manualAlignment);
-        this.leftPanel.add(automaticAlignment);
+        this.leftPanel.setLayout(new GridLayout(3, 1));
+        this.leftPanel.add(this.scroolPane);
+        this.leftPanel.add(this.manualAlignment);
+        this.leftPanel.add(this.automaticAlignment);
         add(this.leftPanel, BorderLayout.WEST);
 
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
