@@ -1,6 +1,7 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.util.CheckImage;
+import com.ds4h.model.util.NameBuilder;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
@@ -53,11 +54,7 @@ public class HomographyAlignment {
     }
 
     private ImagePlus convertToImage(final File file, final Mat matrix){
-        final String fileName = file.getName();
-        final String[] parts = file.getName().split("\\.");
-        final String fileNameWithoutExtension = parts[0];
-        final String fileExtension = parts[1];
-        final String imgFinalName = fileNameWithoutExtension+"_Aligned"+fileExtension;
+        final String imgFinalName = new NameBuilder().parseName(file.getName()).splitBy("\\.").getFinalName();
         ImagePlus impOutput = new ImagePlus();
         if(Imgcodecs.imwrite(imgFinalName, matrix)){
             impOutput = IJ.openImage(imgFinalName);

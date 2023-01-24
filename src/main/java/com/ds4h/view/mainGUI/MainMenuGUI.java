@@ -17,6 +17,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JMenuItem aboutItem, loadImages,settingsItem;
     private final JPanel leftPanel;
     private final CornerSelectorGUI rightPanel;
+    private final AboutGUI aboutGUI;
+    private final BunwarpjGUI settingsBunwarpj;
+
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -30,6 +33,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
 
+
+
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.leftPanel = new JPanel();
         this.leftPanel.setLayout(new GridLayout(2, 1));
@@ -41,6 +46,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         //Adding the Right Panel, where all the images are loaded
         this.rightPanel = new CornerSelectorGUI();
+        this.aboutGUI = new AboutGUI();
+        this.settingsBunwarpj = new BunwarpjGUI();
         add(this.rightPanel);
 
         //Init of the Menu Bar and all the Menu Items
@@ -52,8 +59,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.addComponents();
         this.addListeners();
-
-        setVisible(true);
+        this.showDialog();
     }
 
     /**
@@ -78,6 +84,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.menu.add(this.settingsItem);
     }
 
+    @Override
+    public void showDialog() {
+        setVisible(true);
+    }
+
     /**
      * Add all the listeners to the components of the MainMenu
      */
@@ -85,7 +96,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         // Add event listener to the menu items
         this.aboutItem.addActionListener(event -> {
-            new AboutGUI();
+            this.aboutGUI.showDialog();
         });
 
         this.loadImages.addActionListener(event ->{
@@ -93,7 +104,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.settingsItem.addActionListener(event ->{
-            new BunwarpjGUI();
+            this.settingsBunwarpj.showDialog();
         });
 
         this.manualAlignment.addActionListener(event -> {

@@ -31,6 +31,11 @@ public class AboutGUI extends Frame implements StandardGUI {
         this.addListeners();
 
         pack();
+
+    }
+
+    @Override
+    public void showDialog() {
         setVisible(true);
     }
 
