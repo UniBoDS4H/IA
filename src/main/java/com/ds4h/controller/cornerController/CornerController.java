@@ -13,4 +13,8 @@ public class CornerController {
         Opener opener = new Opener();
         this.cornerManager.loadImages(paths.stream().map(path -> opener.openImage(path)).collect(Collectors.toList()));
     }
+
+    public List<ImagePlus> getImages() {
+        return this.cornerManager.getImages();
+    }
 }

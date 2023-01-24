@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CornerManager {
     final Map<ImagePlus, List<Point>> images = new HashMap<>();
@@ -36,5 +37,9 @@ public class CornerManager {
     }
     public void moveCorner(ImagePlus image, Point corner, Point newCorner){
 
+    }
+
+    public List<ImagePlus> getImages() {
+        return this.images.keySet().stream().collect(Collectors.toList());
     }
 }
