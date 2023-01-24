@@ -1,4 +1,4 @@
-package com.ds4h.model.alignment;
+package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.ImagingConversion;
