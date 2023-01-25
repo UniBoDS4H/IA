@@ -140,6 +140,8 @@
 			<url>https://mvnrepository.com/artifact/com.github.sbridges.object-inspector/object-inspector</url>
 		</repository>
 		-->
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.imagej</groupId>
