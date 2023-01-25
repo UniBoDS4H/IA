@@ -9,13 +9,16 @@ import ij.ImagePlus;
 import ij.io.Opener;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
@@ -31,6 +34,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AboutGUI aboutGUI;
     private final BunwarpjGUI settingsBunwarpj;
     private final CornerController cornerControler;
+    private final List<JLabel> imageLabels;
 
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
@@ -58,6 +62,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
 
         //Init of the previewList
+        this.imageLabels = new ArrayList<>();
         this.previewImagesList = new JPanel();
         this.previewImagesList.setLayout(new BoxLayout(this.previewImagesList, BoxLayout.Y_AXIS));
         this.listScroller = new JScrollPane(this.previewImagesList);
@@ -157,19 +162,26 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      * Method used to show the loaded images inside the list
      */
     private void showPreviewImages(){
+        this.imageLabels.clear();
+        this.previewImagesList.removeAll();
         Opener opener = new Opener();
         for (ImagePlus image : this.cornerControler.getImages()) {
             JLabel imageLabel = new JLabel(new ImageIcon(image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+            this.imageLabels.add(imageLabel);
             imageLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     // Set the clicked image as the current image
+                    Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
+                    imageLabels.stream().forEach(i -> i.setBorder(BorderFactory.createLineBorder(Color.BLUE, 0)));
+                    imageLabel.setBorder(border);
                     rightPanel.setCurrentImage(image);
                 }
             });
             this.previewImagesList.add(imageLabel);
         }
-        this.repaint();
+        this.previewImagesList.revalidate();
+
     }
 
 
