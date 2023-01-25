@@ -140,12 +140,6 @@
 			<url>https://mvnrepository.com/artifact/com.github.sbridges.object-inspector/object-inspector</url>
 		</repository>
 		-->
-		<repository>
-			<id>elastix</id>
-			<url>https://elastix.isi.uu.nl/maven2</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>net.imagej</groupId>
