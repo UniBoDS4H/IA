@@ -50,13 +50,33 @@ public class SurfAlignment {
         final List<Point> points1 = new ArrayList<>();
         /* the loop is used to iterate through the matches list, and for each match , it adds the corresponding point from the
            first image to the "points1", and the corresponding point from the second image to the "points2" list.
+
+           The goal of this code is to extract the keypoints from the two images that were matched together and store them in two
+           lists, "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix
+           that aligns the two images.
         * */
         for(int i = 0;i<matchesList.size(); i++){
+            /*EXPLANATION :
+                matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
+                .queryIdx : is a property of the DMatch that represents the index of the keypoint in the query image(the first image passed to the BFMatcher)
+                .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
+            */
+            // Adds the point from the query image that corresponding to the current match to the "points1" list.
             points1.add(keypoints1List.get(matchesList.get(i).queryIdx).pt);
         }
 
+        /*
+            The goal of this code is to extract the keypoints from the two images that were matched together and store them in two lists
+            "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix that aligns
+            the two images
+         */
         final List<Point> points2 = new ArrayList<>();
         for(int i = 0;i<matchesList.size(); i++){
+            /*EXPLANATION :
+                matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
+                .trainIdx : is a property of the DMatch object that represents the index of the keypoint in the train image(the second image passed to the BFMatcher)
+                .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
+            */
             points2.add(keypoints2List.get(matchesList.get(i).trainIdx).pt);
         }
 
@@ -65,9 +85,11 @@ public class SurfAlignment {
         final MatOfPoint2f points2_ = new MatOfPoint2f();
         points2_.fromList(points2);
 
+        // find the Homography matrix
         Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
 
         Mat alignedImage1 = new Mat();
+        //
         Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
 
         return alignedImage1;
