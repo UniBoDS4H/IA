@@ -106,7 +106,10 @@
 			<id>MVN Public repository</id>
 			<url>https://maven.scijava.org/content/repositories/public/</url>
 		</repository>
-
+		<repository>
+			<id>MVN Bytedeco</id>
+			<url>https://mvnrepository.com/artifact/org.bytedeco/javac</url>
+		</repository>
 		<!--
 		<repository>
 			<id>ossrh</id>
@@ -144,26 +147,27 @@
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.github.sbridges.object-inspector</groupId>
-			<artifactId>object-inspector</artifactId>
-			<version>0.1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bUnwarpJ_</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.12.0</version>
-		</dependency>
+
 		<!--
 		<dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>udunits</artifactId>
 			<version>4.3.18</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.sbridges.object-inspector</groupId>
+			<artifactId>object-inspector</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.joheras</groupId>
@@ -172,10 +176,12 @@
 		</dependency>
 		-->
 		<dependency>
-			<groupId>org.openpnp</groupId>
+			<groupId>org.bytedeco</groupId>
 			<artifactId>opencv</artifactId>
-			<version>4.6.0-0</version>
+			<version>4.6.0-1.5.8</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/opencv -->
 
 	</dependencies>
 </project>
