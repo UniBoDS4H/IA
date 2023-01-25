@@ -6,9 +6,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.OptionalDouble;
+
 
 public class BunwarpjGUI extends Frame implements StandardGUI {
+
+    //private final JSlider slider;
+    //private final JComboBox<> modeMenu, initial, final;
     private final JPanel divPanel,
             curlPanel,
             landmarkPanel,
