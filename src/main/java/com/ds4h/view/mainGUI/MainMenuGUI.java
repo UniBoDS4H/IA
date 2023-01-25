@@ -1,5 +1,6 @@
 package com.ds4h.view.mainGUI;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -165,9 +166,18 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.imageLabels.clear();
         this.previewImagesList.removeAll();
         Opener opener = new Opener();
-        for (ImagePlus image : this.cornerControler.getImages()) {
-            JLabel imageLabel = new JLabel(new ImageIcon(image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        for (ImageCorners image : this.cornerControler.getCornerImagesImages()) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+            JLabel imageLabel = new JLabel(new ImageIcon(image.getImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
             this.imageLabels.add(imageLabel);
+            panel.add(imageLabel);
+            if(this.cornerControler.isSource(image)){
+                System.out.println("aa");
+                JLabel textLabel = new JLabel("TARGET");
+                textLabel.setForeground(Color.black);
+                panel.add(textLabel);
+            }
             imageLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -175,10 +185,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
                     imageLabels.stream().forEach(i -> i.setBorder(BorderFactory.createLineBorder(Color.BLUE, 0)));
                     imageLabel.setBorder(border);
-                    rightPanel.setCurrentImage(image);
+                    rightPanel.setCurrentImage(image.getImage());
                 }
             });
-            this.previewImagesList.add(imageLabel);
+            this.previewImagesList.add(panel);
         }
         this.previewImagesList.revalidate();
 
