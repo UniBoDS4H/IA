@@ -1,21 +1,34 @@
 package com.ds4h.model.imageCorners;
+import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
+import ij.io.Opener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import java.awt.*;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ImageCorners {
-    private final ImagePlus image;
+    private final File image;
     private final List<Point> corners;
 
-    public ImageCorners(ImagePlus image){
+    public ImageCorners(File image){
         this.image = image;
         this.corners = new ArrayList<>();
     }
+    public ImagePlus getImage(){
+        Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
+        return img.get();
+    }
 
-    public List<Point> getCorners(ImagePlus image){
+    public String getPath(){
+        return this.image.getPath();
+    }
+
+    public List<Point> getCorners(){
         return new ArrayList<>(this.corners);
     }
 
@@ -29,7 +42,7 @@ public class ImageCorners {
             throw new IllegalArgumentException("given corner was not found");
         }
     }
-    public void moveCorner(ImagePlus image, org.opencv.core.Point corner, org.opencv.core.Point newCorner){
+    public void moveCorner(File image, Point corner, Point newCorner){
 
     }
 }

@@ -1,25 +1,29 @@
 package com.ds4h.model.cornerManager;
 
+import com.ds4h.model.imageCorners.ImageCorners;
 import ij.ImagePlus;
 import org.opencv.core.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.io.File;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CornerManager {
-    final Map<ImagePlus, List<Point>> images = new HashMap<>();
+    final List<ImageCorners> imagesWithCorners;
+    ImageCorners sourceImage;
+    public CornerManager(){
+        this.imagesWithCorners = new ArrayList<>();
+    }
 
-    public void loadImages(List<ImagePlus> loadingImages){
+    public void loadImages(List<String> loadingImages){
+        //setting the first image as default
+        this.sourceImage = new ImageCorners(new File(loadingImages.get(0)));
         loadingImages.forEach(image -> {
-            this.images.put(image, new ArrayList<>());
+            this.imagesWithCorners.add(new ImageCorners(new File(image)));
         });
     }
 
-
-
-    public List<ImagePlus> getImages() {
-        return this.images.keySet().stream().collect(Collectors.toList());
+    public Optional<ImageCorners> getSourceImage(){
+        return Optional.of(this.sourceImage);
     }
 }
