@@ -17,27 +17,7 @@ public class CornerManager {
         });
     }
 
-    public List<Point> getCorners(ImagePlus image){
-        return this.images.get(image);
-    }
 
-    public void addCorner(ImagePlus image, Point corner){
-            List<Point> points =  this.images.containsKey(image)?images.get(image):new ArrayList<>();
-            points.add(corner);
-            this.images.put(image, points);
-    }
-    public void removeCorner(ImagePlus image, Point corner){
-        if(this.images.containsKey(image)){
-            List<Point> points = this.images.get(image);
-            points.remove(corner);
-            this.images.put(image, points);
-        }else{
-            throw new IllegalArgumentException("given image was not found");
-        }
-    }
-    public void moveCorner(ImagePlus image, Point corner, Point newCorner){
-
-    }
 
     public List<ImagePlus> getImages() {
         return this.images.keySet().stream().collect(Collectors.toList());
