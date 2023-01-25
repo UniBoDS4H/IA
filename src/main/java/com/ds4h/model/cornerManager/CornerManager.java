@@ -16,11 +16,15 @@ public class CornerManager {
     }
 
     public void loadImages(List<String> loadingImages){
-        //setting the first image as default
-        this.sourceImage = new ImageCorners(new File(loadingImages.get(0)));
         loadingImages.forEach(image -> {
             this.imagesWithCorners.add(new ImageCorners(new File(image)));
         });
+        //setting the first image as default
+        this.setAsSource(new ImageCorners(new File(loadingImages.get(0))));
+    }
+
+    public List<ImageCorners> getCornerImagesImages(){
+        return new ArrayList<>(this.imagesWithCorners);
     }
 
     public Optional<ImageCorners> getSourceImage(){
@@ -28,6 +32,10 @@ public class CornerManager {
     }
 
     public void setAsSource(ImageCorners image){
+        this.imagesWithCorners.forEach(im->{
+            System.out.println(im);
+        });
+        System.out.println(image);
         if(this.imagesWithCorners.contains(image)){
             this.sourceImage = image;
         }else{

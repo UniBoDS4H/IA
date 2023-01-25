@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,19 @@ public class ImageCorners {
 
     public List<Point> getCorners(){
         return new ArrayList<>(this.corners);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageCorners that = (ImageCorners) o;
+        return Objects.equals(image, that.image) && Objects.equals(corners, that.corners);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(image, corners);
     }
 
     public void addCorner(Point corner){

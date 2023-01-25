@@ -1,6 +1,7 @@
 package com.ds4h.controller.cornerController;
 
 import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.imageCorners.ImageCorners;
 import ij.ImagePlus;
 import ij.io.Opener;
 
@@ -13,7 +14,11 @@ public class CornerController {
         this.cornerManager.loadImages(paths);
     }
 
-    public List<ImagePlus> getImages() {
-        return this.cornerManager.getImages();
+    public List<ImageCorners> getCornerImagesImages() {
+        return this.cornerManager.getCornerImagesImages();
+    }
+    public boolean isSource(ImageCorners image){
+        return this.cornerManager.getSourceImage().isPresent()?
+                this.cornerManager.getSourceImage().get().equals(image): false;
     }
 }
