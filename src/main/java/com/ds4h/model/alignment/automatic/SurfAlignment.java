@@ -1,6 +1,5 @@
 package com.ds4h.model.alignment.automatic;
 
-import org.bytedeco.opencv.opencv_core.KeyPointVector;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
@@ -11,7 +10,16 @@ import org.opencv.xfeatures2d.SURF;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SURF alignment of images.
+ * The SURF method is a fast and robust algorithm for similar images.
+ */
 public class SurfAlignment {
+    private static final int NUMBER_OF_ITERATION = 5;
+    static {
+        // Load the library for the alignment
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
     public static Mat align(){
         //Read the two images you want to align using the Imgcodecs class:
         final Mat image1 = Imgcodecs.imread("image1.jpg", Imgcodecs.IMREAD_GRAYSCALE);
@@ -85,11 +93,17 @@ public class SurfAlignment {
         final MatOfPoint2f points2_ = new MatOfPoint2f();
         points2_.fromList(points2);
 
-        // find the Homography matrix
-        Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
+        // Compute the homography matrix that aligns two images.
+        /*
+            points1_ : a matrix of 2D points in the first image (query image)
+            points2_ : a matrix of 2D points in the second image (train image)
+            Calib3d.RANSAC : the algorithm used to compute the Homography.
+            NUMBER_OF_ITERATION : number of iteration for the RANSAC algorithm
+         */
+        Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
 
         Mat alignedImage1 = new Mat();
-        //
+        // Align the first image to the second image using the homography matrix
         Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
 
         return alignedImage1;
