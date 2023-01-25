@@ -20,6 +20,7 @@ import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgproc.Imgproc.*;
 
 public class SurfAlignment {
+
     public static Mat align(Mat img1, Mat img2){
 
         Mat img1Gray = new Mat();
@@ -79,4 +80,5 @@ public class SurfAlignment {
 
          return null;
     }
+
 }

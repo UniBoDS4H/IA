@@ -21,11 +21,23 @@ public final class DisplayInfo {
         System.out.println(imgDimension);
         Dimension dimension = new Dimension();
         if(DisplayInfo.isVertical(imgDimension)){
-            final double newWidth = imgDimension.getWidth()*containerDimension.getHeight()/imgDimension.getHeight();
-            dimension.setSize(containerDimension.getHeight(), newWidth);
+            double newWidth = imgDimension.getWidth()*containerDimension.getHeight()/imgDimension.getHeight();
+            double newHeight = containerDimension.getHeight();
+            if(newWidth > containerDimension.getWidth()){
+                final double temp = newWidth;
+                newWidth = containerDimension.getWidth();
+                newHeight = newWidth*newHeight/temp;
+            }
+            dimension.setSize(newHeight, newWidth);
         }else{
-            final double newHeight = imgDimension.getHeight()*containerDimension.getWidth()/imgDimension.getWidth();
-            dimension.setSize(newHeight, containerDimension.getWidth());
+            double newHeight = imgDimension.getHeight()*containerDimension.getWidth()/imgDimension.getWidth();
+            double newWidth = containerDimension.getWidth();
+            if(newHeight > containerDimension.getHeight()){
+                final double temp = newHeight;
+                newHeight = containerDimension.getHeight();
+                newWidth = newHeight*newWidth/temp;
+            }
+            dimension.setSize(newHeight, newWidth);
         }
         return dimension;
     }
