@@ -33,9 +33,8 @@ public class CornerManager {
         return Optional.of(this.sourceImage);
     }
 
-    public void setAsSource(final ImageCorners image){
-        System.out.println(image);
-        if(this.imagesWithCorners.contains(image) && Objects.nonNull(image)){
+    public void setAsSource(ImageCorners image){
+        if(this.imagesWithCorners.contains(image)){
             //TODO:remove the source image from the list
             this.sourceImage = image;
         }else{
