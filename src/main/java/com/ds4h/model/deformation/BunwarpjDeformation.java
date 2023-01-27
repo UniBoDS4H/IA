@@ -2,6 +2,7 @@ package com.ds4h.model.deformation;
 
 import bunwarpj.BSplineModel;
 import bunwarpj.bUnwarpJ_;
+import com.sun.istack.internal.NotNull;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
 
@@ -27,9 +28,8 @@ public class BunwarpjDeformation {
      */
     public static ImagePlus deform(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
             final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
-            final int imageWeight, final int consistencyWeight, final int threshold
-            ,final ImagePlus target,final ImagePlus source){
-
+            final int imageWeight, final int consistencyWeight, final int threshold, final ImagePlus target, final ImagePlus source){
+        //Compute the tranformation
         final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
                 source,
                 target.getProcessor(),

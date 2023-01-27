@@ -18,8 +18,7 @@ public class CornerController {
         return this.cornerManager.getCornerImagesImages();
     }
     public boolean isSource(ImageCorners image){
-        return this.cornerManager.getSourceImage().isPresent()?
-                this.cornerManager.getSourceImage().get().equals(image): false;
+        return this.cornerManager.getSourceImage().isPresent() && this.cornerManager.getSourceImage().get().equals(image);
     }
 
     public void changeTarget(ImageCorners newTarget){

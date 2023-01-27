@@ -8,6 +8,7 @@ import org.opencv.core.Mat;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ImagingConversion {
@@ -45,8 +46,9 @@ public class ImagingConversion {
 
     public static Optional<ImagePlus> fromSinglePathToImagePlus(final String path){
         try {
-            final Optional<ImagePlus> output = !path.isEmpty() ? Optional.of(IJ.openImage(path)) : Optional.empty();
-            return output;
+            if(Objects.nonNull(path)) {
+                return !path.isEmpty() ? Optional.of(IJ.openImage(path)) : Optional.empty();
+            }
         }catch(Exception e){
             IJ.showMessage("An error occurred with this file : " + path + ". Are you sure that is correct ?");
         }
