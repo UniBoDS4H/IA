@@ -30,27 +30,32 @@ public class HomographyAlignment {
 
     /**
      * Manual alignment using the Homography alignment
-     * @param cornerManager : container where are stored all the images and their points
+     * @param source : the source image used as reference
+     * @param  target : the target to align
      * @return : the list of all the images aligned to the source
      */
-    public static List<ImagePlus> align(final CornerManager cornerManager){
-        final List<ImagePlus> output = new LinkedList<>();
+    private static Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
         //Check if the list source is set
-        if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()){
-            final Mat matReference = imread(cornerManager.getSourceImage().get().getPath(), IMREAD_ANYCOLOR);
-            final Point[] pointReference = cornerManager.getSourceImage().get().getCorners();
-            for (ImageCorners image :  cornerManager.getCornerImagesImages()) {
-                // Compute the Homography alignment
-                final Mat matDest = imread(image.getPath(), IMREAD_ANYCOLOR);
-                final Mat h = Imgproc.getAffineTransform( new MatOfPoint2f(pointReference), new MatOfPoint2f(image.getCorners()));
-                final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
-                // Try to convert the image, if it is present add it in to the list.
-                Optional<ImagePlus> imageWarped = HomographyAlignment.convertToImage(image.getFile(), warpedMat);
-                imageWarped.ifPresent(output::add);
-            }
+            final Mat matReference = imread(source.getPath(), IMREAD_ANYCOLOR);
+            final Point[] pointReference = source.getCorners();
+            // Compute the Homography alignment
+            final Mat matDest = imread(target.getPath(), IMREAD_ANYCOLOR);
+            final Mat h = Imgproc.getAffineTransform( new MatOfPoint2f(pointReference), new MatOfPoint2f(target.getCorners()));
+            final Mat warpedMat = new Mat();
+            Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
+            // Try to convert the image, if it is present add it in to the list.
+            return HomographyAlignment.convertToImage(target.getFile(), warpedMat);
+    }
+
+    public static List<ImagePlus> alignImages(final CornerManager cornerManager){
+        List<ImagePlus> images = new LinkedList<>();
+        if(cornerManager.getSourceImage().isPresent()) {
+            final ImageCorners source = cornerManager.getSourceImage().get();
+            cornerManager.getCornerImagesImages().forEach(image ->
+                    HomographyAlignment.align(source, image).ifPresent(images::add)
+            );
         }
-        return output;
+        return images;
     }
 
     /**
