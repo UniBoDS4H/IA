@@ -1,5 +1,10 @@
 package com.ds4h.model.alignment.automatic;
 
+import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.NameBuilder;
+import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
@@ -7,8 +12,11 @@ import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * SURF alignment of images.
@@ -20,10 +28,17 @@ public class SurfAlignment {
         // Load the library for the alignment
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
-    public static Mat align(){
+
+    /**
+     * Align two images using the SURF Algorithm
+     * @param sourceImage : the source image for the alignment
+     * @param targetImage : the image to align
+     * @return : the target image aligned to the source image
+     */
+    private static Optional<ImagePlus> align(final ImageCorners sourceImage, final ImageCorners targetImage){
         //Read the two images you want to align using the Imgcodecs class:
-        final Mat image1 = Imgcodecs.imread("image1.jpg", Imgcodecs.IMREAD_GRAYSCALE);
-        final Mat image2 = Imgcodecs.imread("image2.jpg", Imgcodecs.IMREAD_GRAYSCALE);
+        final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
+        final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
 
 
         // Detect keypoints and compute descriptors using the SURF algorithm
@@ -100,13 +115,39 @@ public class SurfAlignment {
             Calib3d.RANSAC : the algorithm used to compute the Homography.
             NUMBER_OF_ITERATION : number of iteration for the RANSAC algorithm
          */
-        Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+        final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
 
-        Mat alignedImage1 = new Mat();
+        final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
         Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
+        Optional<ImagePlus> optionalImage  = SurfAlignment.convertToImage(targetImage.getFile(), alignedImage1);
+        return optionalImage;
+    }
 
-        return alignedImage1;
+    /**
+     * Align the images stored inside the cornerManager. All the images will be aligned to the source image
+     * @param cornerManager : container where all the images are stored
+     * @return the List of all the images aligned to the source
+     */
+    public static List<ImagePlus> alignImages(final CornerManager cornerManager){
+        final List<ImagePlus> images = new LinkedList<>();
+        if(cornerManager.getSourceImage().isPresent()) {
+            final ImageCorners source = cornerManager.getSourceImage().get();
+            for (ImageCorners image : cornerManager.getCornerImagesImages()) {
+                SurfAlignment.align(source, image).ifPresent(images::add);
+            }
+        }
+        return images;
+    }
+
+    /**
+     * Convert the new matrix in to an image
+     * @param file : this will be used in order to get the name and store used it for the creation of the new file.
+     * @param matrix : the image aligned matrix
+     * @return : the new image created by the Matrix.
+     */
+    private static Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
+        return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
     }
 
 }

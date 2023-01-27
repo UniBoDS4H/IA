@@ -30,9 +30,14 @@ public class HomographyAlignment {
 
     private HomographyAlignment(){}
 
+    /**
+     * Manual alignment using the Homography alignment
+     * @param cornerManager : container where are stored all the images and their points
+     * @return : the list of all the images aligned to the source
+     */
     public static List<ImagePlus> align(final CornerManager cornerManager){
         final List<ImagePlus> output = new LinkedList<>();
-
+        //Check if the list source is set
         if(cornerManager.getSourceImage().isPresent()){
             final Mat matReference = imread(cornerManager.getSourceImage().get().getPath(), IMREAD_ANYCOLOR);
             final Point[] pointReference = cornerManager.getSourceImage().get().getCorners();
@@ -50,8 +55,13 @@ public class HomographyAlignment {
         return output;
     }
 
+    /**
+     * Convert the new matrix in to an image
+     * @param file : this will be used in order to get the name and store used it for the creation of the new file.
+     * @param matrix : the image aligned matrix
+     * @return : the new image created by the Matrix.
+     */
     private static Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        final Optional<ImagePlus> impOutput = ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
-        return impOutput;
+        return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
     }
 }

@@ -22,7 +22,8 @@ public class ImageCorners {
     }
     public ImagePlus getImage(){
         Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
-        //TODO : Check if the Optional is present. If it so then you return it otherwise it gives you error if the Optional is empty
+        //TODO : Check if the Optional is present. If it so then you return it otherwise it gives you error if the Optional is empty.
+        //TODO: maybe it is better return the Optional.
         return img.get();
     }
 
