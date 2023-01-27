@@ -21,4 +21,8 @@ public class CornerController {
         return this.cornerManager.getSourceImage().isPresent()?
                 this.cornerManager.getSourceImage().get().equals(image): false;
     }
+
+    public void changeTarget(ImageCorners newTarget){
+        this.cornerManager.setAsSource(newTarget);
+    }
 }

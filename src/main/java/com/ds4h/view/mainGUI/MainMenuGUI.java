@@ -165,20 +165,30 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void showPreviewImages(){
         this.imageLabels.clear();
         this.previewImagesList.removeAll();
+        this.previewImagesList.revalidate();
         Opener opener = new Opener();
         for (ImageCorners image : this.cornerControler.getCornerImagesImages()) {
             JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+            JButton targetButton = new JButton("Set as target");
             JLabel imageLabel = new JLabel(new ImageIcon(image.getImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+            panel.setLayout(new GridLayout(1, 3));
             this.imageLabels.add(imageLabel);
             panel.add(imageLabel);
-            if(this.cornerControler.isSource(image)){
-                System.out.println("aa");
-                JLabel textLabel = new JLabel("TARGET");
-                textLabel.setForeground(Color.black);
-                panel.add(textLabel);
+            panel.add(targetButton);
+            JLabel textLabel = new JLabel("TARGET");
+            textLabel.setForeground(Color.black);
+            panel.add(textLabel);
+            if (this.cornerControler.isSource(image)) {
+                textLabel.setVisible(true);
+            }else{
+                textLabel.setVisible(false);
             }
-            imageLabel.addMouseListener(new MouseAdapter() {
+            targetButton.addActionListener(event -> {
+                this.cornerControler.changeTarget(image);
+                this.showPreviewImages();
+                this.previewImagesList.revalidate();
+            });
+            panel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     // Set the clicked image as the current image
@@ -192,6 +202,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         }
         this.previewImagesList.revalidate();
 
+    }
+
+    private void updateTargetLabel(JLabel textLabel){
+        for (ImageCorners image : this.cornerControler.getCornerImagesImages()) {
+
+        }
     }
 
 
