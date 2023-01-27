@@ -1,8 +1,6 @@
 package com.ds4h.model.deformation;
 
-import bunwarpj.BSplineModel;
 import bunwarpj.bUnwarpJ_;
-import com.sun.istack.internal.NotNull;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
 

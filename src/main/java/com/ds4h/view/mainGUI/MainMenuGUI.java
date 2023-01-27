@@ -1,4 +1,5 @@
 package com.ds4h.view.mainGUI;
+
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
@@ -6,7 +7,6 @@ import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.io.Opener;
 
 import javax.swing.*;
 import javax.swing.border.Border;

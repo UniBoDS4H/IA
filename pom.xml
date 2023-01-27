@@ -192,14 +192,13 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<appendAssemblyId>false</appendAssemblyId>
 					<archive>
 						<manifest>
-							<mainClass>com.ds4h.imagej.Process_Pixels</mainClass>
+							<mainClass>fully.qualified.MainClass</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -218,6 +217,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>

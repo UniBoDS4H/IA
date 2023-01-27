@@ -2,10 +2,8 @@ package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
-import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
-import com.sun.istack.internal.NotNull;
 import ij.ImagePlus;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
