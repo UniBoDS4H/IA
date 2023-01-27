@@ -13,10 +13,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * SURF alignment of images.
@@ -78,14 +75,14 @@ public class SurfAlignment {
            lists, "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix
            that aligns the two images.
         * */
-        for(int i = 0;i<matchesList.size(); i++){
+        for (DMatch match : matchesList) {
             /*EXPLANATION :
                 matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
                 .queryIdx : is a property of the DMatch that represents the index of the keypoint in the query image(the first image passed to the BFMatcher)
                 .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
             */
             // Adds the point from the query image that corresponding to the current match to the "points1" list.
-            points1.add(keypoints1List.get(matchesList.get(i).queryIdx).pt);
+            points1.add(keypoints1List.get(match.queryIdx).pt);
         }
 
         /*
@@ -94,13 +91,13 @@ public class SurfAlignment {
             the two images
          */
         final List<Point> points2 = new ArrayList<>();
-        for(int i = 0;i<matchesList.size(); i++){
+        for (DMatch dMatch : matchesList) {
             /*EXPLANATION :
                 matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
                 .trainIdx : is a property of the DMatch object that represents the index of the keypoint in the train image(the second image passed to the BFMatcher)
                 .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
             */
-            points2.add(keypoints2List.get(matchesList.get(i).trainIdx).pt);
+            points2.add(keypoints2List.get(dMatch.trainIdx).pt);
         }
 
         final MatOfPoint2f points1_ = new MatOfPoint2f();
@@ -120,8 +117,7 @@ public class SurfAlignment {
         final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
         Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
-        Optional<ImagePlus> optionalImage  = SurfAlignment.convertToImage(targetImage.getFile(), alignedImage1);
-        return optionalImage;
+        return SurfAlignment.convertToImage(targetImage.getFile(), alignedImage1);
     }
 
     /**
@@ -131,11 +127,9 @@ public class SurfAlignment {
      */
     public static List<ImagePlus> alignImages(final CornerManager cornerManager){
         final List<ImagePlus> images = new LinkedList<>();
-        if(cornerManager.getSourceImage().isPresent()) {
+        if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
-            for (ImageCorners image : cornerManager.getCornerImagesImages()) {
-                SurfAlignment.align(source, image).ifPresent(images::add);
-            }
+            cornerManager.getCornerImagesImages().forEach(image -> SurfAlignment.align(source, image).ifPresent(images::add));
         }
         return images;
     }

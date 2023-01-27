@@ -5,6 +5,7 @@ import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
+import com.sun.istack.internal.NotNull;
 import ij.ImagePlus;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,10 +13,7 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
@@ -38,7 +36,7 @@ public class HomographyAlignment {
     public static List<ImagePlus> align(final CornerManager cornerManager){
         final List<ImagePlus> output = new LinkedList<>();
         //Check if the list source is set
-        if(cornerManager.getSourceImage().isPresent()){
+        if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()){
             final Mat matReference = imread(cornerManager.getSourceImage().get().getPath(), IMREAD_ANYCOLOR);
             final Point[] pointReference = cornerManager.getSourceImage().get().getCorners();
             for (ImageCorners image :  cornerManager.getCornerImagesImages()) {

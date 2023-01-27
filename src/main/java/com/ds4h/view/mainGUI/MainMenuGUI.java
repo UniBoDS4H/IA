@@ -156,7 +156,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         fd.setMultipleMode(true);
         fd.setVisible(true);
         File[] files = fd.getFiles();//Get all the files
-        this.cornerControler.loadImages(Arrays.stream(files).map(f->f.getPath()).collect(Collectors.toList()));
+        this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
         this.showPreviewImages();
     }
     /**
