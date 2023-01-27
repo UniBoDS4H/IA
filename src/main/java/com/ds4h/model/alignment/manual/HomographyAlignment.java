@@ -1,5 +1,7 @@
 package com.ds4h.model.alignment.manual;
 
+import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
@@ -28,33 +30,38 @@ public class HomographyAlignment {
 
     private HomographyAlignment(){}
 
-    public static List<ImagePlus> align(final File impReference,
-                                        final Point[] pointsReference,
-                                        final Map<File, Point[]> images){
+    /**
+     * Manual alignment using the Homography alignment
+     * @param cornerManager : container where are stored all the images and their points
+     * @return : the list of all the images aligned to the source
+     */
+    public static List<ImagePlus> align(final CornerManager cornerManager){
         final List<ImagePlus> output = new LinkedList<>();
-        final Mat matReference = imread(impReference.getPath(), IMREAD_ANYCOLOR);
-        for (Map.Entry<File, Point[]> image :  images.entrySet()) {
-            // TODO : check immagine
-            if(CheckImage.checkImage(image.getKey())){
-                final Mat matDest = imread(image.getKey().getPath(), IMREAD_ANYCOLOR);
-                final Mat h = Imgproc.getAffineTransform( new MatOfPoint2f(pointsReference), new MatOfPoint2f(image.getValue()));
+        //Check if the list source is set
+        if(cornerManager.getSourceImage().isPresent()){
+            final Mat matReference = imread(cornerManager.getSourceImage().get().getPath(), IMREAD_ANYCOLOR);
+            final Point[] pointReference = cornerManager.getSourceImage().get().getCorners();
+            for (ImageCorners image :  cornerManager.getCornerImagesImages()) {
+                // Compute the Homography alignment
+                final Mat matDest = imread(image.getPath(), IMREAD_ANYCOLOR);
+                final Mat h = Imgproc.getAffineTransform( new MatOfPoint2f(pointReference), new MatOfPoint2f(image.getCorners()));
                 final Mat warpedMat = new Mat();
                 Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
-                // TODO : Add the image inside the list output
-                //ImagePlus imp2Warped
-                /*
-                ImagePlusMatConverter b = new ImagePlusMatConverter();
-                ImagePlusMatConverter.toMat(new ImagePlus().get)
-                ImageJ2OpenCVConverter a = new ImageJ2OpenCVConverter();
-*/
-
+                // Try to convert the image, if it is present add it in to the list.
+                Optional<ImagePlus> imageWarped = HomographyAlignment.convertToImage(image.getFile(), warpedMat);
+                imageWarped.ifPresent(output::add);
             }
         }
-        return null;
+        return output;
     }
 
-    private Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        final Optional<ImagePlus> impOutput = ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
-        return impOutput;
+    /**
+     * Convert the new matrix in to an image
+     * @param file : this will be used in order to get the name and store used it for the creation of the new file.
+     * @param matrix : the image aligned matrix
+     * @return : the new image created by the Matrix.
+     */
+    private static Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
+        return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
     }
 }

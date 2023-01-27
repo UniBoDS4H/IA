@@ -20,20 +20,8 @@ import java.awt.*;
  *
  * @author Johannes Schindelin
  */
-
 public class Process_Pixels implements PlugIn {
-	protected ImagePlus image;
 
-	public String name = "Miglior plugin al mondo";
-
-	/**
-	 * Main method for debugging.
-	 *
-	 * For debugging, it is convenient to have a method that starts ImageJ, loads
-	 * an image and calls the plugin, e.g. after setting breakpoints.
-	 *
-	 * @param args unused
-	 */
 
 	public static void main(String[] args) throws Exception {
 		new Process_Pixels().run(null);
