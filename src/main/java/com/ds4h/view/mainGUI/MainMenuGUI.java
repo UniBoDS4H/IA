@@ -6,7 +6,6 @@ import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.ImagePlus;
 import ij.io.Opener;
 
 import javax.swing.*;
@@ -30,7 +29,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JMenu menu;
     private final JMenuItem aboutItem, loadImages,settingsItem;
     private final JPanel leftPanel;
-    private final JScrollPane scroolPane;
     private final CornerSelectorGUI rightPanel;
     private final AboutGUI aboutGUI;
     private final BunwarpjGUI settingsBunwarpj;
@@ -52,7 +50,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.automaticAlignment = new JButton("Automatic Alignment");
 
 
-        this.scroolPane = new JScrollPane();
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.leftPanel = new JPanel();
         this.leftPanel.setLayout(new GridLayout(2, 1));
@@ -156,7 +153,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         fd.setMultipleMode(true);
         fd.setVisible(true);
         File[] files = fd.getFiles();//Get all the files
-        this.cornerControler.loadImages(Arrays.stream(files).map(f->f.getPath()).collect(Collectors.toList()));
+        this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
         this.showPreviewImages();
     }
     /**
@@ -166,7 +163,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.imageLabels.clear();
         this.previewImagesList.removeAll();
         this.previewImagesList.revalidate();
-        Opener opener = new Opener();
         for (ImageCorners image : this.cornerControler.getCornerImagesImages()) {
             JPanel panel = new JPanel();
             JButton targetButton = new JButton("Set as target");
@@ -178,11 +174,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             JLabel textLabel = new JLabel("TARGET");
             textLabel.setForeground(Color.black);
             panel.add(textLabel);
-            if (this.cornerControler.isSource(image)) {
-                textLabel.setVisible(true);
-            }else{
-                textLabel.setVisible(false);
-            }
+            textLabel.setVisible(this.cornerControler.isSource(image));
             targetButton.addActionListener(event -> {
                 this.cornerControler.changeTarget(image);
                 this.showPreviewImages();
@@ -193,7 +185,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 public void mouseClicked(MouseEvent e) {
                     // Set the clicked image as the current image
                     Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
-                    imageLabels.stream().forEach(i -> i.setBorder(BorderFactory.createLineBorder(Color.BLUE, 0)));
+                    imageLabels.forEach(i -> i.setBorder(BorderFactory.createLineBorder(Color.BLUE, 0)));
                     imageLabel.setBorder(border);
                     rightPanel.setCurrentImage(image.getImage());
                 }
@@ -203,13 +195,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.previewImagesList.revalidate();
 
     }
-
-    private void updateTargetLabel(JLabel textLabel){
-        for (ImageCorners image : this.cornerControler.getCornerImagesImages()) {
-
-        }
-    }
-
 
     /**
      * Method used to set the Min dimension of the Frame, based on the Users monitor dimension
