@@ -140,7 +140,11 @@
 			<url>https://mvnrepository.com/artifact/com.github.sbridges.object-inspector/object-inspector</url>
 		</repository>
 		-->
-	</repositories>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+		</repositories>
 
 	<dependencies>
 		<dependency>
@@ -181,7 +185,6 @@
 			<artifactId>opencv</artifactId>
 			<version>4.6.0-1.5.8</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-assembly-plugin</artifactId>
@@ -198,7 +201,7 @@
 					<appendAssemblyId>false</appendAssemblyId>
 					<archive>
 						<manifest>
-							<mainClass>fully.qualified.MainClass</mainClass>
+							<mainClass>com.ds4h.imagej.Process_Pixels</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

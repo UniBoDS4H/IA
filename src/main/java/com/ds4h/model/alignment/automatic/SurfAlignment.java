@@ -1,17 +1,22 @@
 package com.ds4h.model.alignment.automatic;
 
+import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
+import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
 import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.osgi.OpenCVInterface;
 import org.opencv.xfeatures2d.SURF;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.util.*;
 
@@ -19,21 +24,33 @@ import java.util.*;
  * SURF alignment of images.
  * The SURF method is a fast and robust algorithm for similar images.
  */
-public class SurfAlignment {
+public class SurfAlignment extends AlignmentAlgorithm {
     private static final int NUMBER_OF_ITERATION = 5;
-    static {
-        // Load the library for the alignment
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    public SurfAlignment(){
+        super();
     }
-
     /**
      * Align two images using the SURF Algorithm
      * @param sourceImage : the source image for the alignment
      * @param targetImage : the image to align
      * @return : the target image aligned to the source image
      */
-    private static Optional<ImagePlus> align(final ImageCorners sourceImage, final ImageCorners targetImage){
+    @Override
+    protected Optional<ImagePlus> align(final ImageCorners sourceImage, final ImageCorners targetImage){
         //Read the two images you want to align using the Imgcodecs class:
+        /*
+        final BufferedImage bufferedImage = sourceImage.getImage().getBufferedImage();
+        final Mat image1 = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), sourceImage.getImage().getType());
+        byte[] data = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
+        image1.put(0, 0, data);
+
+        System.out.println(sourceImage.getImage());
+        IJ.openImage(sourceImage.getPath());
+
+        sourceImage.getImage().show();
+
+         */
+        //ImagePlusMatConverter imgConverter = new ImagePlusMatConverter();
         final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
         final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
 
@@ -117,7 +134,7 @@ public class SurfAlignment {
         final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
         Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
-        return SurfAlignment.convertToImage(targetImage.getFile(), alignedImage1);
+        return this.convertToImage(targetImage.getFile(), alignedImage1);
     }
 
     /**
@@ -125,11 +142,12 @@ public class SurfAlignment {
      * @param cornerManager : container where all the images are stored
      * @return the List of all the images aligned to the source
      */
-    public static List<ImagePlus> alignImages(final CornerManager cornerManager){
+    @Override
+    public  List<ImagePlus> alignImages(final CornerManager cornerManager){
         final List<ImagePlus> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
-            cornerManager.getCornerImagesImages().forEach(image -> SurfAlignment.align(source, image).ifPresent(images::add));
+            cornerManager.getCornerImagesImages().forEach(image -> this.align(source, image).ifPresent(images::add));
         }
         return images;
     }
@@ -140,7 +158,8 @@ public class SurfAlignment {
      * @param matrix : the image aligned matrix
      * @return : the new image created by the Matrix.
      */
-    private static Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
+    @Override
+    protected Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
     }
 

@@ -14,6 +14,10 @@ public class CornerController {
         this.cornerManager.loadImages(paths);
     }
 
+    public CornerManager getCornerManager(){
+        return this.cornerManager;
+    }
+
     public List<ImageCorners> getCornerImagesImages() {
         return this.cornerManager.getCornerImagesImages();
     }

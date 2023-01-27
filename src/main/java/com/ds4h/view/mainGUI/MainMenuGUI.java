@@ -1,5 +1,6 @@
 package com.ds4h.view.mainGUI;
 
+import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
@@ -135,6 +136,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.manualAlignment.addActionListener(event -> {
+        });
+        this.automaticAlignment.addActionListener(event -> {
+            new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager());
         });
 
         addWindowListener(new WindowAdapter() {
