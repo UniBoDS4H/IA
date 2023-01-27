@@ -1,11 +1,10 @@
 package com.ds4h.model.cornerManager;
 
 import com.ds4h.model.imageCorners.ImageCorners;
-import ij.ImagePlus;
-import org.opencv.core.Point;
-
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CornerManager {

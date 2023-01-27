@@ -1,18 +1,15 @@
 package com.ds4h.model.imageCorners;
+
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
-import ij.io.Opener;
 import org.opencv.core.Point;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ImageCorners {
     private final File image;
@@ -22,11 +19,8 @@ public class ImageCorners {
         this.image = image;
         this.corners = new ArrayList<>();
     }
-    public ImagePlus getImage() throws FileNotFoundException {
+    public ImagePlus getImage(){
         Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
-        if(!img.isPresent()){
-            throw new FileNotFoundException("the path of the image was not correct");
-        }
         return img.get();
     }
 
