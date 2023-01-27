@@ -19,6 +19,6 @@ public class ManualAlignmentController {
      * @return : the images aligned to the source image.
      */
     public List<ImagePlus> homographyAlignment(final CornerManager cornerManager){
-        return HomographyAlignment.align(cornerManager);
+        return HomographyAlignment.alignImages(cornerManager);
     }
 }
