@@ -5,6 +5,7 @@ import ij.io.Opener;
 import org.opencv.core.Point;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +21,11 @@ public class ImageCorners {
         this.image = image;
         this.corners = new ArrayList<>();
     }
-    public ImagePlus getImage(){
+    public ImagePlus getImage() throws FileNotFoundException {
         Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
-        //TODO : Check if the Optional is present. If it so then you return it otherwise it gives you error if the Optional is empty.
-        //TODO: maybe it is better return the Optional.
+        if(!img.isPresent()){
+            throw new FileNotFoundException("the path of the image was not correct");
+        }
         return img.get();
     }
 
