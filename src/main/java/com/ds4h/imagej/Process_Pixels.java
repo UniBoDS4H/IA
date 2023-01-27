@@ -8,11 +8,11 @@
 
 package com.ds4h.imagej;
 
-import ij.IJ;
-import ij.ImageJ;
 import ij.ImagePlus;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.plugin.PlugIn;
+
+import java.awt.*;
 
 /**
  * A template for processing each pixel of either
@@ -20,17 +20,11 @@ import ij.plugin.PlugIn;
  *
  * @author Johannes Schindelin
  */
+
 public class Process_Pixels implements PlugIn {
 	protected ImagePlus image;
 
-	// image property members
-	private int width;
-	private int height;
-
-	// plugin parameters
-	public double value;
-	public String name;
-
+	public String name = "Miglior plugin al mondo";
 
 	/**
 	 * Main method for debugging.
@@ -40,16 +34,14 @@ public class Process_Pixels implements PlugIn {
 	 *
 	 * @param args unused
 	 */
-	public static void main(String[] args) throws Exception {
 
-		// start ImageJ
-		new ImageJ();
-		// run the plugin
-		IJ.runPlugIn(Process_Pixels.class.getName(), "");
+	public static void main(String[] args) throws Exception {
+		new Process_Pixels().run(null);
 	}
+
 
 	@Override
 	public void run(String s) {
-		new MainMenuGUI();
+		EventQueue.invokeLater(MainMenuGUI::new);
 	}
 }
