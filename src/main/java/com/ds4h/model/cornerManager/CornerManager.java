@@ -15,7 +15,7 @@ public class CornerManager {
         this.imagesWithCorners = new ArrayList<>();
     }
 
-    public void loadImages(List<String> loadingImages){
+    public void loadImages(final List<String> loadingImages){
         loadingImages.forEach(image -> {
             this.imagesWithCorners.add(new ImageCorners(new File(image)));
         });
@@ -31,10 +31,12 @@ public class CornerManager {
         return Optional.of(this.sourceImage);
     }
 
-    public void setAsSource(ImageCorners image){
-        this.imagesWithCorners.forEach(im->{
-            System.out.println(im);
-        });
+    public void setAsSource(final ImageCorners image){
+        /*
+        this.imagesWithCorners.forEach(im->
+            System.out::println
+        );
+        */
         System.out.println(image);
         if(this.imagesWithCorners.contains(image)){
             this.sourceImage = image;

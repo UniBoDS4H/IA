@@ -1,16 +1,18 @@
-package com.ds4h.model.deformation;
-
-import bunwarpj.BSplineModel;
-import bunwarpj.bUnwarpJ_;
+package com.ds4h.controller.bunwarpJController;
+import com.ds4h.model.deformation.BunwarpjDeformation;
 import ij.ImagePlus;
-import bunwarpj.Transformation;
 
-public class BunwarpjDeformation {
-    private BunwarpjDeformation(){
+/**
+ * Controller for the BunwarpJ elastic deformation
+ */
+public class BunwarpJController {
+
+    public BunwarpJController(){
 
     }
+
     /**
-     * Use BunwarpJ in order to apply the elastic transformation.
+     * Use BunwarpJ in order to apply the elastic transformation using the Class Model.
      * @param mode : The registration mode can be “Accurate”, “Fast” and “Mono”. The registration mode “Mono”. By using "Mono" you have unidirectional registration
      * @param img_subsamp_fact : The image dimensions can be reduced by a factor of 2^0 = 1 to 2^7 = 128.
      * @param min_scale_deformation : Min scale deformation
@@ -23,28 +25,13 @@ public class BunwarpjDeformation {
      * @param threshold : Stop Threshold
      * @param target : Target Image
      * @param source : Source Image
-     * @return :
+     * @return : the transformed image
      */
-    public static ImagePlus deform(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
-            final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
-            final int imageWeight, final int consistencyWeight, final int threshold
+    public ImagePlus transformation(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
+                                    final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
+                                    final int imageWeight, final int consistencyWeight, final int threshold
             ,final ImagePlus target,final ImagePlus source){
-
-        final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
-                source,
-                target.getProcessor(),
-                source.getProcessor(),
-                mode,
-                img_subsamp_fact,
-                min_scale_deformation,
-                max_scale_deformation,
-                divWeight,
-                curlWeight,
-                landmarkWeight,
-                imageWeight,
-                consistencyWeight,
-                threshold);
-        final ImagePlus output = transformation.getDirectResults();
-        return output;
+        return BunwarpjDeformation.deform(mode, img_subsamp_fact, min_scale_deformation, max_scale_deformation, divWeight,
+                curlWeight, landmarkWeight, imageWeight, consistencyWeight, threshold, target, source);
     }
 }
