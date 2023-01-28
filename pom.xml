@@ -185,14 +185,16 @@
 			<artifactId>opencv</artifactId>
 			<version>4.6.0-1.5.8</version>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-assembly-plugin</artifactId>
 			<version>3.4.2</version>
 		</dependency>
+		-->
 
 	</dependencies>
-
+<!--
 	<build>
 		<plugins>
 			<plugin>
@@ -210,8 +212,8 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>make-assembly</id>  this is used for inheritance merges
+						<phase>package</phase>  bind to the packaging phase
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -220,4 +222,5 @@
 			</plugin>
 		</plugins>
 	</build>
+-->
 </project>
