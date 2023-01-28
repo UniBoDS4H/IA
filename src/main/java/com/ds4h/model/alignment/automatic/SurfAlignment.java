@@ -12,7 +12,6 @@ import org.opencv.core.*;
 import org.opencv.features2d.*;
 import org.opencv.imgcodecs.*;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.osgi.OpenCVInterface;
 import org.opencv.xfeatures2d.SURF;
 
 import java.awt.image.BufferedImage;
@@ -51,8 +50,8 @@ public class SurfAlignment extends AlignmentAlgorithm {
 
          */
         //ImagePlusMatConverter imgConverter = new ImagePlusMatConverter();
-        final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
-        final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
+        final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR);
+        final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR);
 
 
         // Detect keypoints and compute descriptors using the SURF algorithm
