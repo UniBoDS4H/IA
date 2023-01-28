@@ -144,7 +144,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             //Mat m = new Mat();
             //bUnwarpJ_ b = new bUnwarpJ_();
             //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
-            //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager());
+            new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager());
         });
 
         addWindowListener(new WindowAdapter() {
