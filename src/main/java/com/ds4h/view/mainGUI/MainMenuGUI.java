@@ -1,4 +1,8 @@
 package com.ds4h.view.mainGUI;
+
+
+import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.*;
+import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
@@ -6,7 +10,7 @@ import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.io.Opener;
+
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -135,6 +139,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.manualAlignment.addActionListener(event -> {
+        });
+        this.automaticAlignment.addActionListener(event -> {
+            //Mat m = new Mat();
+            //bUnwarpJ_ b = new bUnwarpJ_();
+            //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
+            new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager());
         });
 
         addWindowListener(new WindowAdapter() {

@@ -1,4 +1,5 @@
 package com.ds4h.controller.bunwarpJController;
+import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.deformation.BunwarpjDeformation;
 import ij.ImagePlus;
 
@@ -23,15 +24,14 @@ public class BunwarpJController {
      * @param imageWeight : Image Weight. This is the weight to control the pixel values differences. Leave it to 1.0 unless you want to do for instance landmark-only registration.
      * @param consistencyWeight : Consistency Weight. The divergence and curl weights regularize the deformation by penalizing the Divergence and Curl (mathematics) of the deformation vector field. In other words, we penalize vector fields with many points like this:
      * @param threshold : Stop Threshold
-     * @param target : Target Image
-     * @param source : Source Image
+     * @param cornerManager : Target Image
      * @return : the transformed image
      */
     public ImagePlus transformation(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
                                     final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
                                     final int imageWeight, final int consistencyWeight, final int threshold
-            ,final ImagePlus target,final ImagePlus source){
+            , final CornerManager cornerManager){
         return BunwarpjDeformation.deform(mode, img_subsamp_fact, min_scale_deformation, max_scale_deformation, divWeight,
-                curlWeight, landmarkWeight, imageWeight, consistencyWeight, threshold, target, source);
+                curlWeight, landmarkWeight, imageWeight, consistencyWeight, threshold, cornerManager.getImagesToAlign().get(0).getImage(), cornerManager.getSourceImage().get().getImage());
     }
 }
