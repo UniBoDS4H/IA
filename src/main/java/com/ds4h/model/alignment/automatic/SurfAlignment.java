@@ -9,11 +9,12 @@ import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
+import org.opencv.core.CvType;
+import org.opencv.core.Scalar;
 import org.opencv.features2d.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.highgui.HighGui;
 import java.io.File;
 import java.util.*;
 
@@ -24,6 +25,18 @@ import java.util.*;
 public class SurfAlignment extends AlignmentAlgorithm {
     private static final int NUMBER_OF_ITERATION = 5;
 
+
+    public static Mat toGrayscale(Mat mat) {
+        Mat gray = new Mat();
+        if (mat.channels() == 3) {
+            // Convert the BGR image to a single channel grayscale image
+            Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            // If the image is already single channel, just return it
+            gray = mat;
+        }
+        return gray;
+    }
     public SurfAlignment(){
         super();
     }
@@ -35,23 +48,14 @@ public class SurfAlignment extends AlignmentAlgorithm {
      */
     @Override
     protected Optional<ImagePlus> align(final ImageCorners sourceImage, final ImageCorners targetImage){
-        //Read the two images you want to align using the Imgcodecs class:
-        /*
-        final BufferedImage bufferedImage = sourceImage.getImage().getBufferedImage();
-        final Mat image1 = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), sourceImage.getImage().getType());
-        byte[] data = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
-        image1.put(0, 0, data);
 
-        System.out.println(sourceImage.getImage());
-        IJ.openImage(sourceImage.getPath());
-
-        sourceImage.getImage().show();
-
-         */
-        //ImagePlusMatConverter imgConverter = new ImagePlusMatConverter();
         try {
-            final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
-            final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
+            //sourceImage.getImage().show();
+            //targetImage.getImage().show();
+            final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgproc.COLOR_BGR2GRAY);
+            //image1 = SurfAlignment.toGrayscale(image1);
+            final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgproc.COLOR_BGR2GRAY);
+            //image2 = SurfAlignment.toGrayscale(image2);
             // Detect keypoints and compute descriptors using the SURF algorithm
             final SURF detector = SURF.create();
 
@@ -64,7 +68,6 @@ public class SurfAlignment extends AlignmentAlgorithm {
             final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
             final Mat descriptors2 = new Mat();
             detector.detectAndCompute(image2, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-
 
             // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
             final BFMatcher matcher = BFMatcher.create();
@@ -131,6 +134,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
             final Mat alignedImage1 = new Mat();
             // Align the first image to the second image using the homography matrix
             Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
+            System.out.println(alignedImage1);
             return this.convertToImage(targetImage.getFile(), alignedImage1);
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
@@ -148,6 +152,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
         final List<ImagePlus> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
+            System.out.println(source.getFile().getName());
             cornerManager.getImagesToAlign().forEach(image -> this.align(source, image).ifPresent(images::add));
         }
         return images;
