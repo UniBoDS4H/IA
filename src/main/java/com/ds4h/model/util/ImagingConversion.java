@@ -20,7 +20,7 @@ public class ImagingConversion {
                 final byte[] data = new byte[matrix.rows() * matrix.cols() * (int) (matrix.elemSize())];
                 matrix.get(0, 0, data);
                 final String imgFinalName = new NameBuilder().parseName(fileName).splitBy(separator).getFinalName();
-                final ImagePlus imp = new ImagePlus(imgFinalName, new ByteProcessor(matrix.cols(), matrix.rows(), data));
+                final ImagePlus imp = new ImagePlus("PROVA", new ByteProcessor(matrix.cols(), matrix.rows(), data));
                 final Optional<ImagePlus> output = Optional.of(imp);
                 return output;
             }
