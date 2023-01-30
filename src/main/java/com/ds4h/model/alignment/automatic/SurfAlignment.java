@@ -152,16 +152,4 @@ public class SurfAlignment extends AlignmentAlgorithm {
         }
         return images;
     }
-
-    /**
-     * Convert the new matrix in to an image
-     * @param file : this will be used in order to get the name and store used it for the creation of the new file.
-     * @param matrix : the image aligned matrix
-     * @return : the new image created by the Matrix.
-     */
-    @Override
-    protected Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
-    }
-
 }
