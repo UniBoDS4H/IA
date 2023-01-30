@@ -2,10 +2,7 @@ package com.ds4h.view.mainGUI;
 
 
 import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.*;
-import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
-import com.ds4h.model.imageCorners.ImageCorners;
-import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
@@ -14,31 +11,24 @@ import ij.ImagePlus;
 
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment;
-    private final JPanel previewImagesList, buttonsPanel;
-    private final JScrollPane listScroller;
+    private final JPanel buttonsPanel;
     private final JMenuBar menuBar;
     private final JMenu menu;
     private final JMenuItem aboutItem, loadImages,settingsItem;
-    private final JPanel leftPanel;
-    private final CornerSelectorGUI rightPanel;
+    private final JPanel panel;
     private final AboutGUI aboutGUI;
     private final BunwarpjGUI settingsBunwarpj;
     private final CornerController cornerControler;
-    private final List<JLabel> imageLabels;
+    private final PreviewImagesPane imagesPreview;
 
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
@@ -56,8 +46,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
 
         //Adding the Left Panel, where are stored the buttons for the transformations
-        this.leftPanel = new JPanel();
-        this.leftPanel.setLayout(new GridLayout(2, 1));
+        this.panel = new JPanel();
+        this.panel.setLayout(new GridLayout(2, 1));
         this.buttonsPanel = new JPanel();
         this.buttonsPanel.setLayout(new GridLayout(2, 1));
         this.buttonsPanel.add(manualAlignment);
@@ -65,22 +55,15 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
 
         //Init of the previewList
-        this.imageLabels = new ArrayList<>();
-        this.previewImagesList = new JPanel();
-        this.previewImagesList.setLayout(new BoxLayout(this.previewImagesList, BoxLayout.Y_AXIS));
-        this.listScroller = new JScrollPane(this.previewImagesList);
+        this.imagesPreview = new PreviewImagesPane(this.cornerControler);
+        this.panel.add(add(new JScrollPane(this.imagesPreview)));
+        this.panel.add(this.buttonsPanel);
 
-        this.leftPanel.add(this.listScroller);
-        this.leftPanel.add(this.buttonsPanel);
-
-        add(this.leftPanel, BorderLayout.WEST);
+        add(this.panel);
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
 
-        //Adding the Right Panel, where all the images are loaded
-        this.rightPanel = new CornerSelectorGUI();
         this.aboutGUI = new AboutGUI();
         this.settingsBunwarpj = new BunwarpjGUI();
-        add(this.rightPanel);
 
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
@@ -165,46 +148,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         fd.setVisible(true);
         File[] files = fd.getFiles();//Get all the files
         this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
-        this.showPreviewImages();
-    }
-    /**
-     * Method used to show the loaded images inside the list
-     */
-    private void showPreviewImages(){
-        this.imageLabels.clear();
-        this.previewImagesList.removeAll();
-        this.previewImagesList.revalidate();
-        for (ImageCorners image : this.cornerControler.getCornerImagesImages()) {
-            JPanel panel = new JPanel();
-            JButton targetButton = new JButton("Set as target");
-            JLabel imageLabel = new JLabel(new ImageIcon(image.getImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
-            panel.setLayout(new GridLayout(1, 3));
-            this.imageLabels.add(imageLabel);
-            panel.add(imageLabel);
-            panel.add(targetButton);
-            JLabel textLabel = new JLabel("TARGET");
-            textLabel.setForeground(Color.black);
-            panel.add(textLabel);
-            textLabel.setVisible(this.cornerControler.isSource(image));
-            targetButton.addActionListener(event -> {
-                this.cornerControler.changeTarget(image);
-                this.showPreviewImages();
-                this.previewImagesList.revalidate();
-            });
-            panel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    // Set the clicked image as the current image
-                    Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
-                    imageLabels.forEach(i -> i.setBorder(BorderFactory.createLineBorder(Color.BLUE, 0)));
-                    imageLabel.setBorder(border);
-                    rightPanel.setCurrentImage(image.getImage());
-                }
-            });
-            this.previewImagesList.add(panel);
-        }
-        this.previewImagesList.revalidate();
-
+        this.imagesPreview.showPreviewImages();
     }
 
     /**
@@ -213,7 +157,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void setFrameSize(){
         // Get the screen size
         Dimension screenSize = DisplayInfo.getDisplaySize(80);
-        int min_width = (int) (screenSize.width);
+        int min_width = (int) (screenSize.width/6);
         int min_height =(int) (screenSize.height);
         // Set the size of the frame to be half of the screen width and height
         // Set the size of the frame to be half of the screen width and height

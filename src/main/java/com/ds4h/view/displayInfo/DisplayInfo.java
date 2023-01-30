@@ -18,7 +18,6 @@ public final class DisplayInfo {
         return newDim;
     }
     public static Dimension getScaledImageDimension(Dimension imgDimension, Dimension containerDimension){
-        System.out.println(imgDimension);
         Dimension dimension = new Dimension();
         if(DisplayInfo.isVertical(imgDimension)){
             double newWidth = imgDimension.getWidth()*containerDimension.getHeight()/imgDimension.getHeight();
@@ -28,7 +27,7 @@ public final class DisplayInfo {
                 newWidth = containerDimension.getWidth();
                 newHeight = newWidth*newHeight/temp;
             }
-            dimension.setSize(newHeight, newWidth);
+            dimension.setSize(newWidth,newHeight);
         }else{
             double newHeight = imgDimension.getHeight()*containerDimension.getWidth()/imgDimension.getWidth();
             double newWidth = containerDimension.getWidth();
@@ -37,7 +36,7 @@ public final class DisplayInfo {
                 newHeight = containerDimension.getHeight();
                 newWidth = newHeight*newWidth/temp;
             }
-            dimension.setSize(newHeight, newWidth);
+            dimension.setSize(newWidth,newHeight);
         }
         return dimension;
     }
