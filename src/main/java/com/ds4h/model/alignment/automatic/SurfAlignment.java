@@ -148,7 +148,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
         final List<ImagePlus> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
-            cornerManager.getCornerImagesImages().forEach(image -> this.align(source, image).ifPresent(images::add));
+            cornerManager.getImagesToAlign().forEach(image -> this.align(source, image).ifPresent(images::add));
         }
         return images;
     }

@@ -35,7 +35,6 @@ public class HomographyAlignment extends AlignmentAlgorithm {
      */
     @Override
     protected   Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
-        //Check if the list source is set
         try {
             final Mat matReference = imread(source.getPath(), IMREAD_ANYCOLOR);
             final Point[] pointReference = source.getCorners();

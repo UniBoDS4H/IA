@@ -8,6 +8,7 @@
 
 package com.ds4h.imagej;
 
+import com.ds4h.model.util.opencvLoader.OpenCVLoader;
 import ij.ImagePlus;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.plugin.PlugIn;
@@ -24,6 +25,7 @@ public class Process_Pixels implements PlugIn {
 
 
 	public static void main(String[] args) throws Exception {
+		OpenCVLoader.loadOpenCV();
 		new Process_Pixels().run(null);
 	}
 
