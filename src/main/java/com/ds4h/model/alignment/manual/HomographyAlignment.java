@@ -3,20 +3,16 @@ package com.ds4h.model.alignment.manual;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
-import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.model.util.NameBuilder;
 import ij.IJ;
 import ij.ImagePlus;
-import org.bytedeco.opencv.presets.opencv_core;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
