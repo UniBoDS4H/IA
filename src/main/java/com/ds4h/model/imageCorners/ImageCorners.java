@@ -8,6 +8,7 @@ import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,16 @@ public class ImageCorners {
         this.image = image;
         this.corners = new ArrayList<>();
     }
+    public ImagePlus getImage(){
+        Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
+        return img.get();
+    }
     public BufferedImage getBufferedImage(){
         Mat mat = this.getMatImage();
-        return new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
+        BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
+        byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        mat.get(0, 0, data);
+        return image;
     }
 
     public String getPath(){
