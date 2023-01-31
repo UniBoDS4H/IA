@@ -31,6 +31,9 @@ public class ImageCorners {
     public Point[] getCorners(){
         return this.corners.toArray(new Point[0]);
     }
+    public int getIndexOfCorner(Point corner){
+        return this.corners.indexOf(corner)+1;
+    }
 
     @Override
     public boolean equals(Object o) {
