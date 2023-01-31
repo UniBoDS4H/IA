@@ -10,9 +10,11 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
@@ -32,12 +34,16 @@ public class HomographyAlignment extends AlignmentAlgorithm {
      */
     @Override
     protected   Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
-      /*  try {
-            final Mat matReference = imread(source.getPath(), IMREAD_ANYCOLOR);
+     try {
+            final Mat matReference = super.toGrayscale(Imgcodecs.imread(source.getPath(), IMREAD_ANYCOLOR));
             final Point[] pointReference = source.getCorners();
             // Compute the Homography alignment
-            final Mat matDest = imread(target.getPath(), IMREAD_ANYCOLOR);
-            final Mat h = Imgproc.getAffineTransform(new MatOfPoint2f(pointReference), new MatOfPoint2f(target.getCorners()));
+            final Mat matDest = super.toGrayscale(Imgcodecs.imread(target.getPath(), IMREAD_ANYCOLOR));
+            final MatOfPoint2f referencePoint = new MatOfPoint2f();
+            referencePoint.fromArray(source.getCorners());
+            final MatOfPoint2f targetPoint = new MatOfPoint2f();
+            targetPoint.fromArray(target.getCorners());
+            final Mat h = Imgproc.getAffineTransform(referencePoint, targetPoint);
             final Mat warpedMat = new Mat();
             Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
             // Try to convert the image, if it is present add it in to the list.
@@ -46,7 +52,7 @@ public class HomographyAlignment extends AlignmentAlgorithm {
             IJ.showMessage(ex.getMessage());
         }
         return Optional.empty();
-        */
+         /*
         ImagePlus referenceImage = source.getImage();
         ImagePlus targetImage = target.getImage();
         Point[]referencePoints=source.getCorners();
@@ -81,20 +87,23 @@ public class HomographyAlignment extends AlignmentAlgorithm {
                 }
             }
         }
+        */
 
-        return Optional.of(new ImagePlus("Aligned Image", shiftedProcessor));
+        //return Optional.of(new ImagePlus("Aligned Image", shiftedProcessor));
     }
 
     @Override
     public List<ImagePlus> alignImages(final CornerManager cornerManager){
+        /*
         Arrays.stream(cornerManager.getSourceImage().get().getCorners()).forEach(System.out::println);
         cornerManager.getCornerImagesImages().forEach(i->{
             Arrays.stream(i.getCorners()).forEach(System.out::println);
         });
+        */
         List<ImagePlus> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
-            cornerManager.getCornerImagesImages().forEach(image ->
+            cornerManager.getImagesToAlign().forEach(image ->
                     this.align(source, image).ifPresent(images::add)
             );
         }
