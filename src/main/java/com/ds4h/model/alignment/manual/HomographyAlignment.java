@@ -41,19 +41,17 @@ public class HomographyAlignment extends AlignmentAlgorithm {
 
      try {
 
-            final Mat matReference = super.toGrayscale(source.getMatImage());
-            // Compute the Homography alignment
-            final Mat matDest = super.toGrayscale(target.getMatImage());
+
             final MatOfPoint2f referencePoint = source.getMatOfPoint();
             final MatOfPoint2f targetPoint = target.getMatOfPoint();
-            final Mat H = Imgproc.getAffineTransform(referencePoint, targetPoint);
-            //Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
+            referencePoint.toList().forEach(System.out::println);
+            targetPoint.toList().forEach(System.out::println);
+            final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+
             final Mat warpedMat = new Mat();
-            Imgproc.warpAffine(matDest, warpedMat, H, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
-            //Imgproc.warpPerspective(matReference, warpedMat, H, new Size(matDest.cols(), matDest.rows()));
-            // Try to convert the image, if it is present add it in to the list.
+            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size());
              new ImagePlus("Transformed", HighGui.toBufferedImage(warpedMat)).show();
-             new ImagePlus("Origin", HighGui.toBufferedImage(matReference)).show();
+             new ImagePlus("Origin", HighGui.toBufferedImage(source.getMatImage())).show();
             return this.convertToImage(target.getFile(), warpedMat);
         }catch (Exception ex){
             IJ.showMessage(ex.getMessage());
