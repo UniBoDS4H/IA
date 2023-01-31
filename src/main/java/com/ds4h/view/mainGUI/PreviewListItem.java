@@ -45,7 +45,7 @@ public class PreviewListItem extends JPanel {
                 // Set the clicked image as the current image
                 container.setCurrentPanel(PreviewListItem.this);
                 setSelectedPanel();
-                new CornerSelectorGUI(image).showDialog();
+                new CornerSelectorGUI(image, controller).showDialog();
             }
         });
     }

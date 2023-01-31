@@ -31,7 +31,10 @@ public class CornerManager {
     }
 
     public Optional<ImageCorners> getSourceImage(){
-        return Optional.of(this.sourceImage);
+        Optional<ImageCorners> a = this.imagesWithCorners.stream().filter(i->this.sourceImage.equals(i)).findFirst();
+        System.out.println(this.sourceImage);
+        System.out.println(a);
+        return a;
     }
 
     public void setAsSource(ImageCorners image){
