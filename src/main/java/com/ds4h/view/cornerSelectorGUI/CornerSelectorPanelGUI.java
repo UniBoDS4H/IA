@@ -35,8 +35,11 @@ public class CornerSelectorPanelGUI extends JPanel {
             super.paintComponent(g);
             g.drawImage(this.currentImage.getImage().getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
         }
-        g.setColor(Color.RED);
+
         for (Point point : this.currentImage.getCorners()) {
+            g.setColor(Color.YELLOW);
+            g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point)),(int)point.x - 15, (int)point.y+5);
+            g.setColor(Color.RED);
             g.fillOval((int)point.x - 5, (int)point.y - 5, 10, 10);
         }
     }
