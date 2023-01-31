@@ -1,5 +1,8 @@
 package com.ds4h.model.util.opencvLoader;
 
+import java.io.File;
+import java.io.InputStream;
+
 public class OpenCVLoader {
     private static final String PROJECT_DIRECTORY = System.getProperty("user.dir");
     private static final String RESOURCE_DIRECTORY = "resources", SOURCE = "src", MAIN = "main", OPENCV = "opencv";
@@ -27,6 +30,11 @@ public class OpenCVLoader {
         System.load(PROJECT_DIRECTORY+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+MAC_LIB);
     }
     private static void loadLinux(){
+        /*
+        final String tempDir = System.getProperty("java.io.tmpdir");
+        File tempFile = new File(tempDir, LINUX_LIB);
+        final InputStream in = OpenCVLoader.class.getResourceAsStream("/" + LINUX_LIB);
+        */
         final String file = PROJECT_DIRECTORY+SEPARATOR+SOURCE+SEPARATOR+MAIN+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+OPENCV+SEPARATOR+LINUX_LIB;
         System.out.println(file);
         System.load(file);

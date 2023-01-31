@@ -2,11 +2,13 @@ package com.ds4h.view.mainGUI;
 
 
 import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.*;
+import com.ds4h.controller.AlignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignment.manual.HomographyAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
@@ -127,10 +129,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.manualAlignment.addActionListener(event -> {
             HomographyAlignment h = new HomographyAlignment();
-            List<ImagePlus> i = h.alignImages(this.cornerControler.getCornerManager());
-            i.forEach(a->{
-                a.show();
-            });
+            ManualAlignmentController m = new ManualAlignmentController();
+            m.homographyAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
+            new OverlapImagesGUI(m);
 
         });
         this.automaticAlignment.addActionListener(event -> {

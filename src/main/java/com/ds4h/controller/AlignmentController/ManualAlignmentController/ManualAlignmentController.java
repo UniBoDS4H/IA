@@ -6,12 +6,19 @@ import com.ds4h.model.cornerManager.CornerManager;
 import ij.ImagePlus;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ManualAlignmentController {
-    final AlignmentAlgorithm homographyAlignment;
+    private final AlignmentAlgorithm homographyAlignment;
+    private final List<ImagePlus> images;
     public ManualAlignmentController(){
+        this.images = new LinkedList<>();
         this.homographyAlignment = new HomographyAlignment();
+    }
+
+    public List<ImagePlus> getAlignedImages(){
+        return this.images;
     }
 
     /**
@@ -20,6 +27,9 @@ public class ManualAlignmentController {
      * @return : the images aligned to the source image.
      */
     public List<ImagePlus> homographyAlignment(final CornerManager cornerManager){
-        return this.homographyAlignment.alignImages(cornerManager);
+        this.images.clear();
+        this.images.addAll(this.homographyAlignment.alignImages(cornerManager));
+        this.images.add(cornerManager.getSourceImage().get().getImage());
+        return this.images;
     }
 }
