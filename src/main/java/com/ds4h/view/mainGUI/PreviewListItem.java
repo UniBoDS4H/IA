@@ -25,7 +25,7 @@ public class PreviewListItem extends JPanel {
         this.image = image;
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();

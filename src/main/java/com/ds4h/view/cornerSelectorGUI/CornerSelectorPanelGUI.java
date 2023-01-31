@@ -17,6 +17,7 @@ public class CornerSelectorPanelGUI extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                System.out.println(new Point(e.getPoint().x,e.getPoint().y));
                 currentImage.addCorner(new Point(e.getPoint().x,e.getPoint().y));
                 repaint();
             }
@@ -33,7 +34,7 @@ public class CornerSelectorPanelGUI extends JPanel {
     public void paintComponent(Graphics g) {
         if(this.currentImage != null){
             super.paintComponent(g);
-            g.drawImage(this.currentImage.getImage().getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
+            g.drawImage(this.currentImage.getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
         }
 
         for (Point point : this.currentImage.getCorners()) {
