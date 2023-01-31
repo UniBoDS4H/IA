@@ -6,6 +6,7 @@ import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
+    private final static int RGB = 3;
     protected AlignmentAlgorithm(){
 
     }
@@ -28,6 +30,18 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
 
     protected Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
         return Optional.empty();
+    }
+
+    protected Mat toGrayscale(final Mat mat) {
+        Mat gray = new Mat();
+        if (mat.channels() == RGB) {
+            // Convert the BGR image to a single channel grayscale image
+            Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            // If the image is already single channel, just return it
+            gray = mat;
+        }
+        return gray;
     }
 
     @Override

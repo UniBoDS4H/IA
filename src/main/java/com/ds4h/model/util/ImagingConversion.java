@@ -25,6 +25,7 @@ public class ImagingConversion {
                 return output;
             }
         }catch (Exception e){
+            System.out.println("ciao2");
             IJ.showMessage(e.getMessage());
         }
         return Optional.empty();

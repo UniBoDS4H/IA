@@ -26,17 +26,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
     private static final int NUMBER_OF_ITERATION = 5;
 
 
-    public static Mat toGrayscale(Mat mat) {
-        Mat gray = new Mat();
-        if (mat.channels() == 3) {
-            // Convert the BGR image to a single channel grayscale image
-            Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
-        } else {
-            // If the image is already single channel, just return it
-            gray = mat;
-        }
-        return gray;
-    }
+
     public SurfAlignment(){
         super();
     }
@@ -52,10 +42,8 @@ public class SurfAlignment extends AlignmentAlgorithm {
         try {
             //sourceImage.getImage().show();
             //targetImage.getImage().show();
-            final Mat image1 = Imgcodecs.imread(sourceImage.getPath(), Imgproc.COLOR_BGR2GRAY);
-            //image1 = SurfAlignment.toGrayscale(image1);
-            final Mat image2 = Imgcodecs.imread(targetImage.getPath(), Imgproc.COLOR_BGR2GRAY);
-            //image2 = SurfAlignment.toGrayscale(image2);
+            final Mat image1 = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+            final Mat image2 = super.toGrayscale(Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
             // Detect keypoints and compute descriptors using the SURF algorithm
             final SURF detector = SURF.create();
 
@@ -137,6 +125,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
             System.out.println(alignedImage1);
             return this.convertToImage(targetImage.getFile(), alignedImage1);
         }catch (Exception e){
+            System.out.println("ciao");
             IJ.showMessage(e.getMessage());
         }
         return Optional.empty();
