@@ -34,18 +34,14 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
 
     protected Mat toGrayscale(final Mat mat) {
         Mat gray = new Mat();
-        try{
-            if (mat.channels() == RGB) {
-                // Convert the BGR image to a single channel grayscale image
-                Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
-            } else {
-                // If the image is already single channel, just return it
-                gray = mat;
-            }
-            return gray;
-        }catch (Exception e){
-            throw e;
+        if (mat.channels() == RGB) {
+            // Convert the BGR image to a single channel grayscale image
+            Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            // If the image is already single channel, just return it
+            gray = mat;
         }
+        return gray;
     }
 
     @Override
