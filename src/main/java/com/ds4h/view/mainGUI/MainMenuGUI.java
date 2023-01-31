@@ -3,6 +3,7 @@ package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.*;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.model.alignment.manual.HomographyAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
@@ -17,6 +18,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.List;
+
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment;
@@ -123,6 +126,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.manualAlignment.addActionListener(event -> {
+            HomographyAlignment h = new HomographyAlignment();
+            List<ImagePlus> i = h.alignImages(this.cornerControler.getCornerManager());
+            i.forEach(a->{
+                a.show();
+            });
+
         });
         this.automaticAlignment.addActionListener(event -> {
             //Mat m = new Mat();

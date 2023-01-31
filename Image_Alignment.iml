@@ -12,8 +12,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: net.imagej:ij:1.53f" level="project" />
     <orderEntry type="library" name="Maven: sc.fiji:bUnwarpJ_:2.6.13" level="project" />
-    <orderEntry type="library" name="Maven: org.bytedeco:opencv:4.6.0-1.5.8" level="project" />
-    <orderEntry type="library" name="Maven: org.bytedeco:openblas:0.3.21-1.5.8" level="project" />
-    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.5.8" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:opencv:4.0.1-1.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.4.4" level="project" />
   </component>
 </module>

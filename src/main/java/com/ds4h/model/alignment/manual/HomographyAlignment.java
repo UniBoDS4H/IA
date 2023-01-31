@@ -5,23 +5,20 @@ import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.*;
 
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_ANYCOLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
 public class HomographyAlignment extends AlignmentAlgorithm {
-    static{
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-    }
+
 
     public HomographyAlignment(){
         super();
@@ -35,7 +32,7 @@ public class HomographyAlignment extends AlignmentAlgorithm {
      */
     @Override
     protected   Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
-        try {
+      /*  try {
             final Mat matReference = imread(source.getPath(), IMREAD_ANYCOLOR);
             final Point[] pointReference = source.getCorners();
             // Compute the Homography alignment
@@ -49,10 +46,51 @@ public class HomographyAlignment extends AlignmentAlgorithm {
             IJ.showMessage(ex.getMessage());
         }
         return Optional.empty();
+        */
+        ImagePlus referenceImage = source.getImage();
+        ImagePlus targetImage = target.getImage();
+        Point[]referencePoints=source.getCorners();
+        Point[]targetPoints=target.getCorners();
+        System.out.println(targetPoints);
+        int width = referenceImage.getWidth();
+        int height = referenceImage.getHeight();
+
+        // Calculate the average shift in x and y
+        int xShift = 0;
+        int yShift = 0;
+        for (int i = 0; i < referencePoints.length; i++) {
+            xShift += referencePoints[i].x - targetPoints[i].x;
+            yShift += referencePoints[i].y - targetPoints[i].y;
+        }
+        xShift /= referencePoints.length;
+        yShift /= referencePoints.length;
+
+        // Shift the target image by the calculated x and y shift
+        ByteProcessor shiftedProcessor = new ByteProcessor(width, height);
+
+        ByteProcessor targetProcessor = (ByteProcessor) targetImage.getProcessor();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int targetX = x - xShift;
+                int targetY = y - yShift;
+                if (targetX >= 0 && targetX < width && targetY >= 0 && targetY < height) {
+                    shiftedProcessor.set(x, y, targetProcessor.get(targetX, targetY));
+                } else {
+                    shiftedProcessor.set(x, y, 0);
+                }
+            }
+        }
+
+        return Optional.of(new ImagePlus("Aligned Image", shiftedProcessor));
     }
 
     @Override
     public List<ImagePlus> alignImages(final CornerManager cornerManager){
+        Arrays.stream(cornerManager.getSourceImage().get().getCorners()).forEach(System.out::println);
+        cornerManager.getCornerImagesImages().forEach(i->{
+            Arrays.stream(i.getCorners()).forEach(System.out::println);
+        });
         List<ImagePlus> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();

@@ -1,5 +1,6 @@
 package com.ds4h.view.cornerSelectorGUI;
 
+import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -12,10 +13,10 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     private final CornerSelectorPanelGUI panel;
     private ImageCorners image;
-    public CornerSelectorGUI(ImageCorners image){
+    public CornerSelectorGUI(ImageCorners image, CornerController controller){
         this.image = image;
         this.panel = new CornerSelectorPanelGUI();
-        this.panel.setCurrentImage(image.getImage());
+        this.panel.setCurrentImage(image);
         this.setFrameSize();
         this.addListeners();
         this.addComponents();
