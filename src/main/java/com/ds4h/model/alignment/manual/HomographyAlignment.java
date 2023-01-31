@@ -35,6 +35,7 @@ public class HomographyAlignment extends AlignmentAlgorithm {
     @Override
     protected   Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
      try {
+
             final Mat matReference = super.toGrayscale(Imgcodecs.imread(source.getPath(), IMREAD_ANYCOLOR));
             final Point[] pointReference = source.getCorners();
             // Compute the Homography alignment
