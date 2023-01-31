@@ -2,9 +2,7 @@ package com.ds4h.model.imageCorners;
 
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
+import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.awt.image.BufferedImage;
@@ -29,9 +27,12 @@ public class ImageCorners {
     }
     public BufferedImage getBufferedImage(){
         Mat mat = this.getMatImage();
+
         BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
         byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
         mat.get(0, 0, data);
+
+
         return image;
     }
 
@@ -80,8 +81,28 @@ public class ImageCorners {
         return mat;
     }
 
+    public MatOfKeyPoint getMatOfKeyPoint(){
+        List<KeyPoint> keypoints = new ArrayList<>();
+        for (Point point : this.corners) {
+            keypoints.add(new KeyPoint((float)point.x, (float)point.y, 1));
+        }
+
+        MatOfKeyPoint matOfKeyPoints = new MatOfKeyPoint();
+        matOfKeyPoints.fromList(keypoints);
+        return matOfKeyPoints;
+    }
+
     public Mat getMatImage(){
-        return Imgcodecs.imread(this.image.getPath());
+        Mat mat = Imgcodecs.imread(this.image.getPath());
+        this.corners.forEach(c->{
+            for(int j = (int)c.y-10; j < (int)c.y +10; j++) {
+                for (int i = (int) c.x - 10; i < (int) c.x + 10; i++) {
+                    mat.put(i, j, new double[]{0, 0, 255});
+                }
+            }
+
+        });
+        return mat;
     }
     public void moveCorner(File image, Point corner, Point newCorner){
 

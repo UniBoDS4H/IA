@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+
+import com.ds4h.model.util.CoordinateConverter;
 import org.opencv.core.Point;
 
 public class CornerSelectorPanelGUI extends JPanel {
@@ -17,8 +20,7 @@ public class CornerSelectorPanelGUI extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println(new Point(e.getPoint().x,e.getPoint().y));
-                currentImage.addCorner(new Point(e.getPoint().x,e.getPoint().y));
+                currentImage.addCorner(CoordinateConverter.getMatIndexFromPoint(new Point(e.getX(), e.getY()), currentImage.getMatImage().rows(), currentImage.getMatImage().cols(), getWidth(), getHeight()));
                 repaint();
             }
         });
@@ -37,12 +39,15 @@ public class CornerSelectorPanelGUI extends JPanel {
             g.drawImage(this.currentImage.getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
         }
 
-        for (Point point : this.currentImage.getCorners()) {
-            g.setColor(Color.YELLOW);
-            g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point)),(int)point.x - 15, (int)point.y+5);
-            g.setColor(Color.RED);
-            g.fillOval((int)point.x - 5, (int)point.y - 5, 10, 10);
-        }
+        Arrays.stream(this.currentImage.getCorners())
+                .map(p-> CoordinateConverter.getPointFromMatIndex(p,this.currentImage.getMatImage().rows(), this.currentImage.getMatImage().cols(), this.getWidth(), this.getHeight()))
+                .forEach(point->{
+                    g.setColor(Color.YELLOW);
+                    g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point)),(int)point.x - 15, (int)point.y+5);
+                    g.setColor(Color.YELLOW);
+                    g.fillOval((int)point.x - 5, (int)point.y - 5, 10, 10);
+                });
+
     }
 
 }
