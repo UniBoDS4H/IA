@@ -21,6 +21,10 @@ import java.awt.*;
  *
  * Authors DS4H Team : Iorio Matteo & Vincenzi Fabio
  */
+/*
+	FUNCTIONALITIES :
+		TODO: Add the possibility to change colors, contrast ecc ecc for each image
+ */
 public class Process_Pixels implements PlugIn {
 
 

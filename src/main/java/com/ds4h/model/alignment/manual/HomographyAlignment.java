@@ -1,17 +1,17 @@
 package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.video.Video;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -35,6 +35,7 @@ public class HomographyAlignment extends AlignmentAlgorithm {
     @Override
     protected   Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
      try {
+
             final Mat matReference = super.toGrayscale(Imgcodecs.imread(source.getPath(), IMREAD_ANYCOLOR));
             // Compute the Homography alignment
             final Mat matDest = super.toGrayscale(Imgcodecs.imread(target.getPath(), IMREAD_ANYCOLOR));
@@ -42,9 +43,11 @@ public class HomographyAlignment extends AlignmentAlgorithm {
             referencePoint.fromArray(source.getCorners());
             final MatOfPoint2f targetPoint = new MatOfPoint2f();
             targetPoint.fromArray(target.getCorners());
-            final Mat h = Imgproc.getAffineTransform(referencePoint, targetPoint);
+            final Mat H = Imgproc.getAffineTransform(referencePoint, targetPoint);
+            //Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
             final Mat warpedMat = new Mat();
-            Imgproc.warpAffine(matDest, warpedMat, h, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
+            Imgproc.warpAffine(matDest, warpedMat, H, matReference.size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);
+            //Imgproc.warpPerspective(matReference, warpedMat, H, new Size(matDest.cols(), matDest.rows()));
             // Try to convert the image, if it is present add it in to the list.
             return this.convertToImage(target.getFile(), warpedMat);
         }catch (Exception ex){
