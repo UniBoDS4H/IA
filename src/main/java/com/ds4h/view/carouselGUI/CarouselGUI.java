@@ -1,9 +1,5 @@
 package com.ds4h.view.carouselGUI;
 
-    //TODO:Plot the aligned images in a carousel, navigate the images using the arrows or key as L(left) & R(right)
-import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
-import com.ds4h.controller.AlignmentController.ManualAlignmentController.ManualAlignmentController;
-import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
@@ -46,7 +42,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
 
 
     private void swipeRight() {
-        this.currentImage = (this.currentImage - 1 + images.size()) % this.images.size();
+        this.currentImage = (this.currentImage - 1 + this.images.size()) % this.images.size();
         this.panel.repaint();
         this.setSize(this.panel.getPreferredSize());
     }
@@ -73,9 +69,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             @Override
             public void keyPressed(KeyEvent e) {
                 final int key = e.getKeyCode();
-                if(key == KeyEvent.VK_L){
+                if(key == KeyEvent.VK_L || key == KeyEvent.VK_LEFT){
                     swipeLeft();
-                }else if(key == KeyEvent.VK_R){
+                }else if(key == KeyEvent.VK_R || key == KeyEvent.VK_RIGHT){
                     swipeRight();
                 }
             }
