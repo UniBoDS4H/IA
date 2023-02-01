@@ -60,7 +60,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addListeners() {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         this.addKeyListener(new KeyListener() {
             @Override

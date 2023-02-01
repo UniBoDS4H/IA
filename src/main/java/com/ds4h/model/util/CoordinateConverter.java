@@ -17,6 +17,6 @@ public class CoordinateConverter {
     public static Point getPointFromMatIndex(Point p, int rows, int cols, int width, int height){
         int x = (int)p.x * width / cols;
         int y = (int)p.y * height / rows;
-        return new Point(x,y);
+        return new Point(x+1,y+1);
     }
 }

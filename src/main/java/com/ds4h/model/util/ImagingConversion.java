@@ -23,7 +23,6 @@ public class ImagingConversion {
                 return Optional.of(imp);
             }
         }catch (Exception e){
-            System.out.println("ciao2");
             IJ.showMessage(e.getMessage());
         }
         return Optional.empty();

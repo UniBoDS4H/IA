@@ -122,10 +122,8 @@ public class SurfAlignment extends AlignmentAlgorithm {
             final Mat alignedImage1 = new Mat();
             // Align the first image to the second image using the homography matrix
             Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
-            System.out.println(alignedImage1);
             return this.convertToImage(targetImage.getFile(), alignedImage1);
         }catch (Exception e){
-            System.out.println("ciao");
             IJ.showMessage(e.getMessage());
         }
         return Optional.empty();
