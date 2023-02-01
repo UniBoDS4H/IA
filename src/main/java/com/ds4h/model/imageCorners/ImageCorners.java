@@ -78,6 +78,7 @@ public class ImageCorners {
     public MatOfPoint2f getMatOfPoint(){
         MatOfPoint2f mat = new MatOfPoint2f();
         mat.fromList(this.corners);
+
         return mat;
     }
 
@@ -94,14 +95,7 @@ public class ImageCorners {
 
     public Mat getMatImage(){
         Mat mat = Imgcodecs.imread(this.image.getPath());
-        this.corners.forEach(c->{
-            for(int j = (int)c.y-10; j < (int)c.y +10; j++) {
-                for (int i = (int) c.x - 10; i < (int) c.x + 10; i++) {
-                    mat.put(i, j, new double[]{0, 0, 255});
-                }
-            }
 
-        });
         return mat;
     }
     public void moveCorner(File image, Point corner, Point newCorner){

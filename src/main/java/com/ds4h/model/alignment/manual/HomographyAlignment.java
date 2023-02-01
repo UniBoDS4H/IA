@@ -9,6 +9,7 @@ import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -44,12 +45,13 @@ public class HomographyAlignment extends AlignmentAlgorithm {
 
             final MatOfPoint2f referencePoint = source.getMatOfPoint();
             final MatOfPoint2f targetPoint = target.getMatOfPoint();
-            referencePoint.toList().forEach(System.out::println);
-            targetPoint.toList().forEach(System.out::println);
+
+            final MatOfPoint2f s = new MatOfPoint2f(new Point(0,0), new Point(source.getMatImage().cols()-1,0), new Point(0,source.getMatImage().rows()-1));
+            final MatOfPoint2f d = new MatOfPoint2f(new Point(source.getMatImage().cols()-1,0), new Point(0,0), new Point(source.getMatImage().cols()-1,source.getMatImage().rows()-1));
             final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
 
             final Mat warpedMat = new Mat();
-            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size());
+            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(),Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
              new ImagePlus("Transformed", HighGui.toBufferedImage(warpedMat)).show();
              new ImagePlus("Origin", HighGui.toBufferedImage(source.getMatImage())).show();
             return this.convertToImage(target.getFile(), warpedMat);
