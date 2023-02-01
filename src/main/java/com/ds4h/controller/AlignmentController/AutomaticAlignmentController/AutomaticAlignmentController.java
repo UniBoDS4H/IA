@@ -1,5 +1,6 @@
 package com.ds4h.controller.AlignmentController.AutomaticAlignmentController;
 
+import com.ds4h.controller.AlignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.AlignmentTest;
 import com.ds4h.model.alignment.automatic.SurfAlignment;
@@ -11,15 +12,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AutomaticAlignmentController {
-    final AlignmentAlgorithm surfAlignment = new SurfAlignment();
+public class AutomaticAlignmentController implements AlignmentControllerInterface {
+    final AlignmentAlgorithm surfAlignment;
+    final List<ImagePlus> alignedImages;
     public AutomaticAlignmentController(){
-
+        this.surfAlignment = new SurfAlignment();
+        this.alignedImages = new LinkedList<>();
     }
-    public List<ImagePlus> surfAlignment(final CornerManager cornerManager){
-        //ImageCorners i = cornerManager.getImagesToAlign().get(0);
-        //AlignmentTest.Aling(cornerManager.getSourceImage().get(), i);
-        //return Collections.emptyList();
-        return this.surfAlignment.alignImages(cornerManager);
+    public void surfAlignment(final CornerManager cornerManager){
+        this.alignedImages.clear();
+        this.alignedImages.addAll(this.surfAlignment.alignImages(cornerManager));
+    }
+
+    @Override
+    public List<ImagePlus> getAlignedImages() {
+        return new LinkedList<>(this.alignedImages);
     }
 }

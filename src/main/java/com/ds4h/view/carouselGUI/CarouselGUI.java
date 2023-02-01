@@ -3,11 +3,15 @@ package com.ds4h.view.carouselGUI;
     //TODO:Plot the aligned images in a carousel, navigate the images using the arrows or key as L(left) & R(right)
 import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.AlignmentController.ManualAlignmentController.ManualAlignmentController;
+import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,52 +23,89 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class CarouselGUI extends JPanel {
+public class CarouselGUI extends JFrame implements StandardGUI {
     private static final long serialVersionUID = 1L;
     private static final int SLIDE_DELAY = 1000; // 5 seconds
-    private List<ImagePlus> images;
+    private final List<ImagePlus> images;
+    private final CarouselPanel panel;
     private int currentImage;
-    private final Timer slideTimer;
 
-    public CarouselGUI(ManualAlignmentController m) {
-        images = m.getAlignedImages();
-        currentImage = 0;
+    public CarouselGUI(final List<ImagePlus> images) {
+        this.setTitle("Final Alignment Result");
+        this.panel = new CarouselPanel();
+        this.images = images;
+        this.currentImage = 0;
 
         // Create a timer to automatically change slides
-        slideTimer = new Timer(SLIDE_DELAY, new ActionListener() {
+
+        this.pack();
+        this.addListeners();
+        this.addComponents();
+        this.showDialog();
+    }
+
+
+    private void swipeRight() {
+        this.currentImage = (this.currentImage - 1 + images.size()) % this.images.size();
+        this.panel.repaint();
+        this.setSize(this.panel.getPreferredSize());
+    }
+
+    private void swipeLeft(){
+        this.currentImage = (this.currentImage + 1) % this.images.size();
+        this.panel.repaint();
+        this.setSize(this.panel.getPreferredSize());
+    }
+
+    @Override
+    public void showDialog() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void addListeners() {
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        this.addKeyListener(new KeyListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                nextSlide();
+            public void keyTyped(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                final int key = e.getKeyCode();
+                if(key == KeyEvent.VK_L){
+                    swipeLeft();
+                }else if(key == KeyEvent.VK_R){
+                    swipeRight();
+                }
             }
+
+            @Override
+            public void keyReleased(KeyEvent e) {}
         });
-        slideTimer.start();
-        JFrame frame = new JFrame("Carousel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(this);
-        frame.pack();
-        frame.setVisible(true);
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Draw the current image
-        System.out.println(this.images.size());
-        g.drawImage(images.get(currentImage).getImage(), 0, 0, null);
+    public void addComponents() {
+        this.add(this.panel);
+        this.setSize(this.panel.getPreferredSize());
     }
-
-    @Override
-    public Dimension getPreferredSize() {
-        if (images.isEmpty()) {
-            return new Dimension(100, 100);
-        } else {
-            return new Dimension(images.get(0).getWidth(), images.get(0).getHeight());
+    private class CarouselPanel extends JPanel{
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            // Draw the current image
+            g.drawImage(images.get(currentImage).getImage(), 0, 0, null);
         }
-    }
 
-    private void nextSlide() {
-        currentImage = (currentImage + 1) % images.size();
-        repaint();
+        @Override
+        public Dimension getPreferredSize() {
+            if (images.isEmpty()) {
+                return new Dimension(100, 100);
+            } else {
+                return new Dimension(images.get(0).getWidth(), images.get(0).getHeight());
+            }
+        }
     }
 }
 
