@@ -8,30 +8,26 @@ import javax.swing.ImageIcon;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
-    final JLayeredPane panel;
-    public OverlapImagesGUI(final ManualAlignmentController controller){
-        //TODO: Overlap the images with different opacities.
+    private final JLayeredPane panel;
+    private final List<ImagePlus> images;
+    public OverlapImagesGUI(final List<ImagePlus> images){
         this.setTitle("Final Result");
-        Dimension screenSize = DisplayInfo.getDisplaySize(80);
-        int min_width = (int) (screenSize.width/6);
-        int min_height =(int) (screenSize.height);
-        // Set the size of the frame to be half of the screen width and height
-        // Set the size of the frame to be half of the screen width and height
-        setSize(min_width, min_height);
-        setMinimumSize(new Dimension(min_width,min_height));
+        this.images = images;
         int layer = 0;
         this.panel = new JLayeredPane();
-        for(ImagePlus image : controller.getAlignedImages()){
+        this.addComponents();
+        // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY AND THE RGB COLOR
+        for(ImagePlus image : this.images){
             final ImagePanel imagePanel = new ImagePanel(image.getImage());
             imagePanel.setBounds(new Rectangle(image.getWidth(), image.getHeight()));
             imagePanel.setOpaque(false);
-            imagePanel.setOpacity(0.1f);
+            imagePanel.setOpacity(0.2f);
             this.panel.add(imagePanel, new Integer(layer++));
         }
 
-        this.addComponents();
         this.addListeners();
         this.showDialog();
     }
@@ -48,15 +44,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        add(this.panel);
-        pack();
+        this.add(this.panel);
+        this.setSize(new Dimension(this.images.get(0).getWidth(), this.images.get(0).getHeight()));
     }
-    static class ImagePanel extends JPanel {
+    private class ImagePanel extends JPanel {
         private final Image image;
         private float opacity = 0.1f;
 
         public ImagePanel(final Image image) {
             this.image = image;
+            this.setSize(this.getPreferredSize());
         }
 
         public void setOpacity(final float opacity) {
@@ -69,9 +66,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, this.opacity));
-            g2d.fill(new Rectangle(0, 0, 100, 100));
             g2d.drawImage(this.image, 0, 0, null);
             g2d.dispose();
+        }
+        @Override
+        public Dimension getPreferredSize() {
+            if (images.isEmpty()) {
+                return new Dimension(100, 100);
+            } else {
+                return new Dimension(images.get(0).getWidth(), images.get(0).getHeight());
+            }
         }
     }
 }
