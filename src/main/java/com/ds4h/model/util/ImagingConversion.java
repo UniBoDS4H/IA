@@ -5,6 +5,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import org.opencv.core.Mat;
+import org.opencv.highgui.HighGui;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,12 +18,9 @@ public class ImagingConversion {
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName, final String separator){
         try {
             if (!matrix.empty() && !fileName.isEmpty() && !separator.isEmpty()) {
-                final byte[] data = new byte[matrix.rows() * matrix.cols() * (int) (matrix.elemSize())];
-                matrix.get(0, 0, data);
                 final String imgFinalName = new NameBuilder().parseName(fileName).splitBy(separator).getFinalName();
-                final ImagePlus imp = new ImagePlus("PROVA", new ByteProcessor(matrix.cols(), matrix.rows(), data));
-                final Optional<ImagePlus> output = Optional.of(imp);
-                return output;
+                final ImagePlus imp = new ImagePlus("PROVA", HighGui.toBufferedImage(matrix));
+                return Optional.of(imp);
             }
         }catch (Exception e){
             System.out.println("ciao2");

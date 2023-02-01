@@ -29,7 +29,6 @@ public class ManualAlignmentController {
     public List<ImagePlus> homographyAlignment(final CornerManager cornerManager){
         this.images.clear();
         this.images.addAll(this.homographyAlignment.alignImages(cornerManager));
-        this.images.add(cornerManager.getSourceImage().get().getImage());
         return this.images;
     }
 }
