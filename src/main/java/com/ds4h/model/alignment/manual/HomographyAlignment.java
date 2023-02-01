@@ -52,8 +52,6 @@ public class HomographyAlignment extends AlignmentAlgorithm {
 
             final Mat warpedMat = new Mat();
             Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(),Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
-             new ImagePlus("Transformed", HighGui.toBufferedImage(warpedMat)).show();
-             new ImagePlus("Origin", HighGui.toBufferedImage(source.getMatImage())).show();
             return this.convertToImage(target.getFile(), warpedMat);
         }catch (Exception ex){
             IJ.showMessage(ex.getMessage());
@@ -74,12 +72,10 @@ public class HomographyAlignment extends AlignmentAlgorithm {
         List<ImagePlus> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
-            cornerManager.getImagesToAlign().forEach(image ->{
-
-                    this.align(source, image).ifPresent(images::add);
-                    }
-            );
+            images.add(source.getImage());
+            cornerManager.getImagesToAlign().forEach(image -> this.align(source, image).ifPresent(images::add));
         }
+        System.out.println(images.size());
         return images;
     }
 }
