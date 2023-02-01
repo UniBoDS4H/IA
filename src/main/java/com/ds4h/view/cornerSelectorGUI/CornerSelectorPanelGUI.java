@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.AbstractMap;
 import java.util.Arrays;
-
 import com.ds4h.model.util.CoordinateConverter;
 import org.opencv.core.Point;
 
@@ -40,12 +40,12 @@ public class CornerSelectorPanelGUI extends JPanel {
         }
 
         Arrays.stream(this.currentImage.getCorners())
-                .map(p-> CoordinateConverter.getPointFromMatIndex(p,this.currentImage.getMatImage().rows(), this.currentImage.getMatImage().cols(), this.getWidth(), this.getHeight()))
+                .map(p-> new AbstractMap.SimpleEntry<Point,Point>(CoordinateConverter.getPointFromMatIndex(p,this.currentImage.getMatImage().rows(), this.currentImage.getMatImage().cols(), this.getWidth(), this.getHeight()),p))
                 .forEach(point->{
                     g.setColor(Color.YELLOW);
-                    g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point)),(int)point.x - 15, (int)point.y+5);
+                    g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 15, (int)point.getKey().y+5);
                     g.setColor(Color.YELLOW);
-                    g.fillOval((int)point.x - 5, (int)point.y - 5, 10, 10);
+                    g.fillOval((int)point.getKey().x - 5, (int)point.getKey().y - 5, 10, 10);
                 });
 
     }
