@@ -79,6 +79,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             //TODO:SELECT THE INDEXED IMAGE AND CHANGE HIS COLOR
             //TODO:UNDERSTAND HOW CAN I CHANGE THE BACKGROUND COLOR OF THE IMAGE WITHOUT DESTROY THE IMAGE ITSELF
             //TODO:TRY WITH THE IMAGEPROCESSOR, CONFIGURING THE IMAGE CHANNEL
+            //TODO:TRY TO CONVERT THE IMAGE TO RGB
 
         });
         this.comboBox.addActionListener(evenet -> {
