@@ -20,7 +20,7 @@ build_mac:
 
 build_linux:
 	    mvn install:install-file \
-        -Dfile="src/main/resources/opencv/linux_jar/opencv-455.jar" \
+        -Dfile="./src/main/resources/opencv/linux_jar/opencv-455.jar" \
         -DgroupId="org" \
         -DartifactId="opencv" \
         -Dversion="4.5.5" \
