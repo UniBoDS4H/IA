@@ -143,7 +143,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             AutomaticAlignmentController a = new AutomaticAlignmentController();
             a.surfAlignment(this.cornerControler.getCornerManager());
             //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
-            //new CarouselGUI(a.getAlignedImages());
+            new CarouselGUI(a.getAlignedImages());
             new OverlapImagesGUI(a.getAlignedImages());
         });
 
