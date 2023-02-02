@@ -98,7 +98,7 @@ public class ImageCorners {
 
         return mat;
     }
-    public void moveCorner(File image, Point corner, Point newCorner){
-
+    public void moveCorner(Point corner, Point newCorner){
+        this.corners.set(this.corners.indexOf(corner), newCorner);
     }
 }
