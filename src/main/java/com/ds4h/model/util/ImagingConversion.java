@@ -19,7 +19,7 @@ public class ImagingConversion {
         try {
             if (!matrix.empty() && !fileName.isEmpty() && !separator.isEmpty()) {
                 final String imgFinalName = new NameBuilder().parseName(fileName).splitBy(separator).getFinalName();
-                final ImagePlus imp = new ImagePlus("PROVA", HighGui.toBufferedImage(matrix));
+                final ImagePlus imp = new ImagePlus(imgFinalName, HighGui.toBufferedImage(matrix));
                 return Optional.of(imp);
             }
         }catch (Exception e){

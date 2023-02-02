@@ -1,26 +1,49 @@
 package com.ds4h.view.configureImageGUI;
 
+import com.ds4h.model.util.Pair;
+import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ConfigureImagesGUI extends JFrame implements StandardGUI {
-    private final JPanel panel;
-    private final JColorChooser colorChooser;
-    private final JComboBox<Integer> comboBox;
+    private final JButton reset;
+    private final JButton colorButton;
+    private final JComboBox<String> comboBox;
     private final JSlider slider;
-    private final JList<String> images;
-    public ConfigureImagesGUI(){
-        this.setSize(new Dimension(1000, 1000));
-        this.panel = new JPanel();
+    private final JLabel labelButton, labelCombo, labelSlider;
+    private Color color = Color.RED;
+    private final GridBagConstraints constraints;
+
+    private final static int WIDTH = 700, HEIGHT = 400, DEFAULT = 2;
+    private final static float DIV = 10f;
+    private final List<Pair<ImagePlus, Color>> defaultColors;
+    private final List<OverlapImagesGUI.ImagePanel> imagePanels;
+    public ConfigureImagesGUI(final List<ImagePlus> images){
+        this.setSize(new Dimension(WIDTH, HEIGHT));
+        this.constraints = new GridBagConstraints();
+        this.constraints.insets = new Insets(0, 0, 5, 5);
+        this.constraints.anchor = GridBagConstraints.WEST;
+        this.setLayout(new GridBagLayout());
+        this.defaultColors = new LinkedList<>();
+        this.imagePanels = new LinkedList<>();
+        images.forEach(image -> defaultColors.add(new Pair<>(image, image.getImage().getGraphics().getColor())));
+        this.reset = new JButton("Reset");
+        this.labelButton = new JLabel("Choose a color for the image");
+        this.labelCombo = new JLabel("Choose the Image");
+        this.labelSlider = new JLabel("Choos the opacity of the image");
         this.comboBox = new JComboBox<>();
-        this.colorChooser = new JColorChooser();
-        this.slider = new JSlider(0,1);
-        this.images = new JList<>();
+        this.colorButton = new JButton("Choose color");
+        this.slider = new JSlider(0,10);
         this.addComponents();
         this.addListeners();
-        this.showDialog();
     }
 
     @Override
@@ -31,13 +54,82 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
 
+        this.colorButton.addActionListener(event -> {
+            color = JColorChooser.showDialog(this, "Choose color", color);
+            final int index = this.comboBox.getSelectedIndex();
+
+            final ImageProcessor ip = this.imagePanels.get(index).getImagePlus().getProcessor();
+            /*
+            if (ip instanceof ColorProcessor) {
+                ColorProcessor cp = (ColorProcessor) ip;
+                int[] pixels = (int[]) cp.getPixels();
+                for (int i = 0; i < pixels.length; i++) {
+                    int red = (pixels[i] >> 16) & 0xff;
+                    int green = (pixels[i] >> 8) & 0xff;
+                    int blue = pixels[i] & 0xff;
+                    // modify red channel
+                    red = 255; // your modification here
+                    pixels[i] = (red << 16) | (green << 8) | blue;
+                }
+                cp.setPixels(pixels);
+                this.imagePanels.get(index).getImagePlus().setProcessor(cp);
+
+            }
+             */
+            //TODO:SELECT THE INDEXED IMAGE AND CHANGE HIS COLOR
+            //TODO:UNDERSTAND HOW CAN I CHANGE THE BACKGROUND COLOR OF THE IMAGE WITHOUT DESTROY THE IMAGE ITSELF
+            //TODO:TRY WITH THE IMAGEPROCESSOR, CONFIGURING THE IMAGE CHANNEL
+
+        });
+        this.comboBox.addActionListener(evenet -> {
+            final int index = this.comboBox.getSelectedIndex();
+            this.slider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
+        });
+        this.slider.addChangeListener(event -> {
+            final float value = (this.slider.getValue() / DIV);
+            final int index = this.comboBox.getSelectedIndex();
+            this.imagePanels.get(index).setOpacity(value);
+        });
+        this.reset.addActionListener(evenet -> {
+            this.imagePanels.forEach(imageP -> imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY));
+            this.slider.setValue(DEFAULT);
+        });
+
+    }
+
+    public void setElements(final List<OverlapImagesGUI.ImagePanel> imagePanels){
+        this.imagePanels.clear();
+        this.imagePanels.addAll(imagePanels);
     }
 
     @Override
     public void addComponents() {
-        this.panel.add(this.images);
-        this.panel.add(this.colorChooser);
-        this.panel.add(this.slider);
-        this.add(this.panel);
+        this.addElement(this.labelCombo, new JPanel(), this.comboBox);
+        this.addElement(this.labelButton, new JPanel(), this.colorButton);
+        this.addElement(this.labelSlider, new JPanel(), this.slider);
+        this.slider.setMajorTickSpacing(5);
+        this.slider.setMinorTickSpacing(1);
+        this.slider.setPaintTicks(true);
+        this.slider.setPaintLabels(true);
+        this.populateCombo();
+        final JPanel buttonPanel = new JPanel();
+        buttonPanel.add(reset);
+        this.constraints.gridy++;
+        this.add(buttonPanel, this.constraints);
+    }
+
+    private void populateCombo(){
+        int index = 0;
+        for(Pair<ImagePlus, Color> image : this.defaultColors){
+            this.comboBox.addItem(image.getFirst().getTitle() + ":" + index);
+            index++;
+        }
+    }
+    private void addElement(final JLabel label, final JPanel panel, final JComponent component){
+        panel.add(label);
+        panel.add(component);
+        this.constraints.gridx = 0;
+        this.constraints.gridy++;
+        add(panel, this.constraints);
     }
 }
