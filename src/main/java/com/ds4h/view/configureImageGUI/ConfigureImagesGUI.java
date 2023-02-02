@@ -4,6 +4,9 @@ import com.ds4h.model.util.Pair;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,6 +56,26 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
 
         this.colorButton.addActionListener(event -> {
             color = JColorChooser.showDialog(this, "Choose color", color);
+            final int index = this.comboBox.getSelectedIndex();
+
+            final ImageProcessor ip = this.imagePanels.get(index).getImagePlus().getProcessor();
+            /*
+            if (ip instanceof ColorProcessor) {
+                ColorProcessor cp = (ColorProcessor) ip;
+                int[] pixels = (int[]) cp.getPixels();
+                for (int i = 0; i < pixels.length; i++) {
+                    int red = (pixels[i] >> 16) & 0xff;
+                    int green = (pixels[i] >> 8) & 0xff;
+                    int blue = pixels[i] & 0xff;
+                    // modify red channel
+                    red = 255; // your modification here
+                    pixels[i] = (red << 16) | (green << 8) | blue;
+                }
+                cp.setPixels(pixels);
+                this.imagePanels.get(index).getImagePlus().setProcessor(cp);
+
+            }
+             */
             //TODO:SELECT THE INDEXED IMAGE AND CHANGE HIS COLOR
             //TODO:UNDERSTAND HOW CAN I CHANGE THE BACKGROUND COLOR OF THE IMAGE WITHOUT DESTROY THE IMAGE ITSELF
             //TODO:TRY WITH THE IMAGEPROCESSOR, CONFIGURING THE IMAGE CHANNEL

@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -107,6 +108,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         public float getOpacity(){
             return this.opacity;
         }
+        public ImagePlus getImagePlus(){
+            return this.image;
+        }
 
         public void setOpacity(final float opacity) {
             this.opacity = opacity;
@@ -127,7 +131,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             if (images.isEmpty()) {
                 return new Dimension(100, 100);
             } else {
-                return new Dimension(images.get(0).getWidth(), images.get(0).getHeight());
+                return new Dimension(images.stream().max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
+                        images.stream().max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight());
             }
         }
     }
