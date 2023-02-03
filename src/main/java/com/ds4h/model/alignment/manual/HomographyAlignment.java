@@ -43,22 +43,4 @@ public class HomographyAlignment extends AlignmentAlgorithm {
         return Optional.empty();
 
     }
-
-
-    @Override
-    public List<ImagePlus> alignImages(final CornerManager cornerManager){
-        /*
-        Arrays.stream(cornerManager.getSourceImage().get().getCorners()).forEach(System.out::println);
-        cornerManager.getCornerImagesImages().forEach(i->{
-            Arrays.stream(i.getCorners()).forEach(System.out::println);
-        });
-        */
-        List<ImagePlus> images = new LinkedList<>();
-        if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            final ImageCorners source = cornerManager.getSourceImage().get();
-            images.add(source.getImage());
-            cornerManager.getImagesToAlign().forEach(image -> this.align(source, image).ifPresent(images::add));
-        }
-        return images;
-    }
 }
