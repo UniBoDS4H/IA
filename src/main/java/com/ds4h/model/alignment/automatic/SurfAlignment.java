@@ -128,20 +128,4 @@ public class SurfAlignment extends AlignmentAlgorithm {
         }
         return Optional.empty();
     }
-
-    /**
-     * Align the images stored inside the cornerManager. All the images will be aligned to the source image
-     * @param cornerManager : container where all the images are stored
-     * @return the List of all the images aligned to the source
-     */
-    @Override
-    public  List<ImagePlus> alignImages(final CornerManager cornerManager){
-        final List<ImagePlus> images = new LinkedList<>();
-        if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            final ImageCorners source = cornerManager.getSourceImage().get();
-            images.add(source.getImage());
-            cornerManager.getImagesToAlign().forEach(image -> this.align(source, image).ifPresent(images::add));
-        }
-        return images;
-    }
 }
