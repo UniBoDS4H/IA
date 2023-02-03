@@ -1,7 +1,6 @@
 package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.Pair;
 import ij.IJ;
@@ -12,10 +11,6 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import javax.swing.text.html.Option;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class HomographyAlignment extends AlignmentAlgorithm {
