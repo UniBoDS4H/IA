@@ -1,9 +1,12 @@
 package com.ds4h.model.alignment;
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
+import com.ds4h.model.util.Pair;
+import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -26,8 +29,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
     }
 
-    protected Optional<ImagePlus> align(final ImageCorners source, final ImageCorners target){
-        return Optional.empty();
+    protected Optional<Pair<ImagePlus, Mat>> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
+        throw new NoSuchMethodException("Method not implemented");
     }
 
     protected Mat toGrayscale(final Mat mat) {
@@ -47,12 +50,19 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
      * @return the List of all the images aligned to the source
      */
     @Override
-    public List<ImagePlus> alignImages(final CornerManager cornerManager){
-        List<ImagePlus> images = new LinkedList<>();
+    public List<AlignedImage> alignImages(final CornerManager cornerManager){
+        List<AlignedImage> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
-            images.add(source.getImage());
-            cornerManager.getImagesToAlign().forEach(image -> this.align(source, image).ifPresent(images::add));
+            images.add(new AlignedImage(source.getMatImage(), source.getImage()));
+            try {
+                for(ImageCorners image : cornerManager.getImagesToAlign()){
+                    final Optional<Pair<ImagePlus, Mat>> output = this.align(source, image);
+                    output.map(out -> new AlignedImage(out.getSecond(), out.getFirst())).ifPresent(images::add);
+                }
+            }catch (Exception e){
+                IJ.showMessage(e.getMessage());
+            }
         }
         return images;
     }

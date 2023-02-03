@@ -1,5 +1,7 @@
 package com.ds4h.view.carouselGUI;
 
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -27,10 +30,10 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private final CarouselPanel panel;
     private int currentImage;
 
-    public CarouselGUI(final List<ImagePlus> images) {
+    public CarouselGUI(final AlignmentControllerInterface controller) {
         this.setTitle("Final Alignment Result");
         this.panel = new CarouselPanel();
-        this.images = images;
+        this.images = controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
         this.currentImage = 0;
 
         // Create a timer to automatically change slides

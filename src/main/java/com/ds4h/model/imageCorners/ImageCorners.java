@@ -25,6 +25,8 @@ public class ImageCorners {
         Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
         return img.get();
     }
+
+
     public BufferedImage getBufferedImage(){
         Mat mat = this.getMatImage();
 
@@ -94,9 +96,7 @@ public class ImageCorners {
     }
 
     public Mat getMatImage(){
-        Mat mat = Imgcodecs.imread(this.image.getPath());
-
-        return mat;
+        return Imgcodecs.imread(this.image.getPath());
     }
     public void moveCorner(Point corner, Point newCorner){
         this.corners.set(this.corners.indexOf(corner), newCorner);

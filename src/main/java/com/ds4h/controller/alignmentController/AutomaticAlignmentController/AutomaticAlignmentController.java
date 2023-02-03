@@ -1,20 +1,20 @@
-package com.ds4h.controller.AlignmentController.AutomaticAlignmentController;
+package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 
-import com.ds4h.controller.AlignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.alignment.AlignmentTest;
 import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.util.Pair;
 import ij.ImagePlus;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
     final AlignmentAlgorithm surfAlignment;
-    final List<ImagePlus> alignedImages;
+    final List<AlignedImage> alignedImages;
     public AutomaticAlignmentController(){
         this.surfAlignment = new SurfAlignment();
         this.alignedImages = new LinkedList<>();
@@ -25,7 +25,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     @Override
-    public List<ImagePlus> getAlignedImages() {
+    public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(this.alignedImages);
     }
 }

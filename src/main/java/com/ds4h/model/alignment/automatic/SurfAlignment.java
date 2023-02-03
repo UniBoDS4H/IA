@@ -5,6 +5,7 @@ import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.NameBuilder;
+import com.ds4h.model.util.Pair;
 import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
@@ -37,7 +38,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
      * @return : the target image aligned to the source image
      */
     @Override
-    protected Optional<ImagePlus> align(final ImageCorners sourceImage, final ImageCorners targetImage){
+    protected Optional<Pair<ImagePlus, Mat>> align(final ImageCorners sourceImage, final ImageCorners targetImage){
 
         try {
             //sourceImage.getImage().show();
@@ -118,11 +119,11 @@ public class SurfAlignment extends AlignmentAlgorithm {
             NUMBER_OF_ITERATION : number of iteration for the RANSAC algorithm
          */
             final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
-
             final Mat alignedImage1 = new Mat();
             // Align the first image to the second image using the homography matrix
             Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
-            return this.convertToImage(targetImage.getFile(), alignedImage1);
+            final Optional<ImagePlus> finalImage = this.convertToImage(targetImage.getFile(), alignedImage1);
+            return finalImage.map(imagePlus -> new Pair<>(imagePlus, alignedImage1));
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
         }
