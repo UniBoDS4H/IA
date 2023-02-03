@@ -115,6 +115,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         public ImagePlus getImagePlus(){
             return this.alignedImage.getAlignedImage();
         }
+        public AlignedImage getImage(){
+            return this.alignedImage;
+        }
 
         public void setOpacity(final float opacity) {
             this.opacity = opacity;
