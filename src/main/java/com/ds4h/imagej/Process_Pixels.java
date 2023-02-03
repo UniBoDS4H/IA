@@ -24,6 +24,7 @@ import java.awt.*;
 /*
 	FUNCTIONALITIES :
 		TODO: Add the possibility to change colors, contrast ecc ecc for each image
+		TODO: Add the possibility to see the alignments points of the AutomaticAlignment for the Semi-Automatic
  */
 public class Process_Pixels implements PlugIn {
 

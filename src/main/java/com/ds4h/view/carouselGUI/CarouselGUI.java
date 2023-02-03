@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -99,7 +100,8 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             if (images.isEmpty()) {
                 return new Dimension(100, 100);
             } else {
-                return new Dimension(images.get(0).getWidth(), images.get(0).getHeight());
+                return new Dimension(images.stream().max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
+                        images.stream().max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight());
             }
         }
     }
