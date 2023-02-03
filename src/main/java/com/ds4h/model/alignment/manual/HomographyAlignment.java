@@ -5,6 +5,7 @@ import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Scalar;
@@ -33,7 +34,9 @@ public class HomographyAlignment extends AlignmentAlgorithm {
         try {
             final MatOfPoint2f referencePoint = source.getMatOfPoint();
             final MatOfPoint2f targetPoint = target.getMatOfPoint();
-            final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+            //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+            final Mat H = Calib3d.estimateAffine2D(targetPoint, referencePoint);
+
             final Mat warpedMat = new Mat();
             Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(),Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
             return this.convertToImage(target.getFile(), warpedMat);
