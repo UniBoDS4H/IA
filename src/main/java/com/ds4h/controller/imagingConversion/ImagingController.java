@@ -13,7 +13,7 @@ public class ImagingController {
 
     }
 
-    public ImagePlus fromGray2Rgb(final AlignedImage image){
+    public static ImagePlus fromGray2Rgb(final AlignedImage image){
         final Mat rgbMatrix = ImagingConversion.fromGray2Rgb(image.getMat());
         return new ImagePlus(image.getAlignedImage().getTitle(), HighGui.toBufferedImage(rgbMatrix));
     }

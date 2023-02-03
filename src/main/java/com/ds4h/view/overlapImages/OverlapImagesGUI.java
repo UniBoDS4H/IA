@@ -16,16 +16,18 @@ import java.util.stream.Collectors;
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
     private final JLayeredPane panel;
-    private final List<ImagePlus> images;
+    private final List<AlignedImage> images;
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
     private final JMenu settingsMenu;
     private final JMenuItem settingsImages;
+    private final AlignmentControllerInterface controller;
     public OverlapImagesGUI(final AlignmentControllerInterface controller){
         this.setTitle("Final Result");
-        this.images = controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
+        this.controller = controller;
+        this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
-        this.configureImagesGUI = new ConfigureImagesGUI(this.images);
+        this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
         this.panel = new JLayeredPane();
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
@@ -59,26 +61,29 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.menu.add(this.settingsMenu);
         this.settingsMenu.add(this.settingsImages);
         this.setJMenuBar(this.menu);
-        this.setSize(new Dimension(this.images.get(0).getWidth(), this.images.get(0).getHeight()));
+        this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
+                    .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
+                images.stream().map(AlignedImage::getAlignedImage)
+                        .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight()));
     }
 
     private void overlapImages(){
         int layer = 0;
-        for(ImagePlus image : this.images){
+        for(AlignedImage image : this.images){
             final ImagePanel imagePanel = new ImagePanel(image);
             this.imagePanels.add(imagePanel);
-            imagePanel.setBounds(new Rectangle(image.getWidth(), image.getHeight()));
+            imagePanel.setBounds(new Rectangle(image.getAlignedImage().getWidth(), image.getAlignedImage().getHeight()));
             imagePanel.setOpaque(false);
             this.panel.add(imagePanel, new Integer(layer++));
         }
     }
     public class ImagePanel extends JPanel {
-        private ImagePlus image;
+        private final AlignedImage alignedImage;
         public final static float DEFAULT_OPACITY = 0.2f;
         private float opacity = DEFAULT_OPACITY;
 
-        public ImagePanel(final ImagePlus image) {
-            this.image = image;
+        public ImagePanel(final AlignedImage image) {
+            this.alignedImage = image;
             this.prova();
             this.setSize(this.getPreferredSize());
         }
@@ -108,7 +113,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             return this.opacity;
         }
         public ImagePlus getImagePlus(){
-            return this.image;
+            return this.alignedImage.getAlignedImage();
         }
 
         public void setOpacity(final float opacity) {
@@ -122,7 +127,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, this.opacity));
-            g2d.drawImage(this.image.getImage(), 0, 0, null);
+            g2d.drawImage(this.alignedImage.getAlignedImage().getImage(), 0, 0, null);
             g2d.dispose();
         }
         @Override
@@ -130,8 +135,12 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             if (images.isEmpty()) {
                 return new Dimension(100, 100);
             } else {
-                return new Dimension(images.stream().max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
-                        images.stream().max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight());
+                return new Dimension(images.stream()
+                            .map(AlignedImage::getAlignedImage)
+                            .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
+                        images.stream()
+                                .map(AlignedImage::getAlignedImage)
+                                .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight());
             }
         }
     }
