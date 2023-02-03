@@ -1,16 +1,23 @@
 package com.ds4h.model.util;
 
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.HighGui;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
+import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class ImagingConversion {
     private ImagingConversion(){}
@@ -52,4 +59,12 @@ public class ImagingConversion {
         }
         return Optional.empty();
     }
+
+    public static Mat fromGray2Rgb(final Mat matrix){
+        final Mat rgb = new Mat();
+        Imgproc.cvtColor(matrix, rgb, COLOR_GRAY2RGB);
+        return rgb;
+    }
+
+
 }

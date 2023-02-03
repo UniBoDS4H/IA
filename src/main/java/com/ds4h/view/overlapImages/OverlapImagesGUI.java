@@ -1,18 +1,17 @@
 package com.ds4h.view.overlapImages;
 
-import com.ds4h.controller.AlignmentController.ManualAlignmentController.ManualAlignmentController;
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
-import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
-import javax.swing.ImageIcon;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
@@ -22,9 +21,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final JMenuBar menu;
     private final JMenu settingsMenu;
     private final JMenuItem settingsImages;
-    public OverlapImagesGUI(final List<ImagePlus> images){
+    public OverlapImagesGUI(final AlignmentControllerInterface controller){
         this.setTitle("Final Result");
-        this.images = images;
+        this.images = controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
         this.imagePanels = new LinkedList<>();
         this.configureImagesGUI = new ConfigureImagesGUI(this.images);
         this.panel = new JLayeredPane();

@@ -1,17 +1,15 @@
 package com.ds4h.view.mainGUI;
 
 
-import com.ds4h.controller.AlignmentController.AutomaticAlignmentController.*;
-import com.ds4h.controller.AlignmentController.ManualAlignmentController.ManualAlignmentController;
+import com.ds4h.controller.alignmentController.AutomaticAlignmentController.*;
+import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.cornerController.CornerController;
-import com.ds4h.model.alignment.manual.HomographyAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.ImagePlus;
 
 
 import javax.swing.*;
@@ -21,7 +19,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.List;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
@@ -131,7 +128,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
             ManualAlignmentController m = new ManualAlignmentController();
             m.homographyAlignment(this.cornerControler.getCornerManager());
-            new CarouselGUI(m.getAlignedImages());
+            new CarouselGUI(m);
 
         });
         this.automaticAlignment.addActionListener(event -> {
@@ -142,7 +139,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             a.surfAlignment(this.cornerControler.getCornerManager());
             //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
             //new CarouselGUI(a.getAlignedImages());
-            new OverlapImagesGUI(a.getAlignedImages());
+            new OverlapImagesGUI(a);
         });
 
         addWindowListener(new WindowAdapter() {
