@@ -15,7 +15,7 @@ public class CornerSelectorPanelGUI extends JPanel {
     private ImageCorners currentImage;
     private Set<Point> selectedPoints;
     private Point referencePoint;
-    private final int POINT_DIAMETER = 10;
+    private final int POINT_DIAMETER = 6;
     private final int RADIUS = 10;
     public CornerSelectorPanelGUI() {
         this.selectedPoints = new HashSet<>();
@@ -116,13 +116,19 @@ public class CornerSelectorPanelGUI extends JPanel {
                 .map(p-> new AbstractMap.SimpleEntry<Point,Point>(this.getPointFromMatIndex(p),p))
                 .forEach(point->{ //point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
                     g.setColor(Color.YELLOW);
-                    g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 15, (int)point.getKey().y+5);
+                    g.setFont(new Font("Serif", Font.BOLD, 16));
+                    g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 25, (int)point.getKey().y+25);
+                    Graphics2D g2d = (Graphics2D) g;
                     if(!this.selectedPoints.contains(point.getValue())){
                         g.setColor(Color.RED);
+                        g2d.setColor(Color.RED);
                     }else{
                         g.setColor(Color.YELLOW);
+                        g2d.setColor(Color.YELLOW);
                     }
-                    g.fillOval((int)point.getKey().x - 5, (int)point.getKey().y - 5, POINT_DIAMETER, POINT_DIAMETER);
+                    g2d.setStroke(new BasicStroke(3));
+                    g2d.drawOval((int)point.getKey().x - 15, (int)point.getKey().y - 15, 30, 30);
+                    g.fillOval((int)point.getKey().x - 3, (int)point.getKey().y - 3, POINT_DIAMETER, POINT_DIAMETER);
                 });
 
     }
