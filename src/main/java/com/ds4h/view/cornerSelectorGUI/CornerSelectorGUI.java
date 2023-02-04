@@ -4,11 +4,14 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
+import org.opencv.core.Point;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CornerSelectorGUI extends Frame implements StandardGUI {
@@ -16,13 +19,15 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     private final CornerController cornerController;
     private final CornerSelectorPanelGUI panel;
     private ImageCorners image;
-    private final JPanel menu;
+    private Set<Point> selectedPoints;
+    private final CornerSelectorMenuGUI menu;
     public CornerSelectorGUI(final ImageCorners image, final CornerController controller){
         this.cornerController = controller;
         this.image = image;
-        this.panel = new CornerSelectorPanelGUI();
+        this.panel = new CornerSelectorPanelGUI(this);
         this.panel.setCurrentImage(image);
-        this.menu = new JPanel();
+        this.menu = new CornerSelectorMenuGUI(this.cornerController, this.image, this);
+        this.selectedPoints = new HashSet<>();
         setLayout(new BorderLayout());
         this.setFrameSize();
         this.addListeners();
@@ -46,29 +51,16 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     @Override
     public void addComponents() {
         this.add(this.panel, BorderLayout.CENTER);
-        menu.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        String[] options = this.cornerController.getCornerImagesImages().stream()
-                .filter(i-> !i.equals(this.image))
-                .map(i-> this.cornerController.getCornerImagesImages().indexOf(i)+1 + " - " + i.getFile().getName())
-                .collect(Collectors.toList()).toArray(new String[0]);
-        JComboBox<String> copyToCombo = new JComboBox<>(options);
-        copyToCombo.setEditable(false);
-        copyToCombo.setSelectedIndex(0);
-        //copyToCombo.setPreferredSize(new Dimension(100, 25));
-
-        JLabel copyToLabel = new JLabel("Copy to");
-        JButton deleteButton = new JButton("Delete");
-        JButton copyButton = new JButton("Copy");
-
-
-        menu.add(copyToLabel);
-        menu.add(copyToCombo);
-        menu.add(copyButton);
-        menu.add(deleteButton);
-
-        this.add(menu, BorderLayout.SOUTH);
+        this.add(this.menu, BorderLayout.SOUTH);
     }
+    public void repaintPanel(){
+        this.panel.repaint();
+    }
+
+    public Set<Point> getSelectedPoints(){
+        return this.selectedPoints;
+    }
+
     private void setFrameSize(){
         Dimension newDimension = DisplayInfo.getScaledImageDimension(
                 new Dimension(this.image.getBufferedImage().getWidth(this.panel),
@@ -76,5 +68,21 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
                 DisplayInfo.getDisplaySize(80));
         setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
         setMinimumSize(newDimension);
+    }
+
+    public void setSelectedPoints(Set<Point> points) {
+        this.selectedPoints = points;
+    }
+
+    public void removeSelectedPoint(Point point) {
+        this.selectedPoints.remove(point);
+    }
+
+    public void addSelectedPoint(Point point) {
+        this.selectedPoints.add(point);
+    }
+
+    public void clearSelectedPoints() {
+        this.selectedPoints.clear();
     }
 }

@@ -12,24 +12,25 @@ import java.util.stream.Collectors;
 
 public class CornerSelectorPanelGUI extends JPanel {
     private ImageCorners currentImage;
-    private Set<Point> selectedPoints;
     private Point referencePoint;
+    private final CornerSelectorGUI container;
     private final int POINT_DIAMETER = 6;
     private final int RADIUS = 15;
-    public CornerSelectorPanelGUI() {
-        this.selectedPoints = new HashSet<>();
+    public CornerSelectorPanelGUI(CornerSelectorGUI container) {
+        this.container = container;
         addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_DELETE || keyEvent.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                    selectedPoints.forEach(s->currentImage.removeCorner(s));
-                    selectedPoints.clear();
+                    container.getSelectedPoints().forEach(s->currentImage.removeCorner(s));
+                    container.clearSelectedPoints();
                     repaint();
                 }
             }
         });
         setFocusable(true);
+
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -50,8 +51,8 @@ public class CornerSelectorPanelGUI extends JPanel {
                 if(imageContains(point)){//point already present in the image
                     Point actualPoint = getActualPoint(point); //getting the exact pressed point
                     if(!e.isControlDown()){
-                        selectedPoints.clear();
-                        selectedPoints.add(actualPoint);
+                        container.clearSelectedPoints();
+                        container.addSelectedPoint(actualPoint);
                     }
                 }
                 repaint();
@@ -66,15 +67,15 @@ public class CornerSelectorPanelGUI extends JPanel {
                     referencePoint = actualPoint;
 
                     if(e.isControlDown()){
-                        if(selectedPoints.contains(actualPoint)){//if the point is already selected
-                            selectedPoints.remove(actualPoint);
+                        if(container.getSelectedPoints().contains(actualPoint)){//if the point is already selected
+                            container.removeSelectedPoint(actualPoint);
                         }else{
-                            selectedPoints.add(actualPoint);
+                            container.addSelectedPoint(actualPoint);
                         }
                     }else{
-                        if(!selectedPoints.contains(actualPoint)){
-                            selectedPoints.clear();
-                            selectedPoints.add(actualPoint);
+                        if(!container.getSelectedPoints().contains(actualPoint)){
+                            container.clearSelectedPoints();
+                            container.addSelectedPoint(actualPoint);
                         }
                     }
                 }else{
@@ -94,10 +95,10 @@ public class CornerSelectorPanelGUI extends JPanel {
     private void moveAllSelected(Point oldPoint, Point newPoint){
         int xGap = (int)(newPoint.x-oldPoint.x);
         int yGap = (int)(newPoint.y-oldPoint.y);
-        this.selectedPoints.forEach(p->{
+        this.container.getSelectedPoints().forEach(p->{
             this.currentImage.moveCorner(p, new Point(p.x+xGap,p.y+yGap));
         });
-        this.selectedPoints = this.selectedPoints.stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toSet());
+        this.container.setSelectedPoints(this.container.getSelectedPoints().stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toSet()));
     }
     private Point getMatIndexFromPoint(Point p){
         return CoordinateConverter.getMatIndexFromPoint(p, currentImage.getMatImage().rows(), currentImage.getMatImage().cols(), getWidth(), getHeight());
@@ -145,7 +146,7 @@ public class CornerSelectorPanelGUI extends JPanel {
                     g.setFont(new Font("Serif", Font.BOLD, 16));
                     g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 25, (int)point.getKey().y+25);
                     Graphics2D g2d = (Graphics2D) g;
-                    if(!this.selectedPoints.contains(point.getValue())){
+                    if(!this.container.getSelectedPoints().contains(point.getValue())){
                         g.setColor(Color.RED);
                         g2d.setColor(Color.RED);
                     }else{
