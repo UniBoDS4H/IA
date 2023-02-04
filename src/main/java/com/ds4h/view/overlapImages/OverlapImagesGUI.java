@@ -3,6 +3,7 @@ package com.ds4h.view.overlapImages;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
+import com.ds4h.view.exportGUI.ExportZipGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
@@ -11,16 +12,16 @@ import java.awt.*;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
+    private ExportZipGUI exportZipGUI;
     private final JLayeredPane panel;
     private final List<AlignedImage> images;
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
-    private final JMenu settingsMenu;
-    private final JMenuItem settingsImages;
+    private final JMenu settingsMenu, export;
+    private final JMenuItem settingsImages, exportZip;
     private final AlignmentControllerInterface controller;
     public OverlapImagesGUI(final AlignmentControllerInterface controller){
         this.setTitle("Final Result");
@@ -31,7 +32,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.panel = new JLayeredPane();
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
-        this.settingsImages = new JMenuItem("configure images");
+        this.export = new JMenu("Export");
+        this.settingsImages = new JMenuItem("Configure images");
+        this.exportZip = new JMenuItem("Export as zip");
         this.addComponents();
         // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY AND THE RGB COLOR
 
@@ -52,6 +55,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.configureImagesGUI.setElements(this.imagePanels);
             this.configureImagesGUI.showDialog();
         });
+        this.exportZip.addActionListener(event -> {
+            new ExportZipGUI();
+        });
     }
 
     @Override
@@ -59,7 +65,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.overlapImages();
         this.add(this.panel);
         this.menu.add(this.settingsMenu);
+        this.menu.add(this.export);
         this.settingsMenu.add(this.settingsImages);
+        this.export.add(this.exportZip);
         this.setJMenuBar(this.menu);
         this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
                     .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),

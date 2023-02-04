@@ -62,27 +62,43 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             color = JColorChooser.showDialog(this, "Choose color", color);
             final int index = this.comboBox.getSelectedIndex();
 
-            final ImagePlus img = this.imagePanels.get(index).getImagePlus();
+
             /*
+            final ImagePlus img = this.imagePanels.get(index).getImagePlus();
             final ImageProcessor ip = img.getProcessor();
-            int width = img.getWidth();
-            int height = img.getHeight();
+            ColorProcessor cp = img.getProcessor().convertToColorProcessor();
+            int width = cp.getWidth();
+            int height = cp.getHeight();
+            int[] pixels = (int[]) cp.getPixels();
 
-            ImageProcessor red = img.getChannelProcessor();
-            red.multiply(2);
-            img.setC(1);
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int value = pixels[y * width + x];
+                    int red = (value & 0xff0000) >> 16;
+                    int green = (value & 0xff00) >> 8;
+                    int blue = value & 0xff;
 
+                    // modify the red channel
+                    red = 0;  // set the red channel to max
+                    green = 255;
+                    blue = 0;
+                    // recompose the pixel value
+                    int newValue = (red) | (green) | blue;
+                    pixels[y * width + x] = newValue;
+                }
+            }
+
+            cp.setPixels(pixels);
             img.updateAndDraw();
             img.show();
-                FUNZIONA
-             */
+            */
             //TODO:SELECT THE INDEXED IMAGE AND CHANGE HIS COLOR
             //TODO:UNDERSTAND HOW CAN I CHANGE THE BACKGROUND COLOR OF THE IMAGE WITHOUT DESTROY THE IMAGE ITSELF
             //TODO:TRY WITH THE IMAGEPROCESSOR, CONFIGURING THE IMAGE CHANNEL
             //TODO:TRY TO CONVERT THE IMAGE TO RGB
 
         });
-        this.comboBox.addActionListener(evenet -> {
+        this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
             this.slider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
         });

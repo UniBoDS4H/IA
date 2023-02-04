@@ -41,7 +41,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         this.add(this.panel);
     }
     private void setFrameSize(){
-        Dimension newDimension = DisplayInfo.getScaledImageDimension(
+        final Dimension newDimension = DisplayInfo.getScaledImageDimension(
                 new Dimension(this.image.getBufferedImage().getWidth(this.panel),
                         this.image.getBufferedImage().getHeight(this.panel)),
                 DisplayInfo.getDisplaySize(80));
