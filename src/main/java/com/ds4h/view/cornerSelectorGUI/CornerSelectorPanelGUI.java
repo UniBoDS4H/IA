@@ -6,19 +6,31 @@ import org.opencv.core.Point;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CornerSelectorPanelGUI extends JPanel {
     private ImageCorners currentImage;
-    private Set<Point> selectedPoints;
     private Point referencePoint;
+    private final CornerSelectorGUI container;
     private final int POINT_DIAMETER = 6;
-    private final int RADIUS = 10;
-    public CornerSelectorPanelGUI() {
-        this.selectedPoints = new HashSet<>();
+    private final int RADIUS = 15;
+    public CornerSelectorPanelGUI(CornerSelectorGUI container) {
+        this.container = container;
+        addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_DELETE || keyEvent.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    container.getSelectedPoints().forEach(s->currentImage.removeCorner(s));
+                    container.clearSelectedPoints();
+                    repaint();
+                }
+            }
+        });
+        setFocusable(true);
+
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -33,17 +45,37 @@ public class CornerSelectorPanelGUI extends JPanel {
         });
         addMouseListener(new MouseAdapter() {
             @Override
+            public void mouseClicked(MouseEvent e) {
+                Point point = getMatIndexFromPoint(new Point(e.getX(),e.getY()));
+
+                if(imageContains(point)){//point already present in the image
+                    Point actualPoint = getActualPoint(point); //getting the exact pressed point
+                    if(!e.isControlDown()){
+                        container.clearSelectedPoints();
+                        container.addSelectedPoint(actualPoint);
+                    }
+                }
+                repaint();
+            }
+
+            @Override
             public void mousePressed(MouseEvent e) {
                 Point point = getMatIndexFromPoint(new Point(e.getX(),e.getY()));
 
                 if(imageContains(point)){//point already present in the image
                     Point actualPoint = getActualPoint(point); //getting the exact pressed point
                     referencePoint = actualPoint;
+
                     if(e.isControlDown()){
-                        if(selectedPoints.contains(actualPoint)){//if the point is already selected
-                            selectedPoints.remove(actualPoint);
+                        if(container.getSelectedPoints().contains(actualPoint)){//if the point is already selected
+                            container.removeSelectedPoint(actualPoint);
                         }else{
-                            selectedPoints.add(actualPoint);
+                            container.addSelectedPoint(actualPoint);
+                        }
+                    }else{
+                        if(!container.getSelectedPoints().contains(actualPoint)){
+                            container.clearSelectedPoints();
+                            container.addSelectedPoint(actualPoint);
                         }
                     }
                 }else{
@@ -63,14 +95,10 @@ public class CornerSelectorPanelGUI extends JPanel {
     private void moveAllSelected(Point oldPoint, Point newPoint){
         int xGap = (int)(newPoint.x-oldPoint.x);
         int yGap = (int)(newPoint.y-oldPoint.y);
-        System.out.println(this.selectedPoints.size());
-        this.selectedPoints.forEach(p->{
+        this.container.getSelectedPoints().forEach(p->{
             this.currentImage.moveCorner(p, new Point(p.x+xGap,p.y+yGap));
         });
-        this.selectedPoints.stream().forEach(System.out::println);
-        System.out.println();
-        this.selectedPoints = this.selectedPoints.stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toSet());
-        this.selectedPoints.stream().forEach(System.out::println);
+        this.container.setSelectedPoints(this.container.getSelectedPoints().stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toList()));
     }
     private Point getMatIndexFromPoint(Point p){
         return CoordinateConverter.getMatIndexFromPoint(p, currentImage.getMatImage().rows(), currentImage.getMatImage().cols(), getWidth(), getHeight());
@@ -92,7 +120,6 @@ public class CornerSelectorPanelGUI extends JPanel {
     private Point getActualPoint(Point selected){
        Optional<Point> point = Arrays.stream(this.currentImage.getCorners()).filter(p -> p.x < selected.x + RADIUS && p.x > selected.x - RADIUS && p.y < selected.y + RADIUS && p.y > selected.y - RADIUS).findFirst();
         if(point.isPresent()) {
-            System.out.println("actual" + point.get());
             return point.get();
         }else{
             throw new IllegalArgumentException("selected point was not among the image ones");
@@ -119,7 +146,7 @@ public class CornerSelectorPanelGUI extends JPanel {
                     g.setFont(new Font("Serif", Font.BOLD, 16));
                     g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 25, (int)point.getKey().y+25);
                     Graphics2D g2d = (Graphics2D) g;
-                    if(!this.selectedPoints.contains(point.getValue())){
+                    if(!this.container.getSelectedPoints().contains(point.getValue())){
                         g.setColor(Color.RED);
                         g2d.setColor(Color.RED);
                     }else{
