@@ -15,7 +15,7 @@ public class CornerSelectorMenuGUI extends JPanel {
     private final JButton deleteButton;
     private final JLabel copyToLabel;
     private final JButton copyButton;
-    private final JComboBox<String> copyToCombo;
+    private final JComboBox<ImageCorners> copyToCombo;
     private final CornerSelectorGUI container;
     public CornerSelectorMenuGUI(CornerController controller, ImageCorners image, CornerSelectorGUI container){
         this.container = container;
@@ -23,10 +23,9 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.cornerController = controller;
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        String[] options = this.cornerController.getCornerImagesImages().stream()
+        ImageCorners[] options = this.cornerController.getCornerImagesImages().stream()
                 .filter(i-> !i.equals(this.image))
-                .map(i-> this.cornerController.getCornerImagesImages().indexOf(i)+1 + " - " + i.getFile().getName())
-                .collect(Collectors.toList()).toArray(new String[0]);
+                .collect(Collectors.toList()).toArray(new ImageCorners[0]);
         copyToCombo = new JComboBox<>(options);
         copyToCombo.setEditable(false);
         copyToCombo.setSelectedIndex(0);
@@ -42,6 +41,10 @@ public class CornerSelectorMenuGUI extends JPanel {
             container.getSelectedPoints().forEach(p-> image.removeCorner(p));
             container.clearSelectedPoints();
             container.repaintPanel();
+        });
+        this.copyButton.addActionListener(e->{
+            ImageCorners img = (ImageCorners)copyToCombo.getSelectedItem();
+            container.getSelectedPoints().forEach(p-> img.addCorner(p));
         });
     }
     public void addComponents(){

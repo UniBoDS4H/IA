@@ -6,20 +6,20 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import org.opencv.core.Point;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     private final CornerController cornerController;
     private final CornerSelectorPanelGUI panel;
     private ImageCorners image;
-    private Set<Point> selectedPoints;
+    private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
     public CornerSelectorGUI(final ImageCorners image, final CornerController controller){
         this.cornerController = controller;
@@ -27,7 +27,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         this.panel = new CornerSelectorPanelGUI(this);
         this.panel.setCurrentImage(image);
         this.menu = new CornerSelectorMenuGUI(this.cornerController, this.image, this);
-        this.selectedPoints = new HashSet<>();
+        this.selectedPoints = new ArrayList<>();
         setLayout(new BorderLayout());
         this.setFrameSize();
         this.addListeners();
@@ -57,7 +57,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         this.panel.repaint();
     }
 
-    public Set<Point> getSelectedPoints(){
+    public List<Point> getSelectedPoints(){
         return this.selectedPoints;
     }
 
@@ -70,7 +70,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         setMinimumSize(newDimension);
     }
 
-    public void setSelectedPoints(Set<Point> points) {
+    public void setSelectedPoints(List<Point> points) {
         this.selectedPoints = points;
     }
 

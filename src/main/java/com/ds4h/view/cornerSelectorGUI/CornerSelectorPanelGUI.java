@@ -98,7 +98,7 @@ public class CornerSelectorPanelGUI extends JPanel {
         this.container.getSelectedPoints().forEach(p->{
             this.currentImage.moveCorner(p, new Point(p.x+xGap,p.y+yGap));
         });
-        this.container.setSelectedPoints(this.container.getSelectedPoints().stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toSet()));
+        this.container.setSelectedPoints(this.container.getSelectedPoints().stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toList()));
     }
     private Point getMatIndexFromPoint(Point p){
         return CoordinateConverter.getMatIndexFromPoint(p, currentImage.getMatImage().rows(), currentImage.getMatImage().cols(), getWidth(), getHeight());

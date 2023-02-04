@@ -101,4 +101,9 @@ public class ImageCorners {
     public void moveCorner(Point corner, Point newCorner){
         this.corners.set(this.corners.indexOf(corner), newCorner);
     }
+
+    @Override
+    public String toString() {
+        return this.getFile().getName();
+    }
 }
