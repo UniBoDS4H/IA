@@ -16,6 +16,7 @@ import java.util.List;
 
 public class ExportZipGUI {
     private final JFrame frame;
+    private final JButton button;
     /*
     private final AlignmentControllerInterface controller;
     private final JFileChooser fileChooser;
@@ -26,22 +27,20 @@ public class ExportZipGUI {
 
 
     public ExportZipGUI(){
+        this.button = new JButton("Save");
         List<JPanel> panels = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JCheckBox checkBox = new JCheckBox("Checkbox " + (i + 1));
-            JTextField textField = new JTextField("Textfield " + (i + 1), 20);
-            panel.add(checkBox);
-            panel.add(textField);
+            final ExportImage panel = new ExportImage("ciao");
             panels.add(panel);
         }
 
-        JList<JPanel> panelList = new JList<>(panels.toArray(new JPanel[panels.size()]));
+        JList<JPanel> panelList = new JList<>(panels.toArray(new JPanel[0]));
         panelList.setCellRenderer(new PanelListCellRenderer());
 
         this.frame = new JFrame("JList of JPanels Example");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.getContentPane().add(new JScrollPane(panelList), BorderLayout.CENTER);
+        this.frame.getContentPane().add(this.button, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
     }
@@ -116,7 +115,12 @@ public class ExportZipGUI {
             this.fileName = new JTextField();
             this.fileName.setText(name);
             this.exclude.setText("Exclude from saving");
+            this.setLayout(new FlowLayout(FlowLayout.LEFT));
             this.addComponents();
+        }
+
+        public String getFileName(){
+            return this.fileName.getText();
         }
 
         public void addComponents() {
