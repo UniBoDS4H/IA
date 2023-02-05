@@ -35,8 +35,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.export = new JMenu("Export");
         this.settingsImages = new JMenuItem("Configure images");
         this.exportZip = new JMenuItem("Export as zip");
+        this.exportZipGUI = new ExportZipGUI(this.controller);
         this.addComponents();
-        // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY AND THE RGB COLOR
+        // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY (DONE) AND THE RGB COLOR
 
         this.addListeners();
         this.showDialog();
@@ -56,7 +57,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.configureImagesGUI.showDialog();
         });
         this.exportZip.addActionListener(event -> {
-            new ExportZipGUI();
+            this.exportZipGUI.showDialog();
         });
     }
 

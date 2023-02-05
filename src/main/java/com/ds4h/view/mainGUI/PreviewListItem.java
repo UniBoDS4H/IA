@@ -58,8 +58,7 @@ public class PreviewListItem extends JPanel {
             Arrays.stream(this.container.getComponents()).map(i->(JPanel)i).forEach(i -> i.setBorder(null));
             this.setBorder(border);
         }
-
-        container.repaint();
+        this.container.repaint();
 
     }
 }

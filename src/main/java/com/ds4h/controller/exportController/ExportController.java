@@ -15,6 +15,6 @@ public class ExportController {
     }
 
     public static void exportAsZip(final List<AlignedImage> images, final String path) throws IOException {
-        ZipExporter.exportToZip(images.get(0), path);
+        ZipExporter.exportToZip(images, path);
     }
 }

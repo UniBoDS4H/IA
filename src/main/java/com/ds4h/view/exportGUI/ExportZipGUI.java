@@ -14,35 +14,39 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExportZipGUI {
+public class ExportZipGUI implements StandardGUI{
     private final JFrame frame;
     private final JButton button;
-    /*
-    private final AlignmentControllerInterface controller;
+    private final AlignmentControllerInterface controllerInterface;
+    private final List<JPanel> panels;
+    private final JList<JPanel> panelList;
     private final JFileChooser fileChooser;
-    private final JButton button;
-    private final JList<ExportImage> elements;
-
-     */
 
 
-    public ExportZipGUI(){
+    public ExportZipGUI(final AlignmentControllerInterface controller){
         this.button = new JButton("Save");
-        List<JPanel> panels = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            final ExportImage panel = new ExportImage("ciao");
+        this.controllerInterface = controller;
+        this.panels = new ArrayList<>();
+        this.controllerInterface.getAlignedImages().forEach(image -> {
+            final ExportImage panel = new ExportImage(image.getAlignedImage().getTitle());
+            panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            panel.setVisible(true);
+            panel.setFocusable(true);
             panels.add(panel);
-        }
-
-        JList<JPanel> panelList = new JList<>(panels.toArray(new JPanel[0]));
-        panelList.setCellRenderer(new PanelListCellRenderer());
+        });
+        this.panelList  = new JList<>(panels.toArray(new JPanel[0]));
+        this.panelList.setVisible(true);
+        this.panelList.setFocusable(true);
+        this.panelList.addListSelectionListener(event -> {
+            System.out.println("dio porco");
+        });
+        this.panelList.setCellRenderer(new PanelListCellRenderer());
+        this.fileChooser = new JFileChooser();
 
         this.frame = new JFrame("JList of JPanels Example");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.getContentPane().add(new JScrollPane(panelList), BorderLayout.CENTER);
-        this.frame.getContentPane().add(this.button, BorderLayout.SOUTH);
-        frame.pack();
-        frame.setVisible(true);
+        this.addComponents();
+        this.addListeners();
+
     }
     static class PanelListCellRenderer implements ListCellRenderer<JPanel> {
         @Override
@@ -51,27 +55,29 @@ public class ExportZipGUI {
             return panel;
         }
     }
-    /*
+
     private void setFrameSize(){
         final Dimension newDimension = DisplayInfo.getDisplaySize(50);
-        this.setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
-        this.setMinimumSize(newDimension);
+        this.frame.setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
+        this.frame.setMinimumSize(newDimension);
     }
 
     @Override
     public void showDialog() {
-        this.setVisible(true);
+        this.frame.setVisible(true);
     }
 
     @Override
     public void addListeners() {
+        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         this.button.addActionListener(event -> {
-            final int result = fileChooser.showDialog(this, "Select a Directory");
+            final int result = fileChooser.showDialog(this.frame, "Select a Directory");
             if(result == JFileChooser.APPROVE_OPTION){
                 File selectedFile = fileChooser.getSelectedFile();
                 String path = selectedFile.getAbsolutePath();
                 try {
-                    ExportController.exportAsZip(this.controller.getAlignedImages(), path);
+                    ExportController.exportAsZip(this.controllerInterface.getAlignedImages(), path);
                 } catch (IOException e) {
                     IJ.showMessage(e.getMessage());
                 }
@@ -82,28 +88,11 @@ public class ExportZipGUI {
     @Override
     public void addComponents() {
         this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        final JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(100, 200));
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        for (int i = 0; i < 50; i++) {
-            JPanel innerPanel = new JPanel();
-            innerPanel.add(new JCheckBox("Checkbox " + i));
-            innerPanel.add(new JTextField("Textfield " + i));
-            innerPanel.setPreferredSize(new Dimension(100, 100));
-            innerPanel.setVisible(true);
-            this.elements.add(innerPanel);
-
-        }
-        this.elements.setPreferredSize(new Dimension(100, 200));
-        this.elements.setVisible(true);
-        JScrollPane scrollPane = new JScrollPane(this.elements);
-        scrollPane.setPreferredSize(new Dimension(200, 10));
-        this.pack();
-        this.add(scrollPane, BorderLayout.CENTER);
-
+        this.frame.getContentPane().add(new JScrollPane(panelList), BorderLayout.CENTER);
+        this.frame.getContentPane().add(this.button, BorderLayout.SOUTH);
+        this.frame.pack();
     }
 
-    */
     private static class ExportImage extends JPanel{
         private final JCheckBox exclude;
         private final JTextField fileName;
@@ -124,6 +113,8 @@ public class ExportZipGUI {
         }
 
         public void addComponents() {
+            this.setVisible(true);
+            this.setFocusable(true);
             this.add(this.fileName);
             this.add(this.exclude);
         }
