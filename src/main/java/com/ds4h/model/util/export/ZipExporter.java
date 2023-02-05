@@ -1,6 +1,7 @@
 package com.ds4h.model.util.export;
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import ij.IJ;
 import ij.io.FileSaver;
 
 import javax.imageio.ImageIO;
@@ -28,16 +29,15 @@ public class ZipExporter {
     }
     public static void exportToZip(final List<AlignedImage> imageList, final String path) throws IOException  {
         final File targetZipFile = new File(path, "ds4h_aligned_image.zip");
-        final ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(targetZipFile.toPath()));
-
-        for (AlignedImage imp : imageList) {
-            final File outputFile = new File(imp.getAlignedImage().getTitle());
-            final BufferedImage bim = imp.getAlignedImage().getBufferedImage();
-            final ZipEntry entry = new ZipEntry(imp.getAlignedImage().getTitle());
-            zos.putNextEntry(entry);
-            ImageIO.write(bim, "tif", zos);
-            //sbim.createGraphics().drawImage(bim, 0, 0, null);
+        try(final ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(targetZipFile.toPath()))){
+            for (AlignedImage imp : imageList) {
+                final ZipEntry entry = new ZipEntry(imp.getAlignedImage().getTitle());
+                zos.putNextEntry(entry);
+                //TODO:GET ALL THE BYTES OF THE IMAGES AND SAVE IT INSIDE THE ENTRY
+                //zos.write(imp.getAlignedImage().getFileInfo()., 0, imp.getAlignedImage().getFileInfo().lutSize);
+                zos.closeEntry();
+                //IJ.save(imp.getAlignedImage(), path+"/"+ "ds4h_aligned_image.zip"+"/"+imp.getAlignedImage().getTitle());
+            }
         }
-        zos.close();
     }
 }
