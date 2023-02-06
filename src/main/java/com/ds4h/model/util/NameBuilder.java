@@ -20,8 +20,12 @@ public class NameBuilder {
             final String[] parts = this.finalName.split(separator);
             final String fileNameWithoutExtension = parts[0];
             final String fileExtension = parts[1];
-            this.finalName = fileNameWithoutExtension+NameBuilder.TAG_NAME+NameBuilder.DOT+fileExtension;
+            System.out.println(fileNameWithoutExtension);
+            //TODO: FIX THIS, THE SEPARATOR IS NOT CORRECT
+            this.finalName = fileNameWithoutExtension+"_"+NameBuilder.TAG_NAME+NameBuilder.DOT+fileExtension;
         }
+        System.out.println(Objects.nonNull(separator) + " " +!this.finalName.isEmpty()
+                + " " + separator);
         return this;
     }
     public String getFinalName(){
