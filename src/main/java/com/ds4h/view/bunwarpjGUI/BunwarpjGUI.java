@@ -59,7 +59,7 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         // Get the screens dimension
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
-        setLayout(new GridBagLayout());
+        this.setLayout(new GridBagLayout());
 
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
