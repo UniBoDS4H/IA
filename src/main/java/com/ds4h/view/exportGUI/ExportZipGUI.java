@@ -2,18 +2,25 @@ package com.ds4h.view.exportGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.exportController.ExportController;
+import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.util.Pair;
+import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ExportZipGUI extends JFrame implements StandardGUI{
     private final JButton button;
     private final AlignmentControllerInterface controllerInterface;
-    private final JComboBox<String> images;
+    private final JList<Panel> images;
     private final JTextField textField;
     private final JCheckBox includeImage;
     private final JFileChooser fileChooser;
@@ -30,13 +37,17 @@ public class ExportZipGUI extends JFrame implements StandardGUI{
         this.constraints = new GridBagConstraints();
         this.constraints.insets = new Insets(0, 0, 5, 5);
         this.constraints.anchor = GridBagConstraints.WEST;
-        this.images = new JComboBox<>();
-        this.textField = new JTextField("Select an Image");
-        this.textField.setSize(new Dimension(400,10));
+        this.textField = new JTextField();
+
         this.includeImage = new JCheckBox();
+        final List<JPanel> ps = new ArrayList<>();
         this.controllerInterface.getAlignedImages().forEach(image -> {
-            this.images.addItem(image.getAlignedImage().getTitle());
+            final JPanel p = new JPanel();
+            p.add(new JTextField("AOO"));
+            p.add(new JCheckBox("DIO CANE"));
+            ps.add(p);
         });
+        this.images = new JList<>();
         this.fileChooser = new JFileChooser();
         this.addComponents();
         this.addListeners();
@@ -67,11 +78,7 @@ public class ExportZipGUI extends JFrame implements StandardGUI{
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.images.addActionListener(event -> {
-            System.out.println("ciao");
-            final int index = this.images.getSelectedIndex();
-            this.textField.setText(this.images.getItemAt(index));
-        });
+
         this.button.addActionListener(event -> {
             final int result = fileChooser.showDialog(this, "Select a Directory");
             if(result == JFileChooser.APPROVE_OPTION){
