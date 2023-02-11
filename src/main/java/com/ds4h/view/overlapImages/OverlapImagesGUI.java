@@ -5,6 +5,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.exportGUI.ExportZipGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
+import com.ds4h.view.saveImagesGUI.SaveImagesPane;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
@@ -59,7 +60,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         });
         this.exportZip.addActionListener(event -> {
             //this.exportZipGUI.showDialog();
-            new SaveImagesGUI();
+            new SaveImagesGUI(this.controller).showDialog();
         });
     }
 

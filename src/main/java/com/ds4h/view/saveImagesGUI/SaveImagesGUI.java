@@ -1,43 +1,50 @@
 package com.ds4h.view.saveImagesGUI;
 
-import javax.swing.*;
-import javax.swing.event.MouseInputListener;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.standardGUI.StandardGUI;
 
-public class SaveImagesGUI extends JFrame {
-    private final DefaultListModel<JPanel> ps = new DefaultListModel<>();
-    public SaveImagesGUI() {
-        initUI();
+import javax.swing.*;
+import java.awt.*;
+
+public class SaveImagesGUI extends JFrame implements StandardGUI {
+    private final JButton saveButton;
+    private final SaveImagesPane imagesPane;
+    private final JScrollPane scrollPane;
+    private final AlignmentControllerInterface controller;
+    public SaveImagesGUI(final AlignmentControllerInterface controller){
+        this.setSize();
+        this.controller = controller;
+        this.setLayout(new BorderLayout());
+        this.scrollPane = new JScrollPane();
+        this.saveButton = new JButton("Save");
+        this.imagesPane = new SaveImagesPane(this.controller);
+        this.imagesPane.showPreviewImages();
+        this.addComponents();
+        this.addListeners();
     }
 
-    private void initUI() {
-        setTitle("List Box Example");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        JPanel panel = new JPanel();
-        getContentPane().add(panel);
-        JScrollPane scrollPane = new JScrollPane();
-        for(int i = 0; i < 10; i++){
-            final JPanel p = new JPanel();
-            p.setVisible(true);
-            p.setSize(new Dimension(400,50));
-            p.add(new JTextField("test"));
-            final JCheckBox c = new JCheckBox("test");
-            c.addActionListener(evenet -> {
-                c.setSelected(!c.isSelected());
-            });
-            p.add(c);
-            p.setBackground(Color.GREEN);
-            scrollPane.setView(p, i);
-        }
-        scrollPane.setPreferredSize(new java.awt.Dimension(400, 100));
-        panel.add(scrollPane);
-
-        pack();
-        setLocationRelativeTo(null);
+    @Override
+    public void showDialog() {
         this.setVisible(true);
+    }
+
+    @Override
+    public void addListeners() {
+
+    }
+
+    @Override
+    public void addComponents() {
+        this.add(this.imagesPane, BorderLayout.CENTER);
+        this.add(this.saveButton, BorderLayout.SOUTH);
+    }
+
+    private void setSize(){
+        Dimension screenSize = DisplayInfo.getDisplaySize(50);
+        int min_width = (int) (screenSize.width);
+        int min_height =(int) (screenSize.height);
+        setSize(min_width, min_height);
+        setMinimumSize(new Dimension(min_width,min_height));
     }
 }
