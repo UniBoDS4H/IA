@@ -1,3 +1,77 @@
+# DS4H Image Alignment
+
+"Data Science for Health (DS4H) Image Alignment" is a user-friendly tool freely provided as an ImageJ/Fiji plugin. With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by defining with a few clicks some well visible reference marks, or by using automatic routines.
+
+
+## Implementation
+
+DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji. TO BE DONE
+
+
+### Manual Alignment
+
+TO BE DONE
+
+
+### Automatic Alignment
+TO BE DONE
+
+
+
+## Installation
+
+
+DS4H Image Alignment can be installed easily, on Windows, Linux and Apple Silicon M1 and Intel Based Mac ( Mac-ImageJ is the ARM version, Mac-Fiji is the x86 Intel version). In order to use our tool, you can just download the version that you need for your pc, copy the jar 
+inside the "plugins" folder of ImageJ/Fiji. 
+
+
+## How to use It
+TO BE DONE
+
+## Acknowledgments
+We thanks all the University Students that helped in this project. In particular:
+
+   * Fabio Vincenzi, Bachelor's Degree Student in Engineering and Computer Sciences, Alma Mater Studiorum University of Bologna, Italy
+
+      email : fabio.vincenzi2001@gmail.com, 
+
+      Linkedin : 
+   * Matteo Iorio, Bachelor's Degree Student in Engineering and Computer Sciences, Alma Mater Studiorum University of Bologna, Italy
+
+      email : matteo.iorio01@gmail.com, 
+
+      Linkedin : https://www.linkedin.com/in/matteo-iorio-1257621b4/
+
+
+## Contact Us
+The Data Science for Health (DS4H) group:
+
+   * Antonella Carbonaro, Department of Computer Science and Engineering (DISI), University of Bologna, Bologna, Italy, 
+   
+      email: antonella.carbonaro@unibo.it
+
+   * Filippo Piccinini, Istituto Scientifico Romagnolo per lo Studio e la Cura dei Tumori (IRST) IRCCS, Meldola (FC), Italy, 
+   
+      email: filippo.piccinini@irst.emr.it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 This is an example Maven project implementing an ImageJ 1.x plugin.
 
 For an example Maven project implementing an **ImageJ2 command**, see:
