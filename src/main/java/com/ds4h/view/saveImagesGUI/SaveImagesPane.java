@@ -5,13 +5,17 @@ import com.ds4h.model.alignedImage.AlignedImage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SaveImagesPane extends JPanel {
 
     private final AlignmentControllerInterface controller;
     private JPanel currentPanel;
+    private final List<PreviewListSaves> listPanels;
     public SaveImagesPane(final AlignmentControllerInterface controller){
         this.controller = controller;
+        this.listPanels = new LinkedList<>();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setVisible(true);
     }
@@ -24,8 +28,19 @@ public class SaveImagesPane extends JPanel {
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
             this.add(panel);
+            this.listPanels.add(panel);
         }
         this.revalidate();
+    }
+
+    public List<AlignedImage> getImagesToSave(){
+        final List<AlignedImage> images = new LinkedList<>();
+        for(PreviewListSaves innerPanel : this.listPanels){
+            if(innerPanel.toSave()){
+                images.add(innerPanel.getImage());
+            }
+        }
+        return images;
     }
 
     public void updateList(){
