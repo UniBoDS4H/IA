@@ -1,40 +1,47 @@
 package com.ds4h.model.util.save;
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
+import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class SaveImages {
-    private final static String DIRECTORY = "DS4H_Project";
+    public final static String DIRECTORY = "DS4H_Project";
 
     private SaveImages(){
 
     }
-
-    public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
+    //TODO:ADD DOC
+    public static void saveImages(final List<ImagePlus> images, final String path) throws IOException {
         final File directory = new File(path+"/"+SaveImages.DIRECTORY);
         if(!directory.exists()){
             if(directory.mkdir()){
-                for(final AlignedImage image : images){
-                    IJ.save(image.getAlignedImage(), path+"/"+ SaveImages.DIRECTORY +"/"+image.getAlignedImage().getTitle());
-                }
+                SaveImages.save(images,
+                        path+"/"+ SaveImages.DIRECTORY);
             }else{
-                for(final AlignedImage image : images){
-                    IJ.save(image.getAlignedImage(), path+"/"+image.getAlignedImage().getTitle());
-                }
+                SaveImages.save(images,
+                        path);
             }
         }else{
-            for(final AlignedImage image : images){
-                IJ.save(image.getAlignedImage(), path+"/"+ SaveImages.DIRECTORY +"/"+image.getAlignedImage().getTitle());
-            }
+            SaveImages.save(images,
+                    path+"/"+ SaveImages.DIRECTORY);
         }
+    }
 
+
+
+    private static void save(final List<ImagePlus> images, final String path){
+        for(final ImagePlus image : images){
+            IJ.save(image, path+"/"+image.getTitle());
+        }
     }
 
     private static String getFormat(final ImagePlus image){

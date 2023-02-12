@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExportZipGUI extends JFrame implements StandardGUI{
+public class ExportZipGUI extends JFrame {
+    /*
     private final JButton button;
     private final AlignmentControllerInterface controllerInterface;
     private final JList<Panel> images;
@@ -29,6 +30,7 @@ public class ExportZipGUI extends JFrame implements StandardGUI{
 
 
     public ExportZipGUI(final AlignmentControllerInterface controller){
+
         this.setLayout(new GridBagLayout());
         // Set the Frame size
         this.setSize();
@@ -111,4 +113,5 @@ public class ExportZipGUI extends JFrame implements StandardGUI{
         this.constraints.gridy++;
         add(panel, this.constraints);
     }
+    */
 }
