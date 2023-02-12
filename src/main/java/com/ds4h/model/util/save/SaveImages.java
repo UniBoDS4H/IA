@@ -2,6 +2,7 @@ package com.ds4h.model.util.save;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import ij.IJ;
 import ij.ImagePlus;
 import org.json.JSONObject;
@@ -14,25 +15,18 @@ import java.util.stream.Collectors;
 
 
 public class SaveImages {
-    public final static String DIRECTORY = "DS4H_Project";
+    private final static String DIRECTORY = "DS4H_Project";
 
     private SaveImages(){
 
     }
     //TODO:ADD DOC
     public static void saveImages(final List<ImagePlus> images, final String path) throws IOException {
-        final File directory = new File(path+"/"+SaveImages.DIRECTORY);
-        if(!directory.exists()){
-            if(directory.mkdir()){
-                SaveImages.save(images,
-                        path+"/"+ SaveImages.DIRECTORY);
-            }else{
-                SaveImages.save(images,
-                        path);
-            }
+        if(DirectoryCreator.createDirectory(path, DIRECTORY)){
+            final File directory = new File(path + "/"+DIRECTORY);
+            SaveImages.save(images, path+"/" + DIRECTORY);
         }else{
-            SaveImages.save(images,
-                    path+"/"+ SaveImages.DIRECTORY);
+            SaveImages.save(images, path);
         }
     }
 
