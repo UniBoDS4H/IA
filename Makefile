@@ -40,4 +40,5 @@ build_windows:
         -DgeneratePom=true
 
 create_release:
-    mvn package -P uberjar
+	mvn package -P uberjar
+
