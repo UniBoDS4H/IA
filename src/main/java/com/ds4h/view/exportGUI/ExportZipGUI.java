@@ -2,6 +2,9 @@ package com.ds4h.view.exportGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.exportController.ExportController;
+import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.util.Pair;
+import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
@@ -14,65 +17,72 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExportZipGUI implements StandardGUI{
-    private final JFrame frame;
+public class ExportZipGUI extends JFrame {
+    /*
     private final JButton button;
     private final AlignmentControllerInterface controllerInterface;
-    private final List<JPanel> panels;
-    private final JList<JPanel> panelList;
+    private final JList<Panel> images;
+    private final JTextField textField;
+    private final JCheckBox includeImage;
     private final JFileChooser fileChooser;
+    private final GridBagConstraints constraints;
+
 
 
     public ExportZipGUI(final AlignmentControllerInterface controller){
+
+        this.setLayout(new GridBagLayout());
+        // Set the Frame size
+        this.setSize();
         this.button = new JButton("Save");
         this.controllerInterface = controller;
-        this.panels = new ArrayList<>();
-        this.controllerInterface.getAlignedImages().forEach(image -> {
-            final ExportImage panel = new ExportImage(image.getAlignedImage().getTitle());
-            panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            panel.setVisible(true);
-            panel.setFocusable(true);
-            panels.add(panel);
-        });
-        this.panelList  = new JList<>(panels.toArray(new JPanel[0]));
-        this.panelList.setVisible(true);
-        this.panelList.setFocusable(true);
-        this.panelList.addListSelectionListener(event -> {
-            System.out.println("dio porco");
-        });
-        this.panelList.setCellRenderer(new PanelListCellRenderer());
-        this.fileChooser = new JFileChooser();
+        this.constraints = new GridBagConstraints();
+        this.constraints.insets = new Insets(0, 0, 5, 5);
+        this.constraints.anchor = GridBagConstraints.WEST;
+        this.textField = new JTextField();
 
-        this.frame = new JFrame("JList of JPanels Example");
+        this.includeImage = new JCheckBox();
+        final List<JPanel> ps = new ArrayList<>();
+        this.controllerInterface.getAlignedImages().forEach(image -> {
+            final JPanel p = new JPanel();
+            p.add(new JTextField("AOO"));
+            p.add(new JCheckBox("DIO CANE"));
+            ps.add(p);
+        });
+        this.images = new JList<>();
+        this.fileChooser = new JFileChooser();
         this.addComponents();
         this.addListeners();
 
     }
-    static class PanelListCellRenderer implements ListCellRenderer<JPanel> {
-        @Override
-        public Component getListCellRendererComponent(JList<? extends JPanel> list, JPanel panel, int index,
-                                                      boolean isSelected, boolean cellHasFocus) {
-            return panel;
-        }
+
+    private void setSize(){
+        Dimension screenSize = DisplayInfo.getDisplaySize(50);
+        int min_width = (int) (screenSize.width);
+        int min_height =(int) (screenSize.height);
+        // Set the size of the frame to be half of the screen width and height
+        // Set the size of the frame to be half of the screen width and height
+        setSize(min_width, min_height);
+        setMinimumSize(new Dimension(min_width,min_height));
     }
 
     private void setFrameSize(){
         final Dimension newDimension = DisplayInfo.getDisplaySize(50);
-        this.frame.setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
-        this.frame.setMinimumSize(newDimension);
+        this.setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
+        this.setMinimumSize(newDimension);
     }
 
     @Override
     public void showDialog() {
-        this.frame.setVisible(true);
+        this.setVisible(true);
     }
 
     @Override
     public void addListeners() {
-        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         this.button.addActionListener(event -> {
-            final int result = fileChooser.showDialog(this.frame, "Select a Directory");
+            final int result = fileChooser.showDialog(this, "Select a Directory");
             if(result == JFileChooser.APPROVE_OPTION){
                 File selectedFile = fileChooser.getSelectedFile();
                 String path = selectedFile.getAbsolutePath();
@@ -88,35 +98,20 @@ public class ExportZipGUI implements StandardGUI{
     @Override
     public void addComponents() {
         this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        this.frame.getContentPane().add(new JScrollPane(panelList), BorderLayout.CENTER);
-        this.frame.getContentPane().add(this.button, BorderLayout.SOUTH);
-        this.frame.pack();
+        this.addElement(new JLabel("Select the image"), new JPanel(), this.images);
+        this.addElement(new JLabel("Change the name"), new JPanel(), this.textField);
+        this.addElement(new JLabel("Include this file ?"), new JPanel(), this.includeImage);
+        this.constraints.gridx = 0;
+        this.constraints.gridy++;
+        add(this.button, this.constraints);
     }
 
-    private static class ExportImage extends JPanel{
-        private final JCheckBox exclude;
-        private final JTextField fileName;
-
-        public  ExportImage(final String name){
-            this.setSize(new Dimension(1000, 10));
-            this.setLayout(new BorderLayout());
-            this.exclude = new JCheckBox();
-            this.fileName = new JTextField();
-            this.fileName.setText(name);
-            this.exclude.setText("Exclude from saving");
-            this.setLayout(new FlowLayout(FlowLayout.LEFT));
-            this.addComponents();
-        }
-
-        public String getFileName(){
-            return this.fileName.getText();
-        }
-
-        public void addComponents() {
-            this.setVisible(true);
-            this.setFocusable(true);
-            this.add(this.fileName);
-            this.add(this.exclude);
-        }
+    private void addElement(final JLabel label, final JPanel panel, final JComponent component){
+        panel.add(label);
+        panel.add(component);
+        this.constraints.gridx = 0;
+        this.constraints.gridy++;
+        add(panel, this.constraints);
     }
+    */
 }

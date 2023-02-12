@@ -144,6 +144,10 @@
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
+		<repository>
+			<id>JSON</id>
+			<url>https://mvnrepository.com/artifact/org.json/json</url>
+		</repository>
 		</repositories>
 
 	<dependencies>
@@ -185,19 +189,11 @@
 			<artifactId>opencv</artifactId>
 			<version>4.0.1-1.4.4</version>
 		</dependency>
-		<!--
 		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>opencv</artifactId>
-			<version>4.5.5</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20220924</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-assembly-plugin</artifactId>
-			<version>3.4.2</version>
-		</dependency>
-		-->
-
 	</dependencies>
 <!--
 	<build>

@@ -1,8 +1,6 @@
-package com.ds4h.model.util.export;
+package com.ds4h.model.util.exportProject;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import ij.IJ;
-import ij.io.FileSaver;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

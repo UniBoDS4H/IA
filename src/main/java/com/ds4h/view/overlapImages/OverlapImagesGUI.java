@@ -3,7 +3,7 @@ package com.ds4h.view.overlapImages;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
-import com.ds4h.view.exportGUI.ExportZipGUI;
+import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
@@ -13,15 +13,17 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+//TODO:ADD DOC
+//TODO: ADD THE POSSIBILITY TO SWITCH FROM CAROUSEL AND OVERLAPPED
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
-    private ExportZipGUI exportZipGUI;
     private final JLayeredPane panel;
     private final List<AlignedImage> images;
+    private final SaveImagesGUI saveGui;
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
-    private final JMenu settingsMenu, export;
-    private final JMenuItem settingsImages, exportZip;
+    private final JMenu settingsMenu, saveMenu;
+    private final JMenuItem settingsImages, saveImages;
     private final AlignmentControllerInterface controller;
     public OverlapImagesGUI(final AlignmentControllerInterface controller){
         this.setTitle("Final Result");
@@ -32,10 +34,10 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.panel = new JLayeredPane();
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
-        this.export = new JMenu("Export");
+        this.saveMenu = new JMenu("Save");
         this.settingsImages = new JMenuItem("Configure images");
-        this.exportZip = new JMenuItem("Export as zip");
-        this.exportZipGUI = new ExportZipGUI(this.controller);
+        this.saveImages = new JMenuItem("Save Images");
+        this.saveGui = new SaveImagesGUI(this.controller);
         this.addComponents();
         // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY (DONE) AND THE RGB COLOR
 
@@ -56,8 +58,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.configureImagesGUI.setElements(this.imagePanels);
             this.configureImagesGUI.showDialog();
         });
-        this.exportZip.addActionListener(event -> {
-            this.exportZipGUI.showDialog();
+        this.saveImages.addActionListener(event -> {
+            this.saveGui.showDialog();
         });
     }
 
@@ -66,9 +68,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.overlapImages();
         this.add(this.panel);
         this.menu.add(this.settingsMenu);
-        this.menu.add(this.export);
+        this.menu.add(this.saveMenu);
         this.settingsMenu.add(this.settingsImages);
-        this.export.add(this.exportZip);
+        this.saveMenu.add(this.saveImages);
         this.setJMenuBar(this.menu);
         this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
                     .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),

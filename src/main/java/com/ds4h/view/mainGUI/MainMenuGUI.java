@@ -4,12 +4,15 @@ package com.ds4h.view.mainGUI;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.*;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.exportController.ExportController;
+import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.IJ;
 
 
 import javax.swing.*;
@@ -17,6 +20,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -25,10 +29,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment;
     private final JPanel buttonsPanel;
     private final JMenuBar menuBar;
-    private final JMenu menu;
-    private final JMenuItem aboutItem, loadImages,settingsItem;
+    private final JMenu menu, project;
+    private final JMenuItem aboutItem, loadImages,settingsItem, exportItem;
     private final JPanel panel;
     private final AboutGUI aboutGUI;
+    private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
     private final CornerController cornerControler;
     private final PreviewImagesPane imagesPreview;
@@ -42,6 +47,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     public MainMenuGUI() {
         setTitle("DS4H Image Alignment");
         this.setFrameSize();
+        this.fileChooser = new JFileChooser();
         this.cornerControler = new CornerController();
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
@@ -71,9 +77,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("Navigation");
+        this.project = new JMenu("Project");
         this.aboutItem = new JMenuItem("About");
         this.loadImages = new JMenuItem("Load Images");
         this.settingsItem = new JMenuItem("Settings");
+        this.exportItem = new JMenuItem("Export");
 
         this.addComponents();
         this.addListeners();
@@ -95,11 +103,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         // Create menu and add it to the menu bar
         this.menuBar.add(this.menu);
-
+        this.menuBar.add(this.project);
         // Create menu items and add them to the menu
         this.menu.add(this.aboutItem);
         this.menu.add(this.loadImages);
         this.menu.add(this.settingsItem);
+        this.project.add(this.exportItem);
     }
 
     @Override
@@ -131,6 +140,20 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             new CarouselGUI(m);
 
         });
+
+        this.exportItem.addActionListener(event -> {
+            this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            final int result = this.fileChooser.showOpenDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                final File file = this.fileChooser.getSelectedFile();
+                try {
+                    ExportController.exportProject(this.cornerControler.getCornerImagesImages(), file.getPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         this.automaticAlignment.addActionListener(event -> {
             //Mat m = new Mat();
             //bUnwarpJ_ b = new bUnwarpJ_();
