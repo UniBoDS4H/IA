@@ -1,6 +1,7 @@
 # DS4H Image Alignment
 
-"Data Science for Health (DS4H) Image Alignment" is a user-friendly tool freely provided as an ImageJ/Fiji plugin. With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by defining with a few clicks some well visible reference marks, or by using automatic routines.
+> "Data Science for Health (DS4H) Image Alignment" is a user-friendly tool freely provided as an ImageJ/Fiji plugin.
+With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by defining with a few clicks some well visible reference marks, or by using automatic routines.
 
 
 ## Implementation
@@ -9,12 +10,15 @@ DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji.
 
 
 ### Manual Alignment
-
-TO BE DONE
+The manual aligmment algorithm used inside this project are two : 
+   1. [Homography Alignment]()
+   2. [Second]
+TBD
+    
 
 
 ### Automatic Alignment
-TO BE DONE
+The automatic alignment algorithm used is [**SURF**](https://en.wikipedia.org/wiki/Speeded_up_robust_features). TBD
 
 
 
