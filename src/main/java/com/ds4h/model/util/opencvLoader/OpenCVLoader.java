@@ -1,7 +1,8 @@
 package com.ds4h.model.util.opencvLoader;
 
-import java.io.File;
-import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 
 public class OpenCVLoader {
     private static final String PROJECT_DIRECTORY = System.getProperty("user.dir");
@@ -36,7 +37,40 @@ public class OpenCVLoader {
         final InputStream in = OpenCVLoader.class.getResourceAsStream("/" + LINUX_LIB);
         */
         final String file = PROJECT_DIRECTORY+SEPARATOR+SOURCE+SEPARATOR+MAIN+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+OPENCV+SEPARATOR+LINUX_LIB;
+        //loadLib((OPENCV+SEPARATOR),LINUX_LIB);
         System.out.println(file);
         System.load(file);
+    }
+
+    private static void loadLib(String path, String name) {
+        name = System.mapLibraryName(name); // extends name with .dll, .so or .dylib
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = OpenCVLoader.class.getResourceAsStream("/" + path + name);
+            File fileOut = new File("/usr/local/lib/");
+            System.out.println(fileOut.toString());
+            outputStream = new FileOutputStream(fileOut);
+            IOUtils.copy(inputStream,outputStream);
+            System.out.println(fileOut.toString());
+            System.load(fileOut.toString());//loading goes here
+        } catch (Exception e) {
+            //handle
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    //log
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    //log
+                }
+            }
+        }
     }
 }

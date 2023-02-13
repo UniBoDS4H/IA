@@ -1,17 +1,13 @@
 package com.ds4h.model.util.save;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import ij.IJ;
 import ij.ImagePlus;
-import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class SaveImages {

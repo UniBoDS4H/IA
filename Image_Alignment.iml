@@ -14,5 +14,7 @@
     <orderEntry type="library" name="Maven: sc.fiji:bUnwarpJ_:2.6.13" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:opencv:4.0.1-1.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20220924" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
   </component>
 </module>

@@ -10,14 +10,16 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CornerSelectorPanelGUI extends JPanel {
+public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener{
     private ImageCorners currentImage;
     private Point referencePoint;
+    private int zoomLevel = 100;
     private final CornerSelectorGUI container;
     private final int POINT_DIAMETER = 6;
     private final int RADIUS = 15;
     public CornerSelectorPanelGUI(CornerSelectorGUI container) {
         this.container = container;
+        addMouseWheelListener(this);
         addKeyListener(new KeyAdapter() {
 
             @Override
@@ -130,32 +132,59 @@ public class CornerSelectorPanelGUI extends JPanel {
         this.currentImage = image;
         repaint();
     }
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (e.isControlDown()) {
+            if (e.getWheelRotation() < 0) {
+                System.out.println("in");
+                zoomIn();
+            } else {
+
+                System.out.println("out");
+                zoomOut();
+            }
+        }
+    }
+
+    public void zoomIn() {
+        this.zoomLevel += 10;
+        setPreferredSize(new Dimension((int) (getPreferredSize().width * 1.1), (int) (getPreferredSize().height * 1.1)));
+        revalidate();
+        repaint();
+    }
+
+    public void zoomOut() {
+        this.zoomLevel -= 10;
+        setPreferredSize(new Dimension((int) (getPreferredSize().width / 1.1), (int) (getPreferredSize().height / 1.1)));
+        revalidate();
+        repaint();
+    }
 
 
     @Override
     public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         if(this.currentImage != null){
             super.paintComponent(g);
-            g.drawImage(this.currentImage.getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
+            g2d.scale(zoomLevel / 100.0, zoomLevel / 100.0);
+            g2d.drawImage(this.currentImage.getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
         }
 
         Arrays.stream(this.currentImage.getCorners())
                 .map(p-> new AbstractMap.SimpleEntry<Point,Point>(this.getPointFromMatIndex(p),p))
                 .forEach(point->{ //point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
-                    g.setColor(Color.YELLOW);
-                    g.setFont(new Font("Serif", Font.BOLD, 16));
-                    g.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 25, (int)point.getKey().y+25);
-                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setColor(Color.YELLOW);
+                    g2d.setFont(new Font("Serif", Font.BOLD, 16));
+                    g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 25, (int)point.getKey().y+25);
+
                     if(!this.container.getSelectedPoints().contains(point.getValue())){
-                        g.setColor(Color.RED);
                         g2d.setColor(Color.RED);
                     }else{
-                        g.setColor(Color.YELLOW);
                         g2d.setColor(Color.YELLOW);
                     }
                     g2d.setStroke(new BasicStroke(3));
                     g2d.drawOval((int)point.getKey().x - 15, (int)point.getKey().y - 15, 30, 30);
-                    g.fillOval((int)point.getKey().x - 3, (int)point.getKey().y - 3, POINT_DIAMETER, POINT_DIAMETER);
+                    g2d.fillOval((int)point.getKey().x - 3, (int)point.getKey().y - 3, POINT_DIAMETER, POINT_DIAMETER);
                 });
 
     }
