@@ -10,6 +10,7 @@ import ij.ImagePlus;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private void overlapImages(){
         int layer = 0;
         for(AlignedImage image : this.images){
-            final ImagePanel imagePanel = new ImagePanel(image);
+            final ImagePanel imagePanel = new ImagePanel(image.getAlignedImage());
             this.imagePanels.add(imagePanel);
             imagePanel.setBounds(new Rectangle(image.getAlignedImage().getWidth(), image.getAlignedImage().getHeight()));
             imagePanel.setOpaque(false);
@@ -96,44 +97,41 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         }
     }
     public class ImagePanel extends JPanel {
-        private final AlignedImage alignedImage;
+        private ImagePlus alignedImage;
         public final static float DEFAULT_OPACITY = 0.2f;
         private float opacity = DEFAULT_OPACITY;
 
-        public ImagePanel(final AlignedImage image) {
+        public ImagePanel(final ImagePlus image) {
             this.alignedImage = image;
-            this.prova();
             this.setSize(this.getPreferredSize());
         }
 
-        private void prova(){
-            /*
-            BufferedImage originalImage = this.image.getBufferedImage();
-            int width = originalImage.getWidth();
-            int height = originalImage.getHeight();
-            BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-            for (int i = 0; i < this.image.getWidth(); i++) {
-                for (int j = 0; j < this.image.getHeight(); j++) {
-                    if(originalImage.getRGB(i,j) == Color.BLACK.getRGB()) {
-                        newImage.setRGB(i, j, Color.cyan.getRGB());
-                    }
+        public void changeRedChannel(final int intensity){
+            final BufferedImage img = this.getImagePlus().getBufferedImage();
+            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            for(int i = 0; i < img.getWidth(); i++){
+                for(int j = 0; j < img.getHeight(); j++){
+                    Color c = new Color(img.getRGB(i,j));
+                    int r = c.getRed();
+                    int g = c.getGreen();
+                    int b = c.getBlue();
+                    int a = c.getAlpha();
+                    Color nc = new Color(intensity, g, b, a);
+                    image.setRGB(i, j, nc.getRGB());
                 }
             }
-
-            this.image = new ImagePlus("Colored Image", newImage);
-            this.image.show();
-
-             */
+            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
         }
+        public void changeGreenChannel(final int intensity){
 
+        }
+        public void changeBlueChannel(final int intensity){
+
+        }
         public float getOpacity(){
             return this.opacity;
         }
         public ImagePlus getImagePlus(){
-            return this.alignedImage.getAlignedImage();
-        }
-        public AlignedImage getImage(){
             return this.alignedImage;
         }
 
@@ -148,7 +146,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, this.opacity));
-            g2d.drawImage(this.alignedImage.getAlignedImage().getImage(), 0, 0, null);
+            g2d.drawImage(this.alignedImage.getImage(), 0, 0, null);
             g2d.dispose();
         }
         @Override
