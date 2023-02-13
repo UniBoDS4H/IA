@@ -2,6 +2,7 @@ package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -23,7 +24,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
     private final JMenu settingsMenu, saveMenu;
-    private final JMenuItem settingsImages, saveImages;
+    private final JMenuItem settingsImages, carouselItem, saveImages;
     private final AlignmentControllerInterface controller;
     public OverlapImagesGUI(final AlignmentControllerInterface controller){
         this.setTitle("Final Result");
@@ -37,6 +38,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.saveMenu = new JMenu("Save");
         this.settingsImages = new JMenuItem("Configure images");
         this.saveImages = new JMenuItem("Save Images");
+        this.carouselItem = new JMenuItem("View as Carousel");
         this.saveGui = new SaveImagesGUI(this.controller);
         this.addComponents();
         // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY (DONE) AND THE RGB COLOR
@@ -61,6 +63,10 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.saveImages.addActionListener(event -> {
             this.saveGui.showDialog();
         });
+        this.carouselItem.addActionListener(event -> {
+            new CarouselGUI(this.controller).showDialog();
+            this.dispose();
+        });
     }
 
     @Override
@@ -70,6 +76,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
         this.settingsMenu.add(this.settingsImages);
+        this.settingsMenu.add(this.carouselItem);
         this.saveMenu.add(this.saveImages);
         this.setJMenuBar(this.menu);
         this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)

@@ -1,21 +1,17 @@
-package com.ds4h.model.util.save;
+package com.ds4h.model.util.saveProject;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import ij.IJ;
 import ij.ImagePlus;
-import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class SaveImages {
-    private final static String DIRECTORY = "DS4H_Project";
+    private final static String DIRECTORY = "DS4H_AlignedImages";
 
     private SaveImages(){
 

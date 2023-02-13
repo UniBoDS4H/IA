@@ -2,14 +2,11 @@ package com.ds4h.model.util.exportProject;
 
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.directoryCreator.DirectoryCreator;
-import com.ds4h.model.util.save.SaveImages;
-import ij.IJ;
-import ij.ImagePlus;
+import com.ds4h.model.util.saveProject.SaveImages;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opencv.core.Point;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;

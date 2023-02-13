@@ -1,7 +1,7 @@
 package com.ds4h.controller.savingController;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.util.save.SaveImages;
+import com.ds4h.model.util.saveProject.SaveImages;
 
 import java.io.IOException;
 import java.util.List;

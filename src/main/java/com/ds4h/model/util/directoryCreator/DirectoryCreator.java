@@ -1,7 +1,5 @@
 package com.ds4h.model.util.directoryCreator;
 
-import com.ds4h.model.util.save.SaveImages;
-
 import java.io.File;
 
 public class DirectoryCreator {
