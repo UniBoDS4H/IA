@@ -1,7 +1,10 @@
 package com.ds4h.model.util.opencvLoader;
 
+import ij.IJ;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import javax.swing.*;
 import java.io.*;
 
 public class OpenCVLoader {
@@ -10,12 +13,13 @@ public class OpenCVLoader {
     private static final String SEPARATOR = System.getProperty("file.separator");
     private static final String OS = System.getProperty("os.name").toLowerCase();
     private static final String WINDOWS = "windows", MAC = "mac", LINUX = "linux";
-    private static final String WINDOWS_LIB = "opencv_java455.dll", MAC_LIB = "opencv_java455.dylib", LINUX_LIB = "libopencv_java455.so";
+    private static final String WINDOWS_LIB = "opencv_java455.dll", MAC_LIB = "opencv_java455.dylib", LINUX_LIB = "libopencv_java455";
     private OpenCVLoader(){
 
     }
 
     public static void loadOpenCV(){
+        IJ.showMessage(OS);
         if(OS.contains(WINDOWS)){
 
         }else if(OS.contains(MAC)){
@@ -36,41 +40,26 @@ public class OpenCVLoader {
         File tempFile = new File(tempDir, LINUX_LIB);
         final InputStream in = OpenCVLoader.class.getResourceAsStream("/" + LINUX_LIB);
         */
-        final String file = PROJECT_DIRECTORY+SEPARATOR+SOURCE+SEPARATOR+MAIN+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+OPENCV+SEPARATOR+LINUX_LIB;
-        //loadLib((OPENCV+SEPARATOR),LINUX_LIB);
-        System.out.println(file);
-        System.load(file);
+        final String file = PROJECT_DIRECTORY+SEPARATOR+SOURCE+SEPARATOR+MAIN+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+OPENCV+SEPARATOR+LINUX_LIB+".so";
+        loadLib((OPENCV+SEPARATOR),LINUX_LIB);
+        IJ.showMessage(file.toString());
+        //System.load(file);
     }
 
     private static void loadLib(String path, String name) {
-        name = System.mapLibraryName(name); // extends name with .dll, .so or .dylib
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
         try {
-            inputStream = OpenCVLoader.class.getResourceAsStream("/" + path + name);
-            File fileOut = new File("/usr/local/lib/");
-            System.out.println(fileOut.toString());
-            outputStream = new FileOutputStream(fileOut);
-            IOUtils.copy(inputStream,outputStream);
-            System.out.println(fileOut.toString());
-            System.load(fileOut.toString());//loading goes here
+            InputStream in = OpenCVLoader.class.getResourceAsStream("/" + path + name +".so");
+            File fileOut = File.createTempFile("lib", ".so");
+            try (OutputStream out = FileUtils.openOutputStream(fileOut)) {
+                if (in != null) {
+                    IOUtils.copy(in, out);
+                    in.close();
+                    out.close(); // Without this line it doesn't work on windows, so, just leave it there, avoid even the check for the OS
+                    System.load(fileOut.toString());
+                }
+            }
         } catch (Exception e) {
-            //handle
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    //log
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    //log
-                }
-            }
+            IJ.showMessage(e.getMessage());
         }
     }
 }
