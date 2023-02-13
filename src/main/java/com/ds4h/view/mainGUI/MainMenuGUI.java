@@ -5,6 +5,7 @@ import com.ds4h.controller.alignmentController.AutomaticAlignmentController.*;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.exportController.ExportController;
+import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -30,7 +31,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JPanel buttonsPanel;
     private final JMenuBar menuBar;
     private final JMenu menu, project;
-    private final JMenuItem aboutItem, loadImages,settingsItem, exportItem;
+    private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem;
     private final JPanel panel;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
@@ -82,6 +83,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.loadImages = new JMenuItem("Load Images");
         this.settingsItem = new JMenuItem("Settings");
         this.exportItem = new JMenuItem("Export");
+        this.importItem = new JMenuItem("Import");
 
         this.addComponents();
         this.addListeners();
@@ -109,6 +111,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.menu.add(this.loadImages);
         this.menu.add(this.settingsItem);
         this.project.add(this.exportItem);
+        this.project.add(this.importItem);
     }
 
     @Override
@@ -149,6 +152,20 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 try {
                     ExportController.exportProject(this.cornerControler.getCornerImagesImages(), file.getPath());
                 } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        this.importItem.addActionListener(event -> {
+            this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            final int result = this.fileChooser.showOpenDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                final File file = this.fileChooser.getSelectedFile();
+                try {
+                    ImportController.importProject(file, this.cornerControler.getCornerManager());
+                    this.imagesPreview.showPreviewImages();
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }

@@ -22,6 +22,13 @@ public class CornerManager {
         this.setAsSource(new ImageCorners(new File(loadingImages.get(0))));
     }
 
+    public void addImages(final List<ImageCorners> images){
+        if(images.size() > 0) {
+            this.imagesWithCorners.addAll(images);
+            this.setAsSource(images.get(0));
+        }
+    }
+
     public List<ImageCorners> getCornerImagesImages(){
         return new ArrayList<>(this.imagesWithCorners);
     }
@@ -31,8 +38,7 @@ public class CornerManager {
     }
 
     public Optional<ImageCorners> getSourceImage(){
-        Optional<ImageCorners> a = this.imagesWithCorners.stream().filter(i->this.sourceImage.equals(i)).findFirst();
-        return a;
+        return this.imagesWithCorners.stream().filter(i-> this.sourceImage.equals(i)).findFirst();
     }
 
     public void setAsSource(ImageCorners image){
