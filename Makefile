@@ -42,3 +42,14 @@ build_windows:
 create_release:
 	mvn package -P uberjar
 
+create_jar_linux: build_linux, create_release
+        echo "JAR for linux created"
+
+create_jar_windows: build_windows, create_release
+        echo "JAR for windows created"
+
+create_jar_mac_intel: build_x86, create_release
+        echo "JAR for mac intel created"
+
+create_jar_mac_silicon: build_mac, create_release
+        echo "JAR for mac silicon created"
