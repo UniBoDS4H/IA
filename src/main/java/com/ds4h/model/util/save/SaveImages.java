@@ -22,9 +22,10 @@ public class SaveImages {
     }
     //TODO:ADD DOC
     public static void saveImages(final List<ImagePlus> images, final String path) throws IOException {
-        if(DirectoryCreator.createDirectory(path, DIRECTORY)){
-            final File directory = new File(path + "/"+DIRECTORY);
-            SaveImages.save(images, path+"/" + DIRECTORY);
+        final String dir = DirectoryCreator.createDirectory(path, DIRECTORY);
+        if(!dir.isEmpty()){
+            final File directory = new File(path + "/"+dir);
+            SaveImages.save(images, path+"/" + dir);
         }else{
             SaveImages.save(images, path);
         }

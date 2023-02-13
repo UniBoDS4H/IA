@@ -27,9 +27,10 @@ public class ExportProject {
     public static void exportProject(final List<ImageCorners> images,final String path) throws IOException {
 
         final JSONArray imageList = ExportProject.createJSON(images);
-        if(DirectoryCreator.createDirectory(path, PROJECT_FOLDER)){
-            SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+PROJECT_FOLDER);
-            ExportProject.exportJSON(imageList, path+"/"+PROJECT_FOLDER);
+        final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
+        if(!directory.isEmpty()){
+            SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+directory);
+            ExportProject.exportJSON(imageList, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.
             SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
@@ -70,7 +71,7 @@ public class ExportProject {
     }
 
     private static void exportJSON(final JSONArray array, final String path){
-        try (FileWriter file = new FileWriter(path)) {
+        try (FileWriter file = new FileWriter(path+"/"+PROJECT_NAME)) {
             file.write(array.toString());
             file.flush();
         } catch (IOException e) {
