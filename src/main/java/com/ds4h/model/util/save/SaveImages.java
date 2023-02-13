@@ -32,7 +32,7 @@ public class SaveImages {
 
 
 
-    private static void save(final List<ImagePlus> images, final String path){
+    public static void save(final List<ImagePlus> images, final String path){
         for(final ImagePlus image : images){
             IJ.save(image, path+"/"+image.getTitle());
         }

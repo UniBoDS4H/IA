@@ -1,7 +1,9 @@
 package com.ds4h.model.util.exportProject;
 
 import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.save.SaveImages;
+import ij.IJ;
 import ij.ImagePlus;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,8 +18,23 @@ import java.util.stream.Collectors;
 public class ExportProject {
     private final static String FILE_KEY = "FILE_NAME";
     private final static String POINTS_KEY = "POINTS";
+    private final static String PROJECT_NAME = "ds4h_project.json";
+    private final static String PROJECT_FOLDER = "DS4H_Project";
     private ExportProject(){
 
+    }
+
+    public static void exportProject(final List<ImageCorners> images,final String path) throws IOException {
+
+        final JSONArray imageList = ExportProject.createJSON(images);
+        if(DirectoryCreator.createDirectory(path, PROJECT_FOLDER)){
+            SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+PROJECT_FOLDER);
+            ExportProject.exportJSON(imageList, path+"/"+PROJECT_FOLDER);
+        }else{
+            //Something happen, the creation failed I save the image inside the path.
+            SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
+            ExportProject.exportJSON(imageList, path);
+        }
     }
     /*
             JSON FILE :
@@ -36,24 +53,25 @@ public class ExportProject {
                           ]
             }
          */
-    public static void exportProject(final List<ImageCorners> images,final String path) throws IOException {
-
+    private static JSONArray createJSON(final List<ImageCorners> images){
         final JSONArray imageList = new JSONArray();
-        //SaveImages.saveImages(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
-        //TODO: Save the file and the images in the same directory
+        //Create the json
         images.forEach(imageCorners -> {
             final JSONObject obj = new JSONObject();
-            obj.put(FILE_KEY, imageCorners.getImage().getTitle());
             final JSONArray array = new JSONArray();
             for(Point point : imageCorners.getCorners()){
                 array.put(point.toString());
             }
             obj.put(POINTS_KEY, array);
+            obj.put(FILE_KEY, imageCorners.getImage().getTitle());
             imageList.put(obj);
         });
+        return imageList;
+    }
 
-        try (FileWriter file = new FileWriter(path+ "/project.json")) {
-            file.write(imageList.toString(2));
+    private static void exportJSON(final JSONArray array, final String path){
+        try (FileWriter file = new FileWriter(path)) {
+            file.write(array.toString());
             file.flush();
         } catch (IOException e) {
             e.printStackTrace();
