@@ -24,6 +24,13 @@ public class ExportProject {
 
     }
 
+    //TODO: add better doc
+    /**
+     * Export the entire project
+     * @param images the images with their points.
+     * @param path the path where store the project
+     * @throws IOException error in the saving s
+     */
     public static void exportProject(final List<ImageCorners> images,final String path) throws IOException {
 
         final JSONArray imageList = ExportProject.createJSON(images);
@@ -54,6 +61,12 @@ public class ExportProject {
                           ]
             }
          */
+
+    /**
+     * Create the json file with all the information needed
+     * @param images all the images of the project
+     * @return the JSONArray to write
+     */
     private static JSONArray createJSON(final List<ImageCorners> images){
         final JSONArray imageList = new JSONArray();
         //Create the json
@@ -70,6 +83,11 @@ public class ExportProject {
         return imageList;
     }
 
+    /**
+     * Write the JSONFile in the path
+     * @param array all the project information
+     * @param path where will be stored the inormation
+     */
     private static void exportJSON(final JSONArray array, final String path){
         try (FileWriter file = new FileWriter(path+"/"+PROJECT_NAME)) {
             file.write(array.toString());
