@@ -79,6 +79,8 @@ public class CornerSelectorPanelGUI extends JPanel {
                         }
                     }
                 }else{
+                    //TODO: you are using the JAVA.AWT point, is this correct ? Because we are working on opencv point.
+                    //TODO: fix the MVC
                     currentImage.addCorner(getMatIndexFromPoint(new Point(e.getX(), e.getY())));
                 }
                 repaint();

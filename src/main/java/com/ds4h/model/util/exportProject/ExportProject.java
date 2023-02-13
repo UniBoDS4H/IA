@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExportProject {
-    private final static String FILE_KEY = "FILE_NAME";
-    private final static String POINTS_KEY = "POINTS";
+    public final static String FILE_KEY = "FILE_NAME";
+    public final static String POINTS_KEY = "POINTS";
     private final static String PROJECT_NAME = "ds4h_project.json";
     private final static String PROJECT_FOLDER = "DS4H_Project";
     private ExportProject(){
