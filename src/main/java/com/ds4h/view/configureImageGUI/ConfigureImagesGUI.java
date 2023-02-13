@@ -6,21 +6,20 @@ import com.ds4h.model.util.Pair;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
-import ij.process.ByteProcessor;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JButton reset;
-    private final JButton colorButton;
     private final JComboBox<String> comboBox;
+    private final JSlider redSlider, greenSlider, blueSlider;
     private final JSlider slider;
-    private final JLabel labelButton, labelCombo, labelSlider;
+    private final JLabel labelCombo, labelSlider;
     private Color color = Color.RED;
     private final GridBagConstraints constraints;
 
@@ -35,19 +34,26 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.constraints.anchor = GridBagConstraints.WEST;
         this.setLayout(new GridBagLayout());
         this.defaultColors = new LinkedList<>();
+        this.redSlider = new JSlider(0, 255);
+        this.greenSlider = new JSlider(0, 255);
+        this.blueSlider = new JSlider(0, 255);
         this.imagePanels = new LinkedList<>();
         controller.getAlignedImages()
                 .forEach(image -> defaultColors.add(new Pair<>(image.getAlignedImage(),
                         image.getAlignedImage().getImage().getGraphics().getColor())));
         this.reset = new JButton("Reset");
-        this.labelButton = new JLabel("Choose a color for the image");
         this.labelCombo = new JLabel("Choose the Image");
         this.labelSlider = new JLabel("Choos the opacity of the image");
         this.comboBox = new JComboBox<>();
-        this.colorButton = new JButton("Choose color");
         this.slider = new JSlider(0,10);
         this.addComponents();
         this.addListeners();
+    }
+
+    private void configureSlider(final JSlider slider){
+        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintLabels(true);
     }
 
     @Override
@@ -58,45 +64,10 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
 
-        this.colorButton.addActionListener(event -> {
-            color = JColorChooser.showDialog(this, "Choose color", color);
+        this.redSlider.addChangeListener(event -> {
+            final int value = redSlider.getValue();
             final int index = this.comboBox.getSelectedIndex();
-
-
-            /*
-            final ImagePlus img = this.imagePanels.get(index).getImagePlus();
-            final ImageProcessor ip = img.getProcessor();
-            ColorProcessor cp = img.getProcessor().convertToColorProcessor();
-            int width = cp.getWidth();
-            int height = cp.getHeight();
-            int[] pixels = (int[]) cp.getPixels();
-
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    int value = pixels[y * width + x];
-                    int red = (value & 0xff0000) >> 16;
-                    int green = (value & 0xff00) >> 8;
-                    int blue = value & 0xff;
-
-                    // modify the red channel
-                    red = 0;  // set the red channel to max
-                    green = 255;
-                    blue = 0;
-                    // recompose the pixel value
-                    int newValue = (red) | (green) | blue;
-                    pixels[y * width + x] = newValue;
-                }
-            }
-
-            cp.setPixels(pixels);
-            img.updateAndDraw();
-            img.show();
-            */
-            //TODO:SELECT THE INDEXED IMAGE AND CHANGE HIS COLOR
-            //TODO:UNDERSTAND HOW CAN I CHANGE THE BACKGROUND COLOR OF THE IMAGE WITHOUT DESTROY THE IMAGE ITSELF
-            //TODO:TRY WITH THE IMAGEPROCESSOR, CONFIGURING THE IMAGE CHANNEL
-            //TODO:TRY TO CONVERT THE IMAGE TO RGB
-
+            this.imagePanels.get(index).changeRedChannel(value);
         });
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
@@ -122,7 +93,12 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents() {
         this.addElement(this.labelCombo, new JPanel(), this.comboBox);
-        this.addElement(this.labelButton, new JPanel(), this.colorButton);
+        this.addElement(new JLabel("Red channel : "), new JPanel(), this.redSlider);
+        this.addElement(new JLabel("Green channel : "), new JPanel(), this.greenSlider);
+        this.addElement(new JLabel("Blue channel : "), new JPanel(), this.blueSlider);
+        this.configureSlider(this.redSlider);
+        this.configureSlider(this.greenSlider);
+        this.configureSlider(this.blueSlider);
         this.addElement(this.labelSlider, new JPanel(), this.slider);
         this.slider.setMajorTickSpacing(5);
         this.slider.setMinorTickSpacing(1);

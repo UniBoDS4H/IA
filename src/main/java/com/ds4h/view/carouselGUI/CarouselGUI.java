@@ -2,42 +2,44 @@ package com.ds4h.view.carouselGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.overlapImages.OverlapImagesGUI;
+import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 
 public class CarouselGUI extends JFrame implements StandardGUI {
     private static final long serialVersionUID = 1L;
-    private static final int SLIDE_DELAY = 1000; // 5 seconds
     private final List<ImagePlus> images;
     private final CarouselPanel panel;
+    private final JMenuBar menuBar;
+    private final JMenu settings;
+    private final JMenu save;
+    private final SaveImagesGUI saveGui;
+    private final JMenuItem overlappedItem, saveItem;
     private int currentImage;
+    private final AlignmentControllerInterface controller;
 
     public CarouselGUI(final AlignmentControllerInterface controller) {
         this.setTitle("Final Alignment Result");
         this.panel = new CarouselPanel();
-        this.images = controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
+        this.controller = controller;
+        this.images = this.controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
         this.currentImage = 0;
-
+        this.saveGui = new SaveImagesGUI(this.controller);
+        this.menuBar = new JMenuBar();
+        this.settings = new JMenu("Settings");
+        this.save = new JMenu("Save");
+        this.overlappedItem = new JMenuItem("View Overlapped");
+        this.saveItem = new JMenuItem("Save Project");
         // Create a timer to automatically change slides
-
         this.pack();
         this.addListeners();
         this.addComponents();
@@ -65,7 +67,13 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+        this.overlappedItem.addActionListener(event -> {
+            new OverlapImagesGUI(this.controller);
+            this.dispose();
+        });
+        this.saveItem.addActionListener(event -> {
+            this.saveGui.showDialog();
+        });
         this.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {}
@@ -88,6 +96,11 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents() {
         this.add(this.panel);
+        this.setJMenuBar(this.menuBar);
+        this.menuBar.add(this.settings);
+        this.menuBar.add(this.save);
+        this.settings.add(this.overlappedItem);
+        this.save.add(this.saveItem);
         this.setSize(this.panel.getPreferredSize());
     }
     private class CarouselPanel extends JPanel{

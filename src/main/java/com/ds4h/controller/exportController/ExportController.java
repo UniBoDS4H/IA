@@ -14,6 +14,8 @@ public class ExportController {
     }
 
     public static void exportProject(final List<ImageCorners> images, final String path) throws IOException {
-        ExportProject.exportProject(images, path);
+        if(!images.isEmpty()) {
+            ExportProject.exportProject(images, path);
+        }
     }
 }

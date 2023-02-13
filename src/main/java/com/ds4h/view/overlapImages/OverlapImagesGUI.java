@@ -2,6 +2,7 @@ package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -9,6 +10,7 @@ import ij.ImagePlus;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +25,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
     private final JMenu settingsMenu, saveMenu;
-    private final JMenuItem settingsImages, saveImages;
+    private final JMenuItem settingsImages, carouselItem, saveImages;
     private final AlignmentControllerInterface controller;
     public OverlapImagesGUI(final AlignmentControllerInterface controller){
         this.setTitle("Final Result");
@@ -37,6 +39,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.saveMenu = new JMenu("Save");
         this.settingsImages = new JMenuItem("Configure images");
         this.saveImages = new JMenuItem("Save Images");
+        this.carouselItem = new JMenuItem("View as Carousel");
         this.saveGui = new SaveImagesGUI(this.controller);
         this.addComponents();
         // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY (DONE) AND THE RGB COLOR
@@ -61,6 +64,10 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.saveImages.addActionListener(event -> {
             this.saveGui.showDialog();
         });
+        this.carouselItem.addActionListener(event -> {
+            new CarouselGUI(this.controller).showDialog();
+            this.dispose();
+        });
     }
 
     @Override
@@ -70,6 +77,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
         this.settingsMenu.add(this.settingsImages);
+        this.settingsMenu.add(this.carouselItem);
         this.saveMenu.add(this.saveImages);
         this.setJMenuBar(this.menu);
         this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
@@ -81,7 +89,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private void overlapImages(){
         int layer = 0;
         for(AlignedImage image : this.images){
-            final ImagePanel imagePanel = new ImagePanel(image);
+            final ImagePanel imagePanel = new ImagePanel(image.getAlignedImage());
             this.imagePanels.add(imagePanel);
             imagePanel.setBounds(new Rectangle(image.getAlignedImage().getWidth(), image.getAlignedImage().getHeight()));
             imagePanel.setOpaque(false);
@@ -89,44 +97,41 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         }
     }
     public class ImagePanel extends JPanel {
-        private final AlignedImage alignedImage;
+        private ImagePlus alignedImage;
         public final static float DEFAULT_OPACITY = 0.2f;
         private float opacity = DEFAULT_OPACITY;
 
-        public ImagePanel(final AlignedImage image) {
+        public ImagePanel(final ImagePlus image) {
             this.alignedImage = image;
-            this.prova();
             this.setSize(this.getPreferredSize());
         }
 
-        private void prova(){
-            /*
-            BufferedImage originalImage = this.image.getBufferedImage();
-            int width = originalImage.getWidth();
-            int height = originalImage.getHeight();
-            BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-            for (int i = 0; i < this.image.getWidth(); i++) {
-                for (int j = 0; j < this.image.getHeight(); j++) {
-                    if(originalImage.getRGB(i,j) == Color.BLACK.getRGB()) {
-                        newImage.setRGB(i, j, Color.cyan.getRGB());
-                    }
+        public void changeRedChannel(final int intensity){
+            final BufferedImage img = this.getImagePlus().getBufferedImage();
+            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            for(int i = 0; i < img.getWidth(); i++){
+                for(int j = 0; j < img.getHeight(); j++){
+                    Color c = new Color(img.getRGB(i,j));
+                    int r = c.getRed();
+                    int g = c.getGreen();
+                    int b = c.getBlue();
+                    int a = c.getAlpha();
+                    Color nc = new Color(intensity, g, b, a);
+                    image.setRGB(i, j, nc.getRGB());
                 }
             }
-
-            this.image = new ImagePlus("Colored Image", newImage);
-            this.image.show();
-
-             */
+            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
         }
+        public void changeGreenChannel(final int intensity){
 
+        }
+        public void changeBlueChannel(final int intensity){
+
+        }
         public float getOpacity(){
             return this.opacity;
         }
         public ImagePlus getImagePlus(){
-            return this.alignedImage.getAlignedImage();
-        }
-        public AlignedImage getImage(){
             return this.alignedImage;
         }
 
@@ -141,7 +146,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, this.opacity));
-            g2d.drawImage(this.alignedImage.getAlignedImage().getImage(), 0, 0, null);
+            g2d.drawImage(this.alignedImage.getImage(), 0, 0, null);
             g2d.dispose();
         }
         @Override

@@ -1,4 +1,4 @@
-package com.ds4h.model.util.save;
+package com.ds4h.model.util.saveProject;
 
 import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import ij.IJ;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public class SaveImages {
-    private final static String DIRECTORY = "DS4H_Project";
+    private final static String DIRECTORY = "DS4H_AlignedImages";
 
     private SaveImages(){
 

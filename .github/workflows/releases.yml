@@ -21,6 +21,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build Linux JAR
-      run: make build_linux; make create_release
+      run: make create_jar_linux
     - name: Build Windows JAR
-      run: make build_windows; make create_release
+      run: make create_jar_windows
