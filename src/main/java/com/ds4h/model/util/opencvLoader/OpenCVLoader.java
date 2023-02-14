@@ -42,7 +42,7 @@ public class OpenCVLoader {
         */
         final String file = PROJECT_DIRECTORY+SEPARATOR+SOURCE+SEPARATOR+MAIN+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+OPENCV+SEPARATOR+LINUX_LIB+".so";
         loadLib((OPENCV+SEPARATOR),LINUX_LIB);
-        IJ.showMessage(file.toString());
+        IJ.log(file.toString());
         //System.load(file);
     }
 

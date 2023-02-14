@@ -33,13 +33,15 @@ public class Process_Pixels implements PlugIn {
 
 	public static void main(String[] args) throws Exception {
 
-		OpenCVLoader.loadOpenCV();
+
 		new Process_Pixels().run(null);
 	}
 
 
 	@Override
 	public void run(String s) {
+		OpenCVLoader.loadOpenCV();
 		EventQueue.invokeLater(MainMenuGUI::new);
+
 	}
 }
