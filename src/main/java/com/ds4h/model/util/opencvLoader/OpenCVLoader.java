@@ -29,27 +29,19 @@ public class OpenCVLoader {
         }
     }
     private static void loadWindows(){
-        System.load(PROJECT_DIRECTORY+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+WINDOWS_LIB);
+        loadLib(LINUX_LIB, ".dll");
     }
     private static void loadMac(){
-        System.load(PROJECT_DIRECTORY+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+MAC_LIB);
+        loadLib(LINUX_LIB, ".dylib");
     }
     private static void loadLinux(){
-        /*
-        final String tempDir = System.getProperty("java.io.tmpdir");
-        File tempFile = new File(tempDir, LINUX_LIB);
-        final InputStream in = OpenCVLoader.class.getResourceAsStream("/" + LINUX_LIB);
-        */
-        final String file = PROJECT_DIRECTORY+SEPARATOR+SOURCE+SEPARATOR+MAIN+SEPARATOR+RESOURCE_DIRECTORY+SEPARATOR+OPENCV+SEPARATOR+LINUX_LIB+".so";
-        loadLib((OPENCV+SEPARATOR),LINUX_LIB);
-        IJ.showMessage(file.toString());
-        //System.load(file);
+       loadLib(LINUX_LIB, ".so");
     }
 
-    private static void loadLib(String path, String name) {
+    private static void loadLib(String name, String extension) {
         try {
-            InputStream in = OpenCVLoader.class.getResourceAsStream("/" + path + name +".so");
-            File fileOut = File.createTempFile("lib", ".so");
+            InputStream in = OpenCVLoader.class.getResourceAsStream("/opencv/" + name + extension);
+            File fileOut = File.createTempFile("lib", extension);
             try (OutputStream out = FileUtils.openOutputStream(fileOut)) {
                 if (in != null) {
                     IOUtils.copy(in, out);
