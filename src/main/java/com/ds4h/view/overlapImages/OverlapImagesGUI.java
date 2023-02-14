@@ -99,6 +99,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     public class ImagePanel extends JPanel {
         private ImagePlus alignedImage;
         public final static float DEFAULT_OPACITY = 0.2f;
+        private int redValue = 0;
+        private int greenValue = 0;
+        private int blueValue = 0;
         private float opacity = DEFAULT_OPACITY;
 
         public ImagePanel(final ImagePlus image) {
@@ -116,17 +119,55 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
                     int g = c.getGreen();
                     int b = c.getBlue();
                     int a = c.getAlpha();
+                    this.redValue = r;
+                    this.greenValue = g;
+                    this.blueValue = b;
                     Color nc = new Color(intensity, g, b, a);
                     image.setRGB(i, j, nc.getRGB());
                 }
             }
             this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
+            this.repaint();
         }
         public void changeGreenChannel(final int intensity){
-
+            final BufferedImage img = this.getImagePlus().getBufferedImage();
+            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            for(int i = 0; i < img.getWidth(); i++){
+                for(int j = 0; j < img.getHeight(); j++){
+                    Color c = new Color(img.getRGB(i,j));
+                    int r = c.getRed();
+                    int g = c.getGreen();
+                    int b = c.getBlue();
+                    int a = c.getAlpha();
+                    this.redValue = r;
+                    this.greenValue = g;
+                    this.blueValue = b;
+                    Color nc = new Color(r, intensity, b, a);
+                    image.setRGB(i, j, nc.getRGB());
+                }
+            }
+            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
+            this.repaint();
         }
         public void changeBlueChannel(final int intensity){
-
+            final BufferedImage img = this.getImagePlus().getBufferedImage();
+            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            for(int i = 0; i < img.getWidth(); i++){
+                for(int j = 0; j < img.getHeight(); j++){
+                    Color c = new Color(img.getRGB(i,j));
+                    int r = c.getRed();
+                    int g = c.getGreen();
+                    int b = c.getBlue();
+                    int a = c.getAlpha();
+                    this.redValue = r;
+                    this.greenValue = g;
+                    this.blueValue = b;
+                    Color nc = new Color(r, g, intensity, a);
+                    image.setRGB(i, j, nc.getRGB());
+                }
+            }
+            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
+            this.repaint();
         }
         public float getOpacity(){
             return this.opacity;

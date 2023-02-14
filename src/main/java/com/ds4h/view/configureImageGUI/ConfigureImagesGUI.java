@@ -53,7 +53,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private void configureSlider(final JSlider slider){
         slider.setMajorTickSpacing(10);
         slider.setMinorTickSpacing(1);
-        slider.setPaintLabels(true);
+        slider.setPaintTrack(true);
     }
 
     @Override
@@ -69,6 +69,16 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             final int index = this.comboBox.getSelectedIndex();
             this.imagePanels.get(index).changeRedChannel(value);
         });
+        this.greenSlider.addChangeListener(event -> {
+            final int value = greenSlider.getValue();
+            final int index = this.comboBox.getSelectedIndex();
+            this.imagePanels.get(index).changeGreenChannel(value);
+        });
+        this.blueSlider.addChangeListener(event -> {
+            final int value = blueSlider.getValue();
+            final int index = this.comboBox.getSelectedIndex();
+            this.imagePanels.get(index).changeBlueChannel(value);
+        });
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
             this.slider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
@@ -81,6 +91,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.reset.addActionListener(evenet -> {
             this.imagePanels.forEach(imageP -> imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY));
             this.slider.setValue(DEFAULT);
+            //TODO: set default value
         });
 
     }
