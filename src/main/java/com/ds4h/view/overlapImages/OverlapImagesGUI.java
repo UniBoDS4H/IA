@@ -132,9 +132,12 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         public void changeGreenChannel(final int intensity){
             final BufferedImage img = this.getImagePlus().getBufferedImage();
             final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            System.out.println(intensity);
+            /*
             for(int i = 0; i < img.getWidth(); i++){
                 for(int j = 0; j < img.getHeight(); j++){
                     Color c = new Color(img.getRGB(i,j));
+                    Color x = Color.YELLOW;
                     int r = c.getRed();
                     int g = c.getGreen();
                     int b = c.getBlue();
@@ -142,10 +145,11 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
                     this.redValue = r;
                     this.greenValue = g;
                     this.blueValue = b;
-                    Color nc = new Color(r, intensity, b, a);
+                    Color nc = new Color(r, g, b, a );
                     image.setRGB(i, j, nc.getRGB());
                 }
             }
+             */
             this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
             this.repaint();
         }
