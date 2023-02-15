@@ -31,17 +31,18 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.constraints.anchor = GridBagConstraints.WEST;
         this.pointerDimension = new JSlider(1,10);
 
-        this.setActualColors();
+        this.setActualPointerStyles();
 
         this.addListeners();
         this.addComponents();
         this.setFrameSize();
     }
 
-    private void setActualColors() {
+    private void setActualPointerStyles() {
         this.pointerColor.setSelectedItem(this.container.getCornerPanel().getPointerColor());
         this.selectedPointerColor.setSelectedItem(this.container.getCornerPanel().getSelectedPointerColor());
         this.textColor.setSelectedItem(this.container.getCornerPanel().getTextColor());
+        this.pointerDimension.setValue(this.container.getCornerPanel().getPointerDimension());
     }
 
     @Override
@@ -77,6 +78,9 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
                 container.setTextColor(selectedColor);
             }
         });
+        this.pointerDimension.addChangeListener(e->{
+            this.container.getCornerPanel().setPointerDimension(pointerDimension.getValue());
+        });
     }
 
     @Override
@@ -84,6 +88,10 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.addElement(new JLabel("Pointer color: "), new JPanel(), this.pointerColor);
         this.addElement(new JLabel("Selected Pointer color: "), new JPanel(), this.selectedPointerColor);
         this.addElement(new JLabel("Pointer Index color: "), new JPanel(), this.textColor);
+        this.pointerDimension.setMajorTickSpacing(4);
+        this.pointerDimension.setMinorTickSpacing(1);
+        this.pointerDimension.setPaintTicks(true);
+        this.pointerDimension.setPaintLabels(true);
         this.addElement(new JLabel("Pointer dimension: "), new JPanel(), this.pointerDimension);
         this.constraints.gridy++;
     }

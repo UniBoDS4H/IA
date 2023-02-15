@@ -1,11 +1,11 @@
 package com.ds4h.view.cornerSelectorGUI;
+
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import org.opencv.core.Point;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

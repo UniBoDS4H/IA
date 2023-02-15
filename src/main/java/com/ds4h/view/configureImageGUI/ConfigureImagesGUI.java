@@ -35,7 +35,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.colorBox = new JComboBox<>();
         this.reset = new JButton("Reset");
         this.labelCombo = new JLabel("Choose the Image");
-        this.labelSlider = new JLabel("Choos the opacity of the image");
+        this.labelSlider = new JLabel("Choose the opacity of the image");
         this.comboBox = new JComboBox<>();
         this.populateList();
         this.opacitySlider = new JSlider(0,10);

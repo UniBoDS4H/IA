@@ -166,7 +166,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                 .forEach(point->{ //point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
                     g2d.setColor(this.textColor);
                     g2d.setFont(new Font("Serif", Font.BOLD, 16));
-                    g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - 25, (int)point.getKey().y+25);
+                    g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - this.pointerDimension*3-10, (int)point.getKey().y+this.pointerDimension*3+10);
                     //if the corner I'm printing it's not selected I use the not selected color
                     if(!this.container.getSelectedPoints().contains(point.getValue())){
                         g2d.setColor(this.pointerColor);
@@ -174,7 +174,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                         g2d.setColor(this.selectedPointerColor);
                     }
                     g2d.setStroke(new BasicStroke(3));
-                    g2d.drawOval((int)point.getKey().x - this.pointerDimension*2, (int)point.getKey().y - this.pointerDimension*2, this.pointerDimension*4, this.pointerDimension*4);
+                    g2d.drawOval((int)point.getKey().x - this.pointerDimension*3, (int)point.getKey().y - this.pointerDimension*3, this.pointerDimension*6, this.pointerDimension*6);
                     g2d.fillOval((int)point.getKey().x - 3, (int)point.getKey().y - 3, POINT_DIAMETER, POINT_DIAMETER);
                 });
     }
@@ -195,6 +195,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     }
     public void setPointerDimension(int dimension){
         this.pointerDimension = dimension;
+        this.repaint();
     }
 
     public Color getPointerColor() {
