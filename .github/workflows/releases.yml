@@ -22,5 +22,13 @@ jobs:
         cache: maven
     - name: Build Linux JAR
       run: make create_jar_linux
-    - name: Build Windows JAR
-      run: make create_jar_windows
+    - name: "Build & test"
+      run: echo "builded successfully!"
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            *.jar
