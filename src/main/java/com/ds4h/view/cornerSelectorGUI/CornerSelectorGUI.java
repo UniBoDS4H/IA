@@ -1,26 +1,25 @@
 package com.ds4h.view.cornerSelectorGUI;
-
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import org.opencv.core.Point;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
 
 public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     private final CornerController cornerController;
     private final CornerSelectorPanelGUI panel;
-    private ImageCorners image;
+    private final ImageCorners image;
     private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
+
     public CornerSelectorGUI(final ImageCorners image, final CornerController controller){
         this.cornerController = controller;
         this.image = image;
@@ -85,5 +84,21 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     public void clearSelectedPoints() {
         this.selectedPoints.clear();
+    }
+
+    public void setPointerColor(Color selectedColor) {
+        this.panel.setPointerColor(selectedColor);
+    }
+
+    public void setSelectedPointerColor(Color selectedColor) {
+        this.panel.setSelectedPointerColor(selectedColor);
+    }
+
+    public void setTextColor(Color selectedColor) {
+        this.panel.setTextColor(selectedColor);
+    }
+
+    public CornerSelectorPanelGUI getCornerPanel() {
+        return this.panel;
     }
 }
