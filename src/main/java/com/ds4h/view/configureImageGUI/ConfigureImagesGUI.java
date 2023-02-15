@@ -20,7 +20,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JLabel labelCombo, labelSlider;
     private final GridBagConstraints constraints;
 
-    private final static int WIDTH = 700, HEIGHT = 400, DEFAULT = 2;
+    private final static int WIDTH = 700, HEIGHT = 400, DEFAULT = (int)(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY * 10);
     private final static float DIV = 10f;
     private final List<OverlapImagesGUI.ImagePanel> imagePanels;
     private final List<Color> colorList = new LinkedList<>();
