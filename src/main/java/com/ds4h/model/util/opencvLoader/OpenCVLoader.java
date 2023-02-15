@@ -23,7 +23,6 @@ public class OpenCVLoader {
     }
 
     public static void loadOpenCV(){
-        IJ.showMessage(OS);
         if(OS.contains(WINDOWS)){
             OpenCVLoader.loadWindows();
         }else if(OS.contains(MAC)){
