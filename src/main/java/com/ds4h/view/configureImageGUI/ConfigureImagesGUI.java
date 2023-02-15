@@ -131,7 +131,12 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addListeners() {
-
+        this.colorBox.addActionListener(event -> {
+            final int index = this.colorBox.getSelectedIndex();
+            final int indexImage = this.comboBox.getSelectedIndex();
+            final Color color = this.colorBox.getItemAt(index);
+            this.imagePanels.get(indexImage).changeColor(color);
+        });
 
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
@@ -143,9 +148,12 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             this.imagePanels.get(index).setOpacity(value);
         });
         this.reset.addActionListener(evenet -> {
-            this.imagePanels.forEach(imageP -> imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY));
+            this.imagePanels.forEach(imageP -> {
+                imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY);
+                imageP.resetImage();
+            });
             this.opacitySlider.setValue(DEFAULT);
-            //TODO: set default value
+
         });
 
     }
@@ -158,13 +166,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents() {
         this.addElement(this.labelCombo, new JPanel(), this.comboBox);
-        this.addElement(new JLabel("Red channel : "), new JPanel(), this.redSlider);
-        this.addElement(new JLabel("Green channel : "), new JPanel(), this.greenSlider);
-        this.addElement(new JLabel("Blue channel : "), new JPanel(), this.blueSlider);
         this.addElement(new JLabel("Pick a color : "), new JPanel(), this.colorBox);
-        this.configureSlider(this.redSlider);
-        this.configureSlider(this.greenSlider);
-        this.configureSlider(this.blueSlider);
         this.addElement(this.labelSlider, new JPanel(), this.opacitySlider);
         this.opacitySlider.setMajorTickSpacing(5);
         this.opacitySlider.setMinorTickSpacing(1);

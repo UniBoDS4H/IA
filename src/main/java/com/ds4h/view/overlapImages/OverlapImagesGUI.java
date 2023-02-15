@@ -98,75 +98,27 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     }
     public class ImagePanel extends JPanel {
         private ImagePlus alignedImage;
-        public final static float DEFAULT_OPACITY = 0.2f;
-        private int redValue = 0;
-        private int greenValue = 0;
-        private int blueValue = 0;
+        private final ImagePlus clearImage;
+        public final static float DEFAULT_OPACITY = 0.5f;
         private float opacity = DEFAULT_OPACITY;
 
         public ImagePanel(final ImagePlus image) {
+            this.clearImage = image;
             this.alignedImage = image;
             this.setSize(this.getPreferredSize());
         }
 
-        public void changeRedChannel(final int intensity){
-            final BufferedImage img = this.getImagePlus().getBufferedImage();
+        public void changeColor(final Color color){
+            final BufferedImage img = this.clearImage.getBufferedImage();
             final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
             for(int i = 0; i < img.getWidth(); i++){
                 for(int j = 0; j < img.getHeight(); j++){
                     Color c = new Color(img.getRGB(i,j));
-                    int r = c.getRed();
-                    int g = c.getGreen();
-                    int b = c.getBlue();
+                    int r = c.getRed() + color.getRed();
+                    int g = c.getGreen() + color.getGreen();;
+                    int b = c.getBlue() + color.getBlue();;
                     int a = c.getAlpha();
-                    this.redValue = r;
-                    this.greenValue = g;
-                    this.blueValue = b;
-                    Color nc = new Color(intensity, g, b, a);
-                    image.setRGB(i, j, nc.getRGB());
-                }
-            }
-            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
-            this.repaint();
-        }
-        public void changeGreenChannel(final int intensity){
-            final BufferedImage img = this.getImagePlus().getBufferedImage();
-            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            System.out.println(intensity);
-            /*
-            for(int i = 0; i < img.getWidth(); i++){
-                for(int j = 0; j < img.getHeight(); j++){
-                    Color c = new Color(img.getRGB(i,j));
-                    Color x = Color.YELLOW;
-                    int r = c.getRed();
-                    int g = c.getGreen();
-                    int b = c.getBlue();
-                    int a = c.getAlpha();
-                    this.redValue = r;
-                    this.greenValue = g;
-                    this.blueValue = b;
-                    Color nc = new Color(r, g, b, a );
-                    image.setRGB(i, j, nc.getRGB());
-                }
-            }
-             */
-            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
-            this.repaint();
-        }
-        public void changeBlueChannel(final int intensity){
-            final BufferedImage img = this.getImagePlus().getBufferedImage();
-            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            for(int i = 0; i < img.getWidth(); i++){
-                for(int j = 0; j < img.getHeight(); j++){
-                    Color c = new Color(img.getRGB(i,j));
-                    int r = c.getRed();
-                    int g = c.getGreen();
-                    int b = c.getBlue();
-                    int a = c.getAlpha();
-                    this.redValue = r;
-                    this.greenValue = g;
-                    this.blueValue = b;
-                    Color nc = new Color(r, g, intensity, a);
+                    Color nc = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255), a);
                     image.setRGB(i, j, nc.getRGB());
                 }
             }
@@ -178,6 +130,11 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         }
         public ImagePlus getImagePlus(){
             return this.alignedImage;
+        }
+
+        public void resetImage(){
+            this.alignedImage = this.clearImage;
+            this.repaint();
         }
 
         public void setOpacity(final float opacity) {
