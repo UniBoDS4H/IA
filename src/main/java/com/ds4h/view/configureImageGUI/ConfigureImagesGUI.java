@@ -7,14 +7,15 @@ import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JButton reset;
     private final JComboBox<String> comboBox;
-    private final JSlider opacitySlider, redSlider, greenSlider, blueSlider;
-    private final JComboBox<JLabel> colorBox;
+    private final JSlider opacitySlider;
+    private final JComboBox<Color> colorBox;
     private final AlignmentControllerInterface controller;
     private final JLabel labelCombo, labelSlider;
     private final GridBagConstraints constraints;
@@ -30,9 +31,6 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.constraints.insets = new Insets(0, 0, 5, 5);
         this.constraints.anchor = GridBagConstraints.WEST;
         this.setLayout(new GridBagLayout());
-        this.redSlider = new JSlider(0, 255);
-        this.greenSlider = new JSlider(0, 255);
-        this.blueSlider = new JSlider(0, 255);
         this.imagePanels = new LinkedList<>();
         this.colorBox = new JComboBox<>();
         this.reset = new JButton("Reset");
@@ -54,17 +52,70 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         colorList.add(Color.CYAN);
         colorList.add(Color.PINK);
         colorList.add(Color.ORANGE);
-        //this.populateColors();
+        this.populateColors();
     }
 
     private void populateColors(){
-        int index = 0;
+        DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<Color>();
         for(Color color : colorList){
-            final JLabel label = new JLabel();
-            label.setBackground(color);
-            this.colorBox.insertItemAt(label, index);
-            index++;
+            colorModel.addElement(color);
         }
+        this.colorBox.setModel(colorModel);
+
+        this.colorBox.setRenderer(new ListCellRenderer<Color>() {
+            private final JTextField renderer = new JTextField();
+            @Override
+            public Component getListCellRendererComponent(JList<? extends Color> list, Color value, int index, boolean isSelected, boolean cellHasFocus) {
+                renderer.setText(" ");
+                renderer.setBackground(value);
+                renderer.setPreferredSize(new Dimension(50, 20));
+                return renderer;
+            }
+        });
+        this.colorBox.setEditor(new ComboBoxEditor() {
+            private final JTextField editor = new JTextField();
+            private Color color;
+
+            @Override
+            public Component getEditorComponent() {
+                return editor;
+            }
+
+            @Override
+            public void setItem(Object anObject) {
+                if (anObject instanceof Color) {
+                    color = (Color) anObject;
+                    editor.setText("");
+                    editor.setOpaque(true);
+                    editor.setBackground(color);
+                }
+            }
+
+            @Override
+            public Object getItem() {
+                return color;
+            }
+
+            @Override
+            public void selectAll() {
+
+            }
+
+            @Override
+            public void addActionListener(ActionListener l) {
+
+            }
+
+            @Override
+            public void removeActionListener(ActionListener l) {
+
+            }
+        });
+        this.colorBox.setEnabled(true);
+        this.colorBox.setEditable(true);
+        // Set a custom editor for the JComboBox
+
+
     }
 
     private void configureSlider(final JSlider slider){
@@ -81,21 +132,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
 
-        this.redSlider.addChangeListener(event -> {
-            final int value = redSlider.getValue();
-            final int index = this.comboBox.getSelectedIndex();
-            this.imagePanels.get(index).changeRedChannel(value);
-        });
-        this.greenSlider.addChangeListener(event -> {
-            final int value = greenSlider.getValue();
-            final int index = this.comboBox.getSelectedIndex();
-            this.imagePanels.get(index).changeGreenChannel(value);
-        });
-        this.blueSlider.addChangeListener(event -> {
-            final int value = blueSlider.getValue();
-            final int index = this.comboBox.getSelectedIndex();
-            this.imagePanels.get(index).changeBlueChannel(value);
-        });
+
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
             this.opacitySlider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));

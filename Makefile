@@ -42,7 +42,7 @@ build_windows:
 create_release:
 	mvn package -P uberjar
 
-create_jar_linux: build_linux create_release
+create_jar_linux: create_release
 	echo "JAR for linux created"
 
 create_jar_windows: build_windows create_release
