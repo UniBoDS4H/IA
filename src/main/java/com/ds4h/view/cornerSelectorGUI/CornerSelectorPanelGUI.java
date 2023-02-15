@@ -18,6 +18,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     private Color selectedPointerColor;
     private Color textColor;
     private int pointerDimension;
+    private Point pointToEdit;
 
     public CornerSelectorPanelGUI(CornerSelectorGUI container) {
         this.container = container;
@@ -53,10 +54,14 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
 
             @Override
             public void mousePressed(MouseEvent e) {
+                pointToEdit = null;
                 Point point = getMatIndexFromPoint(new Point(e.getX(),e.getY()));
                 if(imageContains(point)){//point already present in the image
                     Point actualPoint = getActualPoint(point); //getting the exact pressed point
                     referencePoint = actualPoint;
+                    if(container.getSelectedPoints().contains(actualPoint) && container.getSelectedPoints().size() == 1){
+                        pointToEdit = actualPoint;
+                    }
 
                     if(e.isControlDown()){
                         if(container.getSelectedPoints().contains(actualPoint)){//if the point is already selected
@@ -87,7 +92,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         this.textColor = Color.YELLOW;
         this.pointerColor = Color.RED;
         this.selectedPointerColor = Color.YELLOW;
-        this.pointerDimension = 7;
+        this.pointerDimension = 5;
     }
 
     private void moveAllSelected(Point oldPoint, Point newPoint){
@@ -154,6 +159,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
 
     @Override
     public void paintComponent(Graphics g) {
+        this.removeAll();
         Graphics2D g2d = (Graphics2D) g;
         if(this.currentImage != null){
             super.paintComponent(g);
@@ -163,9 +169,23 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         Arrays.stream(this.currentImage.getCorners())
                 .map(p-> new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p))
                 .forEach(point->{ //point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
+                    Font f = new Font("Serif", Font.BOLD, 16);
                     g2d.setColor(this.textColor);
-                    g2d.setFont(new Font("Serif", Font.BOLD, 16));
-                    g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())),(int)point.getKey().x - this.pointerDimension*3-12, (int)point.getKey().y+this.pointerDimension*3+12);
+                    g2d.setFont(f);
+                    int textX = (int)point.getKey().x - this.pointerDimension*3-12;
+                    int textY = (int)point.getKey().y+this.pointerDimension*3+12;
+                    if(this.pointToEdit != null && this.pointToEdit.equals(point.getValue())){
+                        JTextField textField = new JTextField();
+                        textField.setBounds(textX-5, textY-20, 25, 25); // x, y, width, height
+                        textField.setFont(f);
+                        textField.requestFocus();
+                        textField.setHorizontalAlignment(SwingConstants.CENTER);
+                        textField.setText(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())));
+                        this.setLayout(null); // set layout to null to position components manually
+                        this.add(textField);
+                    }else{
+                        g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())), textX, textY);
+                    }
                     //if the corner I'm printing it's not selected I use the not selected color
                     if(!this.container.getSelectedPoints().contains(point.getValue())){
                         g2d.setColor(this.pointerColor);

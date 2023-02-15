@@ -88,7 +88,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.addElement(new JLabel("Pointer color: "), new JPanel(), this.pointerColor);
         this.addElement(new JLabel("Selected Pointer color: "), new JPanel(), this.selectedPointerColor);
         this.addElement(new JLabel("Pointer Index color: "), new JPanel(), this.textColor);
-        this.pointerDimension.setMajorTickSpacing(4);
+        this.pointerDimension.setMajorTickSpacing(9);
         this.pointerDimension.setMinorTickSpacing(1);
         this.pointerDimension.setPaintTicks(true);
         this.pointerDimension.setPaintLabels(true);
