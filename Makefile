@@ -42,6 +42,9 @@ build_windows:
 create_release:
 	mvn package -P uberjar
 
+create_jar: create_release
+        echo "Jar created successfully!!"
+
 create_jar_linux: create_release
 	echo "JAR for linux created"
 
