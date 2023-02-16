@@ -106,4 +106,16 @@ public class ImageCorners {
     public String toString() {
         return this.getFile().getName();
     }
+
+    public void editCornerIndex(Point pointToEdit, int value) {
+        value--;
+        if(value <= this.corners.size()){
+            Point temp = this.corners.get(value);
+            int tempIndex = this.corners.indexOf(pointToEdit);
+            this.corners.set(value, pointToEdit);
+            this.corners.set(tempIndex, temp);
+        }else{
+            throw new IllegalArgumentException();
+        }
+    }
 }

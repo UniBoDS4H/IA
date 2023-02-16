@@ -3,6 +3,7 @@ import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.CoordinateConverter;
 import org.opencv.core.Point;
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -19,6 +20,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     private Color textColor;
     private int pointerDimension;
     private Point pointToEdit;
+    private JFormattedTextField pointInputBox;
 
     public CornerSelectorPanelGUI(CornerSelectorGUI container) {
         this.container = container;
@@ -54,23 +56,19 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
 
             @Override
             public void mousePressed(MouseEvent e) {
-                pointToEdit = null;
                 Point point = getMatIndexFromPoint(new Point(e.getX(),e.getY()));
                 if(imageContains(point)){//point already present in the image
                     Point actualPoint = getActualPoint(point); //getting the exact pressed point
                     referencePoint = actualPoint;
-                    if(container.getSelectedPoints().contains(actualPoint) && container.getSelectedPoints().size() == 1){
-                        pointToEdit = actualPoint;
-                    }
 
-                    if(e.isControlDown()){
-                        if(container.getSelectedPoints().contains(actualPoint)){//if the point is already selected
+                    if (e.isControlDown()) {
+                        if (container.getSelectedPoints().contains(actualPoint)) {//if the point is already selected
                             container.removeSelectedPoint(actualPoint);
-                        }else{
+                        } else {
                             container.addSelectedPoint(actualPoint);
                         }
-                    }else{
-                        if(!container.getSelectedPoints().contains(actualPoint)){
+                    } else {
+                        if (!container.getSelectedPoints().contains(actualPoint)) {
                             container.clearSelectedPoints();
                             container.addSelectedPoint(actualPoint);
                         }
@@ -93,6 +91,14 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         this.pointerColor = Color.RED;
         this.selectedPointerColor = Color.YELLOW;
         this.pointerDimension = 5;
+    }
+    private NumberFormatter getFormatter(){
+        NumberFormatter formatter = new NumberFormatter();
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setMaximum(Integer.MAX_VALUE);
+        formatter.setAllowsInvalid(false);
+        return formatter;
     }
 
     private void moveAllSelected(Point oldPoint, Point newPoint){
@@ -175,14 +181,13 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                     int textX = (int)point.getKey().x - this.pointerDimension*3-12;
                     int textY = (int)point.getKey().y+this.pointerDimension*3+12;
                     if(this.pointToEdit != null && this.pointToEdit.equals(point.getValue())){
-                        JTextField textField = new JTextField();
-                        textField.setBounds(textX-5, textY-20, 25, 25); // x, y, width, height
-                        textField.setFont(f);
-                        textField.requestFocus();
-                        textField.setHorizontalAlignment(SwingConstants.CENTER);
-                        textField.setText(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())));
+                        this.pointInputBox.setBounds(textX-5, textY-20, 25, 25); // x, y, width, height
+                        this.pointInputBox.setFont(f);
+                        this.pointInputBox.requestFocus();
+                        this.pointInputBox.setHorizontalAlignment(SwingConstants.CENTER);
+                        this.pointInputBox.setText(String.valueOf(this.currentImage.getIndexOfCorner(point.getValue())));
                         this.setLayout(null); // set layout to null to position components manually
-                        this.add(textField);
+                        this.add(pointInputBox);
                     }else{
                         g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())), textX, textY);
                     }
@@ -231,5 +236,14 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
 
     public int getPointerDimension(){
         return this.pointerDimension;
+    }
+
+    public void editPoint() {
+        pointToEdit = referencePoint;
+        pointInputBox = new JFormattedTextField(getFormatter());
+        this.repaint();
+    }
+    public void savePoint(){
+        currentImage.editCornerIndex(pointToEdit, Integer.parseInt(pointInputBox.getText()));
     }
 }
