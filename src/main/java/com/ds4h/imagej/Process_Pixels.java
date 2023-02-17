@@ -16,6 +16,8 @@ import ij.plugin.PlugIn;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * A template for processing each pixel of either
@@ -32,8 +34,11 @@ public class Process_Pixels implements PlugIn {
 
 
 	public static void main(String[] args) throws Exception {
-
-
+		final String date = String.valueOf(LocalDate.now().getYear()) +
+				String.valueOf(LocalDate.now().getMonthValue())
+				+ String.valueOf(LocalDate.now().getDayOfMonth());
+		final String hour = String.valueOf(LocalTime.now().getHour()) + String.valueOf(LocalTime.now().getMinute());
+		System.out.println(hour);
 		new Process_Pixels().run(null);
 	}
 
