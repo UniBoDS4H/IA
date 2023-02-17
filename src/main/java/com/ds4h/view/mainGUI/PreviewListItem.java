@@ -19,10 +19,12 @@ public class PreviewListItem extends JPanel {
     private final CornerController controller;
     private final ImageCorners image;
     private final PreviewImagesPane container;
+    private final CornerSelectorGUI cornerSelector;
     PreviewListItem(CornerController controller, ImageCorners image, PreviewImagesPane container){
         this.container = container;
         this.controller = controller;
         this.image = image;
+        this.cornerSelector = new CornerSelectorGUI(this.image, this.controller);
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
         this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
@@ -45,7 +47,7 @@ public class PreviewListItem extends JPanel {
                 // Set the clicked image as the current image
                 container.setCurrentPanel(PreviewListItem.this);
                 setSelectedPanel();
-                new CornerSelectorGUI(image, controller).showDialog();
+                cornerSelector.showDialog();
             }
         });
     }
