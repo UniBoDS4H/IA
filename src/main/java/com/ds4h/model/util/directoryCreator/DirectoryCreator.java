@@ -7,13 +7,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class DirectoryCreator {
+    private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private DirectoryCreator(){
 
     }
 
     public static String createTemporaryDirectory(final String dirName){
-        final String path = System.getProperty("java.io.tmpdir");
-        return DirectoryCreator.createDirectory(path, dirName);
+        return DirectoryCreator.createDirectory(TEMPORARY_PATH, dirName);
     }
 
     public static String createDirectory(final String path, final String dirName){
@@ -21,20 +21,6 @@ public class DirectoryCreator {
         final String baseDirectoryName = path+"/"+ finalName;
         File directory = new File(baseDirectoryName);
         return directory.mkdir() ? finalName : "";
-            /*
-        }else{
-            int counter = 1;
-            String directoryName = dirName;
-            String name = dirName;
-            while(directory.exists()){
-                directoryName = baseDirectoryName+"-"+counter;
-                name = dirName + "-" + counter;
-                directory = new File(directoryName);
-                counter++;
-            }
-            return directory.mkdirs() ? name : "";
-        }
-        */
     }
 
     private static String createName(final String baseName){

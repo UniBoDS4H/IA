@@ -1,10 +1,13 @@
 package com.ds4h.controller.cornerController;
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.reuse.ReuseSources;
 import ij.ImagePlus;
 import ij.io.Opener;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,5 +30,13 @@ public class CornerController {
 
     public void changeTarget(ImageCorners newTarget){
         this.cornerManager.setAsSource(newTarget);
+    }
+
+    public void reuseSource(final List<AlignedImage> alignedImages) throws FileNotFoundException {
+        final List<ImageCorners> images = ReuseSources.reuseSources(this.cornerManager, alignedImages);
+        if(!images.isEmpty()) {
+            this.cornerManager.clearList();
+            this.cornerManager.addImages(images);
+        }
     }
 }

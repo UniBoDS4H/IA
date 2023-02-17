@@ -29,6 +29,10 @@ public class CornerManager {
         }
     }
 
+    public void clearList(){
+        this.imagesWithCorners.clear();
+    }
+
     public List<ImageCorners> getCornerImagesImages(){
         return new ArrayList<>(this.imagesWithCorners);
     }

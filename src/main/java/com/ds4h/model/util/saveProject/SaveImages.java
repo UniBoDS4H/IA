@@ -11,7 +11,8 @@ import java.util.List;
 
 
 public class SaveImages {
-    private final static String DIRECTORY = "DS4H_AlignedImages";
+    private final static String DIRECTORY = "DS4H_AlignedImages", TMP_DIRECTORY = "TMP_DS4H_AlignedImages";
+    private final static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
 
     private SaveImages(){
 
@@ -24,6 +25,14 @@ public class SaveImages {
         }else{
             SaveImages.save(images, path);
         }
+    }
+
+    public static String saveTMPImages(final List<ImagePlus> images){
+        final String dir = DirectoryCreator.createTemporaryDirectory(TMP_DIRECTORY);
+        if(!dir.isEmpty()){
+            SaveImages.save(images, TEMPORARY_PATH+ "/" + dir);
+        }
+        return TEMPORARY_PATH + "/" + dir;
     }
 
 
