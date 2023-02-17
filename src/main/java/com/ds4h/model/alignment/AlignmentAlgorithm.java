@@ -29,7 +29,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
     }
 
-    protected Optional<Pair<ImagePlus, Mat>> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
+    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
         throw new NoSuchMethodException("Method not implemented");
     }
 
@@ -57,8 +57,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
             images.add(new AlignedImage(source.getMatImage(), source.getImage()));
             try {
                 for(ImageCorners image : cornerManager.getImagesToAlign()){
-                    final Optional<Pair<ImagePlus, Mat>> output = this.align(source, image);
-                    output.map(out -> new AlignedImage(out.getSecond(), out.getFirst())).ifPresent(images::add);
+                    final Optional<AlignedImage> output = this.align(source, image);
+                    output.ifPresent(images::add);
                 }
             }catch (Exception e){
                 IJ.showMessage(e.getMessage());

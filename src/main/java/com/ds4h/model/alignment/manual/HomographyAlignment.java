@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.manual;
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.Pair;
@@ -27,7 +28,7 @@ public class HomographyAlignment extends AlignmentAlgorithm {
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected   Optional<Pair<ImagePlus, Mat>> align(final ImageCorners source, final ImageCorners target){
+    protected   Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
         try {
             final MatOfPoint2f referencePoint = source.getMatOfPoint();
             final MatOfPoint2f targetPoint = target.getMatOfPoint();
@@ -37,7 +38,7 @@ public class HomographyAlignment extends AlignmentAlgorithm {
             final Mat warpedMat = new Mat();
             Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(),Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
             final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
-            return finalImage.map(image -> new Pair<>(image, warpedMat));
+            return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
         }catch (Exception ex){
             IJ.showMessage(ex.getMessage());
         }

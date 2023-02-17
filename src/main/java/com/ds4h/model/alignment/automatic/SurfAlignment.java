@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic;
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
@@ -38,7 +39,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
      * @return : the target image aligned to the source image
      */
     @Override
-    protected Optional<Pair<ImagePlus, Mat>> align(final ImageCorners sourceImage, final ImageCorners targetImage){
+    protected Optional<AlignedImage> align(final ImageCorners sourceImage, final ImageCorners targetImage){
 
         try {
             //sourceImage.getImage().show();
@@ -123,7 +124,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
             // Align the first image to the second image using the homography matrix
             Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
             final Optional<ImagePlus> finalImage = this.convertToImage(targetImage.getFile(), alignedImage1);
-            return finalImage.map(imagePlus -> new Pair<>(imagePlus, alignedImage1));
+            return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
         }
