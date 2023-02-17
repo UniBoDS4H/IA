@@ -239,6 +239,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     }
 
     public void editPoint() {
+        System.out.println(referencePoint);
         pointToEdit = referencePoint;
         pointInputBox = new JFormattedTextField(getFormatter());
         this.repaint();
