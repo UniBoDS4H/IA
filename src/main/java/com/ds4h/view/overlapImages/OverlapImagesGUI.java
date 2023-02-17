@@ -64,7 +64,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addListeners() {
-
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.settingsImages.addActionListener(event -> {
             this.configureImagesGUI.setElements(this.imagePanels);
