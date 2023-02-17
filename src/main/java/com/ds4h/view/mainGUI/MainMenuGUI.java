@@ -140,7 +140,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
             ManualAlignmentController m = new ManualAlignmentController();
             m.homographyAlignment(this.cornerControler.getCornerManager());
-            new CarouselGUI(m);
+            new CarouselGUI(m, this.cornerControler, this.imagesPreview);
 
         });
 
@@ -179,7 +179,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             a.surfAlignment(this.cornerControler.getCornerManager());
             //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
             //new CarouselGUI(a.getAlignedImages());
-            new OverlapImagesGUI(a);
+            new OverlapImagesGUI(a, this.cornerControler, this.imagesPreview);
         });
 
         addWindowListener(new WindowAdapter() {
@@ -214,5 +214,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         // Set the size of the frame to be half of the screen width and height
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
+    }
+
+    public void reloadImages(){
+        this.imagesPreview.showPreviewImages();
     }
 }

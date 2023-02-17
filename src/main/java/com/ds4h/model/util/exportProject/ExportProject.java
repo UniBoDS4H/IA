@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//TODO : ADD COLORS INFORMATIONS FOR POINTS
+//TODO : ADD INFORMATIONS ABOUT TARGET
+
 public class ExportProject {
     public final static String FILE_KEY = "FILE_NAME";
     public final static String POINTS_KEY = "POINTS";

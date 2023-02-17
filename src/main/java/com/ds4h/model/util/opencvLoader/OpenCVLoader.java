@@ -14,6 +14,7 @@ public class OpenCVLoader {
     private static final String WINDOWS = "windows", MAC = "mac", LINUX = "linux", ARM = "arm", ARMV = "armv";
     private static final String WINDOWS_FORMAT = ".dll", MAC_FORMAT = ".dylib", LINUX_FORMAT = ".so";
     private static final String TMP_LIBRARY_NAME = "DS4H_OpenCVLibrary";
+    private final static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String WINDOWS_LIB = "opencv_java455",
             MAC_LIB_INTEL = "opencv_java455",
             MAC_LIB_ARM = "libopencv_arm_java455",
@@ -52,18 +53,37 @@ public class OpenCVLoader {
 
     private static void loadLib(final String name, final String extension) {
         try {
-            final InputStream in = OpenCVLoader.class.getResourceAsStream(OPENCV + name + extension);
-            final File fileOut = File.createTempFile(TMP_LIBRARY_NAME, extension);
-            try (final OutputStream out = FileUtils.openOutputStream(fileOut)) {
-                if (Objects.nonNull(in)) {
-                    IOUtils.copy(in, out);
-                    in.close();
-                    out.close(); // Without this line it doesn't work on windows, so, just leave it there, avoid even the check for the OS
-                    System.load(fileOut.toString());
+            if (!OpenCVLoader.alreadyLoaded()) {
+                final InputStream in = OpenCVLoader.class.getResourceAsStream(OPENCV + name + extension);
+                final File fileOut = File.createTempFile(TMP_LIBRARY_NAME, extension);
+                try (final OutputStream out = FileUtils.openOutputStream(fileOut)) {
+                    if (Objects.nonNull(in)) {
+                        IOUtils.copy(in, out);
+                        in.close();
+                        out.close(); // Without this line it doesn't work on windows, so, just leave it there, avoid even the check for the OS
+                        System.load(fileOut.toString());
+                    }
+                } catch (IOException e) {
+                    IJ.showMessage(e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             IJ.showMessage(e.getMessage());
         }
+    }
+    private static boolean alreadyLoaded(){
+        final File tmpDirectory = new File(TEMPORARY_PATH);
+        if(tmpDirectory.isDirectory()){
+            final File[] files = tmpDirectory.listFiles();
+            if(Objects.nonNull(files)) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().contains(TMP_LIBRARY_NAME)) {
+                        System.load(file.toString());
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

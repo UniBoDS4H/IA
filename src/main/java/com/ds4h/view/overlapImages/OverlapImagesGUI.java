@@ -1,9 +1,11 @@
 package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
+import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
@@ -11,6 +13,7 @@ import ij.ImagePlus;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,12 +27,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final SaveImagesGUI saveGui;
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
-    private final JMenu settingsMenu, saveMenu;
-    private final JMenuItem settingsImages, carouselItem, saveImages;
+    private final JMenu settingsMenu, saveMenu, reuseMenu;
+    private final JMenuItem settingsImages, carouselItem, saveImages, reuseItem;
     private final AlignmentControllerInterface controller;
-    public OverlapImagesGUI(final AlignmentControllerInterface controller){
+    private final CornerController cornerController;
+    private final PreviewImagesPane previewImagesPane;
+    public OverlapImagesGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
         this.setTitle("Final Result");
         this.controller = controller;
+        this.previewImagesPane = previewImagesPane;
+        this.cornerController = cornerController;
         this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
         this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
@@ -37,9 +44,11 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
         this.saveMenu = new JMenu("Save");
+        this.reuseMenu = new JMenu("Reuse");
         this.settingsImages = new JMenuItem("Configure images");
         this.saveImages = new JMenuItem("Save Images");
         this.carouselItem = new JMenuItem("View as Carousel");
+        this.reuseItem = new JMenuItem("Reuse as Source");
         this.saveGui = new SaveImagesGUI(this.controller);
         this.addComponents();
         // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY (DONE) AND THE RGB COLOR
@@ -55,7 +64,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addListeners() {
-
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.settingsImages.addActionListener(event -> {
             this.configureImagesGUI.setElements(this.imagePanels);
@@ -65,8 +73,17 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.saveGui.showDialog();
         });
         this.carouselItem.addActionListener(event -> {
-            new CarouselGUI(this.controller).showDialog();
+            new CarouselGUI(this.controller, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
+        });
+        this.reuseItem.addActionListener(event -> {
+            try {
+                this.cornerController.reuseSource(this.controller.getAlignedImages());
+                this.previewImagesPane.showPreviewImages();
+                this.dispose();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
@@ -76,9 +93,11 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.add(this.panel);
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
+        this.menu.add(this.reuseMenu);
         this.settingsMenu.add(this.settingsImages);
         this.settingsMenu.add(this.carouselItem);
         this.saveMenu.add(this.saveImages);
+        this.reuseMenu.add(this.reuseItem);
         this.setJMenuBar(this.menu);
         this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
                     .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),

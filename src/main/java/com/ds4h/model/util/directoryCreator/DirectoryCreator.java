@@ -1,28 +1,38 @@
 package com.ds4h.model.util.directoryCreator;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class DirectoryCreator {
+    private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private DirectoryCreator(){
 
     }
 
+    public static String createTemporaryDirectory(final String dirName){
+        return DirectoryCreator.createDirectory(TEMPORARY_PATH, dirName);
+    }
+
     public static String createDirectory(final String path, final String dirName){
-        final String baseDirectoryName = path+"/"+ dirName;
+        final String finalName = DirectoryCreator.createName(dirName);
+        final String baseDirectoryName = path+"/"+ finalName;
         File directory = new File(baseDirectoryName);
-        if(!directory.exists()){
-            return directory.mkdir() ? dirName : "";
-        }else{
-            int counter = 1;
-            String directoryName = dirName;
-            String name = dirName;
-            while(directory.exists()){
-                directoryName = baseDirectoryName+"-"+counter;
-                name = dirName + "-" + counter;
-                directory = new File(directoryName);
-                counter++;
-            }
-            return directory.mkdirs() ? name : "";
-        }
+        return directory.mkdir() ? finalName : "";
+    }
+
+    private static String createName(final String baseName){
+        final LocalDate date = LocalDate.now();
+        final LocalTime time = LocalTime.now();
+        // Extract Year, Month and Day
+        final String year = String.valueOf(date.getYear());
+        final String month = date.getMonthValue() <= 9 ? "0" + String.valueOf(date.getMonthValue()) : String.valueOf(date.getMonthValue());
+        final String day = date.getDayOfMonth() <= 9 ?  "0" + String.valueOf(date.getDayOfMonth()) : String.valueOf(date.getDayOfMonth());
+        //Extract Hour and Minute
+        final String hour = time.getHour() <= 9 ?  "0" + String.valueOf(time.getHour()) : String.valueOf(time.getHour());
+        final String minute = time.getMinute() <= 9 ?  "0" + String.valueOf(time.getMinute()) : String.valueOf(time.getMinute());
+        return (year+month+day+"_"+hour+minute + "_" + baseName);
     }
 }
