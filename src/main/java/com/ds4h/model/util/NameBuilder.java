@@ -25,8 +25,6 @@ public class NameBuilder {
             //TODO: FIX THIS, THE SEPARATOR IS NOT CORRECT
             this.finalName = fileNameWithoutExtension+"_"+NameBuilder.TAG_NAME+NameBuilder.DOT+fileExtension;
         }
-        System.out.println( " " +!this.finalName.isEmpty()
-                + " " + this.finalName.contains("\\.") + Arrays.toString(this.finalName.split("\\.")));
         return this;
     }
     public String getFinalName(){

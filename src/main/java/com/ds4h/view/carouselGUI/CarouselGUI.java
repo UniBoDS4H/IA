@@ -5,6 +5,7 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
+import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
@@ -23,9 +24,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private final CarouselPanel panel;
     private final JMenuBar menuBar;
     private final JMenu settings;
-    private final JMenu save;
+    private final JMenu save, reuse;
     private final SaveImagesGUI saveGui;
-    private final JMenuItem overlappedItem, saveItem;
+    private final JMenuItem overlappedItem, saveItem, reuseItem;
     private int currentImage;
     private final AlignmentControllerInterface controller;
     private final CornerController cornerController;
@@ -42,7 +43,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.saveGui = new SaveImagesGUI(this.controller);
         this.menuBar = new JMenuBar();
         this.settings = new JMenu("Settings");
+        this.reuse = new JMenu("Reuse");
         this.save = new JMenu("Save");
+        this.reuseItem = new JMenuItem("Reuse as resource");
         this.overlappedItem = new JMenuItem("View Overlapped");
         this.saveItem = new JMenuItem("Save Project");
         // Create a timer to automatically change slides
@@ -97,6 +100,10 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             @Override
             public void keyReleased(KeyEvent e) {}
         });
+        this.reuseItem.addActionListener(event -> {
+            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.cornerController, this.controller);
+            reuseGUI.showDialog();
+        });
     }
 
     @Override
@@ -105,8 +112,10 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.setJMenuBar(this.menuBar);
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
+        this.menuBar.add(this.reuse);
         this.settings.add(this.overlappedItem);
         this.save.add(this.saveItem);
+        this.reuse.add(this.reuseItem);
         this.setSize(this.panel.getPreferredSize());
     }
     private class CarouselPanel extends JPanel{

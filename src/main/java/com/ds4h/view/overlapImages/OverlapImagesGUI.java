@@ -6,6 +6,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
+import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
@@ -64,7 +65,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addListeners() {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.settingsImages.addActionListener(event -> {
             this.configureImagesGUI.setElements(this.imagePanels);
             this.configureImagesGUI.showDialog();
@@ -77,13 +78,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
-            try {
-                this.cornerController.reuseSource(this.controller.getAlignedImages());
-                this.previewImagesPane.showPreviewImages();
-                this.dispose();
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.cornerController, this.controller);
+            reuseGUI.showDialog();
         });
     }
 
