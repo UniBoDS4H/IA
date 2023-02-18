@@ -4,9 +4,11 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.reuse.ReuseSources;
+import org.opencv.core.Point;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CornerController {
     CornerManager cornerManager = new CornerManager();
@@ -35,5 +37,21 @@ public class CornerController {
             this.cornerManager.clearList();
             this.cornerManager.addImages(images);
         }
+    }
+
+    public boolean copyCorners(List<Point> selectedPoints, ImageCorners img) {
+        boolean res = true;
+        for (Point p:selectedPoints) {
+            if(this.insideImage(p,img)){
+                img.addCorner(p);
+            }else{
+                res = false;
+            }
+        }
+        return res;
+    }
+
+    private boolean insideImage(Point p, ImageCorners img) {
+        return img.getMatImage().rows() >= p.y && img.getMatImage().cols() >= p.x;
     }
 }
