@@ -26,7 +26,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
      * @return : the new image created by the Matrix.
      */
     protected Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
+        return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
     }
 
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {

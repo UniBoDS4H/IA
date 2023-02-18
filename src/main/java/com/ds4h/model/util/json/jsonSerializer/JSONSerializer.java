@@ -74,7 +74,6 @@ public class JSONSerializer extends JSONFile {
                 jsonArray.put(obj);
             }
         }
-        System.out.println(path);
         JSONSerializer.writeJSON(jsonArray, path, MATRIX_PROJECT_NAME);
     }
 

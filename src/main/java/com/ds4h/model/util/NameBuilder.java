@@ -1,11 +1,12 @@
 package com.ds4h.model.util;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class NameBuilder {
     private String finalName = "";
     private static final String TAG_NAME = "_Aligned", DOT = ".";
-    public static final String DOT_SEPARATOR = "\\.";
+    public static final String DOT_SEPARATOR_REGEX = "\\.";
     public NameBuilder(){}
 
     public NameBuilder parseName(final String input){
@@ -15,17 +16,17 @@ public class NameBuilder {
         return this;
     }
 
-    public NameBuilder splitBy(final String separator){
-        if(Objects.nonNull(separator) && !this.finalName.isEmpty() && this.finalName.contains(separator)){
-            final String[] parts = this.finalName.split(separator);
+    public NameBuilder splitBy(){
+        if(!this.finalName.isEmpty() && this.finalName.contains(DOT)){
+            final String[] parts = this.finalName.split(DOT_SEPARATOR_REGEX);
             final String fileNameWithoutExtension = parts[0];
             final String fileExtension = parts[1];
             System.out.println(fileNameWithoutExtension);
             //TODO: FIX THIS, THE SEPARATOR IS NOT CORRECT
             this.finalName = fileNameWithoutExtension+"_"+NameBuilder.TAG_NAME+NameBuilder.DOT+fileExtension;
         }
-        System.out.println(Objects.nonNull(separator) + " " +!this.finalName.isEmpty()
-                + " " + separator);
+        System.out.println( " " +!this.finalName.isEmpty()
+                + " " + this.finalName.contains("\\.") + Arrays.toString(this.finalName.split("\\.")));
         return this;
     }
     public String getFinalName(){
