@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 public class ExportProject {
 
-    private final static String PROJECT_NAME = "ds4h_project.json";
     private final static String PROJECT_FOLDER = "DS4H_Project";
     private ExportProject(){
 
@@ -31,47 +30,16 @@ public class ExportProject {
      */
     public static void exportProject(final CornerManager cornerManager, final String path) throws IOException {
 
-        final JSONArray imageList = JSONSerializer.createJSON(cornerManager);
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         if(!directory.isEmpty()){
             SaveImages.save(cornerManager.getCornerImages().stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+directory);
-            ExportProject.exportJSON(imageList, path+"/"+directory);
+            JSONSerializer.createJSON(cornerManager, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.
             SaveImages.save(cornerManager.getCornerImages().stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
-            ExportProject.exportJSON(imageList, path);
+            JSONSerializer.createJSON(cornerManager, path);
         }
     }
-    /*
-            JSON FILE :
-            {
-                images = [
-                            file_name : "image.tif",
-                            points: [ XX:YY,
-                                      XX,YY,
-                                      .....
-                                    ],
-                              file_name : "image2.tif",
-                              points: [ XX:YY,
-                                        XX,YY,
-                                        .....
-                                       ],
-                          ]
-            }
-         */
 
-    /**
-     * Write the JSONFile in the path
-     * @param array all the project information
-     * @param path where will be stored the inormation
-     */
-    private static void exportJSON(final JSONArray array, final String path){
-        try (FileWriter file = new FileWriter(path+"/"+PROJECT_NAME)) {
-            file.write(array.toString());
-            file.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 }

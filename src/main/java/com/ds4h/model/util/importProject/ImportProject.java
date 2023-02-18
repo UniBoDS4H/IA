@@ -3,6 +3,7 @@ package com.ds4h.model.util.importProject;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.Pair;
+import com.ds4h.model.util.json.JSONFile;
 import com.ds4h.model.util.json.jsonDeserializer.JSONDeserializer;
 
 import java.io.*;
@@ -53,6 +54,11 @@ public class ImportProject {
                         }
                     }
                 }));
+            }else{
+                tmpFiles.forEach(file -> {
+                    final ImageCorners imageCorners = new ImageCorners(file);
+                    images.add(imageCorners);
+                });
             }
         }else {
             //If the file is not correct
@@ -68,7 +74,7 @@ public class ImportProject {
      * @return true if it is JSON, false otherwise
      */
     private static boolean isJSON(final File file){
-        return file.isFile() && file.getName().endsWith(JSON);
+        return file.isFile() && file.getName().endsWith(JSON) && file.getName().equals(JSONFile.EXPORT_PROJECT_NAME);
     }
 
     public static Optional<ImageCorners> getTargetImage(){

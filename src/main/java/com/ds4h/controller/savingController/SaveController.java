@@ -12,8 +12,6 @@ public class SaveController {
 
     //TODO:ADD DOC
     public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
-        SaveImages.saveImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()),
-                path);
-        SaveMatrix.saveMatrix(images);
+        SaveImages.saveImages(images, path);
     }
 }

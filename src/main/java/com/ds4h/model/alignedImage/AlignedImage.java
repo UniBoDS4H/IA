@@ -24,6 +24,10 @@ public class AlignedImage {
         this.alignedImage = image;
     }
 
+    public String getName(){
+        return this.alignedImage.getTitle();
+    }
+
     public Optional<Mat> getRegistrationMatrix(){
         return this.registrationMatrix;
     }

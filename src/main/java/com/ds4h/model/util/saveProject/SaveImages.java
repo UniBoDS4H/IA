@@ -1,5 +1,6 @@
 package com.ds4h.model.util.saveProject;
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.saveProject.saveReferenceMatrix.SaveMatrix;
 import ij.IJ;
@@ -9,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class SaveImages {
@@ -20,12 +22,13 @@ public class SaveImages {
     }
     //TODO:ADD DOC
 
-    public static void saveImages(final List<ImagePlus> images, final String path) throws IOException {
+    public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
         final String dir = DirectoryCreator.createDirectory(path, DIRECTORY);
         if(!dir.isEmpty()){
-            SaveImages.save(images, path+"/" + dir);
+            SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path+"/" + dir);
+            SaveMatrix.saveMatrix(images, path+"/"+dir);
         }else{
-            SaveImages.save(images, path);
+            SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path);
         }
     }
 
