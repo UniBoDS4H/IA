@@ -14,7 +14,8 @@ import java.util.*;
 public class ImportProject {
 
     private final static String JSON = ".json";
-
+    private static Optional<String> TARGET_IMAGE_NAME = Optional.empty();
+    private static Optional<ImageCorners> TARGET_IMAGE = Optional.empty();
     private ImportProject(){
 
     }
@@ -28,6 +29,7 @@ public class ImportProject {
      * @throws FileNotFoundException if the JSON file does not exist
      */
     public static List<ImageCorners> importProject(final File directory) throws FileNotFoundException {
+        final List<File> tmpFiles = new LinkedList<>();
         final List<ImageCorners> images = new LinkedList<>();
         File jsonFile = null;
         //TODO: add the check for the name of the Directory ?
@@ -36,7 +38,7 @@ public class ImportProject {
             for (final File file : Objects.requireNonNull(directory.listFiles())) {
                 if (file.isFile() && CheckImage.checkImage(file)) {
                     //if the file is an image then we create a new ImageCorners with this File.
-                    images.add(new ImageCorners(file));
+                    tmpFiles.add(file); // Because of the order that can be random, I save the images inside a buffer
                 }else if(ImportProject.isJSON(file)){
                     //Otherwise if the file is our configuration file, we save it for the future.
                     jsonFile = file;
@@ -44,10 +46,14 @@ public class ImportProject {
             }
             if(Objects.nonNull(jsonFile)){
                 //If we have found the configuration json, we read it and we assing for each image its points.
-                ImportProject.readJSON(jsonFile).forEach((key, value) -> images.forEach(imageCorners -> {
-                    if (imageCorners.getImage().getTitle().equals(key)) {
-                        //Add the points for the image
+                ImportProject.readJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
+                    if (file.getName().equals(key)) {
+                        final ImageCorners imageCorners = new ImageCorners(file);
                         value.forEach(imageCorners::addCorner);
+                        images.add(imageCorners);
+                        if(TARGET_IMAGE_NAME.isPresent() && TARGET_IMAGE_NAME.get().equals(file.getName())){
+                            TARGET_IMAGE = Optional.of(imageCorners);
+                        }
                     }
                 }));
             }
@@ -91,6 +97,10 @@ public class ImportProject {
                     final Point point = new Point(pairPoint.getFirst(), pairPoint.getSecond()); // Create the point
                     listPoint.add(point); // Add the points inside the list
                 }
+                //Find the target image
+                if(!obj.isNull(ExportProject.TARGET_KEY)){
+                    TARGET_IMAGE_NAME = Optional.of(fileName);
+                }
                 values.putIfAbsent(fileName, listPoint); // Put the values inside the HashMap
             }
         }
@@ -129,5 +139,9 @@ public class ImportProject {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static Optional<ImageCorners> getTargetImage(){
+        return TARGET_IMAGE;
     }
 }

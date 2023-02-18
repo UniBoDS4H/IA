@@ -1,5 +1,6 @@
 package com.ds4h.model.util.exportProject;
 
+import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.saveProject.SaveImages;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class ExportProject {
     public final static String FILE_KEY = "FILE_NAME";
     public final static String POINTS_KEY = "POINTS";
+    public final static String TARGET_KEY = "TARGET";
     private final static String PROJECT_NAME = "ds4h_project.json";
     private final static String PROJECT_FOLDER = "DS4H_Project";
     private ExportProject(){
@@ -27,20 +29,20 @@ public class ExportProject {
     //TODO: add better doc
     /**
      * Export the entire project
-     * @param images the images with their points.
+     * @param cornerManager the corner manager of all the images.
      * @param path the path where store the project
      * @throws IOException error in the saving s
      */
-    public static void exportProject(final List<ImageCorners> images,final String path) throws IOException {
+    public static void exportProject(final CornerManager cornerManager, final String path) throws IOException {
 
-        final JSONArray imageList = ExportProject.createJSON(images);
+        final JSONArray imageList = ExportProject.createJSON(cornerManager);
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         if(!directory.isEmpty()){
-            SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+directory);
+            SaveImages.save(cornerManager.getCornerImages().stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+directory);
             ExportProject.exportJSON(imageList, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.
-            SaveImages.save(images.stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
+            SaveImages.save(cornerManager.getCornerImages().stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
             ExportProject.exportJSON(imageList, path);
         }
     }
@@ -64,20 +66,23 @@ public class ExportProject {
 
     /**
      * Create the json file with all the information needed
-     * @param images all the images of the project
+     * @param cornerManager the corner manager for all the images
      * @return the JSONArray to write
      */
-    private static JSONArray createJSON(final List<ImageCorners> images){
+    private static JSONArray createJSON(final CornerManager cornerManager){
         final JSONArray imageList = new JSONArray();
         //Create the json
-        images.forEach(imageCorners -> {
+        cornerManager.getCornerImages().forEach(imageCorners -> {
             final JSONObject obj = new JSONObject();
             final JSONArray array = new JSONArray();
             for(Point point : imageCorners.getCorners()){
                 array.put(point.toString());
             }
-            obj.put(POINTS_KEY, array);
             obj.put(FILE_KEY, imageCorners.getImage().getTitle());
+            if(cornerManager.getSourceImage().isPresent() && cornerManager.getSourceImage().get().equals(imageCorners)){
+                obj.put(TARGET_KEY, true);
+            }
+            obj.put(POINTS_KEY, array);
             imageList.put(obj);
         });
         return imageList;

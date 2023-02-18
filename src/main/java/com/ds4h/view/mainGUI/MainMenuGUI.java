@@ -150,7 +150,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
                 try {
-                    ExportController.exportProject(this.cornerControler.getCornerImagesImages(), file.getPath());
+                    ExportController.exportProject(this.cornerControler.getCornerManager(), file.getPath());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

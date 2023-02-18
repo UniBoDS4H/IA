@@ -4,12 +4,9 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.reuse.ReuseSources;
-import ij.ImagePlus;
-import ij.io.Opener;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CornerController {
     CornerManager cornerManager = new CornerManager();
@@ -22,7 +19,7 @@ public class CornerController {
     }
 
     public List<ImageCorners> getCornerImagesImages() {
-        return this.cornerManager.getCornerImagesImages();
+        return this.cornerManager.getCornerImages();
     }
     public boolean isSource(ImageCorners image){
         return this.cornerManager.getSourceImage().isPresent() && this.cornerManager.getSourceImage().get().equals(image);

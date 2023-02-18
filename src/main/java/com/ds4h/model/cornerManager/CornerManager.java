@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CornerManager {
-    final List<ImageCorners> imagesWithCorners;
-    ImageCorners sourceImage;
+    private final List<ImageCorners> imagesWithCorners;
+    private ImageCorners sourceImage;
     public CornerManager(){
         this.imagesWithCorners = new ArrayList<>();
     }
@@ -33,7 +33,7 @@ public class CornerManager {
         this.imagesWithCorners.clear();
     }
 
-    public List<ImageCorners> getCornerImagesImages(){
+    public List<ImageCorners> getCornerImages(){
         return new ArrayList<>(this.imagesWithCorners);
     }
 
