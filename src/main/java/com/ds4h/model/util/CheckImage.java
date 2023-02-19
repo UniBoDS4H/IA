@@ -14,6 +14,7 @@ public class CheckImage {
         if(Objects.nonNull(file)) {
             final String fileName = file.getName();
             final String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            //TODO: Check the size of the image
             return CheckImage.EXTENSIONS.contains(fileExtension.toLowerCase());
         }else{
             return false;
