@@ -50,12 +50,13 @@ public class CornerManager {
     }
 
     public Optional<ImageCorners> getSourceImage(){
-        return this.imagesWithCorners.stream().filter(i-> this.sourceImage.equals(i)).findFirst();
+        return this.sourceImage;
     }
 
     public void setAsSource(ImageCorners image){
         if(this.imagesWithCorners.contains(image)){
             this.sourceImage = Optional.of(image);
+            System.out.println(this.sourceImage);
         }else{
             throw new IllegalArgumentException("given image was not fount among the loaded");
         }

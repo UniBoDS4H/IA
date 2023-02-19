@@ -27,16 +27,12 @@ public class CornerController {
         return this.cornerManager.getSourceImage().isPresent() && this.cornerManager.getSourceImage().get().equals(image);
     }
 
-    public void changeTarget(ImageCorners newTarget){
+    public void changeTarget(final ImageCorners newTarget){
         this.cornerManager.setAsSource(newTarget);
     }
 
     public void reuseSource(final List<AlignedImage> alignedImages) throws FileNotFoundException {
-        final List<ImageCorners> images = ReuseSources.reuseSources(this.cornerManager, alignedImages);
-        if(!images.isEmpty()) {
-            this.cornerManager.clearList();
-            this.cornerManager.addImages(images);
-        }
+        ReuseSources.reuseSources(this.cornerManager, alignedImages);
     }
 
     public boolean isTarget(final ImageCorners image){

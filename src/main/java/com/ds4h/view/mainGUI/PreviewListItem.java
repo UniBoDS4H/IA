@@ -51,6 +51,7 @@ public class PreviewListItem extends JPanel {
 
         this.targetButton.addActionListener(event -> {
             this.controller.changeTarget(image);
+            System.out.println("qua");
             this.container.updateList();
         });
 
