@@ -63,6 +63,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
             }catch (Exception e){
                 IJ.showMessage(e.getMessage());
             }
+        }else{
+            IJ.showMessage("Pick a Target Image");
         }
         return images;
     }

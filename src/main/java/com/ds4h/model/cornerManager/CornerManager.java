@@ -4,15 +4,15 @@ import com.ds4h.model.imageCorners.ImageCorners;
 
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CornerManager {
     private final List<ImageCorners> imagesWithCorners;
-    private ImageCorners sourceImage;
+    private Optional<ImageCorners> sourceImage;
     public CornerManager(){
+        this.sourceImage = Optional.empty();
         this.imagesWithCorners = new ArrayList<>();
     }
 
@@ -32,7 +32,9 @@ public class CornerManager {
     }
 
     public void removeImage(final ImageCorners image){
-        this.imagesWithCorners.removeIf(img -> img.equals(image));
+        if(Objects.nonNull(this.sourceImage) && this.sourceImage.isPresent() && this.sourceImage.get().equals(image)) {
+            this.imagesWithCorners.removeIf(img -> img.equals(image));
+        }
     }
 
     public void clearList(){
@@ -44,7 +46,7 @@ public class CornerManager {
     }
 
     public List<ImageCorners> getImagesToAlign(){
-        return this.imagesWithCorners.stream().filter(im -> !im.equals(this.sourceImage)).collect(Collectors.toList());
+        return this.sourceImage.map(imageCorners -> this.imagesWithCorners.stream().filter(im -> !im.equals(imageCorners)).collect(Collectors.toList())).orElseGet(() -> new LinkedList<>(this.imagesWithCorners));
     }
 
     public Optional<ImageCorners> getSourceImage(){
@@ -53,7 +55,7 @@ public class CornerManager {
 
     public void setAsSource(ImageCorners image){
         if(this.imagesWithCorners.contains(image)){
-            this.sourceImage = image;
+            this.sourceImage = Optional.of(image);
         }else{
             throw new IllegalArgumentException("given image was not fount among the loaded");
         }
