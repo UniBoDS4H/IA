@@ -12,8 +12,10 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Objects;
 
+//TODO: Implement the StandardGUI interface
+
 public class PreviewListItem extends JPanel {
-    private final JButton targetButton;
+    private final JButton targetButton, deleteButton;
     private final JLabel imageLabel;
     private final JLabel targetLabel;
     private final CornerController controller;
@@ -27,14 +29,25 @@ public class PreviewListItem extends JPanel {
         this.cornerSelector = new CornerSelectorGUI(this.image, this.controller);
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
+        this.deleteButton = new JButton("Delete");
         this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();
         this.setSelectedPanel();
+        this.deleteButton.setBackground(Color.RED);
+
         this.add(this.imageLabel);
+        this.add(this.deleteButton);
         this.add(this.targetButton);
         this.add(this.targetLabel);
+
+        this.deleteButton.addActionListener(event -> {
+            if(!this.controller.isTarget(image)) {
+                this.controller.removeImage(image);
+                this.container.updateList();
+            }
+        });
 
         this.targetButton.addActionListener(event -> {
             this.controller.changeTarget(image);

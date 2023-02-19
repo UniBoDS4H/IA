@@ -1,6 +1,8 @@
 package com.ds4h.model.cornerManager;
 
 import com.ds4h.model.imageCorners.ImageCorners;
+
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,10 @@ public class CornerManager {
             this.imagesWithCorners.addAll(images);
             this.setAsSource(images.get(0));
         }
+    }
+
+    public void removeImage(final ImageCorners image){
+        this.imagesWithCorners.removeIf(img -> img.equals(image));
     }
 
     public void clearList(){

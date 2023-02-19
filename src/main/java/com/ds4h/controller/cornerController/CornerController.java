@@ -39,6 +39,16 @@ public class CornerController {
         }
     }
 
+    public boolean isTarget(final ImageCorners image){
+        return this.cornerManager.getSourceImage().isPresent() && this.cornerManager.getSourceImage().get().equals(image);
+    }
+
+    public void removeImage(final ImageCorners image){
+        if(this.cornerManager.getCornerImages().contains(image)){
+            this.cornerManager.removeImage(image);
+        }
+    }
+
     public boolean copyCorners(List<Point> selectedPoints, ImageCorners img) {
         boolean res = true;
         for (Point p:selectedPoints) {
