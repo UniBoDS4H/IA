@@ -31,20 +31,24 @@ public class JSONDeserializer extends JSONFile {
             for (int i = 0; i < imageList.length(); i++) {
                 //I know because how to export that I have a JSONObject with a JSONArray and a simple String
                 final JSONObject obj = imageList.getJSONObject(i); // I get the JSON Object
-                final JSONArray points = obj.getJSONArray(POINTS_KEY); //Get the JSONArray of points
-                final String fileName = obj.getString(FILE_KEY); // Get the file name which a refered the points
-                final List<Point> listPoint = new LinkedList<>();
-                for(int k = 0; k < points.length(); k++){
-                    //Iterate all the points
-                    final Pair<Double, Double> pairPoint = JSONDeserializer.getPoint(points.getString(k)); // Parse the points from string to Pair of double. "{POINTX, POINTY}"
-                    final Point point = new Point(pairPoint.getFirst(), pairPoint.getSecond()); // Create the point
-                    listPoint.add(point); // Add the points inside the list
+                if(!obj.isNull(POINTS_KEY) && !obj.isNull(FILE_KEY)) {
+                    final JSONArray points = obj.getJSONArray(POINTS_KEY); //Get the JSONArray of points
+                    final String fileName = obj.getString(FILE_KEY); // Get the file name which a refered the points
+                    final List<Point> listPoint = new LinkedList<>();
+                    for (int k = 0; k < points.length(); k++) {
+                        //Iterate all the points
+                        final Pair<Double, Double> pairPoint = JSONDeserializer.getPoint(points.getString(k)); // Parse the points from string to Pair of double. "{POINTX, POINTY}"
+                        final Point point = new Point(pairPoint.getFirst(), pairPoint.getSecond()); // Create the point
+                        listPoint.add(point); // Add the points inside the list
+                    }
+                    //Find the target image
+                    if (!obj.isNull(TARGET_KEY)) {
+                        TARGET_IMAGE_NAME = Optional.of(fileName);
+                    }
+                    values.putIfAbsent(fileName, listPoint); // Put the values inside the HashMap
+                }else{
+                    return Collections.emptyMap();
                 }
-                //Find the target image
-                if(!obj.isNull(TARGET_KEY)){
-                    TARGET_IMAGE_NAME = Optional.of(fileName);
-                }
-                values.putIfAbsent(fileName, listPoint); // Put the values inside the HashMap
             }
         }
         return values;

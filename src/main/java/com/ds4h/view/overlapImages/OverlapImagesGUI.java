@@ -124,6 +124,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         }
 
         public void changeColor(final Color color){
+            //TODO: CLICK MOUSE ON THE PIXEL, FOR EACH PIXEL OF THE SAME COLOR MAKE IT BLACK
             final BufferedImage img = this.clearImage.getBufferedImage();
             final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
             for(int i = 0; i < img.getWidth(); i++){

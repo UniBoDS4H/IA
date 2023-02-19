@@ -20,6 +20,7 @@ public class ReuseSources {
     }
     public static List<ImageCorners> reuseSources(final CornerManager cornerManager, final List<AlignedImage> images) throws FileNotFoundException {
         final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
+        System.out.println(path);
         if(!path.isEmpty()){
             return new LinkedList<>(ImportProject.importProject(new File(path)));
         }

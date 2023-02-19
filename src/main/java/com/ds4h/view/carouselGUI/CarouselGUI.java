@@ -22,6 +22,8 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private static final long serialVersionUID = 1L;
     private final List<ImagePlus> images;
     private final CarouselPanel panel;
+    private  final JLabel label;
+    private final JPanel labelPanel;
     private final JMenuBar menuBar;
     private final JMenu settings;
     private final JMenu save, reuse;
@@ -31,14 +33,19 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private final AlignmentControllerInterface controller;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
+    private final int max_number;
 
     public CarouselGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
         this.setTitle("Final Alignment Result");
         this.panel = new CarouselPanel();
         this.previewImagesPane = previewImagesPane;
         this.controller = controller;
+        this.setLayout(new BorderLayout());
         this.cornerController = cornerController;
+        this.labelPanel = new JPanel();
         this.images = this.controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
+        this.max_number = this.images.size();
+        this.label = new JLabel("1/"+this.max_number);
         this.currentImage = 0;
         this.saveGui = new SaveImagesGUI(this.controller);
         this.menuBar = new JMenuBar();
@@ -58,12 +65,14 @@ public class CarouselGUI extends JFrame implements StandardGUI {
 
     private void swipeRight() {
         this.currentImage = (this.currentImage - 1 + this.images.size()) % this.images.size();
+        this.label.setText((this.currentImage+1) + "/" + this.max_number);
         this.panel.repaint();
         this.setSize(this.panel.getPreferredSize());
     }
 
     private void swipeLeft(){
         this.currentImage = (this.currentImage + 1) % this.images.size();
+        this.label.setText((this.currentImage+1) + "/" + this.max_number);
         this.panel.repaint();
         this.setSize(this.panel.getPreferredSize());
     }
@@ -91,9 +100,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             public void keyPressed(KeyEvent e) {
                 final int key = e.getKeyCode();
                 if(key == KeyEvent.VK_L || key == KeyEvent.VK_LEFT){
-                    swipeLeft();
-                }else if(key == KeyEvent.VK_R || key == KeyEvent.VK_RIGHT){
                     swipeRight();
+                }else if(key == KeyEvent.VK_R || key == KeyEvent.VK_RIGHT){
+                    swipeLeft();
                 }
             }
 
@@ -108,7 +117,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        this.add(this.panel);
+        this.add(this.panel, BorderLayout.CENTER);
+        this.labelPanel.add(this.label);
+        this.add(this.labelPanel, BorderLayout.SOUTH);
         this.setJMenuBar(this.menuBar);
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
