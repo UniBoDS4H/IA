@@ -4,6 +4,9 @@ import bunwarpj.bUnwarpJ_;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
 
+/**
+ * This class is used in order to apply an elastic transformation using the BUnwarpJ Library.
+ */
 public class BunwarpjDeformation {
     private BunwarpjDeformation(){
 
@@ -42,7 +45,6 @@ public class BunwarpjDeformation {
                 imageWeight,
                 consistencyWeight,
                 threshold);
-        final ImagePlus output = transformation.getDirectResults();
-        return output;
+        return transformation.getDirectResults();
     }
 }
