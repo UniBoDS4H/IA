@@ -13,6 +13,8 @@ import ij.ImagePlus;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.Comparator;
@@ -24,6 +26,7 @@ import java.util.List;
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
     private final JLayeredPane panel;
+    private final ConfigPanel configPanel;
     private final List<AlignedImage> images;
     private final SaveImagesGUI saveGui;
     private final List<ImagePanel> imagePanels;
@@ -35,6 +38,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final PreviewImagesPane previewImagesPane;
     public OverlapImagesGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
         this.setTitle("Final Result");
+        this.setLayout(new BorderLayout());
         this.controller = controller;
         this.previewImagesPane = previewImagesPane;
         this.cornerController = cornerController;
@@ -42,6 +46,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.imagePanels = new LinkedList<>();
         this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
         this.panel = new JLayeredPane();
+        this.configPanel = new ConfigPanel(this.controller);
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
         this.saveMenu = new JMenu("Save");
@@ -52,8 +57,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.reuseItem = new JMenuItem("Reuse as Source");
         this.saveGui = new SaveImagesGUI(this.controller);
         this.addComponents();
-        // TODO : ADD THE POSSIBILITY TO CHANGE FOR EACH IMAGE THE OPACITY (DONE) AND THE RGB COLOR
-
         this.addListeners();
         this.showDialog();
     }
@@ -66,9 +69,41 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.settingsImages.addActionListener(event -> {
-            this.configureImagesGUI.setElements(this.imagePanels);
-            this.configureImagesGUI.showDialog();
+        this.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                configPanel.setElements(imagePanels);
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
         });
         this.saveImages.addActionListener(event -> {
             this.saveGui.showDialog();
@@ -86,7 +121,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents() {
         this.overlapImages();
-        this.add(this.panel);
+        this.add(this.panel, BorderLayout.CENTER);
+        this.add(this.configPanel, BorderLayout.SOUTH);
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
         this.menu.add(this.reuseMenu);
@@ -95,7 +131,11 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.saveMenu.add(this.saveImages);
         this.reuseMenu.add(this.reuseItem);
         this.setJMenuBar(this.menu);
-        this.setSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
+        this.setMinimumSize(new Dimension(images.stream().map(AlignedImage::getAlignedImage)
+                .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
+                images.stream().map(AlignedImage::getAlignedImage)
+                        .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight()));
+        this.setMaximumSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
                     .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
                 images.stream().map(AlignedImage::getAlignedImage)
                         .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight()));

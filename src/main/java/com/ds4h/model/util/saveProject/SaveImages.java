@@ -34,6 +34,7 @@ public class SaveImages {
 
     public static String saveTMPImages(final List<ImagePlus> images){
         final String dir = DirectoryCreator.createTemporaryDirectory(TMP_DIRECTORY);
+        System.out.println(dir);
         if(!dir.isEmpty()){
             SaveImages.save(images, TEMPORARY_PATH+ "/" + dir);
         }

@@ -1,4 +1,4 @@
-package com.ds4h.view.cornerSelectorGUI;
+package com.ds4h.view.util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,9 +16,11 @@ public class ColorComboBox extends JComboBox<Color> {
         colorList.add(Color.YELLOW);
         colorList.add(Color.MAGENTA);
         colorList.add(Color.CYAN);
+        colorList.add(Color.ORANGE);
+        colorList.add(Color.DARK_GRAY);
         colorList.add(Color.WHITE);
         colorList.add(Color.BLACK);
-        DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<Color>();
+        final DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<Color>();
         for(Color color : colorList){
             colorModel.addElement(color);
         }
