@@ -101,4 +101,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     public CornerSelectorPanelGUI getCornerPanel() {
         return this.panel;
     }
+    public ImageCorners getImage(){
+        return this.image;
+    }
 }

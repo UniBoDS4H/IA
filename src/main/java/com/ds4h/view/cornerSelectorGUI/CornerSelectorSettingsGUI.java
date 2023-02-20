@@ -1,6 +1,5 @@
 package com.ds4h.view.cornerSelectorGUI;
 
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 
@@ -19,10 +18,15 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final GridBagConstraints constraints;
     private final CornerSelectorGUI container;
     private final JSlider pointerDimension;
-
+    private final JButton changeButton;
+    private final JComboBox<Integer> indexFrom;
+    private final JComboBox<Integer> indexTo;
     public CornerSelectorSettingsGUI(CornerSelectorGUI container){
         this.container = container;
         this.pointerColor = new ColorComboBox();
+        this.changeButton = new JButton("Change");
+        this.indexFrom = new JComboBox<>();
+        this.indexTo = new JComboBox<>();
         this.selectedPointerColor = new ColorComboBox();
         this.textColor = new ColorComboBox();
         this.setLayout(new GridBagLayout());
@@ -32,10 +36,17 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerDimension = new JSlider(1,10);
 
         this.setActualPointerStyles();
+        this.setCornerComboBox();
 
         this.addListeners();
         this.addComponents();
         this.setFrameSize();
+    }
+    private void setCornerComboBox(){
+        for(int i = 1; i <=this.container.getImage().getCorners().length; i++){
+            this.indexFrom.addItem(i);
+            this.indexTo.addItem(i);
+        }
     }
 
     private void setActualPointerStyles() {
@@ -57,29 +68,26 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
                 dispose();
             }
         });
-        this.pointerColor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color selectedColor = pointerColor.getSelectedColor();
-                container.setPointerColor(selectedColor);
-            }
+        this.pointerColor.addActionListener(e -> {
+            Color selectedColor = pointerColor.getSelectedColor();
+            container.setPointerColor(selectedColor);
         });
-        this.selectedPointerColor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color selectedColor = selectedPointerColor.getSelectedColor();
-                container.setSelectedPointerColor(selectedColor);
-            }
+        this.selectedPointerColor.addActionListener(e -> {
+            Color selectedColor = selectedPointerColor.getSelectedColor();
+            container.setSelectedPointerColor(selectedColor);
         });
-        this.textColor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color selectedColor = textColor.getSelectedColor();
-                container.setTextColor(selectedColor);
-            }
+        this.textColor.addActionListener(e -> {
+            Color selectedColor = textColor.getSelectedColor();
+            container.setTextColor(selectedColor);
         });
         this.pointerDimension.addChangeListener(e->{
             this.container.getCornerPanel().setPointerDimension(pointerDimension.getValue());
+        });
+        this.changeButton.addActionListener(e -> {
+            int from = (int)indexFrom.getSelectedItem();
+            int to = (int)indexTo.getSelectedItem();
+            container.getImage().editCornerIndex(from-1, to-1);
+            container.repaint();
         });
     }
 
@@ -93,6 +101,11 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerDimension.setPaintTicks(true);
         this.pointerDimension.setPaintLabels(true);
         this.addElement(new JLabel("Corner dimension: "), new JPanel(), this.pointerDimension);
+        JPanel changeIndex = new JPanel();
+        changeIndex.add(this.indexFrom);
+        changeIndex.add(this.indexTo);
+        changeIndex.add(changeButton);
+        this.addElement(new JLabel("Change corner index: "), new JPanel(), changeIndex);
         this.constraints.gridy++;
     }
     private void setFrameSize(){
@@ -103,6 +116,8 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private void addElement(final JLabel label, final JPanel panel, final JComponent component){
         panel.add(label);
         panel.add(component);
+        component.setBackground(this.getBackground());
+        panel.setBackground(this.getBackground());
         this.constraints.gridx = 0;
         this.constraints.gridy++;
         add(panel, this.constraints);

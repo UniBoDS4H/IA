@@ -107,15 +107,14 @@ public class ImageCorners {
         return this.getFile().getName();
     }
 
-    public void editCornerIndex(Point pointToEdit, int value) {
-        value--;
-        if(value <= this.corners.size()){
-            Point temp = this.corners.get(value);
-            int tempIndex = this.corners.indexOf(pointToEdit);
-            this.corners.set(value, pointToEdit);
-            this.corners.set(tempIndex, temp);
-        }else{
-            throw new IllegalArgumentException();
-        }
+    /**
+     * Change the indexToEdit with the newIndex and translate the others, both of them are 0 based
+     * @param indexToEdit
+     * @param newIndex
+     */
+    public void editCornerIndex(int indexToEdit, int newIndex) {
+        Point pointToMove = this.corners.get(indexToEdit);
+        this.corners.remove(indexToEdit);
+        this.corners.add(newIndex, pointToMove);
     }
 }
