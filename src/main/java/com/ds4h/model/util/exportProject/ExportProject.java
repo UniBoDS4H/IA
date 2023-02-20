@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 //TODO : ADD COLORS INFORMATIONS FOR POINTS
-//TODO : ADD INFORMATIONS ABOUT TARGET
 
 public class ExportProject {
 
