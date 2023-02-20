@@ -26,7 +26,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
      * @return : the new image created by the Matrix.
      */
     protected Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        return ImagingConversion.fromMatToImagePlus(matrix, file.getName(), NameBuilder.DOT_SEPARATOR);
+        return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
     }
 
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
@@ -63,6 +63,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
             }catch (Exception e){
                 IJ.showMessage(e.getMessage());
             }
+        }else{
+            IJ.showMessage("Pick a Target Image");
         }
         return images;
     }

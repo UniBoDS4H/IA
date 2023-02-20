@@ -8,31 +8,41 @@ import java.time.LocalTime;
 
 public class DirectoryCreator {
     private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalTime NOW = LocalTime.now();
+
+    private static final String YEAR = String.valueOf(TODAY.getYear());
+    private static final String MONTH = TODAY.getMonthValue() <= 9 ? "0" + String.valueOf(TODAY.getMonthValue()) : String.valueOf(TODAY.getMonthValue());
+    private static final String DAY = TODAY.getDayOfMonth() <= 9 ?  "0" + String.valueOf(TODAY.getDayOfMonth()) : String.valueOf(TODAY.getDayOfMonth());
+    private static final String HOUR = NOW.getHour() <= 9 ?  "0" + String.valueOf(NOW.getHour()) : String.valueOf(NOW.getHour());
+    private static final String MINUTE = NOW.getMinute() <= 9 ?  "0" + String.valueOf(NOW.getMinute()) : String.valueOf(NOW.getMinute());
+    private static final String SECONDS = NOW.getSecond() <= 9 ? "0" + String.valueOf(NOW.getSecond()) : String.valueOf(NOW.getSecond());
     private DirectoryCreator(){
 
     }
 
     public static String createTemporaryDirectory(final String dirName){
-        return DirectoryCreator.createDirectory(TEMPORARY_PATH, dirName);
+        final String finalName = DirectoryCreator.createTMPName(dirName);
+        final String baseDirectoryName = TEMPORARY_PATH+"/"+ finalName;
+        final File directory = new File(baseDirectoryName);
+        return directory.mkdir() ? finalName : "";
     }
 
     public static String createDirectory(final String path, final String dirName){
         final String finalName = DirectoryCreator.createName(dirName);
         final String baseDirectoryName = path+"/"+ finalName;
-        File directory = new File(baseDirectoryName);
+        final File directory = new File(baseDirectoryName);
+        System.out.println(baseDirectoryName);
+        //TODO: when the creation returns false, it menas that already exists another directory with the same name. Add random values to it
         return directory.mkdir() ? finalName : "";
     }
 
+    private static String createTMPName(final String baseName){
+
+        return (YEAR+MONTH+DAY+"_"+HOUR+MINUTE+SECONDS+ "_" + baseName);
+    }
+
     private static String createName(final String baseName){
-        final LocalDate date = LocalDate.now();
-        final LocalTime time = LocalTime.now();
-        // Extract Year, Month and Day
-        final String year = String.valueOf(date.getYear());
-        final String month = date.getMonthValue() <= 9 ? "0" + String.valueOf(date.getMonthValue()) : String.valueOf(date.getMonthValue());
-        final String day = date.getDayOfMonth() <= 9 ?  "0" + String.valueOf(date.getDayOfMonth()) : String.valueOf(date.getDayOfMonth());
-        //Extract Hour and Minute
-        final String hour = time.getHour() <= 9 ?  "0" + String.valueOf(time.getHour()) : String.valueOf(time.getHour());
-        final String minute = time.getMinute() <= 9 ?  "0" + String.valueOf(time.getMinute()) : String.valueOf(time.getMinute());
-        return (year+month+day+"_"+hour+minute + "_" + baseName);
+        return (YEAR+MONTH+DAY+"_"+HOUR+MINUTE+ "_" + baseName);
     }
 }

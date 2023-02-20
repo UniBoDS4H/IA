@@ -15,6 +15,9 @@ public class ImportController {
     public static void importProject(final File directory, final CornerManager cornerManager) throws FileNotFoundException {
         if(directory.isDirectory() && Objects.nonNull(cornerManager)) {
             cornerManager.addImages(ImportProject.importProject(directory));
+            if(ImportProject.getTargetImage().isPresent()){
+                cornerManager.setAsSource(ImportProject.getTargetImage().get());
+            }
         }
     }
 }
