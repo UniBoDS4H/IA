@@ -32,7 +32,7 @@ public class CornerManager {
     }
 
     public void removeImage(final ImageCorners image){
-        if(Objects.nonNull(this.sourceImage) && this.sourceImage.isPresent() && this.sourceImage.get().equals(image)) {
+        if(Objects.nonNull(image) && this.sourceImage.isPresent() && !this.sourceImage.get().equals(image)) {
             this.imagesWithCorners.removeIf(img -> img.equals(image));
         }
     }
