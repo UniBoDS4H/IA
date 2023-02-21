@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CornerController {
     CornerManager cornerManager = new CornerManager();
-    public void loadImages(List<String> paths){
+    public void loadImages(final List<String> paths){
         this.cornerManager.loadImages(paths);
     }
 

@@ -26,11 +26,10 @@ public class CheckImage {
 
     private static boolean checkSize(final File image) throws IllegalArgumentException{
         final double length = CheckImage.getFileSizeGigaBytes(image);
-        System.out.println(length);
         if(length < UPPER_LIMIT){
             return true;
         }
-        throw new IllegalArgumentException("The image : " + image.getName() + " is too big");
+        throw new IllegalArgumentException("The image : " + image.getName() + " is too big. Java can not support the image's size.");
     }
 
     private static double getFileSizeGigaBytes(final File file) {
