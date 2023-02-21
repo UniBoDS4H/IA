@@ -17,17 +17,19 @@ import java.util.Objects;
 
 public class PreviewListItem extends JPanel {
     private final JButton targetButton, deleteButton;
+    private final JLabel idLabel;
     private final JLabel imageLabel;
     private final JLabel targetLabel;
     private final CornerController controller;
     private final ImageCorners image;
     private final PreviewImagesPane container;
     private final CornerSelectorGUI cornerSelector;
-    PreviewListItem(CornerController controller, ImageCorners image, PreviewImagesPane container){
+    PreviewListItem(CornerController controller, ImageCorners image, PreviewImagesPane container, int id){
         this.container = container;
         this.controller = controller;
         this.image = image;
         this.cornerSelector = new CornerSelectorGUI(this.image, this.controller);
+        this.idLabel = new JLabel(Integer.toString(id));
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
         this.deleteButton = new JButton("Delete");
@@ -38,6 +40,7 @@ public class PreviewListItem extends JPanel {
         this.setSelectedPanel();
         this.deleteButton.setBackground(Color.RED);
 
+        this.add(this.idLabel);
         this.add(this.imageLabel);
         this.add(this.deleteButton);
         this.add(this.targetButton);

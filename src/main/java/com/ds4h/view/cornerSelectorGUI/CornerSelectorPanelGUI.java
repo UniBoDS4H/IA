@@ -12,20 +12,27 @@ import java.util.stream.Collectors;
 public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener{
     private ImageCorners currentImage;
     private Point referencePoint;
-    private int zoomLevel = 100;
     private final CornerSelectorGUI container;
     private final int POINT_DIAMETER = 6;
     private Color pointerColor;
     private Color selectedPointerColor;
     private Color textColor;
     private int pointerDimension;
+    private double scale = 1.0;
+    private java.awt.Point mousePosition;
 
     public CornerSelectorPanelGUI(CornerSelectorGUI container) {
         this.container = container;
         this.setDefaultPointerStyles();
         addMouseWheelListener(this);
+        setOpaque(true);
 
         addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mousePosition = e.getPoint();
+                System.out.println("AA");
+            }
             @Override
             public void mouseDragged(MouseEvent e) {
                 if(referencePoint != null) {
@@ -89,14 +96,6 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         this.selectedPointerColor = Color.YELLOW;
         this.pointerDimension = 5;
     }
-    private NumberFormatter getFormatter(){
-        NumberFormatter formatter = new NumberFormatter();
-        formatter.setValueClass(Integer.class);
-        formatter.setMinimum(0);
-        formatter.setMaximum(Integer.MAX_VALUE);
-        formatter.setAllowsInvalid(false);
-        return formatter;
-    }
 
     private void moveAllSelected(Point oldPoint, Point newPoint){
         int xGap = (int)(newPoint.x-oldPoint.x);
@@ -135,30 +134,27 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         this.currentImage = image;
         repaint();
     }
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        if (e.isControlDown()) {
-            if (e.getWheelRotation() < 0) {
-                zoomIn();
-            } else {
-                zoomOut();
-            }
-        }
-    }
-
     public void zoomIn() {
-        this.zoomLevel += 10;
-        setPreferredSize(new Dimension((int) (getPreferredSize().width * 1.1), (int) (getPreferredSize().height * 1.1)));
-        revalidate();
+        scale += 0.1; // aumenta la scala dell'immagine
         repaint();
     }
 
     public void zoomOut() {
-        this.zoomLevel -= 10;
-        setPreferredSize(new Dimension((int) (getPreferredSize().width / 1.1), (int) (getPreferredSize().height / 1.1)));
-        revalidate();
-        repaint();
+        if (scale > 0.1) { // evita di zoomare troppo fuori
+            scale -= 0.1; // diminuisci la scala dell'immagine
+            repaint();
+        }
     }
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        int notches = e.getWheelRotation();
+        if (notches < 0) {
+            this.zoomIn();
+        } else {
+            this.zoomOut();
+        }
+    }
+
 
     @Override
     public void paintComponent(Graphics g) {
@@ -166,8 +162,14 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         Graphics2D g2d = (Graphics2D) g;
         if(this.currentImage != null){
             super.paintComponent(g);
-            g2d.scale(zoomLevel / 100.0, zoomLevel / 100.0);
-            g2d.drawImage(this.currentImage.getBufferedImage(),0,0,this.getWidth(),this.getHeight(),this);
+            g2d.scale(scale, scale);
+            int x = 0;
+            int y = 0;
+            if(mousePosition != null && scale != 1){
+                x = -this.mousePosition.x;
+                y = -this.mousePosition.y;
+            }
+            g2d.drawImage(this.currentImage.getBufferedImage(),x, y,this.getWidth(),this.getHeight(),this);
         }
         Arrays.stream(this.currentImage.getCorners())
                 .map(p-> new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p))
@@ -224,4 +226,5 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     public int getPointerDimension(){
         return this.pointerDimension;
     }
+
 }

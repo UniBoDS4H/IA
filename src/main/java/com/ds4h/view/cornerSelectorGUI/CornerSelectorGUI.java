@@ -4,6 +4,7 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.gui.ImageWindow;
 import org.opencv.core.Point;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CornerSelectorGUI extends Frame implements StandardGUI {
+public class CornerSelectorGUI extends ImageWindow implements StandardGUI {
 
     private final CornerController cornerController;
     private final CornerSelectorPanelGUI panel;
