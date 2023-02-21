@@ -21,8 +21,6 @@ public class NameBuilder {
             final String[] parts = this.finalName.split(DOT_SEPARATOR_REGEX);
             final String fileNameWithoutExtension = parts[0];
             final String fileExtension = parts[1];
-            System.out.println(fileNameWithoutExtension);
-            //TODO: FIX THIS, THE SEPARATOR IS NOT CORRECT
             this.finalName = fileNameWithoutExtension+"_"+NameBuilder.TAG_NAME+NameBuilder.DOT+fileExtension;
         }
         return this;

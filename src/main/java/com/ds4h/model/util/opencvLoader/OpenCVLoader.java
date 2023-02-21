@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.io.*;
 import java.util.Objects;
 
+/**
+ *
+ */
 public class OpenCVLoader {
     private static final String  OPENCV = "/opencv/";
     private static final String OS = System.getProperty("os.name").toLowerCase();

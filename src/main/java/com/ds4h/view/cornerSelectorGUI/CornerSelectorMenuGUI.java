@@ -21,7 +21,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.cornerController = controller;
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        ImageCorners[] options = this.cornerController.getCornerImagesImages().stream()
+        final ImageCorners[] options = this.cornerController.getCornerImagesImages().stream()
                 .filter(i -> !i.equals(this.image)).toArray(ImageCorners[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);

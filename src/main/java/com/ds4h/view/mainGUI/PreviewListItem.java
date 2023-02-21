@@ -3,6 +3,7 @@ package com.ds4h.view.mainGUI;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
+import ij.gui.MessageDialog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -44,8 +45,15 @@ public class PreviewListItem extends JPanel {
 
         this.deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {
-                this.controller.removeImage(image);
-                this.container.updateList();
+                //TODO: Launch a message dialog in order to confirm the deletion
+                final int result = JOptionPane.showConfirmDialog(this,
+                        "Are you sure to delete the selected image ?",
+                        "Confirm operation",
+                        JOptionPane.YES_NO_OPTION);
+                if(result == JOptionPane.YES_OPTION) {
+                    this.controller.removeImage(image);
+                    this.container.updateList();
+                }
             }
         });
 

@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ *
+ */
 public class SaveImages {
     private final static String DIRECTORY = "DS4H_AlignedImages", TMP_DIRECTORY = "TMP_DS4H_AlignedImages";
     private final static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
@@ -34,6 +36,7 @@ public class SaveImages {
 
     public static String saveTMPImages(final List<ImagePlus> images){
         final String dir = DirectoryCreator.createTemporaryDirectory(TMP_DIRECTORY);
+        System.out.println(dir);
         if(!dir.isEmpty()){
             SaveImages.save(images, TEMPORARY_PATH+ "/" + dir);
         }

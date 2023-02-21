@@ -32,6 +32,7 @@ public class ReuseSources {
     public static void reuseSources(final CornerManager cornerManager, final List<AlignedImage> images) {
         if(!images.isEmpty()) {
             final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
+            System.out.println(path);
             if (!path.isEmpty()) {
                 final List<ImageCorners> imageCornersList = cornerManager.getCornerImages();
                 try {
