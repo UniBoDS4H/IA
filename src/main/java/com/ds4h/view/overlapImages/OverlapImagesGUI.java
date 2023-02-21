@@ -1,6 +1,7 @@
 package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.carouselGUI.CarouselGUI;
@@ -16,7 +17,6 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,31 +31,35 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final SaveImagesGUI saveGui;
     private final List<ImagePanel> imagePanels;
     private final JMenuBar menu;
-    private final JMenu settingsMenu, saveMenu, reuseMenu;
-    private final JMenuItem settingsImages, carouselItem, saveImages, reuseItem;
-    private final AlignmentControllerInterface controller;
+    private final JMenu settingsMenu, saveMenu, reuseMenu, transformMenu;
+    private final JMenuItem settingsImages, carouselItem, saveImages, reuseItem, elasticItem;
+    private final AlignmentControllerInterface alignmentControllerInterface;
+    private final BunwarpJController bunwarpJController;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
     public OverlapImagesGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
         this.setTitle("Final Result");
         this.setLayout(new BorderLayout());
-        this.controller = controller;
+        this.alignmentControllerInterface = controller;
+        this.bunwarpJController = new BunwarpJController();
         this.previewImagesPane = previewImagesPane;
         this.cornerController = cornerController;
         this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
-        this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
+        this.configureImagesGUI = new ConfigureImagesGUI(this.alignmentControllerInterface);
         this.panel = new JLayeredPane();
-        this.configPanel = new ConfigPanel(this.controller);
+        this.configPanel = new ConfigPanel(this.alignmentControllerInterface);
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
         this.saveMenu = new JMenu("Save");
+        this.transformMenu = new JMenu("Transform");
         this.reuseMenu = new JMenu("Reuse");
         this.settingsImages = new JMenuItem("Configure images");
         this.saveImages = new JMenuItem("Save Images");
+        this.elasticItem = new JMenuItem("Elastic transformation");
         this.carouselItem = new JMenuItem("View as Carousel");
         this.reuseItem = new JMenuItem("Reuse as Source");
-        this.saveGui = new SaveImagesGUI(this.controller);
+        this.saveGui = new SaveImagesGUI(this.alignmentControllerInterface);
         this.addComponents();
         this.addListeners();
         this.showDialog();
@@ -109,12 +113,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.saveGui.showDialog();
         });
         this.carouselItem.addActionListener(event -> {
-            new CarouselGUI(this.controller, this.cornerController, this.previewImagesPane).showDialog();
+            new CarouselGUI(this.alignmentControllerInterface, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.cornerController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.cornerController, this.alignmentControllerInterface);
             reuseGUI.showDialog();
+        });
+        this.elasticItem.addActionListener(event -> {
+            //TODO: Implement bunwarp J
+            //bunwarpJController.transformation()
         });
     }
 
@@ -126,11 +134,14 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
         this.menu.add(this.reuseMenu);
+        this.menu.add(this.transformMenu);
+        this.transformMenu.add(this.elasticItem);
         this.settingsMenu.add(this.settingsImages);
         this.settingsMenu.add(this.carouselItem);
         this.saveMenu.add(this.saveImages);
         this.reuseMenu.add(this.reuseItem);
         this.setJMenuBar(this.menu);
+        //TODO: set the correct size
         this.setMinimumSize(new Dimension(images.stream().map(AlignedImage::getAlignedImage)
                 .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
                 images.stream().map(AlignedImage::getAlignedImage)
@@ -156,6 +167,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         private final ImagePlus clearImage;
         public final static float DEFAULT_OPACITY = 0.5f;
         private float opacity = DEFAULT_OPACITY;
+        private Color color = Color.RED;
 
         public ImagePanel(final ImagePlus image) {
             this.clearImage = image;
@@ -178,8 +190,17 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
                     image.setRGB(i, j, nc.getRGB());
                 }
             }
+            this.color = color;
             this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
             this.repaint();
+        }
+
+        public void setDefaultColor(){
+            this.color = Color.RED;
+        }
+
+        public Color getColor(){
+            return this.color;
         }
         public float getOpacity(){
             return this.opacity;
