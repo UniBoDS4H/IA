@@ -1,7 +1,11 @@
 package com.ds4h.controller.bunwarpJController;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.deformation.BunwarpjDeformation;
 import ij.ImagePlus;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Controller for the BunwarpJ elastic deformation
@@ -33,5 +37,18 @@ public class BunwarpJController {
             , final CornerManager cornerManager){
         return BunwarpjDeformation.deform(mode, img_subsamp_fact, min_scale_deformation, max_scale_deformation, divWeight,
                 curlWeight, landmarkWeight, imageWeight, consistencyWeight, threshold, cornerManager.getImagesToAlign().get(0).getImage(), cornerManager.getSourceImage().get().getImage());
+    }
+    public List<ImagePlus> transformation(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
+                                          final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
+                                          final int imageWeight, final int consistencyWeight, final int threshold
+            , final List<AlignedImage> images){
+        final AlignedImage source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst().get();
+        final List<ImagePlus> imagePlusList = new LinkedList<>();
+        images.stream().map(AlignedImage::getAlignedImage).forEach(imagePlus -> {
+            final ImagePlus deformedImage = BunwarpjDeformation.deform(mode, img_subsamp_fact, min_scale_deformation, max_scale_deformation, divWeight,
+                    curlWeight, landmarkWeight, imageWeight, consistencyWeight, threshold, imagePlus, source.getAlignedImage());
+            imagePlusList.add(deformedImage);
+        });
+        return imagePlusList;
     }
 }

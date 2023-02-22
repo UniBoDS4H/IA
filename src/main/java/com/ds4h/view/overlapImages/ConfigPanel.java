@@ -56,6 +56,7 @@ public class ConfigPanel extends JPanel implements StandardGUI {
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
             this.opacitySlider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
+            this.colorBox.setSelectedItem(this.imagePanels.get(index).getColor());
         });
         this.opacitySlider.addChangeListener(event -> {
             final float value = (this.opacitySlider.getValue() / DIV);
@@ -66,10 +67,12 @@ public class ConfigPanel extends JPanel implements StandardGUI {
             this.imagePanels.forEach(imageP -> {
                 imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY);
                 imageP.resetImage();
+                imageP.setDefaultColor();
             });
             this.opacitySlider.setValue(DEFAULT);
 
         });
+
 
     }
 

@@ -1,6 +1,7 @@
 package com.ds4h.model.cornerManager;
 
 import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.util.CheckImage;
 
 import java.awt.*;
 import java.io.File;
@@ -17,11 +18,17 @@ public class CornerManager {
     }
 
     public void loadImages(final List<String> loadingImages){
-        loadingImages.forEach(image -> {
-            this.imagesWithCorners.add(new ImageCorners(new File(image)));
+        loadingImages.stream().map(File::new).forEach(file -> {
+            if(CheckImage.checkImage(file)) {
+                this.imagesWithCorners.add(new ImageCorners(file));
+            }
         });
-        //setting the first image as default
-        this.setAsSource(new ImageCorners(new File(loadingImages.get(0))));
+        if(this.imagesWithCorners.size() > 0) {
+            //setting the first image as default
+            this.setAsSource(new ImageCorners(new File(loadingImages.get(0))));
+        }else{
+            throw new IllegalArgumentException("Zero images found");
+        }
     }
 
     public void addImages(final List<ImageCorners> images){
