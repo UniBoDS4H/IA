@@ -55,9 +55,9 @@ public class BunwarpJController {
      * @return : the transformed image
      */
     public List<ImagePlus> transformation(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
-                                          final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
-                                          final int imageWeight, final int consistencyWeight, final int threshold
-            , final List<AlignedImage> images){
+                                          final int max_scale_deformation, final double divWeight, final double curlWeight, final double landmarkWeight,
+                                          final double imageWeight, final double consistencyWeight, final double threshold
+            ,final List<AlignedImage> images){
         final AlignedImage source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst().get();
         final List<ImagePlus> imagePlusList = new LinkedList<>();
         images.stream().map(AlignedImage::getAlignedImage).forEach(imagePlus -> {

@@ -4,6 +4,7 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
@@ -36,11 +37,13 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final BunwarpJController bunwarpJController;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
-    public OverlapImagesGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
+    private final BunwarpjGUI bunwarpjGUI;
+    public OverlapImagesGUI(final BunwarpjGUI bunwarpjGUI, final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
         this.setTitle("Final Result");
         this.setLayout(new BorderLayout());
         this.alignmentControllerInterface = controller;
         this.bunwarpJController = new BunwarpJController();
+        this.bunwarpjGUI = bunwarpjGUI;
         this.previewImagesPane = previewImagesPane;
         this.cornerController = cornerController;
         this.images = controller.getAlignedImages();
@@ -80,7 +83,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.saveGui.showDialog();
         });
         this.carouselItem.addActionListener(event -> {
-            new CarouselGUI(this.alignmentControllerInterface, this.cornerController, this.previewImagesPane).showDialog();
+            new CarouselGUI(this.bunwarpjGUI, this.alignmentControllerInterface, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
@@ -89,7 +92,17 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         });
         this.elasticItem.addActionListener(event -> {
             //TODO: Implement bunwarp J
-            //bunwarpJController.transformation()
+            bunwarpJController.transformation(this.bunwarpjGUI.getModeInput().getValue(),
+                    this.bunwarpjGUI.getSampleFactor(),
+                    this.bunwarpjGUI.getMinScale().getValue(),
+                    this.bunwarpjGUI.getMaxScale().getValue(),
+                    this.bunwarpjGUI.getParDivWeigth(),
+                    this.bunwarpjGUI.getParCurlWeigth(),
+                    this.bunwarpjGUI.getParLandmarkWeigth(),
+                    this.bunwarpjGUI.getParImageWeigth(),
+                    this.bunwarpjGUI.getParConsistencyWeigth(),
+                    this.bunwarpjGUI.getParThreshold(),
+                    this.alignmentControllerInterface.getAlignedImages());
         });
     }
 
