@@ -1,8 +1,10 @@
 package com.ds4h.view.mainGUI;
 
 
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.*;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
+import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
@@ -142,8 +144,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.manualAlignment.addActionListener(event -> {
-            ManualAlignmentController m = new ManualAlignmentController();
-            m.homographyAlignment(this.cornerControler.getCornerManager());
+            SemiAutomaticController m = new SemiAutomaticController();
+            //ManualAlignmentController m = new ManualAlignmentController();
+            m.align(this.cornerControler.getCornerManager());
             new CarouselGUI(m, this.cornerControler, this.imagesPreview);
 
         });

@@ -1,9 +1,8 @@
-package com.ds4h.model.alignment.semiautomatic;
+package com.ds4h.model.alignment.semiAutomatic;
 
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
@@ -15,6 +14,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,14 +35,12 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
             final SURF detector = SURF.create();
 
             // Detect the keypoints and compute the descriptors for both images:
-            final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
-            this.addKeyPoints(keypoints1, targetImage);
+            final MatOfKeyPoint keypoints1 = targetImage.getMatOfKeyPoint(); // Matrix where are stored all the key points
             final Mat descriptors1 = new Mat();
             detector.detectAndCompute(image1 , new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
             // Detect key points for the second image
-            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
-            this.addKeyPoints(keypoints2, sourceImage);
+            final MatOfKeyPoint keypoints2 = sourceImage.getMatOfKeyPoint(); //  Matrix where are stored all the key points
             final Mat descriptors2 = new Mat();
             detector.detectAndCompute(image2, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
 
@@ -118,12 +116,8 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
         return Optional.empty();
     }
 
-    private void addKeyPoints(final MatOfKeyPoint keyPoint, final ImageCorners image){
+    private List<KeyPoint> addKeyPoints(final MatOfKeyPoint keyPoint, final ImageCorners image){
         final MatOfKeyPoint imageKeyPoint = image.getMatOfKeyPoint();
-        for(int row = 0; row < imageKeyPoint.rows(); row++){
-            for(int col = 0; col < imageKeyPoint.cols(); col++){
-                keyPoint.put(row, col, imageKeyPoint.get(row, col));
-            }
-        }
+        return imageKeyPoint.toList();
     }
 }
