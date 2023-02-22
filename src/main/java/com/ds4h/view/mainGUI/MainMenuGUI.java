@@ -8,6 +8,7 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.aboutGUI.AboutGUI;
+import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
@@ -31,13 +32,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JPanel buttonsPanel;
     private final JMenuBar menuBar;
     private final JMenu menu, project;
-    private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem;
+    private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem, alignmentItem;
     private final JPanel panel;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
     private final CornerController cornerControler;
     private final PreviewImagesPane imagesPreview;
+    private final AlignmentConfigGUI alignmentConfigGUI;
 
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
@@ -74,7 +76,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.aboutGUI = new AboutGUI();
         this.settingsBunwarpj = new BunwarpjGUI();
-
+        this.alignmentConfigGUI = new AlignmentConfigGUI();
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("Navigation");
@@ -84,6 +86,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.settingsItem = new JMenuItem("Settings");
         this.exportItem = new JMenuItem("Export");
         this.importItem = new JMenuItem("Import");
+        this.alignmentItem = new JMenuItem("Alignment algorithm");
 
         this.addComponents();
         this.addListeners();
@@ -110,6 +113,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.menu.add(this.aboutItem);
         this.menu.add(this.loadImages);
         this.menu.add(this.settingsItem);
+        this.menu.add(this.alignmentItem);
         this.project.add(this.exportItem);
         this.project.add(this.importItem);
     }
@@ -142,6 +146,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             m.homographyAlignment(this.cornerControler.getCornerManager());
             new CarouselGUI(m, this.cornerControler, this.imagesPreview);
 
+        });
+
+        this.alignmentItem.addActionListener(event -> {
+            this.alignmentConfigGUI.showDialog();
         });
 
         this.exportItem.addActionListener(event -> {

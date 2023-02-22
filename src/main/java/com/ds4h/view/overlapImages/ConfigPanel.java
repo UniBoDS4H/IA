@@ -47,6 +47,7 @@ public class ConfigPanel extends JPanel implements StandardGUI {
     @Override
     public void addListeners() {
         this.colorBox.addActionListener(event -> {
+            System.out.println("ao");
             final int index = this.colorBox.getSelectedIndex();
             final int indexImage = this.comboBox.getSelectedIndex();
             final Color color = this.colorBox.getItemAt(index);
@@ -56,7 +57,7 @@ public class ConfigPanel extends JPanel implements StandardGUI {
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
             this.opacitySlider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
-            this.colorBox.setSelectedItem(this.imagePanels.get(index).getColor());
+            //this.colorBox.setSelectedItem(this.imagePanels.get(index).getColor());
         });
         this.opacitySlider.addChangeListener(event -> {
             final float value = (this.opacitySlider.getValue() / DIV);

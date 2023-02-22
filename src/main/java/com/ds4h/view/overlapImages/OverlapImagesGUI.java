@@ -26,7 +26,6 @@ import java.util.List;
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
     private final JLayeredPane panel;
-    private final ConfigPanel configPanel;
     private final List<AlignedImage> images;
     private final SaveImagesGUI saveGui;
     private final List<ImagePanel> imagePanels;
@@ -48,7 +47,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.imagePanels = new LinkedList<>();
         this.configureImagesGUI = new ConfigureImagesGUI(this.alignmentControllerInterface);
         this.panel = new JLayeredPane();
-        this.configPanel = new ConfigPanel(this.alignmentControllerInterface);
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
         this.saveMenu = new JMenu("Save");
@@ -73,41 +71,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-                configPanel.setElements(imagePanels);
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
+        this.settingsImages.addActionListener(event -> {
+            this.configureImagesGUI.showDialog();
         });
         this.saveImages.addActionListener(event -> {
             this.saveGui.showDialog();
@@ -130,7 +95,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.overlapImages();
         this.add(this.panel, BorderLayout.CENTER);
-        this.add(this.configPanel, BorderLayout.SOUTH);
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
         this.menu.add(this.reuseMenu);
@@ -182,12 +146,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             for(int i = 0; i < img.getWidth(); i++){
                 for(int j = 0; j < img.getHeight(); j++){
                     Color c = new Color(img.getRGB(i,j));
-                    int r = c.getRed() + color.getRed();
-                    int g = c.getGreen() + color.getGreen();
-                    int b = c.getBlue() + color.getBlue();
-                    int a = c.getAlpha();
-                    Color nc = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255), a);
-                    image.setRGB(i, j, nc.getRGB());
+                    if(!c.equals(Color.BLACK)) {
+                        int r = c.getRed() + color.getRed();
+                        int g = c.getGreen() + color.getGreen();
+                        int b = c.getBlue() + color.getBlue();
+                        int a = c.getAlpha();
+                        Color nc = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255), a);
+                        image.setRGB(i, j, nc.getRGB());
+                    }else{
+                        image.setRGB(i, j, Color.BLACK.getRGB());
+                    }
                 }
             }
             this.color = color;
