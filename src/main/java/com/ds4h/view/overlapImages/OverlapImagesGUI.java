@@ -72,7 +72,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.settingsImages.addActionListener(event -> {
+            this.configureImagesGUI.setElements(this.imagePanels);
             this.configureImagesGUI.showDialog();
+
         });
         this.saveImages.addActionListener(event -> {
             this.saveGui.showDialog();

@@ -118,12 +118,6 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
 
     }
 
-    private void configureSlider(final JSlider slider){
-        slider.setMajorTickSpacing(10);
-        slider.setMinorTickSpacing(1);
-        slider.setPaintTrack(true);
-    }
-
     @Override
     public void showDialog() {
         this.setVisible(true);
