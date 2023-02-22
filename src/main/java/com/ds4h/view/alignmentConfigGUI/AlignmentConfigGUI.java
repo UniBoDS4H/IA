@@ -1,17 +1,16 @@
 package com.ds4h.view.alignmentConfigGUI;
 
-import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
-    private final JComboBox<AlignmentAlgorithm> algorithm;
+    private final JComboBox<AlignmentAlgorithmEnum> algorithm;
     private final JButton saveButton;
     private final JLabel text;
     private final GridBagConstraints constraints;
-    private AlignmentAlgorithm selectedValue;
+    private AlignmentAlgorithmEnum selectedValue;
     public AlignmentConfigGUI(){
         this.setTitle("Pick manual alignment algorithm");
         this.setLayout(new GridBagLayout());
@@ -34,15 +33,15 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.algorithm.addActionListener(event -> {
-            this.selectedValue = (AlignmentAlgorithm) this.algorithm.getSelectedItem();
+            this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
         });
         this.saveButton.addActionListener(event -> {
-            this.selectedValue = (AlignmentAlgorithm) this.algorithm.getSelectedItem();
+            this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
             this.dispose();
         });
     }
 
-    public AlignmentAlgorithm getSelectedAlgorithm(){
+    public AlignmentAlgorithmEnum getSelectedAlgorithm(){
         return this.selectedValue;
     }
 
@@ -70,8 +69,8 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     }
 
     private void populateCombo(){
-        this.selectedValue = AlignmentAlgorithm.TRANSLATIVE;
-        for(AlignmentAlgorithm algorithm : AlignmentAlgorithm.values()){
+        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIVE;
+        for(AlignmentAlgorithmEnum algorithm : AlignmentAlgorithmEnum.values()){
             this.algorithm.addItem(algorithm);
         }
     }

@@ -1,12 +1,12 @@
 package com.ds4h.view.alignmentConfigGUI;
 
-public enum AlignmentAlgorithm {
+public enum AlignmentAlgorithmEnum {
 
     TRANSLATIVE("Translative"),
     PROJECTIVE("Projective"),
     AFFINE("Affine");
     private String type;
-    AlignmentAlgorithm(final String type){
+    AlignmentAlgorithmEnum(final String type){
         this.type = type;
     }
 
