@@ -72,8 +72,9 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                         container.clearSelectedPoints();
                         container.addSelectedPoint(actualPoint);
                     }
+                    repaint();
                 }
-                repaint();
+
             }
 
             @Override
@@ -97,7 +98,9 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                         }
                     }else{
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                            currentImage.addCorner(getMatIndexFromPoint(new Point(e.getX(), e.getY())));
+                            System.out.println(xOffset + "  " + yOffset);
+                            System.out.println((-xOffset/zoomFactor)+(e.getX()/zoomFactor) + "   " + (-yOffset/zoomFactor)+(e.getY()/zoomFactor));
+                            currentImage.addCorner(getMatIndexFromPoint(new Point((-xOffset/zoomFactor)+(e.getX()/zoomFactor), (-yOffset/zoomFactor)+(e.getY()/zoomFactor))));
                             repaint();
                         }else{
                             released = false;
@@ -110,7 +113,9 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
             public void mouseReleased(MouseEvent mouseEvent) {
                 referencePoint = null;
                 released = true;
-                repaint();
+                if(dragger){
+                    repaint();
+                }
                 super.mouseReleased(mouseEvent);
             }
         });
@@ -204,7 +209,6 @@ private void setDefaultPointerStyles() {
                 AffineTransform at = new AffineTransform();
                 double xMove = xOffset + xDiff >0? 0: xOffset + xDiff;
                 double yMove = yOffset + yDiff >0? 0: yOffset + yDiff;
-                System.out.println(xOffset + "    " + -this.getWidth()*zoomFactor+this.getWidth());
                 xMove = (xMove < -this.getWidth()*zoomFactor+this.getWidth())?-this.getWidth()*zoomFactor+this.getWidth(): xMove;
                 yMove = (yMove < -this.getHeight()*zoomFactor+this.getHeight())?-this.getHeight()*zoomFactor+this.getHeight(): yMove;
 
