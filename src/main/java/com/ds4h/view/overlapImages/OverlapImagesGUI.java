@@ -161,16 +161,13 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             for(int i = 0; i < img.getWidth(); i++){
                 for(int j = 0; j < img.getHeight(); j++){
                     Color c = new Color(img.getRGB(i,j));
-                    if(!c.equals(Color.BLACK)) {
-                        int r = c.getRed() + color.getRed();
-                        int g = c.getGreen() + color.getGreen();
-                        int b = c.getBlue() + color.getBlue();
-                        int a = c.getAlpha();
-                        Color nc = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255), a);
-                        image.setRGB(i, j, nc.getRGB());
-                    }else{
-                        image.setRGB(i, j, Color.BLACK.getRGB());
-                    }
+
+                    int r = color.getRed()*c.getRed()/255 -40;
+                    int g = color.getGreen()*c.getGreen()/255 -40;
+                    int b = color.getBlue()*c.getBlue()/255 -40;
+                    int a = c.getAlpha();
+                    Color nc = new Color(Math.max(r, 0), Math.max(g, 0), Math.max(b, 0), a);
+                    image.setRGB(i, j, nc.getRGB());
                 }
             }
             this.color = color;
