@@ -17,7 +17,7 @@ public class ImageCorners {
     private final File image;
     private final List<Point> corners;
 
-    public ImageCorners(File image){
+    public ImageCorners(final File image){
         this.image = image;
         this.corners = new ArrayList<>();
     }
@@ -50,11 +50,11 @@ public class ImageCorners {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ImageCorners that = (ImageCorners) o;
-        return Objects.equals(image, that.image) && Objects.equals(corners, that.corners);
+        return Objects.equals(image, that.image);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ImageCorners {
         return Objects.hash(image, corners);
     }
 
-    public void addCorner(Point corner){
+    public void addCorner(final Point corner){
         if(!this.corners.contains(corner)){
             this.corners.add(corner);
         }
@@ -97,7 +97,7 @@ public class ImageCorners {
     public Mat getMatImage(){
         return Imgcodecs.imread(this.image.getPath());
     }
-    public void moveCorner(Point corner, Point newCorner){
+    public void moveCorner(final Point corner,final Point newCorner){
         this.corners.set(this.corners.indexOf(corner), newCorner);
     }
 
@@ -111,7 +111,7 @@ public class ImageCorners {
      * @param indexToEdit
      * @param newIndex
      */
-    public void editCornerIndex(int indexToEdit, int newIndex) {
+    public void editCornerIndex(final int indexToEdit, final int newIndex) {
         Point pointToMove = this.corners.get(indexToEdit);
         this.corners.remove(indexToEdit);
         this.corners.add(newIndex, pointToMove);

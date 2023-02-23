@@ -9,6 +9,7 @@ import com.ds4h.model.util.Pair;
 import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
@@ -44,6 +45,15 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
         }
         return gray;
     }
+
+    protected Optional<AlignedImage> warpMatrix(final Mat source, final Mat destination, final Mat H, final Size size, final File targetImage){
+        final Mat alignedImage1 = new Mat();
+        // Align the first image to the second image using the homography matrix
+        Imgproc.warpPerspective(source, alignedImage1, H, destination.size());
+        final Optional<ImagePlus> finalImage = this.convertToImage(targetImage, alignedImage1);
+        return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
+    }
+
     /**
      * Align the images stored inside the cornerManager. All the images will be aligned to the source image
      * @param cornerManager : container where all the images are stored

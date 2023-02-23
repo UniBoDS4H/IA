@@ -1,5 +1,9 @@
 package com.ds4h.view.bunwarpjGUI;
 
+import com.ds4h.controller.bunwarpJController.BunwarpJController;
+import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
+import com.ds4h.model.deformation.scales.BunwarpJMinScale;
+import com.ds4h.model.deformation.scales.BunwarpJMode;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -30,43 +34,42 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
             imageWeight,
             consistencyWeight,
             thresholdWeight;
+
+    private final JButton buttonSave, buttonCancel;
+    private final GridBagConstraints constraints;
+
     private BunwarpJMode modeInput;
     private BunwarpJMinScale minScale;
     private BunwarpJMaxScale maxScale;
-    private final JButton buttonSave, buttonCancel;
-    private final GridBagConstraints constraints;
     private int sampleFactor;
-
-    private final static double MIN_ZERO = 0.0,
+    public final static double MIN_ZERO = 0.0,
             MIN_ZERO_ONE = 0.01,
             MIN_ONE = 0.1,
-            MIN_TEN = 10.0,
-            WIDTH_SCREEN_MULT = 0.25,
-            HEIGHT_SCREEN_MULT = 0.50;
+            MIN_TEN = 10.0;
 
     private double parDivWeigth = MIN_ZERO,
-        parCurlWeigth = MIN_ZERO,
-        parLandmarkWeigth = MIN_ZERO,
-        parImageWeigth = MIN_ONE,
-        parConsistencyWeigth = MIN_TEN,
-        parThreshold = MIN_ZERO_ONE;
-
+            parCurlWeigth = MIN_ZERO,
+            parLandmarkWeigth = MIN_ZERO,
+            parImageWeigth = MIN_ONE,
+            parConsistencyWeigth = MIN_TEN,
+            parThreshold = MIN_ZERO_ONE;
     private final static int WIDTH = 200, HEIGHT = 30;
-
-    public BunwarpjGUI(){
+    private final BunwarpJController bunwarpJController;
+    public BunwarpjGUI(final BunwarpJController bunwarpJController){
         super("BunwaprJ settings");
         // Get the screens dimension
+        this.bunwarpJController = bunwarpJController;
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         this.setLayout(new GridBagLayout());
 
-        this.modeInput = BunwarpJMode.FAST_MODE;
-        this.minScale = BunwarpJMinScale.VERY_COARSE;
-        this.maxScale = BunwarpJMaxScale.VERY_COARSE;
+        this.modeInput = this.bunwarpJController.getModeInput();
+        this.minScale = this.bunwarpJController.getMinScale();
+        this.maxScale = this.bunwarpJController.getMaxScale();
 
         // Set the Frame size
-        int width = (int) (screenSize.width * BunwarpjGUI.WIDTH_SCREEN_MULT);
-        int height = (int) (screenSize.height * BunwarpjGUI.HEIGHT_SCREEN_MULT);
+        int width = (int) (screenSize.width * 0.25);
+        int height = (int) (screenSize.height * 0.50);
         setSize(width, height);
 
         // Input field Panel
@@ -91,12 +94,12 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         this.initialDef = new JComboBox<>();
         this.finalDef = new JComboBox<>();
         // Init the input fields
-        this.divWeight = new JFormattedTextField(String.valueOf(BunwarpjGUI.MIN_ZERO));
-        this.curlWeight = new JFormattedTextField(String.valueOf(BunwarpjGUI.MIN_ZERO));
-        this.landmarkWeight = new JFormattedTextField(String.valueOf(BunwarpjGUI.MIN_ZERO));
-        this.imageWeight = new JFormattedTextField(String.valueOf(BunwarpjGUI.MIN_ONE));
-        this.consistencyWeight = new JFormattedTextField(String.valueOf(BunwarpjGUI.MIN_TEN));
-        this.thresholdWeight = new JFormattedTextField(String.valueOf(BunwarpjGUI.MIN_ZERO_ONE));
+        this.divWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_ZERO()));
+        this.curlWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_ZERO()));
+        this.landmarkWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_ZERO()));
+        this.imageWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_ONE()));
+        this.consistencyWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_TEN()));
+        this.thresholdWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_ZERO_ONE()));
 
         // Init the buttons
         this.sampleFactor = this.slider.getValue();
@@ -108,16 +111,16 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
 
     @Override
     public void showDialog() {
-        this.modeMenu.setSelectedItem(this.modeInput);
-        this.initialDef.setSelectedItem(this.minScale);
-        this.finalDef.setSelectedItem(this.maxScale);
-        this.slider.setValue(this.sampleFactor);
-        this.divWeight.setValue(String.valueOf(this.parDivWeigth));
-        this.curlWeight.setValue(String.valueOf(this.parCurlWeigth));
-        this.landmarkWeight.setValue(String.valueOf(this.parLandmarkWeigth));
-        this.imageWeight.setValue(String.valueOf(this.parImageWeigth));
-        this.consistencyWeight.setValue(String.valueOf(this.parConsistencyWeigth));
-        this.thresholdWeight.setValue(String.valueOf(this.parThreshold));
+        this.modeMenu.setSelectedItem(this.bunwarpJController.getModeInput());
+        this.initialDef.setSelectedItem(this.bunwarpJController.getMinScale());
+        this.finalDef.setSelectedItem(this.bunwarpJController.getMaxScale());
+        this.slider.setValue(this.bunwarpJController.getSampleFactor());
+        this.divWeight.setValue(String.valueOf(this.bunwarpJController.getParDivWeigth()));
+        this.curlWeight.setValue(String.valueOf(this.bunwarpJController.getParCurlWeigth()));
+        this.landmarkWeight.setValue(String.valueOf(this.bunwarpJController.getParLandmarkWeigth()));
+        this.imageWeight.setValue(String.valueOf(this.bunwarpJController.getParImageWeigth()));
+        this.consistencyWeight.setValue(String.valueOf(this.bunwarpJController.getParConsistencyWeigth()));
+        this.thresholdWeight.setValue(String.valueOf(this.bunwarpJController.getParThreshold()));
 
         setVisible(true);
     }
@@ -131,15 +134,25 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         this.buttonSave.addActionListener(event -> {
             try {
                 this.modeInput = this.modeMenu.getItemAt(this.modeMenu.getSelectedIndex());
+                this.bunwarpJController.setModeInput(this.modeInput);
                 this.minScale = this.initialDef.getItemAt(this.initialDef.getSelectedIndex());
+                this.bunwarpJController.setMinScale(this.minScale);
                 this.maxScale = this.finalDef.getItemAt(this.finalDef.getSelectedIndex());
+                this.bunwarpJController.setMaxScale(this.maxScale);
                 this.sampleFactor = this.slider.getValue();
+                this.bunwarpJController.setSampleFactor(this.sampleFactor);
                 this.parDivWeigth = this.checkInput(this.divWeight) ? Double.parseDouble(this.divWeight.getText()) : BunwarpjGUI.MIN_ZERO;
+                this.bunwarpJController.setParDivWeigth(this.parDivWeigth);
                 this.parCurlWeigth = this.checkInput(this.curlWeight) ? Double.parseDouble(this.curlWeight.getText()) : BunwarpjGUI.MIN_ZERO;
+                this.bunwarpJController.setParCurlWeigth(this.parCurlWeigth);
                 this.parLandmarkWeigth = this.checkInput(this.landmarkWeight) ? Double.parseDouble(this.landmarkWeight.getText()) : BunwarpjGUI.MIN_ZERO;
+                this.bunwarpJController.setParLandmarkWeigth(this.parLandmarkWeigth);
                 this.parImageWeigth = this.checkInput(this.imageWeight) ? Double.parseDouble(this.imageWeight.getText()) : BunwarpjGUI.MIN_ONE;
+                this.bunwarpJController.setParImageWeigth(this.parImageWeigth);
                 this.parConsistencyWeigth = this.checkInput(this.consistencyWeight) ? Double.parseDouble(this.consistencyWeight.getText()) : BunwarpjGUI.MIN_TEN;
+                this.bunwarpJController.setParConsistencyWeigth(this.parConsistencyWeigth);
                 this.parThreshold = this.checkInput(this.thresholdWeight) ? Double.parseDouble(this.thresholdWeight.getText()) : BunwarpjGUI.MIN_ZERO_ONE;
+                this.bunwarpJController.setParThreshold(this.parThreshold);
                 dispose();
             }catch(Exception e){
 
@@ -256,45 +269,4 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         }
         return false;
     }
-
-    public BunwarpJMode getModeInput() {
-        return modeInput;
-    }
-
-    public BunwarpJMinScale getMinScale() {
-        return minScale;
-    }
-
-    public BunwarpJMaxScale getMaxScale() {
-        return maxScale;
-    }
-
-    public int getSampleFactor() {
-        return sampleFactor;
-    }
-
-    public double getParDivWeigth() {
-        return parDivWeigth;
-    }
-
-    public double getParCurlWeigth() {
-        return parCurlWeigth;
-    }
-
-    public double getParLandmarkWeigth() {
-        return parLandmarkWeigth;
-    }
-
-    public double getParImageWeigth() {
-        return parImageWeigth;
-    }
-
-    public double getParConsistencyWeigth() {
-        return parConsistencyWeigth;
-    }
-
-    public double getParThreshold() {
-        return parThreshold;
-    }
-
 }

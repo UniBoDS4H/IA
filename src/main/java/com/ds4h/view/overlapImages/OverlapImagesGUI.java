@@ -91,18 +91,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
-            //TODO: Implement bunwarp J
-            bunwarpJController.transformation(this.bunwarpjGUI.getModeInput().getValue(),
-                    this.bunwarpjGUI.getSampleFactor(),
-                    this.bunwarpjGUI.getMinScale().getValue(),
-                    this.bunwarpjGUI.getMaxScale().getValue(),
-                    this.bunwarpjGUI.getParDivWeigth(),
-                    this.bunwarpjGUI.getParCurlWeigth(),
-                    this.bunwarpjGUI.getParLandmarkWeigth(),
-                    this.bunwarpjGUI.getParImageWeigth(),
-                    this.bunwarpjGUI.getParConsistencyWeigth(),
-                    this.bunwarpjGUI.getParThreshold(),
-                    this.alignmentControllerInterface.getAlignedImages());
+            bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages());
         });
     }
 
