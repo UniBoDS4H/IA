@@ -20,6 +20,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
 
+
     public CornerSelectorGUI(final ImageCorners image, final CornerController controller){
         this.cornerController = controller;
         this.image = image;
