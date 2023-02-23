@@ -4,6 +4,7 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
@@ -26,7 +27,6 @@ import java.util.List;
 public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ConfigureImagesGUI configureImagesGUI;
     private final JLayeredPane panel;
-    private final ConfigPanel configPanel;
     private final List<AlignedImage> images;
     private final SaveImagesGUI saveGui;
     private final List<ImagePanel> imagePanels;
@@ -37,18 +37,19 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final BunwarpJController bunwarpJController;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
-    public OverlapImagesGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
+    private final BunwarpjGUI bunwarpjGUI;
+    public OverlapImagesGUI(final BunwarpjGUI bunwarpjGUI, final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
         this.setTitle("Final Result");
         this.setLayout(new BorderLayout());
         this.alignmentControllerInterface = controller;
         this.bunwarpJController = new BunwarpJController();
+        this.bunwarpjGUI = bunwarpjGUI;
         this.previewImagesPane = previewImagesPane;
         this.cornerController = cornerController;
         this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
         this.configureImagesGUI = new ConfigureImagesGUI(this.alignmentControllerInterface);
         this.panel = new JLayeredPane();
-        this.configPanel = new ConfigPanel(this.alignmentControllerInterface);
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
         this.saveMenu = new JMenu("Save");
@@ -73,47 +74,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-                configPanel.setElements(imagePanels);
-            }
+        this.settingsImages.addActionListener(event -> {
+            this.configureImagesGUI.setElements(this.imagePanels);
+            this.configureImagesGUI.showDialog();
 
-            @Override
-            public void windowClosing(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
         });
         this.saveImages.addActionListener(event -> {
             this.saveGui.showDialog();
         });
         this.carouselItem.addActionListener(event -> {
-            new CarouselGUI(this.alignmentControllerInterface, this.cornerController, this.previewImagesPane).showDialog();
+            new CarouselGUI(this.bunwarpjGUI, this.alignmentControllerInterface, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
@@ -122,7 +92,17 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         });
         this.elasticItem.addActionListener(event -> {
             //TODO: Implement bunwarp J
-            //bunwarpJController.transformation()
+            bunwarpJController.transformation(this.bunwarpjGUI.getModeInput().getValue(),
+                    this.bunwarpjGUI.getSampleFactor(),
+                    this.bunwarpjGUI.getMinScale().getValue(),
+                    this.bunwarpjGUI.getMaxScale().getValue(),
+                    this.bunwarpjGUI.getParDivWeigth(),
+                    this.bunwarpjGUI.getParCurlWeigth(),
+                    this.bunwarpjGUI.getParLandmarkWeigth(),
+                    this.bunwarpjGUI.getParImageWeigth(),
+                    this.bunwarpjGUI.getParConsistencyWeigth(),
+                    this.bunwarpjGUI.getParThreshold(),
+                    this.alignmentControllerInterface.getAlignedImages());
         });
     }
 
@@ -130,7 +110,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.overlapImages();
         this.add(this.panel, BorderLayout.CENTER);
-        this.add(this.configPanel, BorderLayout.SOUTH);
         this.menu.add(this.settingsMenu);
         this.menu.add(this.saveMenu);
         this.menu.add(this.reuseMenu);
@@ -182,12 +161,16 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             for(int i = 0; i < img.getWidth(); i++){
                 for(int j = 0; j < img.getHeight(); j++){
                     Color c = new Color(img.getRGB(i,j));
-                    int r = c.getRed() + color.getRed();
-                    int g = c.getGreen() + color.getGreen();
-                    int b = c.getBlue() + color.getBlue();
-                    int a = c.getAlpha();
-                    Color nc = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255), a);
-                    image.setRGB(i, j, nc.getRGB());
+                    if(!c.equals(Color.BLACK)) {
+                        int r = c.getRed() + color.getRed();
+                        int g = c.getGreen() + color.getGreen();
+                        int b = c.getBlue() + color.getBlue();
+                        int a = c.getAlpha();
+                        Color nc = new Color(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255), a);
+                        image.setRGB(i, j, nc.getRGB());
+                    }else{
+                        image.setRGB(i, j, Color.BLACK.getRGB());
+                    }
                 }
             }
             this.color = color;

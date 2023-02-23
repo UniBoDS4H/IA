@@ -35,7 +35,6 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
     private BunwarpJMaxScale maxScale;
     private final JButton buttonSave, buttonCancel;
     private final GridBagConstraints constraints;
-
     private int sampleFactor;
 
     private final static double MIN_ZERO = 0.0,
@@ -257,4 +256,45 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         }
         return false;
     }
+
+    public BunwarpJMode getModeInput() {
+        return modeInput;
+    }
+
+    public BunwarpJMinScale getMinScale() {
+        return minScale;
+    }
+
+    public BunwarpJMaxScale getMaxScale() {
+        return maxScale;
+    }
+
+    public int getSampleFactor() {
+        return sampleFactor;
+    }
+
+    public double getParDivWeigth() {
+        return parDivWeigth;
+    }
+
+    public double getParCurlWeigth() {
+        return parCurlWeigth;
+    }
+
+    public double getParLandmarkWeigth() {
+        return parLandmarkWeigth;
+    }
+
+    public double getParImageWeigth() {
+        return parImageWeigth;
+    }
+
+    public double getParConsistencyWeigth() {
+        return parConsistencyWeigth;
+    }
+
+    public double getParThreshold() {
+        return parThreshold;
+    }
+
 }

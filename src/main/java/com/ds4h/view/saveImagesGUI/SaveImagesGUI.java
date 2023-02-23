@@ -43,6 +43,7 @@ public class SaveImagesGUI extends JFrame implements StandardGUI {
                 final File selectedDirectory = this.fileChooser.getSelectedFile();
                 try {
                     SaveController.saveImages(this.imagesPane.getImagesToSave(), selectedDirectory.getPath());
+                    this.dispose();
                 }catch (Exception e){
                     IJ.showMessage(e.getMessage());
                 }

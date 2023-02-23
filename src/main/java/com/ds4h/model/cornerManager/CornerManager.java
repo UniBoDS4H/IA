@@ -18,16 +18,21 @@ public class CornerManager {
     }
 
     public void loadImages(final List<String> loadingImages){
-        loadingImages.stream().map(File::new).forEach(file -> {
-            if(CheckImage.checkImage(file)) {
+        loadingImages.stream().map(File::new).filter(CheckImage::checkImage).forEach(file -> {
                 this.imagesWithCorners.add(new ImageCorners(file));
-            }
         });
         if(this.imagesWithCorners.size() > 0) {
             //setting the first image as default
             this.setAsSource(new ImageCorners(new File(loadingImages.get(0))));
         }else{
             throw new IllegalArgumentException("Zero images found");
+        }
+    }
+
+    public void loadImage(final String path){
+        final File file = new File(path);
+        if(CheckImage.checkImage(file)){
+            this.imagesWithCorners.add(new ImageCorners(file));
         }
     }
 
@@ -60,12 +65,12 @@ public class CornerManager {
         return this.sourceImage;
     }
 
-    public void setAsSource(ImageCorners image){
+    public void setAsSource(final ImageCorners image){
         if(this.imagesWithCorners.contains(image)){
             this.sourceImage = Optional.of(image);
             System.out.println(this.sourceImage);
         }else{
-            throw new IllegalArgumentException("given image was not fount among the loaded");
+            throw new IllegalArgumentException("The given image was not fount among the loaded");
         }
     }
 }

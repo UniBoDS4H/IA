@@ -28,8 +28,8 @@ public class BunwarpjDeformation {
      * @return :
      */
     public static ImagePlus deform(final int mode, final int img_subsamp_fact, final int min_scale_deformation,
-            final int max_scale_deformation, final int divWeight, final int curlWeight, final int landmarkWeight,
-            final int imageWeight, final int consistencyWeight, final int threshold, final ImagePlus target, final ImagePlus source){
+            final int max_scale_deformation, final double divWeight, final double curlWeight, final double landmarkWeight,
+            final double imageWeight, final double consistencyWeight, final double threshold, final ImagePlus target, final ImagePlus source){
         //Compute the tranformation
         final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
                 source,

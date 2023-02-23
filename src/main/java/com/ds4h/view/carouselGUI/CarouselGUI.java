@@ -3,6 +3,7 @@ package com.ds4h.view.carouselGUI;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
@@ -35,9 +36,11 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private final PreviewImagesPane previewImagesPane;
     private final int max_number;
 
-    public CarouselGUI(final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
+    private final BunwarpjGUI bunwarpjGUI;
+    public CarouselGUI(final BunwarpjGUI bunwarpjGUI, final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
         this.setTitle("Final Alignment Result");
         this.panel = new CarouselPanel();
+        this.bunwarpjGUI = bunwarpjGUI;
         this.previewImagesPane = previewImagesPane;
         this.controller = controller;
         this.setLayout(new BorderLayout());
@@ -86,7 +89,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.overlappedItem.addActionListener(event -> {
-            new OverlapImagesGUI(this.controller, this.cornerController, this.previewImagesPane);
+            new OverlapImagesGUI(this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
             this.dispose();
         });
         this.saveItem.addActionListener(event -> {

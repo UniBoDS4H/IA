@@ -85,11 +85,10 @@ public class ImageCorners {
     }
 
     public MatOfKeyPoint getMatOfKeyPoint(){
-        List<KeyPoint> keypoints = new ArrayList<>();
+        final List<KeyPoint> keypoints = new ArrayList<>();
         for (Point point : this.corners) {
             keypoints.add(new KeyPoint((float)point.x, (float)point.y, 1));
         }
-
         MatOfKeyPoint matOfKeyPoints = new MatOfKeyPoint();
         matOfKeyPoints.fromList(keypoints);
         return matOfKeyPoints;
