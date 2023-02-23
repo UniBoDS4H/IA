@@ -206,15 +206,15 @@ private void setDefaultPointerStyles() {
                 double yMove = yOffset + yDiff >0? 0: yOffset + yDiff;
                 System.out.println(xOffset + "    " + -this.getWidth()*zoomFactor+this.getWidth());
                 xMove = (xMove < -this.getWidth()*zoomFactor+this.getWidth())?-this.getWidth()*zoomFactor+this.getWidth(): xMove;
-                yMove = (yMove < -this.currentImage.getBufferedImage().getHeight())?-this.currentImage.getBufferedImage().getHeight(): yMove;
+                yMove = (yMove < -this.getHeight()*zoomFactor+this.getHeight())?-this.getHeight()*zoomFactor+this.getHeight(): yMove;
 
                 at.translate(xMove, yMove);
                 at.scale(zoomFactor, zoomFactor);
                 g2d.transform(at);
 
                 if (released) {
-                    xOffset += xMove;
-                    yOffset += yMove;
+                    xOffset = xMove;
+                    yOffset = yMove;
                     dragger = false;
                 }
 
