@@ -4,10 +4,8 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.gui.ImageWindow;
 import org.opencv.core.Point;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,25 +19,13 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     private final ImageCorners image;
     private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
-    private final JScrollPane scrollPane;
-    private static final int ZOOM_FACTOR = 2;
 
-    private ImageIcon imageIcon;
-    private JLabel imageLabel;
 
     public CornerSelectorGUI(final ImageCorners image, final CornerController controller){
         this.cornerController = controller;
         this.image = image;
         this.panel = new CornerSelectorPanelGUI(this);
         this.panel.setCurrentImage(image);
-
-        scrollPane = new JScrollPane(this.panel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
-
-
-
         this.menu = new CornerSelectorMenuGUI(this.cornerController, this.image, this);
         this.selectedPoints = new ArrayList<>();
         setLayout(new BorderLayout());
@@ -64,7 +50,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        this.add(this.scrollPane, BorderLayout.CENTER);
+        this.add(this.panel, BorderLayout.CENTER);
         this.add(this.menu, BorderLayout.SOUTH);
     }
     public void repaintPanel(){
@@ -80,7 +66,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
                 new Dimension(this.image.getBufferedImage().getWidth(this.panel),
                         this.image.getBufferedImage().getHeight(this.panel)),
                 DisplayInfo.getDisplaySize(80));
-        newDimension.setSize(newDimension.getWidth()+this.menu.getWidth()+this.scrollPane.getWidth(), newDimension.getHeight()+this.menu.getHeight()+this.scrollPane.getHeight());
+        newDimension.setSize(newDimension.getWidth()+this.menu.getWidth(), newDimension.getHeight()+this.menu.getHeight());
         setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
         setMinimumSize(newDimension);
     }

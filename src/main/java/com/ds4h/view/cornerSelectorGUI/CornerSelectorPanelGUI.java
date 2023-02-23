@@ -245,20 +245,25 @@ private void setDefaultPointerStyles() {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-
-        zoomer = true;
-
-        //Zoom in
-        if (e.getWheelRotation() < 0) {
-            zoomFactor *= 1.1;
-            repaint();
-        }
-        //Zoom out
-        if (e.getWheelRotation() > 0) {
-            if(zoomFactor/1.1 >=1){
-                zoomFactor /= 1.1;
+        if(e.isControlDown()){
+            zoomer = true;
+            //Zoom in
+            if (e.getWheelRotation() < 0) {
+                zoomFactor = zoomFactor <3? zoomFactor*1.1: 3;
                 repaint();
             }
+            //Zoom out
+            if (e.getWheelRotation() > 0) {
+                if(zoomFactor/1.1 >=1){
+                    zoomFactor /= 1.1;
+                }else{
+                    zoomFactor = 1;
+                    xOffset = 0;
+                    yOffset = 0;
+                }
+                repaint();
+            }
+
         }
     }
 
