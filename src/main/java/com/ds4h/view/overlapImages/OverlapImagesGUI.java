@@ -2,6 +2,7 @@ package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
+import com.ds4h.controller.changeColorController.ChangeColorController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -144,23 +145,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         }
 
         public void changeColor(final Color color){
-            //TODO: CLICK MOUSE ON THE PIXEL, FOR EACH PIXEL OF THE SAME COLOR MAKE IT BLACK
-            final BufferedImage img = this.clearImage.getBufferedImage();
-            final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            for(int i = 0; i < img.getWidth(); i++){
-                for(int j = 0; j < img.getHeight(); j++){
-                    Color c = new Color(img.getRGB(i,j));
-
-                    int r = color.getRed()*c.getRed()/255 -40;
-                    int g = color.getGreen()*c.getGreen()/255 -40;
-                    int b = color.getBlue()*c.getBlue()/255 -40;
-                    int a = c.getAlpha();
-                    Color nc = new Color(Math.max(r, 0), Math.max(g, 0), Math.max(b, 0), a);
-                    image.setRGB(i, j, nc.getRGB());
-                }
-            }
             this.color = color;
-            this.alignedImage = new ImagePlus(this.alignedImage.getTitle(), image);
+            this.alignedImage = ChangeColorController.changeColor(this.clearImage, color);
             this.repaint();
         }
 
