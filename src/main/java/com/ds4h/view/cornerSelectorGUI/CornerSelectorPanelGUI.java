@@ -21,13 +21,13 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     private Color textColor;
     private int pointerDimension;
 
-    private double zoomFactor = 1;
-    private double prevZoomFactor = 1;
+    private double zoomFactor;
+    private double prevZoomFactor;
     private boolean zoomer;
     private boolean dragger;
     private boolean released;
-    private double xOffset = 0;
-    private double yOffset = 0;
+    private double xOffset;
+    private double yOffset;
     private int xDiff;
     private int yDiff;
     private java.awt.Point startPoint;
@@ -37,6 +37,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         this.setDefaultPointerStyles();
         this.addMouseWheelListener(this);
         this.setFocusable(true);
+        this.initZoom();
         setOpaque(true);
         initComponent();
 
@@ -115,6 +116,14 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
             }
         });
     }
+
+    public void initZoom() {
+        this.zoomFactor = 1;
+        this.prevZoomFactor = 1;
+        this.xOffset = 0;
+        this.yOffset = 0;
+    }
+
     private Point getScaledPoint(MouseEvent e){
         return new Point((-xOffset/zoomFactor)+(e.getX()/zoomFactor), (-yOffset/zoomFactor)+(e.getY()/zoomFactor));
     }

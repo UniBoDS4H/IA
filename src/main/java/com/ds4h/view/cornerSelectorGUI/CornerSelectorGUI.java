@@ -37,6 +37,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     @Override
     public void showDialog() {
         setVisible(true);
+        this.panel.initZoom();
     }
 
     @Override
