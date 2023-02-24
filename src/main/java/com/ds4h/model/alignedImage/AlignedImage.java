@@ -2,10 +2,6 @@ package com.ds4h.model.alignedImage;
 
 import ij.ImagePlus;
 import org.opencv.core.Mat;
-import org.opencv.highgui.HighGui;
-
-import java.io.File;
-import java.util.Objects;
 import java.util.Optional;
 
 /**

@@ -1,4 +1,4 @@
-package com.ds4h.view.bunwarpjGUI;
+package com.ds4h.model.deformation.scales;
 
 public enum BunwarpJMode {
 

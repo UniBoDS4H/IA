@@ -4,6 +4,7 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import com.ds4h.view.util.ColorComboBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JButton reset;
     private final JComboBox<String> comboBox;
     private final JSlider opacitySlider;
-    private final JComboBox<Color> colorBox;
+    private final ColorComboBox colorComboBox;
     private final AlignmentControllerInterface controller;
     private final JLabel labelCombo, labelSlider;
     private final GridBagConstraints constraints;
@@ -32,91 +33,17 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.constraints.anchor = GridBagConstraints.WEST;
         this.setLayout(new GridBagLayout());
         this.imagePanels = new LinkedList<>();
-        this.colorBox = new JComboBox<>();
+        this.colorComboBox = new ColorComboBox();
         this.reset = new JButton("Reset");
         this.labelCombo = new JLabel("Choose the Image");
         this.labelSlider = new JLabel("Choose the opacity of the image");
         this.comboBox = new JComboBox<>();
-        this.populateList();
+
         this.opacitySlider = new JSlider(0,10);
         this.addComponents();
         this.addListeners();
     }
 
-    private void populateList(){
-        colorList.add(Color.RED);
-        colorList.add(Color.GREEN);
-        colorList.add(Color.BLUE);
-        colorList.add(Color.YELLOW);
-        colorList.add(Color.MAGENTA);
-        colorList.add(Color.CYAN);
-        colorList.add(Color.PINK);
-        colorList.add(Color.ORANGE);
-        this.populateColors();
-    }
-
-    private void populateColors(){
-        DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<Color>();
-        for(Color color : colorList){
-            colorModel.addElement(color);
-        }
-        this.colorBox.setModel(colorModel);
-
-        this.colorBox.setRenderer(new ListCellRenderer<Color>() {
-            private final JTextField renderer = new JTextField();
-            @Override
-            public Component getListCellRendererComponent(JList<? extends Color> list, Color value, int index, boolean isSelected, boolean cellHasFocus) {
-                renderer.setText(" ");
-                renderer.setBackground(value);
-                renderer.setPreferredSize(new Dimension(50, 20));
-                return renderer;
-            }
-        });
-        this.colorBox.setEditor(new ComboBoxEditor() {
-            private final JTextField editor = new JTextField();
-            private Color color;
-
-            @Override
-            public Component getEditorComponent() {
-                return editor;
-            }
-
-            @Override
-            public void setItem(Object anObject) {
-                if (anObject instanceof Color) {
-                    color = (Color) anObject;
-                    editor.setText("");
-                    editor.setOpaque(true);
-                    editor.setBackground(color);
-                }
-            }
-
-            @Override
-            public Object getItem() {
-                return color;
-            }
-
-            @Override
-            public void selectAll() {
-
-            }
-
-            @Override
-            public void addActionListener(ActionListener l) {
-
-            }
-
-            @Override
-            public void removeActionListener(ActionListener l) {
-
-            }
-        });
-        this.colorBox.setEnabled(true);
-        this.colorBox.setEditable(true);
-        // Set a custom editor for the JComboBox
-
-
-    }
 
     @Override
     public void showDialog() {
@@ -125,10 +52,10 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addListeners() {
-        this.colorBox.addActionListener(event -> {
-            final int index = this.colorBox.getSelectedIndex();
+        this.colorComboBox.addActionListener(event -> {
+            final int index = this.colorComboBox.getSelectedIndex();
             final int indexImage = this.comboBox.getSelectedIndex();
-            final Color color = this.colorBox.getItemAt(index);
+            final Color color = this.colorComboBox.getItemAt(index);
             this.imagePanels.get(indexImage).changeColor(color);
         });
 
@@ -160,7 +87,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents() {
         this.addElement(this.labelCombo, new JPanel(), this.comboBox);
-        this.addElement(new JLabel("Pick a color : "), new JPanel(), this.colorBox);
+        this.addElement(new JLabel("Pick a color : "), new JPanel(), this.colorComboBox);
         this.addElement(this.labelSlider, new JPanel(), this.opacitySlider);
         this.opacitySlider.setMajorTickSpacing(5);
         this.opacitySlider.setMinorTickSpacing(1);

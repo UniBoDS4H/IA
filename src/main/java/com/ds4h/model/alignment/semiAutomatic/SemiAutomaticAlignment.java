@@ -14,7 +14,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,9 +106,7 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
             final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
             final Mat alignedImage1 = new Mat();
             // Align the first image to the second image using the homography matrix
-            Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
-            final Optional<ImagePlus> finalImage = this.convertToImage(targetImage.getFile(), alignedImage1);
-            return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
+            return super.warpMatrix(image1, alignedImage1, H, image2.size(), targetImage.getFile());
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
         }

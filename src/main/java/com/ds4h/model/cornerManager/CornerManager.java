@@ -18,9 +18,12 @@ public class CornerManager {
     }
 
     public void loadImages(final List<String> loadingImages){
-        loadingImages.stream().map(File::new).filter(CheckImage::checkImage).forEach(file -> {
-                this.imagesWithCorners.add(new ImageCorners(file));
-        });
+        loadingImages.stream()
+                .map(File::new)
+                .filter(CheckImage::checkImage)
+                .map(ImageCorners::new)
+                .filter(image -> !this.imagesWithCorners.contains(image))
+                .forEach(this.imagesWithCorners::add);
         if(this.imagesWithCorners.size() > 0) {
             //setting the first image as default
             this.setAsSource(new ImageCorners(new File(loadingImages.get(0))));
@@ -32,7 +35,10 @@ public class CornerManager {
     public void loadImage(final String path){
         final File file = new File(path);
         if(CheckImage.checkImage(file)){
-            this.imagesWithCorners.add(new ImageCorners(file));
+            final ImageCorners image = new ImageCorners(file);
+            if(this.imagesWithCorners.contains(image)) {
+                this.imagesWithCorners.add(image);
+            }
         }
     }
 

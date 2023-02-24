@@ -2,22 +2,16 @@ package com.ds4h.model.alignment.automatic;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
-import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.model.util.NameBuilder;
-import com.ds4h.model.util.Pair;
 import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.CvType;
-import org.opencv.core.Scalar;
 import org.opencv.features2d.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 import org.opencv.imgcodecs.Imgcodecs;
-import java.io.File;
 import java.util.*;
 
 /**
@@ -122,9 +116,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
             final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
             final Mat alignedImage1 = new Mat();
             // Align the first image to the second image using the homography matrix
-            Imgproc.warpPerspective(image1, alignedImage1, H, image2.size());
-            final Optional<ImagePlus> finalImage = this.convertToImage(targetImage.getFile(), alignedImage1);
-            return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
+            return super.warpMatrix(image1, alignedImage1, H, image2.size(), targetImage.getFile());
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
         }

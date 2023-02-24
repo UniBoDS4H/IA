@@ -5,6 +5,7 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.*;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
+import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
@@ -42,6 +43,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final CornerController cornerControler;
     private final PreviewImagesPane imagesPreview;
     private final AlignmentConfigGUI alignmentConfigGUI;
+    private final BunwarpJController bunwarpJController;
 
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
@@ -52,6 +54,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     public MainMenuGUI() {
         setTitle("DS4H Image Alignment");
         this.setFrameSize();
+        this.bunwarpJController = new BunwarpJController();
         this.fileChooser = new JFileChooser();
         this.cornerControler = new CornerController();
         //Init of the two buttons
@@ -77,7 +80,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
 
         this.aboutGUI = new AboutGUI();
-        this.settingsBunwarpj = new BunwarpjGUI();
+        this.settingsBunwarpj = new BunwarpjGUI(this.bunwarpJController);
         this.alignmentConfigGUI = new AlignmentConfigGUI();
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
