@@ -7,6 +7,7 @@ import com.ds4h.model.deformation.scales.BunwarpJMode;
 import ij.ImagePlus;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Controller for the BunwarpJ elastic deformation
@@ -27,10 +28,10 @@ public class BunwarpJController {
     public List<ImagePlus> transformation(final List<AlignedImage> images){
         final Optional<AlignedImage> source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
         if(source.isPresent()) {
-            final List<ImagePlus> imagePlusList = new LinkedList<>();
-            images.stream().map(AlignedImage::getAlignedImage)
-                    .map(alignedImg -> this.bunwarpjDeformation.deform(alignedImg, source.get().getAlignedImage()))
-                    .forEach(imagePlusList::add);
+            final List<ImagePlus> imagePlusList = new CopyOnWriteArrayList<>();
+            images.parallelStream().map(AlignedImage::getAlignedImage)
+            .map(alignedImg -> bunwarpjDeformation.deform(alignedImg, source.get().getAlignedImage()))
+            .forEach(imagePlusList::add);
             return imagePlusList;
         }else{
             return Collections.emptyList();

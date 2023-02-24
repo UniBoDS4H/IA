@@ -1,4 +1,4 @@
-package com.ds4h.model.util.exportProject;
+package com.ds4h.model.util.projectManager.exportProject;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 

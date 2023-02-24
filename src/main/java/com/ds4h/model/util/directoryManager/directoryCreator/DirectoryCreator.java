@@ -1,4 +1,4 @@
-package com.ds4h.model.util.directoryCreator;
+package com.ds4h.model.util.directoryManager.directoryCreator;
 
 import com.ds4h.model.util.DateTime;
 
@@ -27,6 +27,7 @@ public class DirectoryCreator {
         final String finalName = DirectoryCreator.createTMPName(dirName);
         final String baseDirectoryName = TEMPORARY_PATH+"/"+ finalName;
         final File directory = new File(baseDirectoryName);
+        directory.deleteOnExit();
         return directory.mkdir() ? finalName : "";
     }
 

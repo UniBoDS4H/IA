@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * This class is used in order to apply an elastic transformation using the BUnwarpJ Library.
  */
-public class BunwarpjDeformation {
+public class BunwarpjDeformation{
     private BunwarpJMode modeInput;
     private BunwarpJMinScale minScale;
     private BunwarpJMaxScale maxScale;
@@ -42,6 +42,7 @@ public class BunwarpjDeformation {
      * @param source : Source Image
      * @return :
      */
+
     public ImagePlus deform(final ImagePlus target, final ImagePlus source){
         //Compute the tranformation
         final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
@@ -60,6 +61,7 @@ public class BunwarpjDeformation {
                 this.parThreshold);
         return transformation.getDirectResults();
     }
+
 
     public void setModeInput(final BunwarpJMode modeInput) {
         if(Objects.nonNull(modeInput)) {

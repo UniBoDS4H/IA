@@ -1,8 +1,7 @@
-package com.ds4h.model.util.importProject;
+package com.ds4h.model.util.projectManager.importProject;
 
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.util.CheckImage;
-import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.json.JSONFile;
 import com.ds4h.model.util.json.jsonDeserializer.JSONDeserializer;
 

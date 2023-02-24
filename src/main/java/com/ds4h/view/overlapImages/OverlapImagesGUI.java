@@ -92,7 +92,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
-            bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages());
+            //TODO: understand what  to do with this images
+            bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages())
+                    .forEach(ImagePlus::show);
         });
     }
 
@@ -149,6 +151,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.alignedImage = ChangeColorController.changeColor(this.clearImage, color);
             this.repaint();
         }
+
 
         public void setDefaultColor(){
             this.color = Color.RED;

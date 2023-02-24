@@ -7,8 +7,10 @@ import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualA
 import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
+import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
@@ -84,7 +86,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.alignmentConfigGUI = new AlignmentConfigGUI();
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
-        this.menu = new JMenu("Navigation");
+        this.menu = new JMenu("Menu");
         this.project = new JMenu("Project");
         this.aboutItem = new JMenuItem("About");
         this.loadImages = new JMenuItem("Load Images");
@@ -198,6 +200,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                DirectoryManager.deleteTMPDirectories();
+                OpencvController.deleteLibrary();
                 dispose();
             }
         });

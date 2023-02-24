@@ -1,10 +1,9 @@
-package com.ds4h.model.util.opencvLoader;
+package com.ds4h.model.util.opencvManager.opencvLoader;
 
 import ij.IJ;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class OpenCVLoader {
     private static final String OS = System.getProperty("os.name").toLowerCase();
     private static final String WINDOWS = "windows", MAC = "mac", LINUX = "linux", ARM = "arm", ARMV = "armv";
     private static final String WINDOWS_FORMAT = ".dll", MAC_FORMAT = ".dylib", LINUX_FORMAT = ".so";
-    private static final String TMP_LIBRARY_NAME = "DS4H_OpenCVLibrary";
+    public static final String TMP_LIBRARY_NAME = "DS4H_OpenCVLibrary";
     private final static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String WINDOWS_LIB = "opencv_java455",
             MAC_LIB_INTEL = "opencv_java455",

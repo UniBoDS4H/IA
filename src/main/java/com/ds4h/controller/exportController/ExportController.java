@@ -1,7 +1,7 @@
 package com.ds4h.controller.exportController;
 
 import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.util.exportProject.ExportProject;
+import com.ds4h.model.util.projectManager.exportProject.ExportProject;
 
 import java.io.IOException;
 
