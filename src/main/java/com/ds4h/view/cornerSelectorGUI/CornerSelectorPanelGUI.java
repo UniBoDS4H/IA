@@ -46,8 +46,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
             @Override
             public void mouseDragged(MouseEvent e) {
                 if(referencePoint != null) {
-                    Point newPoint = getMatIndexFromPoint(new Point(e.getX(), e.getY()));
-                    //currentImage.moveCorner(referencePoint, newPoint);
+                    Point newPoint = getMatIndexFromPoint(getScaledPoint(e));
                     moveAllSelected(referencePoint, newPoint);
                     referencePoint = newPoint;
                     repaint();
@@ -65,7 +64,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Point point = getMatIndexFromPoint(new Point(e.getX(),e.getY()));
+                Point point = getMatIndexFromPoint(getScaledPoint(e));
                 if(imageContains(point)){//point already present in the image
                     Point actualPoint = getActualPoint(point); //getting the exact pressed point
                     if(!e.isControlDown()){
@@ -80,7 +79,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
             @Override
             public void mousePressed(MouseEvent e) {
 
-                    Point point = getMatIndexFromPoint(new Point(e.getX(),e.getY()));
+                    Point point = getMatIndexFromPoint(getScaledPoint(e));
                     if(imageContains(point)){//point already present in the image
                         Point actualPoint = getActualPoint(point); //getting the exact pressed point
                         referencePoint = actualPoint;
@@ -98,9 +97,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                         }
                     }else{
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                            System.out.println(xOffset + "  " + yOffset);
-                            System.out.println((-xOffset/zoomFactor)+(e.getX()/zoomFactor) + "   " + (-yOffset/zoomFactor)+(e.getY()/zoomFactor));
-                            currentImage.addCorner(getMatIndexFromPoint(new Point((-xOffset/zoomFactor)+(e.getX()/zoomFactor), (-yOffset/zoomFactor)+(e.getY()/zoomFactor))));
+                            currentImage.addCorner(getMatIndexFromPoint(getScaledPoint(e)));
                             repaint();
                         }else{
                             released = false;
@@ -119,6 +116,9 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                 super.mouseReleased(mouseEvent);
             }
         });
+    }
+    private Point getScaledPoint(MouseEvent e){
+        return new Point((-xOffset/zoomFactor)+(e.getX()/zoomFactor), (-yOffset/zoomFactor)+(e.getY()/zoomFactor));
     }
     private void initComponent() {
         addMouseWheelListener(this);
@@ -176,6 +176,14 @@ private void setDefaultPointerStyles() {
         if(this.currentImage != null){
             super.paintComponent(g);
 
+            if(!dragger && !zoomer){
+                AffineTransform at = new AffineTransform();
+                at.translate(xOffset, yOffset);
+                at.scale(zoomFactor, zoomFactor);
+                System.out.println(zoomFactor);
+                g2d.transform(at);
+            }
+
             if (zoomer) {
                 AffineTransform at = new AffineTransform();
 
@@ -200,6 +208,7 @@ private void setDefaultPointerStyles() {
 
                 at.translate(xOffset, yOffset);
                 at.scale(zoomFactor, zoomFactor);
+                System.out.println(zoomFactor);
                 prevZoomFactor = zoomFactor;
                 g2d.transform(at);
                 zoomer = false;
@@ -209,11 +218,11 @@ private void setDefaultPointerStyles() {
                 AffineTransform at = new AffineTransform();
                 double xMove = xOffset + xDiff >0? 0: xOffset + xDiff;
                 double yMove = yOffset + yDiff >0? 0: yOffset + yDiff;
-                xMove = (xMove < -this.getWidth()*zoomFactor+this.getWidth())?-this.getWidth()*zoomFactor+this.getWidth(): xMove;
-                yMove = (yMove < -this.getHeight()*zoomFactor+this.getHeight())?-this.getHeight()*zoomFactor+this.getHeight(): yMove;
-
+                xMove = Math.max(xMove, -this.getWidth() * zoomFactor + this.getWidth());
+                yMove = Math.max(yMove, -this.getHeight() * zoomFactor + this.getHeight());
                 at.translate(xMove, yMove);
                 at.scale(zoomFactor, zoomFactor);
+                System.out.println(zoomFactor);
                 g2d.transform(at);
 
                 if (released) {
@@ -222,9 +231,10 @@ private void setDefaultPointerStyles() {
                     dragger = false;
                 }
 
-
+                System.out.println(at);
             }
-            g2d.drawImage(this.currentImage.getBufferedImage(),0,0,this);
+
+            g2d.drawImage(this.currentImage.getBufferedImage(),0,0,null);
         }
         Arrays.stream(this.currentImage.getCorners())
                 .map(p-> new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p))
