@@ -122,7 +122,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         addMouseWheelListener(this);
     }
 
-private void setDefaultPointerStyles() {
+    private void setDefaultPointerStyles() {
         this.textColor = Color.YELLOW;
         this.pointerColor = Color.RED;
         this.selectedPointerColor = Color.YELLOW;
@@ -222,24 +222,32 @@ private void setDefaultPointerStyles() {
         this.drawPoints(g2d);
     }
 
+    /**
+     * Draws all the corners with their index in the right color and dimension
+     * @param g2d the drawer
+     */
     private void drawPoints(Graphics2D g2d) {
-        Arrays.stream(this.currentImage.getCorners())
-                .map(p-> new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p))
-                .forEach(point->{ //point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
-                    Font f = new Font("Serif", Font.BOLD, 16);
-                    g2d.setColor(this.textColor);
-                    g2d.setFont(f);
-                    int textX = (int)point.getKey().x - this.pointerDimension * 3 - 12;
-                    int textY = (int)point.getKey().y + this.pointerDimension * 3 + 12;
-                    g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())), textX, textY);
-                    //if the corner I'm printing it's not selected I use the not selected color
-                    g2d.setColor(this.container.getSelectedPoints().contains(point.getValue())?this.selectedPointerColor:this.pointerColor);
-                    g2d.setStroke(new BasicStroke(3));
-                    g2d.drawOval((int)point.getKey().x - this.pointerDimension*3, (int)point.getKey().y - this.pointerDimension*3, this.pointerDimension*6, this.pointerDimension*6);
-                    g2d.fillOval((int)point.getKey().x - 3, (int)point.getKey().y - 3, POINT_DIAMETER, POINT_DIAMETER);
-                });
+        for (Point p : this.currentImage.getCorners()) {
+            AbstractMap.SimpleEntry<Point, Point> point = new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p);
+//point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
+            Font f = new Font("Serif", Font.BOLD, 16);
+            g2d.setColor(this.textColor);
+            g2d.setFont(f);
+            int textX = (int) point.getKey().x - this.pointerDimension * 3 - 12;
+            int textY = (int) point.getKey().y + this.pointerDimension * 3 + 12;
+            g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())), textX, textY);
+            //if the corner I'm printing it's not selected I use the not selected color
+            g2d.setColor(this.container.getSelectedPoints().contains(point.getValue()) ? this.selectedPointerColor : this.pointerColor);
+            g2d.setStroke(new BasicStroke(3));
+            g2d.drawOval((int) point.getKey().x - this.pointerDimension * 3, (int) point.getKey().y - this.pointerDimension * 3, this.pointerDimension * 6, this.pointerDimension * 6);
+            g2d.fillOval((int) point.getKey().x - 3, (int) point.getKey().y - 3, POINT_DIAMETER, POINT_DIAMETER);
+        }
     }
 
+    /**
+     * Listener for the mouse wheel in order to zoom in and out
+     * @param e Event listener
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if(e.isControlDown()){
@@ -248,9 +256,7 @@ private void setDefaultPointerStyles() {
             if (e.getWheelRotation() < 0) {
                 zoomFactor = zoomFactor <3? zoomFactor*1.1: 3;
                 repaint();
-            }
-            //Zoom out
-            if (e.getWheelRotation() > 0) {
+            }else{ //Zoom out
                 if(zoomFactor/1.1 >=1){
                     zoomFactor /= 1.1;
                 }else{
@@ -260,7 +266,6 @@ private void setDefaultPointerStyles() {
                 }
                 repaint();
             }
-
         }
     }
 
@@ -298,5 +303,4 @@ private void setDefaultPointerStyles() {
     public int getPointerDimension(){
         return this.pointerDimension;
     }
-
 }
