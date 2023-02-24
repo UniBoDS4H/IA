@@ -32,19 +32,24 @@ public class PreviewListItem extends JPanel {
         this.idLabel = new JLabel(Integer.toString(id));
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
-        this.deleteButton = new JButton("Delete");
+        Icon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
+        this.deleteButton = new JButton(deleteIcon);
+        this.deleteButton.setBorder(null);
+        this.deleteButton.setBorderPainted(false);
+        this.deleteButton.setContentAreaFilled(false);
+        this.deleteButton.setOpaque(false);
+        this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();
         this.setSelectedPanel();
-        this.deleteButton.setBackground(Color.RED);
 
         this.add(this.idLabel);
         this.add(this.imageLabel);
-        this.add(this.deleteButton);
         this.add(this.targetButton);
         this.add(this.targetLabel);
+        this.add(this.deleteButton);
 
         this.deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {

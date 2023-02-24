@@ -178,6 +178,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                 at.translate(xOffset, yOffset);
                 at.scale(zoomFactor, zoomFactor);
                 g2d.transform(at);
+                this.container.updateMenu();
             }
             if(zoomer){
                 AffineTransform at = new AffineTransform();
@@ -217,7 +218,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                     dragger = false;
                 }
             }
-            g2d.drawImage(this.currentImage.getBufferedImage(),0,0,null);
+            g2d.drawImage(this.currentImage.getBufferedImage(),0,0, this.getWidth(),this.getHeight(),null);
         }
         this.drawPoints(g2d);
     }
@@ -228,8 +229,9 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
      */
     private void drawPoints(Graphics2D g2d) {
         for (Point p : this.currentImage.getCorners()) {
+            //point.getValue() -> is the matrix index of the point.
+            //point.getKey() -> is the position of the point to show
             AbstractMap.SimpleEntry<Point, Point> point = new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p);
-//point.getValue() -> is the matrix index of the point.      point.getKey() -> is the position of the point to show
             Font f = new Font("Serif", Font.BOLD, 16);
             g2d.setColor(this.textColor);
             g2d.setFont(f);

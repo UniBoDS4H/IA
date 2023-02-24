@@ -59,4 +59,9 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.add(this.deleteButton);
         this.add(this.cornerSetting);
     }
+    public void updateView(){
+        this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+        this.copyToCombo.setEnabled(this.container.getSelectedPoints().size()!=0);
+        this.deleteButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+    }
 }

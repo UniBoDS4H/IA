@@ -3,6 +3,7 @@ package com.ds4h.controller.alignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.HomographyAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.util.Pair;
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm homographyAlignment;
+    private final AlignmentAlgorithm affineAlignment;
     private final List<AlignedImage> images;
     public ManualAlignmentController(){
         this.images = new LinkedList<>();
         this.homographyAlignment = new HomographyAlignment();
+        this.affineAlignment = new AffineAlignment();
     }
 
     @Override
@@ -31,6 +34,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      */
     public void homographyAlignment(final CornerManager cornerManager){
         this.images.clear();
-        this.images.addAll(this.homographyAlignment.alignImages(cornerManager));
+        this.images.addAll(this.affineAlignment.alignImages(cornerManager));
+        System.out.println(this.images);
     }
 }
