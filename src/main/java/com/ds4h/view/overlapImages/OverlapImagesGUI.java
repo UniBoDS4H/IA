@@ -93,8 +93,18 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         });
         this.elasticItem.addActionListener(event -> {
             //TODO: understand what  to do with this images
-            bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages())
-                    .forEach(ImagePlus::show);
+            bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages());
+            final Thread myThread = new Thread(() -> {
+                while (this.bunwarpJController.isAlive()){
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+
+                    }
+                }
+                this.bunwarpJController.getImages().forEach(ImagePlus::show);
+            });
+            myThread.start();
         });
     }
 

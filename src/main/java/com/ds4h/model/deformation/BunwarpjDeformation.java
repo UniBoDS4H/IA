@@ -9,10 +9,8 @@ import ij.ImagePlus;
 import bunwarpj.Transformation;
 
 import java.awt.*;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -24,9 +22,10 @@ public class BunwarpjDeformation implements Runnable{
     private BunwarpJMaxScale maxScale;
     private int sampleFactor;
 
-    private List<ImagePlus> outputList;
-    private List<AlignedImage> alignedImages;
+    private final List<ImagePlus> outputList;
+    private final List<AlignedImage> alignedImages;
     private Optional<AlignedImage> source;
+    private Thread thread;
     public final static double MIN_ZERO = 0.0,
             MIN_ZERO_ONE = 0.01,
             MIN_ONE = 0.1,
@@ -44,6 +43,7 @@ public class BunwarpjDeformation implements Runnable{
         this.outputList = new CopyOnWriteArrayList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
         this.source = Optional.empty();
+        this.thread = new Thread();
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
         this.maxScale = BunwarpJMaxScale.VERY_COARSE;
@@ -75,15 +75,23 @@ public class BunwarpjDeformation implements Runnable{
         return transformation.getDirectResults();
     }
 
-    public List<ImagePlus> deformList(final List<AlignedImage> images){
+    public void deformList(final List<AlignedImage> images){
         this.source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
-        if(source.isPresent()) {
-            this.alignedImages = new CopyOnWriteArrayList<>(images);
-            this.run();
-            return this.outputList;
-        }else{
-            return Collections.emptyList();
+        if(source.isPresent()  && !this.thread.isAlive()) {
+            this.outputList.clear();
+            this.alignedImages.clear();
+            this.alignedImages.addAll(images);
+            this.thread = new Thread(this);
+            this.thread.start();
         }
+    }
+
+    public boolean isAlive(){
+        return this.thread.isAlive();
+    }
+
+    public List<ImagePlus> getOutputList(){
+        return new LinkedList<>(this.outputList);
     }
 
     @Override
@@ -105,7 +113,6 @@ public class BunwarpjDeformation implements Runnable{
                             this.parConsistencyWeigth,
                             this.parThreshold);
                     return transformation.getDirectResults();
-
                 })
                 .forEach(this.outputList::add));
     }

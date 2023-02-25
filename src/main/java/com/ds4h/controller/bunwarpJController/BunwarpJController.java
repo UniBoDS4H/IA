@@ -25,8 +25,21 @@ public class BunwarpJController {
      * @param images : the list of images to deform
      * @return : the transformed image
      */
-    public List<ImagePlus> transformation(final List<AlignedImage> images){
-        return this.bunwarpjDeformation.deformList(images);
+    public void transformation(final List<AlignedImage> images){
+        if(!this.bunwarpjDeformation.isAlive()) {
+            this.bunwarpjDeformation.deformList(images);
+        }
+    }
+
+    public List<ImagePlus> getImages(){
+        if(!this.bunwarpjDeformation.isAlive()){
+            return this.bunwarpjDeformation.getOutputList();
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean isAlive(){
+        return this.bunwarpjDeformation.isAlive();
     }
 
     public void setModeInput(final BunwarpJMode modeInput) {
