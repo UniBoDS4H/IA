@@ -1,22 +1,32 @@
 package com.ds4h.model.deformation;
 
 import bunwarpj.bUnwarpJ_;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
 
+import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class is used in order to apply an elastic transformation using the BUnwarpJ Library.
  */
-public class BunwarpjDeformation{
+public class BunwarpjDeformation implements Runnable{
     private BunwarpJMode modeInput;
     private BunwarpJMinScale minScale;
     private BunwarpJMaxScale maxScale;
     private int sampleFactor;
+
+    private List<ImagePlus> outputList;
+    private List<AlignedImage> alignedImages;
+    private Optional<AlignedImage> source;
     public final static double MIN_ZERO = 0.0,
             MIN_ZERO_ONE = 0.01,
             MIN_ONE = 0.1,
@@ -31,6 +41,9 @@ public class BunwarpjDeformation{
 
 
     public BunwarpjDeformation(){
+        this.outputList = new CopyOnWriteArrayList<>();
+        this.alignedImages = new CopyOnWriteArrayList<>();
+        this.source = Optional.empty();
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
         this.maxScale = BunwarpJMaxScale.VERY_COARSE;
@@ -60,6 +73,41 @@ public class BunwarpjDeformation{
                 this.parConsistencyWeigth,
                 this.parThreshold);
         return transformation.getDirectResults();
+    }
+
+    public List<ImagePlus> deformList(final List<AlignedImage> images){
+        this.source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
+        if(source.isPresent()) {
+            this.alignedImages = new CopyOnWriteArrayList<>(images);
+            this.run();
+            return this.outputList;
+        }else{
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public void run() {
+        this.source.ifPresent(alignedImage -> this.alignedImages.stream().map(AlignedImage::getAlignedImage)
+                .map(alignedImg -> {
+                    final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImg,
+                            alignedImage.getAlignedImage(),
+                            alignedImg.getProcessor(),
+                            alignedImage.getAlignedImage().getProcessor(),
+                            this.modeInput.getValue(),
+                            this.sampleFactor,
+                            this.minScale.getValue(),
+                            this.maxScale.getValue(),
+                            this.parDivWeigth,
+                            this.parCurlWeigth,
+                            this.parLandmarkWeigth,
+                            this.parImageWeigth,
+                            this.parConsistencyWeigth,
+                            this.parThreshold);
+                    return transformation.getDirectResults();
+
+                })
+                .forEach(this.outputList::add));
     }
 
 
@@ -162,5 +210,6 @@ public class BunwarpjDeformation{
     public double getParThreshold() {
         return parThreshold;
     }
+
 
 }
