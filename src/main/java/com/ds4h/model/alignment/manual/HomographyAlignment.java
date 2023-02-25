@@ -15,7 +15,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.Optional;
 
 public class HomographyAlignment extends AlignmentAlgorithm {
-
+    private static final int LOWER_BOUND = 4;
 
     public HomographyAlignment(){
         super();
@@ -30,13 +30,13 @@ public class HomographyAlignment extends AlignmentAlgorithm {
     @Override
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
         try {
-            if(source.numberOfCorners() == 4 && target.numberOfCorners() == 4) {
+            if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
                 final MatOfPoint2f targetPoint = target.getMatOfPoint();
                 //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
                 final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpPerspective(target.getMatImage(), warpedMat, H, source.getMatImage().size());
+                Imgproc.warpPerspective(source.getMatImage(), warpedMat, H, target.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }
@@ -44,6 +44,10 @@ public class HomographyAlignment extends AlignmentAlgorithm {
             IJ.showMessage(ex.getMessage());
         }
         return Optional.empty();
+    }
 
+    @Override
+    public int neededPoints(){
+        return HomographyAlignment.LOWER_BOUND;
     }
 }

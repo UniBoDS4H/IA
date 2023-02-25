@@ -26,7 +26,6 @@ public class ImagingConversion {
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
                 final String imgFinalName = new NameBuilder().parseName(fileName).splitBy().getFinalName();
-                System.out.println(imgFinalName);
                 final ImagePlus imp = new ImagePlus(imgFinalName, HighGui.toBufferedImage(matrix));
                 return Optional.of(imp);
             }

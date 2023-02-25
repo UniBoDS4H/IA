@@ -5,6 +5,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.HomographyAlignment;
+import com.ds4h.model.alignment.manual.TranslativeAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.util.Pair;
 import ij.ImagePlus;
@@ -16,11 +17,13 @@ import java.util.stream.Collectors;
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm homographyAlignment;
     private final AlignmentAlgorithm affineAlignment;
+    private final AlignmentAlgorithm translativeAlignment;
     private final List<AlignedImage> images;
     public ManualAlignmentController(){
         this.images = new LinkedList<>();
         this.homographyAlignment = new HomographyAlignment();
         this.affineAlignment = new AffineAlignment();
+        this.translativeAlignment = new TranslativeAlignment();
     }
 
     @Override
@@ -41,5 +44,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     public void affineAlignment(final CornerManager cornerManager){
         this.images.clear();
         this.images.addAll(this.affineAlignment.alignImages(cornerManager));
+    }
+
+    public void translativeAlignment(final CornerManager cornerManager){
+        this.images.clear();
+        this.images.addAll(this.translativeAlignment.alignImages(cornerManager));
     }
 }

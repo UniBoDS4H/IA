@@ -1,5 +1,6 @@
 package com.ds4h.view.alignmentConfigGUI;
 
+import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;

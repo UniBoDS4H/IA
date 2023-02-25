@@ -14,8 +14,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.Optional;
 
 public class AffineAlignment extends AlignmentAlgorithm {
-
-
+    private static final int REQUIRED_POINTS = 3;
     public AffineAlignment(){
         super();
     }
@@ -29,7 +28,7 @@ public class AffineAlignment extends AlignmentAlgorithm {
     @Override
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
         try {
-            if(source.numberOfCorners() == 3 && target.numberOfCorners() == 3) {
+            if(source.numberOfCorners() == REQUIRED_POINTS && target.numberOfCorners() == REQUIRED_POINTS) {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
                 final MatOfPoint2f targetPoint = target.getMatOfPoint();
                 final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
@@ -43,6 +42,10 @@ public class AffineAlignment extends AlignmentAlgorithm {
             IJ.showMessage(ex.getMessage());
         }
         return Optional.empty();
+    }
 
+    @Override
+    public int neededPoints(){
+        return AffineAlignment.REQUIRED_POINTS;
     }
 }
