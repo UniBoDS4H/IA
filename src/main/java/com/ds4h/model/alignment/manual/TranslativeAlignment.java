@@ -6,6 +6,7 @@ import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.core.*;
+import org.opencv.highgui.HighGui;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
@@ -17,7 +18,7 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
     }
 
     /**
-     * Manual alignment using the Homography alignment
+     * Manual alignment using the translative alignment
      * @param source : the source image used as reference
      * @param  target : the target to align
      * @return : the list of all the images aligned to the source
@@ -43,12 +44,13 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
                 final double meanDeltaY = Core.mean(new MatOfDouble(deltaY)).val[0];
                 final Point translation = new Point(meanDeltaX, meanDeltaY);
                 // Shift one image by the estimated amount of translation to align it with the other
-                final Mat alignedImage = new Mat();
-                final Mat translationMatrix = new Mat(2, 3, CvType.CV_32FC1);
+                final Mat alignedImage = new Mat(sourceMat.rows(), sourceMat.cols(), sourceMat.type());
+                final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
                 translationMatrix.put(0, 2, translation.x);
                 translationMatrix.put(1, 2, translation.y);
-                Imgproc.warpAffine(sourceMat, alignedImage, translationMatrix, targetMat.size());
+                Imgproc.warpAffine(targetMat, alignedImage, translationMatrix, sourceMat.size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), alignedImage);
+                System.out.println(alignedImage);
                 return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix ,imagePlus));
             }
         }catch (Exception ex){
