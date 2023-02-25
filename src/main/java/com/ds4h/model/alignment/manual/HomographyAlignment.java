@@ -28,15 +28,18 @@ public class HomographyAlignment extends AlignmentAlgorithm {
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected   Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
+    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
         try {
-            final MatOfPoint2f referencePoint = source.getMatOfPoint();
-            final MatOfPoint2f targetPoint = target.getMatOfPoint();
-            final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
-            //final Mat H = Calib3d.findHomography(targetPoint, referencePoint);
-            final Mat warpedMat = new Mat();
-            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);            final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
-            return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+            if(source.numberOfCorners() == 4 && target.numberOfCorners() == 4) {
+                final MatOfPoint2f referencePoint = source.getMatOfPoint();
+                final MatOfPoint2f targetPoint = target.getMatOfPoint();
+                //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+                final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
+                final Mat warpedMat = new Mat();
+                Imgproc.warpPerspective(target.getMatImage(), warpedMat, H, source.getMatImage().size());
+                final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
+                return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+            }
         }catch (Exception ex){
             IJ.showMessage(ex.getMessage());
         }

@@ -29,15 +29,16 @@ public class AffineAlignment extends AlignmentAlgorithm {
     @Override
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
         try {
-            final MatOfPoint2f referencePoint = source.getMatOfPoint();
-            final MatOfPoint2f targetPoint = target.getMatOfPoint();
-            final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
-            //final Mat H = Calib3d.estimateAffine2D(targetPoint, referencePoint);
-
-            final Mat warpedMat = new Mat();
-            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(),Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
-            final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
-            return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+            if(source.numberOfCorners() == 3 && target.numberOfCorners() == 3) {
+                final MatOfPoint2f referencePoint = source.getMatOfPoint();
+                final MatOfPoint2f targetPoint = target.getMatOfPoint();
+                final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+                //final Mat H = Calib3d.estimateAffine2D(targetPoint, referencePoint);
+                final Mat warpedMat = new Mat();
+                Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
+                final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
+                return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+            }
         }catch (Exception ex){
             IJ.showMessage(ex.getMessage());
         }

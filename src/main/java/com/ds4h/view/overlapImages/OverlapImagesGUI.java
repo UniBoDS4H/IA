@@ -12,6 +12,7 @@ import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.IJ;
 import ij.ImagePlus;
 
 import javax.swing.*;
@@ -99,7 +100,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
-
+                        IJ.showMessage(e.getMessage());
                     }
                 }
                 this.bunwarpJController.getImages().forEach(ImagePlus::show);

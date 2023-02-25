@@ -101,6 +101,10 @@ public class ImageCorners {
         this.corners.set(this.corners.indexOf(corner), newCorner);
     }
 
+
+    public int numberOfCorners(){
+        return this.corners.size();
+    }
     @Override
     public String toString() {
         return this.getFile().getName();
