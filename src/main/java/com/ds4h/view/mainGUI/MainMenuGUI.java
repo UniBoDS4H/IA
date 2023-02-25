@@ -151,7 +151,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
             ManualAlignmentController m = new ManualAlignmentController();
             //ManualAlignmentController m = new ManualAlignmentController();
-            m.homographyAlignment(this.cornerControler.getCornerManager());
+            m.affineAlignment(this.cornerControler.getCornerManager());
             new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
 
         });

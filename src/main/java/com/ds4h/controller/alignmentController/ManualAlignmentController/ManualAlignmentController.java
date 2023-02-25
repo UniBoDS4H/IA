@@ -34,7 +34,12 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      */
     public void homographyAlignment(final CornerManager cornerManager){
         this.images.clear();
-        this.images.addAll(this.affineAlignment.alignImages(cornerManager));
+        this.images.addAll(this.homographyAlignment.alignImages(cornerManager));
         System.out.println(this.images);
+    }
+
+    public void affineAlignment(final CornerManager cornerManager){
+        this.images.clear();
+        this.images.addAll(this.affineAlignment.alignImages(cornerManager));
     }
 }

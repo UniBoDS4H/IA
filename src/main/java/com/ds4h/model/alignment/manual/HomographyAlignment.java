@@ -32,11 +32,10 @@ public class HomographyAlignment extends AlignmentAlgorithm {
         try {
             final MatOfPoint2f referencePoint = source.getMatOfPoint();
             final MatOfPoint2f targetPoint = target.getMatOfPoint();
-            //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
-            final Mat H = Calib3d.findHomography(targetPoint, referencePoint);
+            final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+            //final Mat H = Calib3d.findHomography(targetPoint, referencePoint);
             final Mat warpedMat = new Mat();
-            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(),Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
-            final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
+            Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(), Imgproc.INTER_LINEAR + Imgproc.WARP_INVERSE_MAP);            final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
             return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
         }catch (Exception ex){
             IJ.showMessage(ex.getMessage());
