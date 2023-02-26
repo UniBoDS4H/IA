@@ -30,6 +30,10 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         //this.algorithm.setSelectedItem(this.selectedValue);
     }
 
+    public AlignmentAlgorithmEnum getSelectedValue(){
+        return this.selectedValue;
+    }
+
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

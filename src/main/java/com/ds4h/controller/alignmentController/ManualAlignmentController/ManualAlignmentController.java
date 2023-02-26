@@ -3,6 +3,7 @@ package com.ds4h.controller.alignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.HomographyAlignment;
 import com.ds4h.model.alignment.manual.TranslativeAlignment;
@@ -35,18 +36,32 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * Align manually the images using the Homography alignment.
      * @param cornerManager for each Image we have its own points
      */
-    public void homographyAlignment(final CornerManager cornerManager){
+
+    public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager){
+        switch (alignmentAlgorithm){
+            case TRANSLATIVE:
+                this.translativeAlignment(cornerManager);
+                break;
+            case AFFINE:
+                this.affineAlignment(cornerManager);
+                break;
+            case PROJECTIVE:
+                this.homographyAlignment(cornerManager);
+                break;
+        }
+    }
+    private void homographyAlignment(final CornerManager cornerManager){
         this.images.clear();
         this.images.addAll(this.homographyAlignment.alignImages(cornerManager));
         System.out.println(this.images);
     }
 
-    public void affineAlignment(final CornerManager cornerManager){
+    private void affineAlignment(final CornerManager cornerManager){
         this.images.clear();
         this.images.addAll(this.affineAlignment.alignImages(cornerManager));
     }
 
-    public void translativeAlignment(final CornerManager cornerManager){
+    private void translativeAlignment(final CornerManager cornerManager){
         this.images.clear();
         this.images.addAll(this.translativeAlignment.alignImages(cornerManager));
     }
