@@ -13,13 +13,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ManualAlignmentController implements AlignmentControllerInterface {
-    private final AlignmentAlgorithm homographyAlignment;
+    private final AlignmentAlgorithm perspectiveAlignment;
     private final AlignmentAlgorithm affineAlignment;
     private final AlignmentAlgorithm translativeAlignment;
     private final List<AlignedImage> images;
     public ManualAlignmentController(){
         this.images = new LinkedList<>();
-        this.homographyAlignment = new PerspectiveAlignment();
+        this.perspectiveAlignment = new PerspectiveAlignment();
         this.affineAlignment = new AffineAlignment();
         this.translativeAlignment = new TranslativeAlignment();
     }
@@ -34,7 +34,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * @param cornerManager for each Image we have its own points
      */
 
-    public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager){
+    public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager) throws IllegalArgumentException{
         switch (alignmentAlgorithm){
             case TRANSLATIVE:
                 this.translativeAlignment(cornerManager);
@@ -43,21 +43,21 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 this.affineAlignment(cornerManager);
                 break;
             case PERSPECTIVE:
-                this.homographyAlignment(cornerManager);
+                this.perspectiveAlignment(cornerManager);
                 break;
         }
     }
-    private void homographyAlignment(final CornerManager cornerManager){
+    private void perspectiveAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
         this.images.clear();
-        this.images.addAll(this.homographyAlignment.alignImages(cornerManager));
+        this.images.addAll(this.perspectiveAlignment.alignImages(cornerManager));
     }
 
-    private void affineAlignment(final CornerManager cornerManager){
+    private void affineAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
         this.images.clear();
         this.images.addAll(this.affineAlignment.alignImages(cornerManager));
     }
 
-    private void translativeAlignment(final CornerManager cornerManager){
+    private void translativeAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
         this.images.clear();
         this.images.addAll(this.translativeAlignment.alignImages(cornerManager));
     }

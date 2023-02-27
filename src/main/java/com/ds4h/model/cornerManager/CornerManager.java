@@ -36,7 +36,7 @@ public class CornerManager {
         final File file = new File(path);
         if(CheckImage.checkImage(file)){
             final ImageCorners image = new ImageCorners(file);
-            if(this.imagesWithCorners.contains(image)) {
+            if(!this.imagesWithCorners.contains(image)) {
                 this.imagesWithCorners.add(image);
             }
         }
@@ -72,11 +72,11 @@ public class CornerManager {
     }
 
     public void setAsSource(final ImageCorners image){
-        if(this.imagesWithCorners.contains(image)){
+        if(Objects.nonNull(image) && this.imagesWithCorners.contains(image)){
             this.sourceImage = Optional.of(image);
             System.out.println(this.sourceImage);
         }else{
-            throw new IllegalArgumentException("The given image was not fount among the loaded");
+            throw new IllegalArgumentException("The given image was not fount among the loaded or the image input is NULL.");
         }
     }
 }

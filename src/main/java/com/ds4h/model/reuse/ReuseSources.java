@@ -32,12 +32,12 @@ public class ReuseSources {
             final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
             System.out.println(path);
             if (!path.isEmpty()) {
-                final List<ImageCorners> imageCornersList = cornerManager.getCornerImages();
+                final List<ImageCorners> backUpList = cornerManager.getCornerImages();
                 try {
                     cornerManager.clearList();
                     cornerManager.addImages(ImportProject.importProject(new File(path)));
                 }catch(final FileNotFoundException ex){
-                    cornerManager.addImages(imageCornersList);
+                    cornerManager.addImages(backUpList);
                 }
             }
         }

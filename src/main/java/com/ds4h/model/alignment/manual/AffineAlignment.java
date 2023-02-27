@@ -23,10 +23,11 @@ public class AffineAlignment extends AlignmentAlgorithm {
      * Manual alignment using the Homography alignment
      * @param source : the source image used as reference
      * @param  target : the target to align
+     * @throws IllegalArgumentException : in case the number of corners is not correct
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
+    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws IllegalArgumentException{
         try {
             if(source.numberOfCorners() == REQUIRED_POINTS && target.numberOfCorners() == REQUIRED_POINTS) {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
@@ -37,11 +38,13 @@ public class AffineAlignment extends AlignmentAlgorithm {
                 Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+            }else{
+                throw new IllegalArgumentException("The number of corners inside the source image or inside the target image is not correct.\n" +
+                        "In order to use the Affine alignment you must use: " + AffineAlignment.REQUIRED_POINTS + " corners.");
             }
         }catch (Exception ex){
-            IJ.showMessage(ex.getMessage());
+            throw ex;
         }
-        return Optional.empty();
     }
 
     @Override
