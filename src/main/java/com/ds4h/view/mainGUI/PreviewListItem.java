@@ -31,8 +31,9 @@ public class PreviewListItem extends JPanel {
         this.idLabel.setFont(new Font("Serif", Font.BOLD, 16));
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
-        Icon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
-        this.deleteButton = new JButton(deleteIcon);
+        ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
+        ImageIcon resized = new ImageIcon(deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        this.deleteButton = new JButton(resized);
         this.deleteButton.setBorder(null);
         this.deleteButton.setBorderPainted(false);
         this.deleteButton.setContentAreaFilled(false);

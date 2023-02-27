@@ -28,7 +28,15 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.copyToLabel = new JLabel("Copy to");
         this.deleteButton = new JButton("Delete");
         this.copyButton = new JButton("Copy");
-        this.cornerSetting = new JButton("Settings");
+        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/icons/settings.png"));
+        ImageIcon resized = new ImageIcon(settingsIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
+        this.cornerSetting = new JButton(resized);
+        this.cornerSetting.setBorder(null);
+        this.cornerSetting.setBorderPainted(false);
+        this.cornerSetting.setContentAreaFilled(false);
+        this.cornerSetting.setOpaque(false);
+        this.cornerSetting.setCursor(new Cursor(Cursor.HAND_CURSOR));
         this.settings = new CornerSelectorSettingsGUI(container);
 
         this.addComponents();
