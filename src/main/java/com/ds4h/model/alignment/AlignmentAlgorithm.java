@@ -79,4 +79,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
         return images;
     }
 
+    public int neededPoints() throws NoSuchMethodException{
+        throw new NoSuchMethodException("Not implemented");
+    }
+
 }

@@ -8,16 +8,12 @@
 
 package com.ds4h.imagej;
 
-import com.ds4h.model.util.opencvLoader.OpenCVLoader;
-import ij.IJ;
-import ij.ImagePlus;
+import com.ds4h.controller.opencvController.OpencvController;
+import com.ds4h.model.util.opencvManager.opencvLoader.OpenCVLoader;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.plugin.PlugIn;
 
-import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 /**
  * A template for processing each pixel of either
@@ -40,7 +36,7 @@ public class Process_Pixels implements PlugIn {
 
 	@Override
 	public void run(String s) {
-		OpenCVLoader.loadOpenCV();
+		OpencvController.loadLibrary();
 		EventQueue.invokeLater(MainMenuGUI::new);
 
 	}

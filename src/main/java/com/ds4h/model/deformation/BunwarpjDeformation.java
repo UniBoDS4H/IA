@@ -1,22 +1,31 @@
 package com.ds4h.model.deformation;
 
 import bunwarpj.bUnwarpJ_;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
 
-import java.util.Objects;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class is used in order to apply an elastic transformation using the BUnwarpJ Library.
  */
-public class BunwarpjDeformation {
+public class BunwarpjDeformation implements Runnable{
     private BunwarpJMode modeInput;
     private BunwarpJMinScale minScale;
     private BunwarpJMaxScale maxScale;
     private int sampleFactor;
+
+    private final List<ImagePlus> outputList;
+    private final List<AlignedImage> alignedImages;
+    private Optional<AlignedImage> source;
+    private Thread thread;
     public final static double MIN_ZERO = 0.0,
             MIN_ZERO_ONE = 0.01,
             MIN_ONE = 0.1,
@@ -31,6 +40,10 @@ public class BunwarpjDeformation {
 
 
     public BunwarpjDeformation(){
+        this.outputList = new CopyOnWriteArrayList<>();
+        this.alignedImages = new CopyOnWriteArrayList<>();
+        this.source = Optional.empty();
+        this.thread = new Thread();
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
         this.maxScale = BunwarpJMaxScale.VERY_COARSE;
@@ -42,6 +55,7 @@ public class BunwarpjDeformation {
      * @param source : Source Image
      * @return :
      */
+
     public ImagePlus deform(final ImagePlus target, final ImagePlus source){
         //Compute the tranformation
         final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
@@ -60,6 +74,49 @@ public class BunwarpjDeformation {
                 this.parThreshold);
         return transformation.getDirectResults();
     }
+
+    public void deformList(final List<AlignedImage> images){
+        this.source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
+        if(source.isPresent()  && !this.thread.isAlive()) {
+            this.outputList.clear();
+            this.alignedImages.clear();
+            this.alignedImages.addAll(images);
+            this.thread = new Thread(this);
+            this.thread.start();
+        }
+    }
+
+    public boolean isAlive(){
+        return this.thread.isAlive();
+    }
+
+    public List<ImagePlus> getOutputList(){
+        return new LinkedList<>(this.outputList);
+    }
+
+    @Override
+    public void run() {
+        this.source.ifPresent(alignedImage -> this.alignedImages.stream().map(AlignedImage::getAlignedImage)
+                .map(alignedImg -> {
+                    final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImg,
+                            alignedImage.getAlignedImage(),
+                            alignedImg.getProcessor(),
+                            alignedImage.getAlignedImage().getProcessor(),
+                            this.modeInput.getValue(),
+                            this.sampleFactor,
+                            this.minScale.getValue(),
+                            this.maxScale.getValue(),
+                            this.parDivWeigth,
+                            this.parCurlWeigth,
+                            this.parLandmarkWeigth,
+                            this.parImageWeigth,
+                            this.parConsistencyWeigth,
+                            this.parThreshold);
+                    return transformation.getDirectResults();
+                })
+                .forEach(this.outputList::add));
+    }
+
 
     public void setModeInput(final BunwarpJMode modeInput) {
         if(Objects.nonNull(modeInput)) {
@@ -160,5 +217,6 @@ public class BunwarpjDeformation {
     public double getParThreshold() {
         return parThreshold;
     }
+
 
 }

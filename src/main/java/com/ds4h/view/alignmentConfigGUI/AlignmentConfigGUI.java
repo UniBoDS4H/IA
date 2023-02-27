@@ -1,5 +1,6 @@
 package com.ds4h.view.alignmentConfigGUI;
 
+import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -8,7 +9,7 @@ import java.awt.*;
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
     private final JButton saveButton;
-    private final JLabel text;
+    private final JTextArea text;
     private final GridBagConstraints constraints;
     private AlignmentAlgorithmEnum selectedValue;
     public AlignmentConfigGUI(){
@@ -16,7 +17,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.setLayout(new GridBagLayout());
         this.algorithm = new JComboBox<>();
         this.saveButton = new JButton("Save");
-        this.text = new JLabel();
+        this.text = new JTextArea();
         this.constraints = new GridBagConstraints();
         this.constraints.insets = new Insets(0, 0, 5, 5);
         this.constraints.anchor = GridBagConstraints.WEST;
@@ -26,7 +27,11 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     @Override
     public void showDialog() {
         this.setVisible(true);
-        this.algorithm.setSelectedItem(this.selectedValue);
+        //this.algorithm.setSelectedItem(this.selectedValue);
+    }
+
+    public AlignmentAlgorithmEnum getSelectedValue(){
+        return this.selectedValue;
     }
 
     @Override
@@ -34,6 +39,9 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.algorithm.addActionListener(event -> {
             this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
+            assert this.selectedValue != null;
+            System.out.println(this.selectedValue.getDocumentation());
+            this.text.setText(this.selectedValue.getDocumentation());
         });
         this.saveButton.addActionListener(event -> {
             this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
@@ -49,6 +57,9 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.populateCombo();
         this.setSize();
+        this.text.setSize(new Dimension(200, 200));
+        this.text.setEnabled(false);
+        this.text.setFont(new Font("Arial", Font.BOLD, 20));
         this.addElement(new JLabel("Pick the algorithm: "), new JPanel(), this.algorithm);
         this.addElement(new JLabel("Info about: "), new JPanel(), this.text);
         this.constraints.gridy++;
@@ -71,6 +82,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private void populateCombo(){
         this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIVE;
         for(AlignmentAlgorithmEnum algorithm : AlignmentAlgorithmEnum.values()){
+            System.out.println(algorithm);
             this.algorithm.addItem(algorithm);
         }
     }

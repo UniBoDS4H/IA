@@ -1,13 +1,11 @@
-package com.ds4h.model.util.exportProject;
+package com.ds4h.model.util.projectManager.exportProject;
 
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
-import com.ds4h.model.util.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
 import com.ds4h.model.util.saveProject.SaveImages;
-import org.json.JSONArray;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.stream.Collectors;
 

@@ -8,14 +8,14 @@ import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
 
-public class AffineAlignment extends AlignmentAlgorithm {
-    private static final int REQUIRED_POINTS = 3;
-    public AffineAlignment(){
+public class PerspectiveAlignment extends AlignmentAlgorithm {
+    private static final int LOWER_BOUND = 4;
+
+    public PerspectiveAlignment(){
         super();
     }
 
@@ -28,13 +28,13 @@ public class AffineAlignment extends AlignmentAlgorithm {
     @Override
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
         try {
-            if(source.numberOfCorners() == REQUIRED_POINTS && target.numberOfCorners() == REQUIRED_POINTS) {
+            if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
                 final MatOfPoint2f targetPoint = target.getMatOfPoint();
-                final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
-                //final Mat H = Calib3d.estimateAffine2D(targetPoint, referencePoint);
+                //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
+                final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
+                Imgproc.warpPerspective(source.getMatImage(), warpedMat, H, target.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }
@@ -46,6 +46,6 @@ public class AffineAlignment extends AlignmentAlgorithm {
 
     @Override
     public int neededPoints(){
-        return AffineAlignment.REQUIRED_POINTS;
+        return PerspectiveAlignment.LOWER_BOUND;
     }
 }

@@ -12,6 +12,7 @@ import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.IJ;
 import ij.ImagePlus;
 
 import javax.swing.*;
@@ -92,7 +93,19 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
+            //TODO: understand what  to do with this images
             bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages());
+            final Thread myThread = new Thread(() -> {
+                while (this.bunwarpJController.isAlive()){
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        IJ.showMessage(e.getMessage());
+                    }
+                }
+                this.bunwarpJController.getImages().forEach(ImagePlus::show);
+            });
+            myThread.start();
         });
     }
 
@@ -149,6 +162,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.alignedImage = ChangeColorController.changeColor(this.clearImage, color);
             this.repaint();
         }
+
 
         public void setDefaultColor(){
             this.color = Color.RED;
