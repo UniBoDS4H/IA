@@ -1,12 +1,8 @@
 package com.ds4h.view.cornerSelectorGUI;
-
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
-import com.ds4h.model.util.Pair;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.stream.Collectors;
 
 public class CornerSelectorMenuGUI extends JPanel {
     private final CornerController cornerController;
@@ -25,7 +21,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         final MenuItem[] options = this.cornerController.getCornerImagesImages().stream()
-                .filter(i -> !i.equals(this.image)).map(i -> this.cornerController.getMenuItem(i)).toArray(MenuItem[]::new);
+                .filter(i -> !i.equals(this.image)).map(this.cornerController::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
         this.copyToCombo.setSelectedIndex(0);
@@ -67,5 +63,9 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
         this.copyToCombo.setEnabled(this.container.getSelectedPoints().size()!=0);
         this.deleteButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+    }
+
+    public void updateSettings() {
+        this.settings.updateView();
     }
 }

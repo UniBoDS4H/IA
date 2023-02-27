@@ -111,4 +111,8 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     public void updateMenu() {
         this.menu.updateView();
     }
+
+    public void updateSettings() {
+        this.menu.updateSettings();
+    }
 }

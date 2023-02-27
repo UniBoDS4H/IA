@@ -42,6 +42,8 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.setFrameSize();
     }
     private void setCornerComboBox(){
+        this.indexFrom.removeAllItems();
+        this.indexTo.removeAllItems();
         for(int i = 1; i <=this.container.getImage().getCorners().length; i++){
             this.indexFrom.addItem(i);
             this.indexTo.addItem(i);
@@ -120,5 +122,9 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.constraints.gridx = 0;
         this.constraints.gridy++;
         add(panel, this.constraints);
+    }
+
+    public void updateView() {
+        this.setCornerComboBox();
     }
 }
