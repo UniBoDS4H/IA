@@ -18,7 +18,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.container = container;
         this.image = image;
         this.cornerController = controller;
-        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
         final MenuItem[] options = this.cornerController.getCornerImagesImages().stream()
                 .filter(i -> !i.equals(this.image)).map(this.cornerController::getMenuItem).toArray(MenuItem[]::new);
@@ -61,11 +61,17 @@ public class CornerSelectorMenuGUI extends JPanel {
         });
     }
     public void addComponents(){
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.copyToLabel);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.copyToCombo);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.copyButton);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.deleteButton);
+        this.add(Box.createHorizontalGlue());
         this.add(this.cornerSetting);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
     }
     public void updateView(){
         this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
