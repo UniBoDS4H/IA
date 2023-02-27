@@ -21,6 +21,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
     public CornerSelectorSettingsGUI(CornerSelectorGUI container){
+        super("Settings");
         this.container = container;
         this.pointerColor = new ColorComboBox();
         this.changeButton = new JButton("Change");
