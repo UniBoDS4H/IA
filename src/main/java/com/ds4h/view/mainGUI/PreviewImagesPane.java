@@ -4,9 +4,7 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.util.Arrays;
 
 public class PreviewImagesPane extends JPanel {
     private final CornerController controller;

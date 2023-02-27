@@ -3,7 +3,6 @@ package com.ds4h.view.mainGUI;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
-import ij.gui.MessageDialog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -11,7 +10,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Objects;
 
 //TODO: Implement the StandardGUI interface
 
@@ -30,6 +28,7 @@ public class PreviewListItem extends JPanel {
         this.image = image;
         this.cornerSelector = new CornerSelectorGUI(this.image, this.controller);
         this.idLabel = new JLabel(Integer.toString(id));
+        this.idLabel.setFont(new Font("Serif", Font.BOLD, 16));
         this.targetButton = new JButton("Set");
         this.targetLabel = new JLabel("TARGET");
         Icon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
@@ -39,15 +38,19 @@ public class PreviewListItem extends JPanel {
         this.deleteButton.setContentAreaFilled(false);
         this.deleteButton.setOpaque(false);
         this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();
         this.setSelectedPanel();
 
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.idLabel);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.imageLabel);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.targetButton);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.targetLabel);
         this.add(this.deleteButton);
 
