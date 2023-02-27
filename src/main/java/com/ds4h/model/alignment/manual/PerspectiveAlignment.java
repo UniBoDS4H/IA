@@ -33,7 +33,8 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
                 final MatOfPoint2f targetPoint = target.getMatOfPoint();
                 //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
-                final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
+                //final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
+                final Mat H = Imgproc.getPerspectiveTransform(targetPoint, referencePoint);
                 final Mat warpedMat = new Mat();
                 Imgproc.warpPerspective(source.getMatImage(), warpedMat, H, target.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
