@@ -37,18 +37,8 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
 
                 final Point[] srcArray = source.getMatOfPoint().toArray();
                 final Point[] dstArray = target.getMatOfPoint().toArray();
-                final double[] deltaX = new double[srcArray.length];
-                final double[] deltaY = new double[srcArray.length];
                 if(srcArray.length == dstArray.length) {
-                    for (int i = 0; i < srcArray.length; i++) {
-                        System.out.println(srcArray[i]);
-                        deltaX[i] = dstArray[i].x - srcArray[i].x;
-                        deltaY[i] = dstArray[i].y - srcArray[i].y;
-                    }
-
-                    final double meanDeltaX = Core.mean(new MatOfDouble(deltaX)).val[0];
-                    final double meanDeltaY = Core.mean(new MatOfDouble(deltaY)).val[0];
-                    final Point translation = new Point(meanDeltaX, meanDeltaY);
+                    final Point translation = minimumLeastSquare(srcArray, dstArray);
                     // Shift one image by the estimated amount of translation to align it with the other
                     final Mat alignedImage = new Mat(targetMat.rows(), targetMat.cols(), targetMat.type());
                     final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
@@ -69,6 +59,20 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
         }catch (Exception ex){
             throw ex;
         }
+    }
+
+    private Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
+        final double[] deltaX = new double[srcArray.length];
+        final double[] deltaY = new double[srcArray.length];
+
+        for (int i = 0; i < srcArray.length; i++) {
+            deltaX[i] = dstArray[i].x - srcArray[i].x;
+            deltaY[i] = dstArray[i].y - srcArray[i].y;
+        }
+
+        final double meanDeltaX = Core.mean(new MatOfDouble(deltaX)).val[0];
+        final double meanDeltaY = Core.mean(new MatOfDouble(deltaY)).val[0];
+        return new Point(meanDeltaX, meanDeltaY);
     }
 
     @Override

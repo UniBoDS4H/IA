@@ -15,8 +15,8 @@ public class RansacAlignment extends AlignmentAlgorithm {
 
     private static final int LOWER_BOUND = 4;
 
-    private RansacAlignment(){
-
+    public RansacAlignment(){
+        super();
     }
     /**
      * Manual alignment using the Homography alignment
