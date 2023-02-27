@@ -17,6 +17,7 @@ public class CornerSelectorMenuGUI extends JPanel {
     private final JButton cornerSetting;
     private final JComboBox<MenuItem> copyToCombo;
     private final CornerSelectorGUI container;
+    private final CornerSelectorSettingsGUI settings;
     public CornerSelectorMenuGUI(CornerController controller, ImageCorners image, CornerSelectorGUI container){
         this.container = container;
         this.image = image;
@@ -32,6 +33,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.deleteButton = new JButton("Delete");
         this.copyButton = new JButton("Copy");
         this.cornerSetting = new JButton("Settings");
+        this.settings = new CornerSelectorSettingsGUI(container);
 
         this.addComponents();
         this.addListeners();
@@ -51,7 +53,7 @@ public class CornerSelectorMenuGUI extends JPanel {
             }
         });
         this.cornerSetting.addActionListener(e->{
-            new CornerSelectorSettingsGUI(container).showDialog();
+            this.settings.showDialog();
         });
     }
     public void addComponents(){
