@@ -151,8 +151,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
             ManualAlignmentController m = new ManualAlignmentController();
             //ManualAlignmentController m = new ManualAlignmentController();
-            m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
-            new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
+            try {
+                m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
+                new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
+            } catch (Exception e) {
+                IJ.showMessage(e.getMessage());
+            }
 
         });
 
@@ -192,10 +196,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             //bUnwarpJ_ b = new bUnwarpJ_();
             //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
             AutomaticAlignmentController a = new AutomaticAlignmentController();
-            a.surfAlignment(this.cornerControler.getCornerManager());
+            try {
+                a.surfAlignment(this.cornerControler.getCornerManager());
+                new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
+            } catch (Exception e) {
+                //TODO: DO SOMETHING
+            }
             //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
             //new CarouselGUI(a.getAlignedImages());
-            new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
         });
 
         addWindowListener(new WindowAdapter() {

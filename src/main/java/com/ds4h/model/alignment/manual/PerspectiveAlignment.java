@@ -23,10 +23,11 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
      * Manual alignment using the Homography alignment
      * @param source : the source image used as reference
      * @param  target : the target to align
+     * @throws IllegalArgumentException : in case the number of corners is not correct
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target){
+    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws IllegalArgumentException{
         try {
             if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
@@ -37,11 +38,13 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
                 Imgproc.warpPerspective(source.getMatImage(), warpedMat, H, target.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+            }else{
+                throw new IllegalArgumentException("The number of corners inside the source image or or inside the target image is not correct.\n" +
+                        "In order to use the Affine alignment you must at least: " + PerspectiveAlignment.LOWER_BOUND + " corners.");
             }
         }catch (Exception ex){
-            IJ.showMessage(ex.getMessage());
+            throw ex;
         }
-        return Optional.empty();
     }
 
     @Override

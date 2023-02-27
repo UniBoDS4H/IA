@@ -57,10 +57,11 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
     /**
      * Align the images stored inside the cornerManager. All the images will be aligned to the source image
      * @param cornerManager : container where all the images are stored
+     * @throws IllegalArgumentException:
      * @return the List of all the images aligned to the source
      */
     @Override
-    public List<AlignedImage> alignImages(final CornerManager cornerManager){
+    public List<AlignedImage> alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
         List<AlignedImage> images = new LinkedList<>();
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
             final ImageCorners source = cornerManager.getSourceImage().get();
@@ -70,11 +71,12 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
                     final Optional<AlignedImage> output = this.align(source, image);
                     output.ifPresent(images::add);
                 }
-            }catch (Exception e){
-                IJ.showMessage(e.getMessage());
+            }catch (final Exception ex){
+                throw new IllegalArgumentException("Error: " + ex.getMessage());
             }
         }else{
-            IJ.showMessage("Pick a Target Image");
+            throw new IllegalArgumentException("In order to do the alignment It is necessary to have a target," +
+                    " please pick a target image");
         }
         return images;
     }
