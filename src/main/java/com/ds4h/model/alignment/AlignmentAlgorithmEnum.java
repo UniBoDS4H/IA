@@ -6,7 +6,7 @@ public enum AlignmentAlgorithmEnum {
             " be used to align two images by applying a translation in x and y directions.\n" +
             " It is the simplest form of image alignment, and it assumes that the images are already approximately\n" +
             " aligned and only need to be shifted by a certain amount in each direction."),
-    PROJECTIVE("Projective", "Perspective alignment is a technique used to align two images\n" +
+    PERSPECTIVE("Perspective", "Perspective alignment is a technique used to align two images\n" +
             " that have different perspectives or viewpoints. The algorithm works by identifying corresponding points\n" +
             " in the two images, which are usually features that can be detected automatically (such as corners, edges, or blobs).\n" +
             " The algorithm then uses these corresponding points to estimate a homography matrix, which describes the transformation\n" +

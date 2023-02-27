@@ -34,6 +34,7 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
                 final Point[] dstArray = target.getMatOfPoint().toArray();
                 final double[] deltaX = new double[srcArray.length];
                 final double[] deltaY = new double[srcArray.length];
+                //TODO: Check if all have the same points
                 for (int i = 0; i < srcArray.length; i++) {
                     System.out.println(srcArray[i]);
                     deltaX[i] = dstArray[i].x - srcArray[i].x;
