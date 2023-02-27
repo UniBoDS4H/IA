@@ -4,6 +4,7 @@ import ij.ImagePlus;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 
 public class ChangeColor {
 
@@ -26,5 +27,13 @@ public class ChangeColor {
             }
         }
         return new ImagePlus(inputImage.getTitle(), image);
+    }
+
+    public static ImagePlus changeContrast(final ImagePlus inputImage, final float scaleFactor){
+        final BufferedImage bufferedImage = inputImage.getBufferedImage();
+        float offset = -(scaleFactor * 128f) + 128f;
+        final RescaleOp rescaleOp = new RescaleOp(scaleFactor, offset, null);
+        BufferedImage adjustedImage = rescaleOp.filter(bufferedImage, null);
+        return new ImagePlus(inputImage.getTitle(), adjustedImage);
     }
 }
