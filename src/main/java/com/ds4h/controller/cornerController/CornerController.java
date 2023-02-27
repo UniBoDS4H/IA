@@ -4,6 +4,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.model.reuse.ReuseSources;
+import com.ds4h.view.cornerSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 
 import java.io.FileNotFoundException;
@@ -59,5 +60,9 @@ public class CornerController {
 
     private boolean insideImage(Point p, ImageCorners img) {
         return img.getMatImage().rows() >= p.y && img.getMatImage().cols() >= p.x;
+    }
+
+    public MenuItem getMenuItem(ImageCorners image){
+        return new MenuItem(this.getCornerImagesImages().indexOf(image), image);
     }
 }
