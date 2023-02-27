@@ -14,7 +14,8 @@ public enum AlignmentAlgorithmEnum {
     AFFINE("Affine", "Affine alignment is a geometric transformation that can be used to align two images\n" +
             " by applying a combination of translation, rotation, scaling, and shearing. Unlike homography alignment,\n" +
             " affine alignment does not require that the scene in the images is planar,\n" +
-            " and it can handle a wider range of transformations between the two images");
+            " and it can handle a wider range of transformations between the two images"),
+    RANSAC("RANSAC", "AT LEAST 4 POINTS");
     private String type;
     private String documentation;
     AlignmentAlgorithmEnum(final String type, final String documentation){

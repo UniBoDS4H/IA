@@ -18,8 +18,6 @@ public class RansacAlignment extends AlignmentAlgorithm {
     private RansacAlignment(){
 
     }
-
-
     /**
      * Manual alignment using the Homography alignment
      * @param source : the source image used as reference
