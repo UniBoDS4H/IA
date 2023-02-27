@@ -5,24 +5,25 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
-import java.awt.*;
+import java.security.acl.Group;
+
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
+    private final GroupLayout layout;
     private final JButton saveButton;
-    private final JTextArea text;
-    private final GridBagConstraints constraints;
+    private final JLabel text;
     private AlignmentAlgorithmEnum selectedValue;
     public AlignmentConfigGUI(){
         this.setTitle("Pick manual alignment algorithm");
-        this.setLayout(new GridBagLayout());
+        this.layout = new GroupLayout(this.getContentPane());
+        this.layout.setAutoCreateGaps(true);
+        this.layout.setAutoCreateContainerGaps(true);
+        this.getContentPane().setLayout(this.layout);
         this.algorithm = new JComboBox<>();
         this.saveButton = new JButton("Save");
-        this.text = new JTextArea();
+        this.text = new JLabel();
         this.text.setSize(this.getWidth(), this.getHeight() );
-        this.constraints = new GridBagConstraints();
-        this.constraints.insets = new Insets(0, 0, 5, 5);
-        this.constraints.anchor = GridBagConstraints.WEST;
         this.addComponents();
         this.addListeners();
     }
@@ -59,24 +60,36 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.populateCombo();
         this.setSize();
-        this.text.setEnabled(false);
-        this.text.setFont(new Font("Serif", Font.BOLD, this.getWidth()/20));
-        this.addElement(new JLabel("Pick the algorithm: "), new JPanel(), this.algorithm);
-        this.addElement(new JLabel("Info about: "), new JPanel(), this.text);
-        this.constraints.gridy++;
-        this.add(this.saveButton, this.constraints);
+        JLabel algLbl = new JLabel("Pick the algorithm: ");
+        JLabel infoLbl = new JLabel("Info about: ");
+        this.layout.setVerticalGroup(this.layout.createSequentialGroup()
+                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(algLbl)
+                .addComponent(this.algorithm))
+                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(infoLbl)
+                .addComponent(this.text))
+                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(this.saveButton)));
+        this.layout.setHorizontalGroup(this.layout.createSequentialGroup()
+                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                        .addComponent(algLbl)
+                        .addComponent(infoLbl)
+                        .addComponent(this.saveButton))
+                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                        .addComponent(this.algorithm)
+                        .addComponent(this.text)));
+        this.pack();
     }
 
     private void setSize(){
         this.setSize(DisplayInfo.getDisplaySize(30));
     }
 
-    private void addElement(final JLabel label, final JPanel panel, final JComponent component){
+    private void addElement(final JLabel label, final JComponent component){
+        JPanel panel = new JPanel();
         panel.add(label);
         panel.add(component);
-        this.constraints.gridx = 0;
-        this.constraints.gridy++;
-        this.add(panel, this.constraints);
+        this.add(panel);
     }
 
     private void populateCombo(){
