@@ -38,9 +38,9 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
                 final Point[] srcArray = source.getMatOfPoint().toArray();
                 final Point[] dstArray = target.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
-                    final Point translation = minimumLeastSquare(srcArray, dstArray);
+                    final Point translation = minimumLeastSquare(dstArray, srcArray);
                     // Shift one image by the estimated amount of translation to align it with the other
-                    final Mat alignedImage = new Mat(targetMat.rows(), targetMat.cols(), targetMat.type());
+                    final Mat alignedImage = new Mat();
                     final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
@@ -68,6 +68,7 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
         for (int i = 0; i < srcArray.length; i++) {
             deltaX[i] = dstArray[i].x - srcArray[i].x;
             deltaY[i] = dstArray[i].y - srcArray[i].y;
+            System.out.println(deltaX[i] + " " + deltaY[i]);
         }
 
         final double meanDeltaX = Core.mean(new MatOfDouble(deltaX)).val[0];
