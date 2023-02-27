@@ -33,7 +33,7 @@ public class RansacAlignment extends AlignmentAlgorithm {
                 final MatOfPoint2f targetPoint = target.getMatOfPoint();
                 final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpPerspective(source.getMatImage(), warpedMat, H, target.getMatImage().size());
+                Imgproc.warpPerspective(target.getMatImage(), warpedMat, H, source.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{

@@ -1,6 +1,7 @@
 package com.ds4h.view.alignmentConfigGUI;
 
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
+import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -18,6 +19,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.algorithm = new JComboBox<>();
         this.saveButton = new JButton("Save");
         this.text = new JTextArea();
+        this.text.setSize(this.getWidth(), this.getHeight() );
         this.constraints = new GridBagConstraints();
         this.constraints.insets = new Insets(0, 0, 5, 5);
         this.constraints.anchor = GridBagConstraints.WEST;
@@ -57,9 +59,8 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.populateCombo();
         this.setSize();
-        this.text.setSize(new Dimension(200, 200));
         this.text.setEnabled(false);
-        this.text.setFont(new Font("Arial", Font.BOLD, 20));
+        this.text.setFont(new Font("Serif", Font.BOLD, this.getWidth()/20));
         this.addElement(new JLabel("Pick the algorithm: "), new JPanel(), this.algorithm);
         this.addElement(new JLabel("Info about: "), new JPanel(), this.text);
         this.constraints.gridy++;
@@ -67,11 +68,10 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     }
 
     private void setSize(){
-        this.setSize(new Dimension(400, 400));
+        this.setSize(DisplayInfo.getDisplaySize(30));
     }
 
     private void addElement(final JLabel label, final JPanel panel, final JComponent component){
-        label.setPreferredSize(new Dimension(200, 50));
         panel.add(label);
         panel.add(component);
         this.constraints.gridx = 0;
