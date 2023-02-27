@@ -6,6 +6,7 @@ import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.PerspectiveAlignment;
+import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.model.alignment.manual.TranslativeAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 
@@ -16,12 +17,14 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm perspectiveAlignment;
     private final AlignmentAlgorithm affineAlignment;
     private final AlignmentAlgorithm translativeAlignment;
+    private final AlignmentAlgorithm ransacAlignment;
     private final List<AlignedImage> images;
     public ManualAlignmentController(){
         this.images = new LinkedList<>();
         this.perspectiveAlignment = new PerspectiveAlignment();
         this.affineAlignment = new AffineAlignment();
         this.translativeAlignment = new TranslativeAlignment();
+        this.ransacAlignment = new RansacAlignment();
     }
 
     @Override
@@ -37,28 +40,22 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager) throws IllegalArgumentException{
         switch (alignmentAlgorithm){
             case TRANSLATIVE:
-                this.translativeAlignment(cornerManager);
+                this.align(this.translativeAlignment, cornerManager);
                 break;
             case AFFINE:
-                this.affineAlignment(cornerManager);
+                this.align(this.affineAlignment, cornerManager);
                 break;
             case PERSPECTIVE:
-                this.perspectiveAlignment(cornerManager);
+                this.align(this.perspectiveAlignment, cornerManager);
+                break;
+            case RANSAC:
+                this.align(this.ransacAlignment, cornerManager);
                 break;
         }
     }
-    private void perspectiveAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
-        this.images.clear();
-        this.images.addAll(this.perspectiveAlignment.alignImages(cornerManager));
-    }
 
-    private void affineAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
+    private void align(final AlignmentAlgorithm algorithm, final CornerManager cornerManager){
         this.images.clear();
-        this.images.addAll(this.affineAlignment.alignImages(cornerManager));
-    }
-
-    private void translativeAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
-        this.images.clear();
-        this.images.addAll(this.translativeAlignment.alignImages(cornerManager));
+        this.images.addAll(algorithm.alignImages(cornerManager));
     }
 }
