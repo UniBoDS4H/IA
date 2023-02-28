@@ -6,6 +6,7 @@ import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,7 +47,6 @@ public class PreviewListItem extends JPanel {
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();
-        this.setSelectedPanel();
 
         this.centerPanel.add(this.idLabel);
         this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -56,14 +56,16 @@ public class PreviewListItem extends JPanel {
         this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         this.centerPanel.add(this.targetLabel);
         this.centerPanel.add(this.deleteButton);
+        this.setBorder( new MatteBorder(0, 0, 1, 0, Color.gray));
+
 
         JLabel nameLabel = new JLabel(this.image.toString());
+        nameLabel.setFont(new Font("Serif", Font.PLAIN, 10));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(this.leftJustify(nameLabel));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(this.leftJustify(this.centerPanel));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
-
         this.deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {
                 //TODO: Launch a message dialog in order to confirm the deletion
@@ -89,7 +91,6 @@ public class PreviewListItem extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 // Set the clicked image as the current image
                 container.setCurrentPanel(PreviewListItem.this);
-                setSelectedPanel();
                 cornerSelector.showDialog();
             }
         });
@@ -103,14 +104,5 @@ public class PreviewListItem extends JPanel {
     }
     private void setVisibilityTargetLabel(){
         this.targetLabel.setVisible(this.controller.isSource(this.image));
-    }
-    private void setSelectedPanel(){
-        if(this.equals(this.container.getCurrentPanel())){
-            Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
-            Arrays.stream(this.container.getComponents()).map(i->(JPanel)i).forEach(i -> i.setBorder(null));
-            this.setBorder(border);
-        }
-        this.container.repaint();
-
     }
 }
