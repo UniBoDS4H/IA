@@ -25,4 +25,9 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(this.images);
     }
+
+    @Override
+    public boolean isAlive() {
+        return false;
+    }
 }

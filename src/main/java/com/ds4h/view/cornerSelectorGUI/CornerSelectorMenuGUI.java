@@ -44,7 +44,7 @@ public class CornerSelectorMenuGUI extends JPanel {
     }
     public void addListeners() {
         this.deleteButton.addActionListener(e->{
-            container.getSelectedPoints().forEach(image::removeCorner);
+            container.getSelectedPoints().forEach(image::removePoint);
             container.clearSelectedPoints();
             container.repaintPanel();
         });

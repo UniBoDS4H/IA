@@ -10,8 +10,10 @@ import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.model.alignment.manual.TranslativeAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm perspectiveAlignment;
@@ -19,8 +21,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm translativeAlignment;
     private final AlignmentAlgorithm ransacAlignment;
     private final List<AlignedImage> images;
+    private Optional<AlignmentAlgorithmEnum> lastAlgorithm;
     public ManualAlignmentController(){
         this.images = new LinkedList<>();
+        this.lastAlgorithm = Optional.empty();
         this.perspectiveAlignment = new PerspectiveAlignment();
         this.affineAlignment = new AffineAlignment();
         this.translativeAlignment = new TranslativeAlignment();
@@ -29,7 +33,37 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
 
     @Override
     public List<AlignedImage> getAlignedImages(){
-        return new LinkedList<>(this.images);
+        if(this.lastAlgorithm.isPresent()) {
+            switch (this.lastAlgorithm.get()){
+                case TRANSLATIVE:
+                    return new LinkedList<>(translativeAlignment.alignedImages());
+                case AFFINE:
+                    return new LinkedList<>(affineAlignment.alignedImages());
+                case PERSPECTIVE:
+                    return new LinkedList<>(perspectiveAlignment.alignedImages());
+                case RANSAC:
+                    return new LinkedList<>(ransacAlignment.alignedImages());
+            }
+            this.lastAlgorithm = Optional.empty();
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isAlive() {
+        if(this.lastAlgorithm.isPresent()) {
+            switch (this.lastAlgorithm.get()) {
+                case TRANSLATIVE:
+                    return translativeAlignment.isAlive();
+                case AFFINE:
+                    return affineAlignment.isAlive();
+                case PERSPECTIVE:
+                    return perspectiveAlignment.isAlive();
+                case RANSAC:
+                    return ransacAlignment.isAlive();
+            }
+        }
+        return false;
     }
 
     /**
@@ -52,10 +86,12 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 this.align(this.ransacAlignment, cornerManager);
                 break;
         }
+        this.lastAlgorithm = Optional.of(alignmentAlgorithm);
+        System.out.println(this.lastAlgorithm);
     }
 
     private void align(final AlignmentAlgorithm algorithm, final CornerManager cornerManager){
-        this.images.clear();
-        this.images.addAll(algorithm.alignImages(cornerManager));
+        algorithm.alignImages(cornerManager);
     }
+
 }

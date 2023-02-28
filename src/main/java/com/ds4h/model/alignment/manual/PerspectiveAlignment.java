@@ -12,6 +12,10 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
 
+/**
+ * This class is used for the manual alignment using the Perspective technique
+ */
+
 public class PerspectiveAlignment extends AlignmentAlgorithm {
     private static final int LOWER_BOUND = 4;
 
@@ -40,8 +44,8 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
-                throw new IllegalArgumentException("The number of corners inside the source image or or inside the target image is not correct.\n" +
-                        "In order to use the Affine alignment you must at least: " + PerspectiveAlignment.LOWER_BOUND + " corners.");
+                throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
+                        "In order to use the Affine alignment you must use at least: " + PerspectiveAlignment.LOWER_BOUND + " points.");
             }
         }catch (Exception ex){
             throw ex;

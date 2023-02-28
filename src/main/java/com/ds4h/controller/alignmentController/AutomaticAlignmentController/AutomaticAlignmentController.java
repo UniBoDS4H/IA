@@ -20,12 +20,16 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         this.alignedImages = new LinkedList<>();
     }
     public void surfAlignment(final CornerManager cornerManager) throws IllegalArgumentException{
-        this.alignedImages.clear();
-        this.alignedImages.addAll(this.surfAlignment.alignImages(cornerManager));
+        this.surfAlignment.alignImages(cornerManager);
     }
 
     @Override
     public List<AlignedImage> getAlignedImages() {
-        return new LinkedList<>(this.alignedImages);
+        return new LinkedList<>(this.surfAlignment.alignedImages());
+    }
+
+    @Override
+    public boolean isAlive(){
+        return this.surfAlignment.isAlive();
     }
 }

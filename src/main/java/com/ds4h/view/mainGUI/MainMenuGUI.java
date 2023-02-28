@@ -151,12 +151,18 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
             ManualAlignmentController m = new ManualAlignmentController();
             //ManualAlignmentController m = new ManualAlignmentController();
-            try {
+            final Thread th = new Thread(() -> {
                 m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
+                while(m.isAlive()){
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
-            } catch (Exception e) {
-                IJ.showMessage(e.getMessage());
-            }
+            });
+            th.start();
 
         });
 
@@ -196,12 +202,19 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             //bUnwarpJ_ b = new bUnwarpJ_();
             //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
             AutomaticAlignmentController a = new AutomaticAlignmentController();
-            try {
+
+            final Thread th = new Thread(() -> {
                 a.surfAlignment(this.cornerControler.getCornerManager());
+                while(a.isAlive()){
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
-            } catch (Exception e) {
-                //TODO: DO SOMETHING
-            }
+            });
+            th.start();
             //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
             //new CarouselGUI(a.getAlignedImages());
         });
