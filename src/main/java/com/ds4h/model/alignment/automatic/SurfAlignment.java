@@ -5,6 +5,7 @@ import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imageCorners.ImageCorners;
 import ij.IJ;
 import ij.ImagePlus;
+import org.bytedeco.javacpp.presets.opencv_core;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.CvType;
@@ -122,4 +123,6 @@ public class SurfAlignment extends AlignmentAlgorithm {
         }
         return Optional.empty();
     }
+
+
 }

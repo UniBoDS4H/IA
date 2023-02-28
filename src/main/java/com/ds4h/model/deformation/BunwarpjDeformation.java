@@ -94,6 +94,10 @@ public class BunwarpjDeformation implements Runnable{
         return new LinkedList<>(this.outputList);
     }
 
+    /**
+     * Open a new thread for the deformation operation. After the deformation is done, all the images are
+     * stored inside the output list.
+     */
     @Override
     public void run() {
         this.source.ifPresent(alignedImage -> this.alignedImages.stream().map(AlignedImage::getAlignedImage)

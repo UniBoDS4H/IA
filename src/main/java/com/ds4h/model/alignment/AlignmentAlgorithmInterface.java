@@ -9,5 +9,7 @@ import org.opencv.core.Mat;
 import java.util.List;
 
 public interface AlignmentAlgorithmInterface {
-    List<AlignedImage> alignImages(final CornerManager cornerManager);
+    void alignImages(final CornerManager cornerManager);
+
+    boolean isAlive();
 }

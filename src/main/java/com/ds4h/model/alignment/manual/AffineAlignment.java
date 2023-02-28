@@ -13,6 +13,9 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
 
+/**
+ * This class is used for the manual alignment using the Affine technique
+ */
 public class AffineAlignment extends AlignmentAlgorithm {
     private static final int REQUIRED_POINTS = 3;
     public AffineAlignment(){
@@ -20,7 +23,7 @@ public class AffineAlignment extends AlignmentAlgorithm {
     }
 
     /**
-     * Manual alignment using the Homography alignment
+     * Manual alignment using the Affine alignment
      * @param source : the source image used as reference
      * @param  target : the target to align
      * @throws IllegalArgumentException : in case the number of corners is not correct
@@ -38,8 +41,8 @@ public class AffineAlignment extends AlignmentAlgorithm {
                 final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
-                throw new IllegalArgumentException("The number of corners inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Affine alignment you must use: " + AffineAlignment.REQUIRED_POINTS + " corners.");
+                throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
+                        "In order to use the Affine alignment you must use: " + AffineAlignment.REQUIRED_POINTS + " points.");
             }
         }catch (Exception ex){
             throw ex;

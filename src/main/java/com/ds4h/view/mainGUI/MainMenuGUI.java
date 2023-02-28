@@ -12,6 +12,7 @@ import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
@@ -38,7 +39,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final PreviewImagesPane imagesPreview;
     private final AlignmentConfigGUI alignmentConfigGUI;
     private final BunwarpJController bunwarpJController;
+    private final AutomaticAlignmentController a = new AutomaticAlignmentController();
 
+    private final ManualAlignmentController m = new ManualAlignmentController();
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -165,13 +168,20 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.manualAlignment.addActionListener(event -> {
-            ManualAlignmentController m = new ManualAlignmentController();
             //ManualAlignmentController m = new ManualAlignmentController();
-            try {
-                m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
-                new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
-            } catch (Exception e) {
-                IJ.showMessage(e.getMessage());
+            if(!m.isAlive()) {
+                final Thread th = new Thread(() -> {
+                    m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
+                    while (m.isAlive()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
+                });
+                th.start();
             }
 
         });
@@ -211,12 +221,23 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             //Mat m = new Mat();
             //bUnwarpJ_ b = new bUnwarpJ_();
             //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
-            AutomaticAlignmentController a = new AutomaticAlignmentController();
-            try {
+            if(!a.isAlive()) {
                 a.surfAlignment(this.cornerControler.getCornerManager());
-                new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
-            } catch (Exception e) {
-                //TODO: DO SOMETHING
+                final Thread th = new Thread(() -> {
+                    final LoadingGUI loadingGUI = new LoadingGUI();
+                    while (a.isAlive()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if (a.getAlignedImages().size() > 0) {
+                        new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
+                        loadingGUI.close();
+                    }
+                });
+                th.start();
             }
             //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
             //new CarouselGUI(a.getAlignedImages());

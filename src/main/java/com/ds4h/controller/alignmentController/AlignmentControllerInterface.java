@@ -8,4 +8,6 @@ import java.util.List;
 public interface AlignmentControllerInterface {
 
     public List<AlignedImage> getAlignedImages();
+
+    public boolean isAlive();
 }

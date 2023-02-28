@@ -11,6 +11,9 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
 
+/**
+ * This class is used for the manual alignment using the Translative technique
+ */
 public class TranslativeAlignment extends AlignmentAlgorithm {
 
     private static final int LOWER_BOUND = 1;
@@ -49,12 +52,12 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
                     System.out.println(alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{
-                    throw new IllegalArgumentException("The number of corner inside the source image is different from the number of point" +
-                            "inside the target image");
+                    throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
+                            "inside the target image.");
                 }
             }else{
-                throw new IllegalArgumentException("The number of corners inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Affine alignment you must at least: " + TranslativeAlignment.LOWER_BOUND + " corners.");
+                throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
+                        "In order to use the Affine alignment you must at least: " + TranslativeAlignment.LOWER_BOUND + " points.");
             }
         }catch (Exception ex){
             throw ex;

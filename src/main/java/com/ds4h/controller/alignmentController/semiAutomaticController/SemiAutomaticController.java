@@ -18,11 +18,16 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
 
     public void align(final CornerManager cornerManager) throws IllegalArgumentException{
         this.images.clear();
-        this.images.addAll(semiAutomatic.alignImages(cornerManager));
+        semiAutomatic.alignImages(cornerManager);
     }
 
     @Override
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(this.images);
+    }
+
+    @Override
+    public boolean isAlive() {
+        return false;
     }
 }

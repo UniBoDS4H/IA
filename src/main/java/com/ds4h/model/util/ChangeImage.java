@@ -6,9 +6,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 
-public class ChangeColor {
+public class ChangeImage {
 
-    private ChangeColor(){
+    private ChangeImage(){
 
     }
 

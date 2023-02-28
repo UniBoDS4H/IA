@@ -14,11 +14,23 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
+/**
+ * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
+ * Every child class must implement the 'align' method.
+ */
+public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface, Runnable{
     private final static int RGB = 3;
+    private Optional<ImageCorners> source;
+    private final List<ImageCorners> imagesToAlign;
+    private final List<AlignedImage> imagesAligned;
+    private Optional<Thread> thread;
     protected AlignmentAlgorithm(){
-
+        source = Optional.empty();
+        this.thread = Optional.empty();
+        this.imagesToAlign = new LinkedList<>();
+        this.imagesAligned = new CopyOnWriteArrayList<>();
     }
     /**
      * Convert the new matrix in to an image
@@ -58,29 +70,58 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface{
      * Align the images stored inside the cornerManager. All the images will be aligned to the source image
      * @param cornerManager : container where all the images are stored
      * @throws IllegalArgumentException:
-     * @return the List of all the images aligned to the source
      */
     @Override
-    public List<AlignedImage> alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
-        List<AlignedImage> images = new LinkedList<>();
+    public void alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            final ImageCorners source = cornerManager.getSourceImage().get();
-            images.add(new AlignedImage(source.getMatImage(), source.getImage()));
-            try {
-                for(ImageCorners image : cornerManager.getImagesToAlign()){
-                    final Optional<AlignedImage> output = this.align(source, image);
-                    output.ifPresent(images::add);
+            System.out.print(this.isAlive());
+            if(Objects.nonNull(this.thread) && !this.isAlive()) {
+                this.source = cornerManager.getSourceImage();
+                this.imagesAligned.add(new AlignedImage(this.source.get().getMatImage(), this.source.get().getImage()));
+                try {
+                    this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
+                    this.thread = Optional.of(new Thread(this));
+                    this.thread.get().start();
+                } catch (final Exception ex) {
+                    throw new IllegalArgumentException("Error: " + ex.getMessage());
                 }
-            }catch (final Exception ex){
-                throw new IllegalArgumentException("Error: " + ex.getMessage());
             }
         }else{
             throw new IllegalArgumentException("In order to do the alignment It is necessary to have a target," +
-                    " please pick a target image");
+                    " please pick a target image.");
         }
-        return images;
     }
 
+    @Override
+    public void run(){
+        try {
+            if(this.source.isPresent()) {
+                for (ImageCorners image : this.imagesToAlign) {
+                    final Optional<AlignedImage> output = this.align(this.source.get(), image);
+                    output.ifPresent(this.imagesAligned::add);
+                }
+            }
+            this.thread = Optional.empty();
+        } catch (Exception e) {
+            this.thread = Optional.empty();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<AlignedImage> alignedImages(){
+        return new LinkedList<>(this.imagesAligned);
+    }
+
+    public boolean isAlive(){
+        System.out.println(this.thread);
+        return this.thread.isPresent() && this.thread.get().isAlive();
+    }
+
+    /**
+     * Number of needed points in order to perform the alignment algorithm.
+     * @return an integer showing how many points the algorithm needs for the alignment.
+     * @throws NoSuchMethodException in case this method is not override.
+     */
     public int neededPoints() throws NoSuchMethodException{
         throw new NoSuchMethodException("Not implemented");
     }

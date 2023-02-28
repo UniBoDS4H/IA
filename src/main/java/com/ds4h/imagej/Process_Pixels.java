@@ -19,7 +19,9 @@ import java.awt.*;
  * A template for processing each pixel of either
  * GRAY8, GRAY16, GRAY32 or COLOR_RGB images.
  *
- * Authors DS4H Team : Iorio Matteo & Vincenzi Fabio
+ * DS4H Team:
+ * @author Iorio Matteo
+ * @author Vincenzi Fabio
  */
 /*
 	FUNCTIONALITIES :
