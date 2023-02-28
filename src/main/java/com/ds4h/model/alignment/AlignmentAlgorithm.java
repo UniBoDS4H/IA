@@ -25,10 +25,10 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private Optional<ImageCorners> source;
     private final List<ImageCorners> imagesToAlign;
     private final List<AlignedImage> imagesAligned;
-    private Thread thread;
+    private Optional<Thread> thread;
     protected AlignmentAlgorithm(){
         source = Optional.empty();
-
+        this.thread = Optional.empty();
         this.imagesToAlign = new LinkedList<>();
         this.imagesAligned = new CopyOnWriteArrayList<>();
     }
@@ -70,20 +70,21 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      * Align the images stored inside the cornerManager. All the images will be aligned to the source image
      * @param cornerManager : container where all the images are stored
      * @throws IllegalArgumentException:
-     * @return the List of all the images aligned to the source
      */
     @Override
-    public List<AlignedImage> alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
+    public void alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            this.source = cornerManager.getSourceImage();
-            this.imagesAligned.add(new AlignedImage(this.source.get().getMatImage(), this.source.get().getImage()));
-            try {
-                this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
-                this.thread = new Thread(this);
-                this.thread.start();
-                return this.imagesAligned;
-            }catch (final Exception ex){
-                throw new IllegalArgumentException("Error: " + ex.getMessage());
+            System.out.print(this.isAlive());
+            if(Objects.nonNull(this.thread) && !this.isAlive()) {
+                this.source = cornerManager.getSourceImage();
+                this.imagesAligned.add(new AlignedImage(this.source.get().getMatImage(), this.source.get().getImage()));
+                try {
+                    this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
+                    this.thread = Optional.of(new Thread(this));
+                    this.thread.get().start();
+                } catch (final Exception ex) {
+                    throw new IllegalArgumentException("Error: " + ex.getMessage());
+                }
             }
         }else{
             throw new IllegalArgumentException("In order to do the alignment It is necessary to have a target," +
@@ -100,8 +101,9 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                     output.ifPresent(this.imagesAligned::add);
                 }
             }
-            //System.out.print(this.imagesAligned.size());
+            this.thread = Optional.empty();
         } catch (Exception e) {
+            this.thread = Optional.empty();
             throw new RuntimeException(e);
         }
     }
@@ -111,7 +113,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     }
 
     public boolean isAlive(){
-        return Objects.nonNull(this.thread) && this.thread.isAlive();
+        System.out.println(this.thread);
+        return this.thread.isPresent() && this.thread.get().isAlive();
     }
 
     /**
