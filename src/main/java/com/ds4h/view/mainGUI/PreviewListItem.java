@@ -5,12 +5,10 @@ import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 
 //TODO: Implement the StandardGUI interface
 
@@ -18,7 +16,6 @@ public class PreviewListItem extends JPanel {
     private final JButton targetButton, deleteButton;
     private final JLabel idLabel;
     private final JLabel imageLabel;
-    private final JLabel targetLabel;
     private final CornerController controller;
     private final ImageCorners image;
     private final PreviewImagesPane container;
@@ -32,8 +29,7 @@ public class PreviewListItem extends JPanel {
         this.cornerSelector = new CornerSelectorGUI(this.image, this.controller);
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, 16));
-        this.targetButton = new JButton("Set");
-        this.targetLabel = new JLabel("TARGET");
+        this.targetButton = new JButton("TARGET");
         ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
         ImageIcon resized = new ImageIcon(deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         this.deleteButton = new JButton(resized);
@@ -46,7 +42,7 @@ public class PreviewListItem extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
-        this.setVisibilityTargetLabel();
+        this.updateTargetView();
 
         this.centerPanel.add(this.idLabel);
         this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -54,7 +50,6 @@ public class PreviewListItem extends JPanel {
         this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
         this.centerPanel.add(this.targetButton);
         this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.centerPanel.add(this.targetLabel);
         this.centerPanel.add(this.deleteButton);
         this.setBorder( new MatteBorder(0, 0, 1, 0, Color.gray));
 
@@ -102,7 +97,7 @@ public class PreviewListItem extends JPanel {
         b.add( Box.createHorizontalGlue() );
         return b;
     }
-    private void setVisibilityTargetLabel(){
-        this.targetLabel.setVisible(this.controller.isSource(this.image));
+    private void updateTargetView(){
+        this.targetButton.setBackground(this.controller.isSource(this.image)?new Color(0,153,0):Color.GRAY);
     }
 }
