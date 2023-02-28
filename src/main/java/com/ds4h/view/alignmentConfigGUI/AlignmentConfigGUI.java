@@ -5,14 +5,13 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
-import java.security.acl.Group;
 
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
     private final GroupLayout layout;
     private final JButton saveButton;
-    private final JLabel text;
+    private final JTextArea text;
     private AlignmentAlgorithmEnum selectedValue;
     public AlignmentConfigGUI(){
         this.setTitle("Pick manual alignment algorithm");
@@ -22,8 +21,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.getContentPane().setLayout(this.layout);
         this.algorithm = new JComboBox<>();
         this.saveButton = new JButton("Save");
-        this.text = new JLabel();
-        this.text.setSize(this.getWidth(), this.getHeight() );
+        this.text = new JTextArea();
         this.addComponents();
         this.addListeners();
     }

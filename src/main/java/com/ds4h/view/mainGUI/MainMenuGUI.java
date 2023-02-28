@@ -1,17 +1,12 @@
 package com.ds4h.view.mainGUI;
-
-
-import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.alignmentController.AutomaticAlignmentController.*;
+import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
-import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
-import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -20,8 +15,6 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -34,7 +27,6 @@ import java.util.stream.Collectors;
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment;
-    private final JPanel buttonsPanel;
     private final JMenuBar menuBar;
     private final JMenu menu, project;
     private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem, alignmentItem;
@@ -63,20 +55,44 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
 
-
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
-        this.panel.setLayout(new GridLayout(2, 1));
-        this.buttonsPanel = new JPanel();
-        this.buttonsPanel.setLayout(new GridLayout(2, 1));
-        this.buttonsPanel.add(manualAlignment);
-        this.buttonsPanel.add(automaticAlignment);
-
+        this.panel.setLayout(new GridBagLayout());
 
         //Init of the previewList
         this.imagesPreview = new PreviewImagesPane(this.cornerControler);
-        this.panel.add(add(new JScrollPane(this.imagesPreview)));
-        this.panel.add(this.buttonsPanel);
+
+        GridBagConstraints gbcPanel = new GridBagConstraints();
+        gbcPanel.gridx = 0;
+        gbcPanel.gridy = 0;
+        gbcPanel.gridwidth = GridBagConstraints.REMAINDER;
+        gbcPanel.gridheight = 10;
+        gbcPanel.fill = GridBagConstraints.BOTH;
+        gbcPanel.weightx = 1;
+        gbcPanel.weighty = 1;
+        this.panel.add(this.imagesPreview, gbcPanel); 
+
+        GridBagConstraints gbcAuto = new GridBagConstraints();
+        gbcAuto.gridx = 0;
+        gbcAuto.gridy = 10;
+        gbcAuto.gridwidth = 1;
+        gbcAuto.gridheight = 1;
+        gbcAuto.fill = GridBagConstraints.BOTH;
+        gbcAuto.weightx = 1;
+        gbcAuto.weighty = 0;
+        this.panel.add(this.automaticAlignment, gbcAuto);
+        
+        GridBagConstraints gbcManual = new GridBagConstraints();
+        gbcManual.gridx = 0;
+        gbcManual.gridy = 11;
+        gbcManual.gridwidth = 1;
+        gbcManual.gridheight = 1;
+        gbcManual.fill = GridBagConstraints.BOTH;
+        gbcManual.weightx = 1;
+        gbcManual.weighty = 0;
+        this.panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
+
+
 
         add(this.panel);
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));

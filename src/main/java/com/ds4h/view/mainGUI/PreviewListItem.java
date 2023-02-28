@@ -22,9 +22,11 @@ public class PreviewListItem extends JPanel {
     private final ImageCorners image;
     private final PreviewImagesPane container;
     private final CornerSelectorGUI cornerSelector;
+    private final JPanel centerPanel;
     PreviewListItem(CornerController controller, ImageCorners image, PreviewImagesPane container, int id){
         this.container = container;
         this.controller = controller;
+        this.centerPanel = new JPanel();
         this.image = image;
         this.cornerSelector = new CornerSelectorGUI(this.image, this.controller);
         this.idLabel = new JLabel(Integer.toString(id));
@@ -40,20 +42,27 @@ public class PreviewListItem extends JPanel {
         this.deleteButton.setOpaque(false);
         this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
-        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();
         this.setSelectedPanel();
 
-        this.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.add(this.idLabel);
-        this.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.add(this.imageLabel);
-        this.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.add(this.targetButton);
-        this.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.add(this.targetLabel);
-        this.add(this.deleteButton);
+        this.centerPanel.add(this.idLabel);
+        this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.centerPanel.add(this.imageLabel);
+        this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.centerPanel.add(this.targetButton);
+        this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        this.centerPanel.add(this.targetLabel);
+        this.centerPanel.add(this.deleteButton);
+
+        JLabel nameLabel = new JLabel(this.image.toString());
+        this.add(Box.createRigidArea(new Dimension(0, 5)));
+        this.add(this.leftJustify(nameLabel));
+        this.add(Box.createRigidArea(new Dimension(0, 5)));
+        this.add(this.leftJustify(this.centerPanel));
+        this.add(Box.createRigidArea(new Dimension(0, 5)));
 
         this.deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {
@@ -84,6 +93,13 @@ public class PreviewListItem extends JPanel {
                 cornerSelector.showDialog();
             }
         });
+    }
+    private Component leftJustify( Component c )  {
+        Box  b = Box.createHorizontalBox();
+        b.add(Box.createRigidArea(new Dimension(5, 0)));
+        b.add(c);
+        b.add( Box.createHorizontalGlue() );
+        return b;
     }
     private void setVisibilityTargetLabel(){
         this.targetLabel.setVisible(this.controller.isSource(this.image));
