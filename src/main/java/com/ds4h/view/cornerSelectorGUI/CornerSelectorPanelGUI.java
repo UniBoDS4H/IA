@@ -87,14 +87,17 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                                 container.addSelectedPoint(actualPoint);
                             }
                         }else {
+
                             if (!container.getSelectedPoints().contains(actualPoint)) {
                                 container.clearSelectedPoints();
                                 container.addSelectedPoint(actualPoint);
                             }
                         }
                     }else{
+                        //ADD new point
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                             currentImage.addCorner(getMatIndexFromPoint(getScaledPoint(e)));
+                            container.updatePointsForAlignment();
                             repaint();
                         }else{
                             //if I single click a place where there is no point I clear the selection

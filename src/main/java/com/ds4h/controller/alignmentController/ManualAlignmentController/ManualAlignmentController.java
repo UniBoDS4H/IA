@@ -35,7 +35,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     public List<AlignedImage> getAlignedImages(){
         if(this.lastAlgorithm.isPresent()) {
             switch (this.lastAlgorithm.get()){
-                case TRANSLATIVE:
+                case TRANSLATION:
                     return new LinkedList<>(translativeAlignment.alignedImages());
                 case AFFINE:
                     return new LinkedList<>(affineAlignment.alignedImages());
@@ -53,7 +53,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     public boolean isAlive() {
         if(this.lastAlgorithm.isPresent()) {
             switch (this.lastAlgorithm.get()) {
-                case TRANSLATIVE:
+                case TRANSLATION:
                     return translativeAlignment.isAlive();
                 case AFFINE:
                     return affineAlignment.isAlive();
@@ -72,7 +72,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      */
     public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager) throws IllegalArgumentException{
         switch (alignmentAlgorithm){
-            case TRANSLATIVE:
+            case TRANSLATION:
                 this.align(this.translativeAlignment, cornerManager);
                 break;
             case AFFINE:

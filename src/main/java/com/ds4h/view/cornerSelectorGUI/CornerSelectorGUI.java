@@ -3,6 +3,7 @@ package com.ds4h.view.cornerSelectorGUI;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import org.opencv.core.Point;
 
@@ -19,10 +20,12 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     private final ImageCorners image;
     private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
+    private final MainMenuGUI mainMenu;
 
 
-    public CornerSelectorGUI(final ImageCorners image, final CornerController controller){
+    public CornerSelectorGUI(final ImageCorners image, final CornerController controller, MainMenuGUI mainMenu){
         super(controller.getMenuItem(image).toString());
+        this.mainMenu = mainMenu;
         this.cornerController = controller;
         this.image = image;
         this.panel = new CornerSelectorPanelGUI(this);
@@ -114,5 +117,9 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     public void updateSettings() {
         this.menu.updateSettings();
+    }
+    public void updatePointsForAlignment(){
+        System.out.println("A");
+        this.mainMenu.checkPointsForAlignment();
     }
 }

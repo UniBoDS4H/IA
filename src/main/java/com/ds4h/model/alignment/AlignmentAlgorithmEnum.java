@@ -2,7 +2,7 @@ package com.ds4h.model.alignment;
 
 public enum AlignmentAlgorithmEnum {
 
-    TRANSLATIVE("Translative", "Translative alignment is a geometric transformation that can\n" +
+    TRANSLATION("Translation", "Translation alignment is a geometric transformation that can\n" +
             " be used to align two images by applying a translation in x and y directions.\n" +
             " It is the simplest form of image alignment, and it assumes that the images are already approximately\n" +
             " aligned and only need to be shifted by a certain amount in each direction."),

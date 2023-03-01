@@ -11,6 +11,7 @@ import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.PerspectiveAlignment;
 import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.model.alignment.manual.TranslationAlignment;
+import com.ds4h.model.imageCorners.ImageCorners;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -67,7 +68,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.panel.setLayout(new GridBagLayout());
 
         //Init of the previewList
-        this.imagesPreview = new PreviewImagesPane(this.cornerControler);
+        this.imagesPreview = new PreviewImagesPane(this.cornerControler, this);
 
         GridBagConstraints gbcPanel = new GridBagConstraints();
         gbcPanel.gridx = 0;
@@ -148,31 +149,31 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         int nPoints;
         if(!this.cornerControler.getCornerImagesImages().isEmpty()){
             nPoints = this.cornerControler.getCornerImagesImages().get(0).getCorners().length;
-            this.cornerControler.getCornerImagesImages().forEach(i->{
-                switch (this.alignmentConfigGUI.getSelectedValue()){
+            for (ImageCorners i : this.cornerControler.getCornerImagesImages()) {
+                switch (this.alignmentConfigGUI.getSelectedValue()) {
                     case AFFINE:
-                        if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
+                        if (i.getCorners().length != AffineAlignment.REQUIRED_POINTS) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
-                                    +"<br>"
+                                    + "<br>"
                                     + "In order to use the Affine alignment you must use " + AffineAlignment.REQUIRED_POINTS + " points in each image."
                                     + "</html>");
-                        }else{
+                        } else {
                             this.manualAlignment.setEnabled(true);
                             this.manualAlignment.setToolTipText("");
                         }
                         break;
                     case RANSAC:
-                        if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                        if (i.getCorners().length < RansacAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
-                                    +"<br>"
+                                    + "<br>"
                                     + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
-                        }else{
-                            if(i.getCorners().length != nPoints){
+                        } else {
+                            if (i.getCorners().length != nPoints) {
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -181,15 +182,15 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                     case PERSPECTIVE:
-                        if(i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
+                        if (i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
-                                    +"<br>"
+                                    + "<br>"
                                     + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
-                        }else{
-                            if(i.getCorners().length != nPoints){
+                        } else {
+                            if (i.getCorners().length != nPoints) {
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -197,16 +198,16 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                             this.manualAlignment.setToolTipText("");
                         }
                         break;
-                    case TRANSLATIVE:
-                        if(i.getCorners().length < TranslationAlignment.LOWER_BOUND) {
+                    case TRANSLATION:
+                        if (i.getCorners().length < TranslationAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
-                                    +"<br>"
+                                    + "<br>"
                                     + "In order to use the Translation alignment you must use at least " + TranslationAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
-                        }else{
-                            if(i.getCorners().length != nPoints){
+                        } else {
+                            if (i.getCorners().length != nPoints) {
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -215,7 +216,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                 }
-            });
+            }
         }
     }
 
