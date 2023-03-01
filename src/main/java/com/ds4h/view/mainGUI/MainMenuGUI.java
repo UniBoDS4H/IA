@@ -10,6 +10,7 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.PerspectiveAlignment;
 import com.ds4h.model.alignment.manual.RansacAlignment;
+import com.ds4h.model.alignment.manual.TranslationAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -18,7 +19,7 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -144,51 +145,78 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     }
     public void checkPointsForAlignment(){
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-        this.cornerControler.getCornerImagesImages().forEach(i->{
-            switch (this.alignmentConfigGUI.getSelectedValue()){
-                case AFFINE:
-                    if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
-                        this.manualAlignment.setEnabled(false);
-                        this.manualAlignment.setToolTipText("<html>"
-                                        + "The number of points inside images is not correct."
-                                        +"<br>"
-                                        + "In order to use the Affine alignment you must use " + AffineAlignment.REQUIRED_POINTS + " points in each image."
-                                        + "</html>");
-                    }else{
-                        this.manualAlignment.setEnabled(true);
-                        this.manualAlignment.setToolTipText("");
-                    }
-                    break;
-                case RANSAC:
-                    if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
-                        this.manualAlignment.setEnabled(false);
-                        this.manualAlignment.setToolTipText("<html>"
-                                + "The number of points inside images is not correct."
-                                +"<br>"
-                                + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
-                                + "</html>");
-                    }else{
-                        this.manualAlignment.setEnabled(true);
-                        this.manualAlignment.setToolTipText("");
-                    }
-                    break;
-                case PERSPECTIVE:
-                    if(i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
-                        this.manualAlignment.setEnabled(false);
-                        this.manualAlignment.setToolTipText("<html>"
-                                + "The number of points inside images is not correct."
-                                +"<br>"
-                                + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
-                                + "</html>");
-                    }else{
-                        this.manualAlignment.setEnabled(true);
-                        this.manualAlignment.setToolTipText("");
-                    }
-                    break;
-                case TRANSLATIVE:
-                    break;
-            }
-        });
+        int nPoints;
+        if(!this.cornerControler.getCornerImagesImages().isEmpty()){
+            nPoints = this.cornerControler.getCornerImagesImages().get(0).getCorners().length;
+            this.cornerControler.getCornerImagesImages().forEach(i->{
+                switch (this.alignmentConfigGUI.getSelectedValue()){
+                    case AFFINE:
+                        if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the Affine alignment you must use " + AffineAlignment.REQUIRED_POINTS + " points in each image."
+                                    + "</html>");
+                        }else{
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                    case RANSAC:
+                        if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
+                                    + "</html>");
+                        }else{
+                            if(i.getCorners().length != nPoints){
+                                this.manualAlignment.setEnabled(false);
+                                this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
+                            }
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                    case PERSPECTIVE:
+                        if(i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
+                                    + "</html>");
+                        }else{
+                            if(i.getCorners().length != nPoints){
+                                this.manualAlignment.setEnabled(false);
+                                this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
+                            }
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                    case TRANSLATIVE:
+                        if(i.getCorners().length < TranslationAlignment.LOWER_BOUND) {
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the Translation alignment you must use at least " + TranslationAlignment.LOWER_BOUND + " points in each image."
+                                    + "</html>");
+                        }else{
+                            if(i.getCorners().length != nPoints){
+                                this.manualAlignment.setEnabled(false);
+                                this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
+                            }
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                }
+            });
+        }
     }
 
     @Override
