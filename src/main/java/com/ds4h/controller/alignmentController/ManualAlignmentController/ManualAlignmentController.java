@@ -92,5 +92,6 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private void align(final AlignmentAlgorithm algorithm, final CornerManager cornerManager){
         algorithm.alignImages(cornerManager);
     }
+    
 
 }
