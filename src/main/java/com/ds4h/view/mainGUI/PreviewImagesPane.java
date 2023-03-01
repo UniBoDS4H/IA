@@ -1,7 +1,7 @@
 package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.cornerController.CornerController;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class PreviewImagesPane extends JPanel {
     public void showPreviewImages(){
         this.removeAll();
         this.revalidate();
-        for (ImageCorners image : this.controller.getCornerImagesImages()) {
+        for (ImagePoints image : this.controller.getCornerImagesImages()) {
             PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image));
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);

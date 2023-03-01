@@ -41,7 +41,7 @@ public class JSONSerializer extends JSONFile {
         cornerManager.getCornerImages().forEach(imageCorners -> {
             final JSONObject obj = new JSONObject();
             final JSONArray array = new JSONArray();
-            for(Point point : imageCorners.getCorners()){
+            for(Point point : imageCorners.getPoints()){
                 array.put(point.toString());
             }
             obj.put(FILE_KEY, imageCorners.getImage().getTitle());

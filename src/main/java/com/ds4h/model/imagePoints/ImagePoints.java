@@ -1,4 +1,4 @@
-package com.ds4h.model.imageCorners;
+package com.ds4h.model.imagePoints;
 
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
@@ -16,13 +16,13 @@ import java.util.Optional;
 /**
  *
  */
-public class ImageCorners {
+public class ImagePoints {
     private final File image;
-    private final List<Point> corners;
+    private final List<Point> points;
 
-    public ImageCorners(final File image){
+    public ImagePoints(final File image){
         this.image = image;
-        this.corners = new ArrayList<>();
+        this.points = new ArrayList<>();
     }
 
     /**
@@ -61,17 +61,17 @@ public class ImageCorners {
      *
      * @return
      */
-    public Point[] getCorners(){
-        return this.corners.toArray(new Point[0]);
+    public Point[] getPoints(){
+        return this.points.toArray(new Point[0]);
     }
 
     /**
      *
-     * @param corner
+     * @param point
      * @return
      */
-    public int getIndexOfCorner(Point corner){
-        return this.corners.indexOf(corner)+1;
+    public int getIndexOfPoint(final Point point){
+        return this.points.indexOf(point)+1;
     }
 
     /**
@@ -83,7 +83,7 @@ public class ImageCorners {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ImageCorners that = (ImageCorners) o;
+        ImagePoints that = (ImagePoints) o;
         return Objects.equals(image, that.image);
     }
 
@@ -93,16 +93,16 @@ public class ImageCorners {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(image, corners);
+        return Objects.hash(this.image, this.points);
     }
 
     /**
      *
-     * @param corner
+     * @param point
      */
-    public void addCorner(final Point corner){
-        if(!this.corners.contains(corner)){
-            this.corners.add(corner);
+    public void addPoint(final Point point){
+        if(!this.points.contains(point)){
+            this.points.add(point);
         }
     }
 
@@ -119,7 +119,7 @@ public class ImageCorners {
      * @param point
      */
     public void removePoint(final Point point){
-        this.corners.removeIf(p -> p.equals(point));
+        this.points.removeIf(p -> p.equals(point));
     }
 
     /**
@@ -128,7 +128,7 @@ public class ImageCorners {
      */
     public MatOfPoint2f getMatOfPoint(){
         final MatOfPoint2f mat = new MatOfPoint2f();
-        mat.fromList(this.corners);
+        mat.fromList(this.points);
 
         return mat;
     }
@@ -139,7 +139,7 @@ public class ImageCorners {
      */
     public MatOfKeyPoint getMatOfKeyPoint(){
         final List<KeyPoint> keypoints = new ArrayList<>();
-        for (final Point point : this.corners) {
+        for (final Point point : this.points) {
             keypoints.add(new KeyPoint((float)point.x, (float)point.y, 1));
         }
         final MatOfKeyPoint matOfKeyPoints = new MatOfKeyPoint();
@@ -157,19 +157,19 @@ public class ImageCorners {
 
     /**
      *
-     * @param corner
-     * @param newCorner
+     * @param point
+     * @param newPoint
      */
-    public void moveCorner(final Point corner,final Point newCorner){
-        this.corners.set(this.corners.indexOf(corner), newCorner);
+    public void movePoint(final Point point, final Point newPoint){
+        this.points.set(this.points.indexOf(point), newPoint);
     }
 
     /**
      *
      * @return
      */
-    public int numberOfCorners(){
-        return this.corners.size();
+    public int numberOfPoints(){
+        return this.points.size();
     }
 
     /**
@@ -186,11 +186,11 @@ public class ImageCorners {
      * @param indexToEdit
      * @param newIndex
      */
-    public void editCornerIndex(final int indexToEdit, final int newIndex) {
-        final Point pointToMove = this.corners.get(indexToEdit);
-        if(this.corners.contains(pointToMove)){
-            this.corners.remove(indexToEdit);
-            this.corners.add(newIndex, pointToMove);
+    public void editPointIndex(final int indexToEdit, final int newIndex) {
+        final Point pointToMove = this.points.get(indexToEdit);
+        if(this.points.contains(pointToMove)){
+            this.points.remove(indexToEdit);
+            this.points.add(newIndex, pointToMove);
         }
     }
 }

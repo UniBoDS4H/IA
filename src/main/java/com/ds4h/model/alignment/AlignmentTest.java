@@ -1,6 +1,6 @@
 package com.ds4h.model.alignment;
 
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.Features2d;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlignmentTest extends AlignmentAlgorithm{
-    public static void Aling(final ImageCorners imgf1, final ImageCorners imgf2){
+    public static void Aling(final ImagePoints imgf1, final ImagePoints imgf2){
         Mat img1 = Imgcodecs.imread(imgf1.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
         Mat img2 = Imgcodecs.imread(imgf2.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
         if (img1.empty() || img2.empty()) {

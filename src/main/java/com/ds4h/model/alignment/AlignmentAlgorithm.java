@@ -2,11 +2,8 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.model.util.NameBuilder;
-import com.ds4h.model.util.Pair;
-import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -22,8 +19,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface, Runnable{
     private final static int RGB = 3;
-    private Optional<ImageCorners> source;
-    private final List<ImageCorners> imagesToAlign;
+    private Optional<ImagePoints> source;
+    private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> imagesAligned;
     private Optional<Thread> thread;
     protected AlignmentAlgorithm(){
@@ -49,7 +46,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      * @return
      * @throws NoSuchMethodException
      */
-    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
+    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws NoSuchMethodException {
         throw new NoSuchMethodException("Method not implemented");
     }
 
@@ -121,7 +118,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(this.source.isPresent()) {
-                for (final ImageCorners image : this.imagesToAlign) {
+                for (final ImagePoints image : this.imagesToAlign) {
                     final Optional<AlignedImage> output = this.align(this.source.get(), image);
                     output.ifPresent(this.imagesAligned::add);
                 }

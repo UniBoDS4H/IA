@@ -159,11 +159,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         int nPoints;
         if(!this.cornerControler.getCornerImagesImages().isEmpty()){
-            nPoints = this.cornerControler.getCornerImagesImages().get(0).getCorners().length;
+            nPoints = this.cornerControler.getCornerImagesImages().get(0).getPoints().length;
             this.cornerControler.getCornerImagesImages().forEach(i->{
                 switch (this.alignmentConfigGUI.getSelectedValue()){
                     case AFFINE:
-                        if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
+                        if(i.getPoints().length != AffineAlignment.REQUIRED_POINTS){
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
@@ -176,7 +176,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                     case RANSAC:
-                        if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                        if(i.getPoints().length < RansacAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
@@ -184,7 +184,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                     + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
                         }else{
-                            if(i.getCorners().length != nPoints){
+                            if(i.getPoints().length != nPoints){
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -193,7 +193,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                     case PERSPECTIVE:
-                        if(i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
+                        if(i.getPoints().length < PerspectiveAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
@@ -201,7 +201,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                     + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
                         }else{
-                            if(i.getCorners().length != nPoints){
+                            if(i.getPoints().length != nPoints){
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -210,7 +210,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                     case TRANSLATIVE:
-                        if(i.getCorners().length < TranslationAlignment.LOWER_BOUND) {
+                        if(i.getPoints().length < TranslationAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
@@ -218,7 +218,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                     + "In order to use the Translation alignment you must use at least " + TranslationAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
                         }else{
-                            if(i.getCorners().length != nPoints){
+                            if(i.getPoints().length != nPoints){
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -259,6 +259,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(!manualAlignmentController.isAlive()) {
                 final Thread th = new Thread(() -> {
                     manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
+                    final LoadingGUI loadingGUI = new LoadingGUI();
                     while (manualAlignmentController.isAlive()) {
                         try {
                             Thread.sleep(2000);
@@ -266,7 +267,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                             throw new RuntimeException(e);
                         }
                     }
-                    new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
+                    if(manualAlignmentController.getAlignedImages().size() > 0) {
+                        new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
+                        loadingGUI.close();
+                    }
                 });
                 th.start();
             }
@@ -277,6 +281,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(!semiAutomaticController.isAlive()) {
                 final Thread th = new Thread(() -> {
                     semiAutomaticController.align(this.cornerControler);
+                    final LoadingGUI loadingGUI = new LoadingGUI();
                     while (semiAutomaticController.isAlive()) {
                         try {
                             Thread.sleep(2000);
@@ -284,7 +289,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                             throw new RuntimeException(e);
                         }
                     }
-                    new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
+                    if(semiAutomaticController.getAlignedImages().size() > 0) {
+                        new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
+                        loadingGUI.close();
+                    }
                 });
                 th.start();
             }

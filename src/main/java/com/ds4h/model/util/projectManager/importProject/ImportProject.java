@@ -1,6 +1,6 @@
 package com.ds4h.model.util.projectManager.importProject;
 
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.json.JSONFile;
 import com.ds4h.model.util.json.jsonDeserializer.JSONDeserializer;
@@ -12,7 +12,7 @@ import java.util.*;
  *
  */
 public class ImportProject {
-    private static Optional<ImageCorners> TARGET_IMAGE = Optional.empty();
+    private static Optional<ImagePoints> TARGET_IMAGE = Optional.empty();
 
     private final static String JSON = ".json";
 
@@ -28,9 +28,9 @@ public class ImportProject {
      * @return a List of all the ImageCorners
      * @throws FileNotFoundException if the JSON file does not exist
      */
-    public static List<ImageCorners> importProject(final File directory) throws FileNotFoundException {
+    public static List<ImagePoints> importProject(final File directory) throws FileNotFoundException {
         final List<File> tmpFiles = new LinkedList<>();
-        final List<ImageCorners> images = new LinkedList<>();
+        final List<ImagePoints> images = new LinkedList<>();
         File jsonFile = null;
         //TODO: add the check for the name of the Directory ?
         if(Objects.nonNull(directory) && directory.isDirectory()) {
@@ -48,18 +48,18 @@ public class ImportProject {
                 //If we have found the configuration json, we read it and we assing for each image its points.
                 JSONDeserializer.readImportProjectJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
                     if (file.getName().equals(key)) {
-                        final ImageCorners imageCorners = new ImageCorners(file);
-                        value.forEach(imageCorners::addCorner);
-                        images.add(imageCorners);
+                        final ImagePoints imagePoints = new ImagePoints(file);
+                        value.forEach(imagePoints::addPoint);
+                        images.add(imagePoints);
                         if(JSONDeserializer.isTargetPresent() && JSONDeserializer.targetName().equals(file.getName())){
-                            TARGET_IMAGE = Optional.of(imageCorners);
+                            TARGET_IMAGE = Optional.of(imagePoints);
                         }
                     }
                 }));
             }else{
                 tmpFiles.forEach(file -> {
-                    final ImageCorners imageCorners = new ImageCorners(file);
-                    images.add(imageCorners);
+                    final ImagePoints imagePoints = new ImagePoints(file);
+                    images.add(imagePoints);
                 });
             }
         }else {
@@ -79,7 +79,7 @@ public class ImportProject {
         return file.isFile() && file.getName().endsWith(JSON) && file.getName().equals(JSONFile.EXPORT_PROJECT_NAME);
     }
 
-    public static Optional<ImageCorners> getTargetImage(){
+    public static Optional<ImagePoints> getTargetImage(){
         return TARGET_IMAGE;
     }
 }

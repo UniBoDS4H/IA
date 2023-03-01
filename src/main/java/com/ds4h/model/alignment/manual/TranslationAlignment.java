@@ -2,7 +2,7 @@ package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
@@ -28,9 +28,9 @@ public class TranslationAlignment extends AlignmentAlgorithm {
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws IllegalArgumentException{
+    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws IllegalArgumentException{
         try {
-            if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
+            if(source.numberOfPoints() >= LOWER_BOUND && target.numberOfPoints() >= LOWER_BOUND) {
                 final Mat sourceMat = source.getMatImage();
                 final Mat targetMat = target.getMatImage();
 
