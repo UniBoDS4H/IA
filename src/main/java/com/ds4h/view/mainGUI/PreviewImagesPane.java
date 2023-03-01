@@ -28,15 +28,10 @@ public class PreviewImagesPane extends JPanel {
     }
 
     public void updateList(){
-        //rightPanel.setCurrentImage(image.getImage());
         this.showPreviewImages();
         this.repaint();
     }
     public void setCurrentPanel(JPanel panel) {
         this.currentPanel = panel;
     }
-    public JPanel getCurrentPanel(){
-        return this.currentPanel;
-    }
-
 }

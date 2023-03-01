@@ -2,6 +2,7 @@ package com.ds4h.view.alignmentConfigGUI;
 
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -13,8 +14,10 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JButton saveButton;
     private final JTextArea text;
     private AlignmentAlgorithmEnum selectedValue;
-    public AlignmentConfigGUI(){
+    private final MainMenuGUI container;
+    public AlignmentConfigGUI(MainMenuGUI container){
         this.setTitle("Pick manual alignment algorithm");
+        this.container = container;
         this.layout = new GroupLayout(this.getContentPane());
         this.layout.setAutoCreateGaps(true);
         this.layout.setAutoCreateContainerGaps(true);
@@ -43,6 +46,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
             assert this.selectedValue != null;
             System.out.println(this.selectedValue.getDocumentation());
             this.text.setText(this.selectedValue.getDocumentation());
+            this.container.checkPointsForAlignment();
         });
         this.saveButton.addActionListener(event -> {
             this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();

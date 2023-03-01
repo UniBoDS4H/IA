@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 public class TranslativeAlignment extends AlignmentAlgorithm {
 
-    private static final int LOWER_BOUND = 1;
+    public static final int LOWER_BOUND = 1;
 
     public TranslativeAlignment(){
         super();
@@ -35,8 +35,6 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
             if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
                 final Mat sourceMat = source.getMatImage();
                 final Mat targetMat = target.getMatImage();
-
-
 
                 final Point[] srcArray = source.getMatOfPoint().toArray();
                 final Point[] dstArray = target.getMatOfPoint().toArray();

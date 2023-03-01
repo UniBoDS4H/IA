@@ -17,7 +17,7 @@ import java.util.Optional;
  * This class is used for the manual alignment using the Affine technique
  */
 public class AffineAlignment extends AlignmentAlgorithm {
-    private static final int REQUIRED_POINTS = 3;
+    public static final int REQUIRED_POINTS = 3;
     public AffineAlignment(){
         super();
     }

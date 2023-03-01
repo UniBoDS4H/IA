@@ -70,7 +70,6 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * Align manually the images using the Homography alignment.
      * @param cornerManager for each Image we have its own points
      */
-
     public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager) throws IllegalArgumentException{
         switch (alignmentAlgorithm){
             case TRANSLATIVE:
