@@ -8,6 +8,7 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.model.alignment.manual.AffineAlignment;
+import com.ds4h.model.alignment.manual.PerspectiveAlignment;
 import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
@@ -172,12 +173,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     }
                     break;
                 case PERSPECTIVE:
-                    if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                    if(i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
                         this.manualAlignment.setEnabled(false);
                         this.manualAlignment.setToolTipText("<html>"
                                 + "The number of points inside images is not correct."
                                 +"<br>"
-                                + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
+                                + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
                                 + "</html>");
                     }else{
                         this.manualAlignment.setEnabled(true);

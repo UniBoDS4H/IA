@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 
 public class PerspectiveAlignment extends AlignmentAlgorithm {
-    private static final int LOWER_BOUND = 4;
+    public static final int LOWER_BOUND = 4;
 
     public PerspectiveAlignment(){
         super();
