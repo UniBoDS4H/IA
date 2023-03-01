@@ -8,6 +8,7 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.model.alignment.manual.AffineAlignment;
+import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -145,12 +146,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.cornerControler.getCornerImagesImages().forEach(i->{
             switch (this.alignmentConfigGUI.getSelectedValue()){
                 case AFFINE:
-                    if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS && i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
+                    if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
                         this.manualAlignment.setEnabled(false);
                         this.manualAlignment.setToolTipText("<html>"
                                         + "The number of points inside images is not correct."
                                         +"<br>"
-                                        + "In order to use the Affine alignment you must use: " + AffineAlignment.REQUIRED_POINTS + " points in each image."
+                                        + "In order to use the Affine alignment you must use " + AffineAlignment.REQUIRED_POINTS + " points in each image."
                                         + "</html>");
                     }else{
                         this.manualAlignment.setEnabled(true);
@@ -158,12 +159,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     }
                     break;
                 case RANSAC:
-                    if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS && i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
+                    if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
                         this.manualAlignment.setEnabled(false);
                         this.manualAlignment.setToolTipText("<html>"
                                 + "The number of points inside images is not correct."
                                 +"<br>"
-                                + "In order to use the Affine alignment you must use: " + AffineAlignment.REQUIRED_POINTS + " points in each image."
+                                + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
                                 + "</html>");
                     }else{
                         this.manualAlignment.setEnabled(true);
@@ -171,6 +172,17 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     }
                     break;
                 case PERSPECTIVE:
+                    if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                        this.manualAlignment.setEnabled(false);
+                        this.manualAlignment.setToolTipText("<html>"
+                                + "The number of points inside images is not correct."
+                                +"<br>"
+                                + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
+                                + "</html>");
+                    }else{
+                        this.manualAlignment.setEnabled(true);
+                        this.manualAlignment.setToolTipText("");
+                    }
                     break;
                 case TRANSLATIVE:
                     break;
