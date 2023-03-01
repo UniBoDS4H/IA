@@ -1,12 +1,12 @@
 package com.ds4h.view.cornerSelectorGUI;
 import com.ds4h.controller.cornerController.CornerController;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import javax.swing.*;
 import java.awt.*;
 
 public class CornerSelectorMenuGUI extends JPanel {
     private final CornerController cornerController;
-    private final ImageCorners image;
+    private final ImagePoints image;
     private final JButton deleteButton;
     private final JLabel copyToLabel;
     private final JButton copyButton;
@@ -14,7 +14,7 @@ public class CornerSelectorMenuGUI extends JPanel {
     private final JComboBox<MenuItem> copyToCombo;
     private final CornerSelectorGUI container;
     private final CornerSelectorSettingsGUI settings;
-    public CornerSelectorMenuGUI(CornerController controller, ImageCorners image, CornerSelectorGUI container){
+    public CornerSelectorMenuGUI(CornerController controller, ImagePoints image, CornerSelectorGUI container){
         this.container = container;
         this.image = image;
         this.cornerController = controller;

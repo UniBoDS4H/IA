@@ -2,15 +2,12 @@ package com.ds4h.model.alignment.automatic;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
-import ij.ImagePlus;
-import org.bytedeco.javacpp.presets.opencv_core;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.CvType;
 import org.opencv.features2d.*;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 import org.opencv.imgcodecs.Imgcodecs;
 import java.util.*;
@@ -34,7 +31,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
      * @return : the target image aligned to the source image
      */
     @Override
-    protected Optional<AlignedImage> align(final ImageCorners sourceImage, final ImageCorners targetImage){
+    protected Optional<AlignedImage> align(final ImagePoints sourceImage, final ImagePoints targetImage){
 
         try {
             //sourceImage.getImage().show();

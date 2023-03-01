@@ -2,7 +2,7 @@ package com.ds4h.model.reuse;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.projectManager.importProject.ImportProject;
 import com.ds4h.model.util.saveProject.SaveImages;
 
@@ -31,7 +31,7 @@ public class ReuseSources {
         if(!images.isEmpty()) {
             final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
             if (!path.isEmpty()) {
-                final List<ImageCorners> backUpList = cornerManager.getCornerImages();
+                final List<ImagePoints> backUpList = cornerManager.getCornerImages();
                 try {
                     cornerManager.clearList();
                     cornerManager.addImages(ImportProject.importProject(new File(path)));

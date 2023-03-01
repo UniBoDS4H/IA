@@ -1,7 +1,7 @@
 package com.ds4h.model.util.projectManager.exportProject;
 
 import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
 import com.ds4h.model.util.saveProject.SaveImages;
@@ -29,11 +29,11 @@ public class ExportProject {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         if(!directory.isEmpty()){
-            SaveImages.save(cornerManager.getCornerImages().stream().map(ImageCorners::getImage).collect(Collectors.toList()), path+"/"+directory);
+            SaveImages.save(cornerManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path+"/"+directory);
             JSONSerializer.createJSON(cornerManager, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.
-            SaveImages.save(cornerManager.getCornerImages().stream().map(ImageCorners::getImage).collect(Collectors.toList()), path);
+            SaveImages.save(cornerManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path);
             JSONSerializer.createJSON(cornerManager, path);
         }
     }

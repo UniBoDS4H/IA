@@ -1,5 +1,5 @@
 package com.ds4h.view.cornerSelectorGUI;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.CoordinateConverter;
 import org.opencv.core.Point;
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener {
-    private ImageCorners currentImage;
+    private ImagePoints currentImage;
     private Point referencePoint;
     private final CornerSelectorGUI container;
     private final int POINT_DIAMETER = 6;
@@ -96,8 +96,8 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                     }else{
                         //ADD new point
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                            currentImage.addCorner(getMatIndexFromPoint(getScaledPoint(e)));
                             container.updatePointsForAlignment();
+                            currentImage.addPoint(getMatIndexFromPoint(getScaledPoint(e)));
                             repaint();
                         }else{
                             //if I single click a place where there is no point I clear the selection
@@ -144,7 +144,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     private void moveAllSelected(Point oldPoint, Point newPoint){
         int xGap = (int)(newPoint.x-oldPoint.x);
         int yGap = (int)(newPoint.y-oldPoint.y);
-        this.container.getSelectedPoints().forEach(p-> this.currentImage.moveCorner(p, new Point(p.x+xGap,p.y+yGap)));
+        this.container.getSelectedPoints().forEach(p-> this.currentImage.movePoint(p, new Point(p.x+xGap,p.y+yGap)));
         this.container.setSelectedPoints(this.container.getSelectedPoints().stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toList()));
     }
     private Point getMatIndexFromPoint(Point p){
@@ -156,7 +156,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     }
 
     private boolean imageContains(Point point){
-        return Arrays.stream(this.currentImage.getCorners())
+        return Arrays.stream(this.currentImage.getPoints())
                 .anyMatch(p-> p.x < point.x+this.pointerDimension*3 && p.x > point.x-this.pointerDimension*3 && p.y < point.y+this.pointerDimension*3 && p.y > point.y-this.pointerDimension*3);
     }
 
@@ -166,7 +166,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
      * @return the corresponding actual point (matrix index)
      */
     private Point getActualPoint(Point selected){
-       Optional<Point> point = Arrays.stream(this.currentImage.getCorners()).filter(p -> p.x < selected.x + this.pointerDimension*3 && p.x > selected.x - this.pointerDimension*3 && p.y < selected.y + this.pointerDimension*3 && p.y > selected.y - this.pointerDimension*3).findFirst();
+       Optional<Point> point = Arrays.stream(this.currentImage.getPoints()).filter(p -> p.x < selected.x + this.pointerDimension*3 && p.x > selected.x - this.pointerDimension*3 && p.y < selected.y + this.pointerDimension*3 && p.y > selected.y - this.pointerDimension*3).findFirst();
         if(point.isPresent()) {
             return point.get();
         }else{
@@ -174,7 +174,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         }
     }
 
-    public void setCurrentImage(ImageCorners image){
+    public void setCurrentImage(ImagePoints image){
         this.currentImage = image;
         repaint();
     }
@@ -241,7 +241,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
      * @param g2d the drawer
      */
     private void drawPoints(Graphics2D g2d) {
-        for (Point p : this.currentImage.getCorners()) {
+        for (Point p : this.currentImage.getPoints()) {
             //point.getValue() -> is the matrix index of the point.
             //point.getKey() -> is the position of the point to show
             AbstractMap.SimpleEntry<Point, Point> point = new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p);
@@ -250,7 +250,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
             g2d.setFont(f);
             int textX = (int) point.getKey().x - this.pointerDimension * 3 - 12;
             int textY = (int) point.getKey().y + this.pointerDimension * 3 + 12;
-            g2d.drawString(Integer.toString(this.currentImage.getIndexOfCorner(point.getValue())), textX, textY);
+            g2d.drawString(Integer.toString(this.currentImage.getIndexOfPoint(point.getValue())), textX, textY);
             //if the corner I'm printing it's not selected I use the not selected color
             g2d.setColor(this.container.getSelectedPoints().contains(point.getValue()) ? this.selectedPointerColor : this.pointerColor);
             g2d.setStroke(new BasicStroke(3));

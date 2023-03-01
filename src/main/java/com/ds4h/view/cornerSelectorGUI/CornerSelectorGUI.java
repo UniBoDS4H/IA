@@ -1,7 +1,7 @@
 package com.ds4h.view.cornerSelectorGUI;
 
 import com.ds4h.controller.cornerController.CornerController;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -17,13 +17,13 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
 
     private final CornerController cornerController;
     private final CornerSelectorPanelGUI panel;
-    private final ImageCorners image;
+    private final ImagePoints image;
     private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
     private final MainMenuGUI mainMenu;
 
 
-    public CornerSelectorGUI(final ImageCorners image, final CornerController controller, MainMenuGUI mainMenu){
+    public CornerSelectorGUI(final ImagePoints image, final CornerController controller){
         super(controller.getMenuItem(image).toString());
         this.mainMenu = mainMenu;
         this.cornerController = controller;
@@ -107,7 +107,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     public CornerSelectorPanelGUI getCornerPanel() {
         return this.panel;
     }
-    public ImageCorners getImage(){
+    public ImagePoints getImage(){
         return this.image;
     }
 

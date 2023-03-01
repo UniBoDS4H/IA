@@ -1,6 +1,7 @@
 package com.ds4h.view.mainGUI;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
+import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
-    private final JButton manualAlignment, automaticAlignment;
+    private final JButton manualAlignment, automaticAlignment, semiAutomaticAlignment;
     private final JMenuBar menuBar;
     private final JMenu menu, project;
     private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem, alignmentItem;
@@ -44,9 +45,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final PreviewImagesPane imagesPreview;
     private final AlignmentConfigGUI alignmentConfigGUI;
     private final BunwarpJController bunwarpJController;
-    private final AutomaticAlignmentController a = new AutomaticAlignmentController();
-
-    private final ManualAlignmentController m = new ManualAlignmentController();
+    private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
+    private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
+    private final SemiAutomaticController semiAutomaticController = new SemiAutomaticController();
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -62,6 +63,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
+        this.semiAutomaticAlignment = new JButton("SemiAutomatic Alignment");
 
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
@@ -99,6 +101,16 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcManual.weightx = 1;
         gbcManual.weighty = 0;
         this.panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
+
+        GridBagConstraints gbcSemi = new GridBagConstraints();
+        gbcManual.gridx = 0;
+        gbcManual.gridy = 12;
+        gbcManual.gridwidth = 1;
+        gbcManual.gridheight = 1;
+        gbcManual.fill = GridBagConstraints.BOTH;
+        gbcManual.weightx = 1;
+        gbcManual.weighty = 0;
+        this.panel.add(this.semiAutomaticAlignment, gbcManual); // aggiungo il terzo bottone al JFrame con il GridBagLayout
 
 
 
@@ -148,11 +160,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         int nPoints;
         if(!this.cornerControler.getCornerImagesImages().isEmpty()){
-            nPoints = this.cornerControler.getCornerImagesImages().get(0).getCorners().length;
-            for (ImageCorners i : this.cornerControler.getCornerImagesImages()) {
-                switch (this.alignmentConfigGUI.getSelectedValue()) {
+            nPoints = this.cornerControler.getCornerImagesImages().get(0).getPoints().length;
+            this.cornerControler.getCornerImagesImages().forEach(i->{
+                switch (this.alignmentConfigGUI.getSelectedValue()){
                     case AFFINE:
-                        if (i.getCorners().length != AffineAlignment.REQUIRED_POINTS) {
+                        if(i.getPoints().length != AffineAlignment.REQUIRED_POINTS){
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
@@ -165,15 +177,15 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                     case RANSAC:
-                        if (i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                        if(i.getPoints().length < RansacAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
                                     + "<br>"
                                     + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
-                        } else {
-                            if (i.getCorners().length != nPoints) {
+                        }else{
+                            if(i.getPoints().length != nPoints){
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -182,15 +194,15 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                         break;
                     case PERSPECTIVE:
-                        if (i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
+                        if(i.getPoints().length < PerspectiveAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
                                     + "<br>"
                                     + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
-                        } else {
-                            if (i.getCorners().length != nPoints) {
+                        }else{
+                            if(i.getPoints().length != nPoints){
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -198,16 +210,16 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                             this.manualAlignment.setToolTipText("");
                         }
                         break;
-                    case TRANSLATION:
-                        if (i.getCorners().length < TranslationAlignment.LOWER_BOUND) {
+                    case TRANSLATIVE:
+                        if(i.getPoints().length < TranslationAlignment.LOWER_BOUND) {
                             this.manualAlignment.setEnabled(false);
                             this.manualAlignment.setToolTipText("<html>"
                                     + "The number of points inside the images is not correct."
                                     + "<br>"
                                     + "In order to use the Translation alignment you must use at least " + TranslationAlignment.LOWER_BOUND + " points in each image."
                                     + "</html>");
-                        } else {
-                            if (i.getCorners().length != nPoints) {
+                        }else{
+                            if(i.getPoints().length != nPoints){
                                 this.manualAlignment.setEnabled(false);
                                 this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
                             }
@@ -245,21 +257,46 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.manualAlignment.addActionListener(event -> {
             //ManualAlignmentController m = new ManualAlignmentController();
-            if(!m.isAlive()) {
+            if(!manualAlignmentController.isAlive()) {
                 final Thread th = new Thread(() -> {
-                    m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
-                    while (m.isAlive()) {
+                    manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
+                    final LoadingGUI loadingGUI = new LoadingGUI();
+                    while (manualAlignmentController.isAlive()) {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
+                    if(manualAlignmentController.getAlignedImages().size() > 0) {
+                        new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
+                        loadingGUI.close();
+                    }
                 });
                 th.start();
             }
 
+        });
+
+        this.semiAutomaticAlignment.addActionListener(event -> {
+            if(!semiAutomaticController.isAlive()) {
+                final Thread th = new Thread(() -> {
+                    semiAutomaticController.align(this.cornerControler);
+                    final LoadingGUI loadingGUI = new LoadingGUI();
+                    while (semiAutomaticController.isAlive()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if(semiAutomaticController.getAlignedImages().size() > 0) {
+                        new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
+                        loadingGUI.close();
+                    }
+                });
+                th.start();
+            }
         });
 
         this.alignmentItem.addActionListener(event -> {
@@ -294,29 +331,24 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.automaticAlignment.addActionListener(event -> {
-            //Mat m = new Mat();
-            //bUnwarpJ_ b = new bUnwarpJ_();
-            //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
-            if(!a.isAlive()) {
-                a.surfAlignment(this.cornerControler.getCornerManager());
+            if(!automaticAlignmentController.isAlive()) {
+                automaticAlignmentController.surfAlignment(this.cornerControler);
                 final Thread th = new Thread(() -> {
                     final LoadingGUI loadingGUI = new LoadingGUI();
-                    while (a.isAlive()) {
+                    while (automaticAlignmentController.isAlive()) {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    if (a.getAlignedImages().size() > 0) {
-                        new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
+                    if (automaticAlignmentController.getAlignedImages().size() > 0) {
+                        new OverlapImagesGUI(this.settingsBunwarpj, automaticAlignmentController, this.cornerControler, this.imagesPreview);
                         loadingGUI.close();
                     }
                 });
                 th.start();
             }
-            //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
-            //new CarouselGUI(a.getAlignedImages());
         });
 
         addWindowListener(new WindowAdapter() {

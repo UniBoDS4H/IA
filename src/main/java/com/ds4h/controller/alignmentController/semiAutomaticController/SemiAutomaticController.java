@@ -1,6 +1,7 @@
 package com.ds4h.controller.alignmentController.semiAutomaticController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.semiAutomatic.SemiAutomaticAlignment;
@@ -8,26 +9,26 @@ import com.ds4h.model.cornerManager.CornerManager;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class SemiAutomaticController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm semiAutomatic = new SemiAutomaticAlignment();
-    private final List<AlignedImage> images = new LinkedList<>();
     public SemiAutomaticController(){
 
     }
-
-    public void align(final CornerManager cornerManager) throws IllegalArgumentException{
-        this.images.clear();
-        semiAutomatic.alignImages(cornerManager);
-    }
-
     @Override
     public List<AlignedImage> getAlignedImages() {
-        return new LinkedList<>(this.images);
+        return new LinkedList<>(this.semiAutomatic.alignedImages());
     }
 
     @Override
     public boolean isAlive() {
-        return false;
+        return semiAutomatic.isAlive();
+    }
+
+    public void align(final CornerController cornerController) {
+        if(!this.semiAutomatic.isAlive() && Objects.nonNull(cornerController) && Objects.nonNull(cornerController.getCornerManager())){
+            this.semiAutomatic.alignImages(cornerController.getCornerManager());
+        }
     }
 }

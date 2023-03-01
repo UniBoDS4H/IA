@@ -45,7 +45,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private void setCornerComboBox(){
         this.indexFrom.removeAllItems();
         this.indexTo.removeAllItems();
-        for(int i = 1; i <=this.container.getImage().getCorners().length; i++){
+        for(int i = 1; i <=this.container.getImage().getPoints().length; i++){
             this.indexFrom.addItem(i);
             this.indexTo.addItem(i);
         }
@@ -88,7 +88,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.changeButton.addActionListener(e -> {
             int from = (int)indexFrom.getSelectedItem();
             int to = (int)indexTo.getSelectedItem();
-            container.getImage().editCornerIndex(from-1, to-1);
+            container.getImage().editPointIndex(from-1, to-1);
             container.repaint();
         });
     }

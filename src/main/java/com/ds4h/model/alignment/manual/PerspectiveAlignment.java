@@ -2,10 +2,8 @@ package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.imageCorners.ImageCorners;
-import ij.IJ;
+import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
@@ -31,9 +29,9 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws IllegalArgumentException{
+    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws IllegalArgumentException{
         try {
-            if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
+            if(source.numberOfPoints() >= LOWER_BOUND && target.numberOfPoints() >= LOWER_BOUND) {
                 final MatOfPoint2f referencePoint = source.getMatOfPoint();
                 final MatOfPoint2f targetPoint = target.getMatOfPoint();
                 //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);

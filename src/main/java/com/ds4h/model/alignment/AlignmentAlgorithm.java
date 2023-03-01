@@ -2,11 +2,8 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.imageCorners.ImageCorners;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.model.util.NameBuilder;
-import com.ds4h.model.util.Pair;
-import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -22,8 +19,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface, Runnable{
     private final static int RGB = 3;
-    private Optional<ImageCorners> source;
-    private final List<ImageCorners> imagesToAlign;
+    private Optional<ImagePoints> source;
+    private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> imagesAligned;
     private Optional<Thread> thread;
     protected AlignmentAlgorithm(){
@@ -42,10 +39,22 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
     }
 
-    protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
+    /**
+     *
+     * @param source
+     * @param target
+     * @return
+     * @throws NoSuchMethodException
+     */
+    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws NoSuchMethodException {
         throw new NoSuchMethodException("Method not implemented");
     }
 
+    /**
+     *
+     * @param mat
+     * @return
+     */
     protected Mat toGrayscale(final Mat mat) {
         Mat gray = new Mat();
         if (mat.channels() == RGB) {
@@ -58,6 +67,15 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         return gray;
     }
 
+    /**
+     *
+     * @param source
+     * @param destination
+     * @param H
+     * @param size
+     * @param targetImage
+     * @return
+     */
     protected Optional<AlignedImage> warpMatrix(final Mat source, final Mat destination, final Mat H, final Size size, final File targetImage){
         final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
@@ -74,9 +92,10 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     @Override
     public void alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            System.out.print(this.isAlive());
             if(Objects.nonNull(this.thread) && !this.isAlive()) {
                 this.source = cornerManager.getSourceImage();
+                this.imagesAligned.clear();
+                this.imagesToAlign.clear();
                 this.imagesAligned.add(new AlignedImage(this.source.get().getMatImage(), this.source.get().getImage()));
                 try {
                     this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
@@ -92,11 +111,14 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void run(){
         try {
             if(this.source.isPresent()) {
-                for (ImageCorners image : this.imagesToAlign) {
+                for (final ImagePoints image : this.imagesToAlign) {
                     final Optional<AlignedImage> output = this.align(this.source.get(), image);
                     output.ifPresent(this.imagesAligned::add);
                 }
@@ -108,12 +130,19 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<AlignedImage> alignedImages(){
         return new LinkedList<>(this.imagesAligned);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isAlive(){
-        System.out.println(this.thread);
         return this.thread.isPresent() && this.thread.get().isAlive();
     }
 
