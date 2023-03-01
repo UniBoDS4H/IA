@@ -22,20 +22,20 @@ public class TranslationAlignment extends AlignmentAlgorithm {
 
     /**
      * Manual alignment using the translative alignment
-     * @param source : the source image used as reference
-     * @param  target : the target to align
+     * @param targetImage : the source image used as reference
+     * @param  imagePoints : the target to align
      * @throws IllegalArgumentException : in case the number of corners is not correct
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws IllegalArgumentException{
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
-            if(source.numberOfPoints() >= LOWER_BOUND && target.numberOfPoints() >= LOWER_BOUND) {
-                final Mat sourceMat = source.getMatImage();
-                final Mat targetMat = target.getMatImage();
+            if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+                final Mat sourceMat = targetImage.getMatImage();
+                final Mat targetMat = imagePoints.getMatImage();
 
-                final Point[] srcArray = source.getMatOfPoint().toArray();
-                final Point[] dstArray = target.getMatOfPoint().toArray();
+                final Point[] srcArray = targetImage.getMatOfPoint().toArray();
+                final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
                     final Point translation = minimumLeastSquare(dstArray, srcArray);
                     // Shift one image by the estimated amount of translation to align it with the other
@@ -44,7 +44,7 @@ public class TranslationAlignment extends AlignmentAlgorithm {
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
                     Imgproc.warpAffine(targetMat, alignedImage, translationMatrix, sourceMat.size());
-                    final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), alignedImage);
+                    final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     System.out.println(alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{
@@ -75,8 +75,4 @@ public class TranslationAlignment extends AlignmentAlgorithm {
         return new Point(meanDeltaX, meanDeltaY);
     }
 
-    @Override
-    public int neededPoints(){
-        return TranslationAlignment.LOWER_BOUND;
-    }
 }

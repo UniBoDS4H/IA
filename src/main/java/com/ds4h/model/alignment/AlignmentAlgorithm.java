@@ -19,15 +19,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface, Runnable{
     private final static int RGB = 3;
-    private Optional<ImagePoints> source;
+    private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
-    private final List<AlignedImage> imagesAligned;
-    private Optional<Thread> thread;
+    private final List<AlignedImage> alignedImages;
+    private Thread thread;
     protected AlignmentAlgorithm(){
-        source = Optional.empty();
-        this.thread = Optional.empty();
+        targetImage = null;
+        this.thread = null;
         this.imagesToAlign = new LinkedList<>();
-        this.imagesAligned = new CopyOnWriteArrayList<>();
+        this.alignedImages = new CopyOnWriteArrayList<>();
     }
     /**
      * Convert the new matrix in to an image
@@ -40,20 +40,22 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     }
 
     /**
-     *
-     * @param source
-     * @param target
-     * @return
-     * @throws NoSuchMethodException
+     * This method must be overridden from all the children classes. Inside this method we have the
+     * real implementation of the alignment algorithm.
+     * @param targetImage the targetImage image for the alignment, this Object will be used in order to align the imagePoints.
+     * @param imagePoints the image to align base to the targetImage object
+     * @return the Optional aligned containing the final aligned image
+     * @throws NoSuchMethodException in case this method is called from a child class without having the implementation of it
      */
-    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws NoSuchMethodException {
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws NoSuchMethodException {
         throw new NoSuchMethodException("Method not implemented");
     }
 
     /**
-     *
-     * @param mat
-     * @return
+     * This method can be used inside the alignment in order to convert an RGB matrix in to a GrayScale matrix, because
+     * some alignment can require GrayScale images so because of that It is necessary to convert the current Matrix.
+     * @param mat the Matrix to convert from RGB to GrayScale
+     * @return the new GrayScale matrix
      */
     protected Mat toGrayscale(final Mat mat) {
         Mat gray = new Mat();
@@ -62,45 +64,47 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
             Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
         } else {
             // If the image is already single channel, just return it
-            gray = mat;
+            return mat;
         }
         return gray;
     }
 
     /**
-     *
-     * @param source
-     * @param destination
-     * @param H
-     * @param size
-     * @param targetImage
-     * @return
+     * This method is used for the warping of the final Matrix, this warping is used in order to store the new aligned image.
+     * @param source this is the original Matrix of the image to align
+     * @param H the Homography Matrix
+     * @param size the size of the TargetMatrix
+     * @param alignedFile the name of the aligned file
+     * @return an Optional where is stored the new Aligned Image
      */
-    protected Optional<AlignedImage> warpMatrix(final Mat source, final Mat destination, final Mat H, final Size size, final File targetImage){
+    protected Optional<AlignedImage> warpMatrix(final Mat source, final Mat H, final Size size, final File alignedFile){
         final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
-        Imgproc.warpPerspective(source, alignedImage1, H, destination.size());
-        final Optional<ImagePlus> finalImage = this.convertToImage(targetImage, alignedImage1);
+        Imgproc.warpPerspective(source, alignedImage1, H, size);
+        final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile, alignedImage1);
         return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
     }
 
     /**
-     * Align the images stored inside the cornerManager. All the images will be aligned to the source image
-     * @param cornerManager : container where all the images are stored
-     * @throws IllegalArgumentException:
+     * When this method is called we start the real process of image alignment. If the thread is not alive and the
+     * target image is present we can start the operation. Take in mind that the alignment is done inside a separate Thread,
+     * so if you need the images you have to wait until the alignment is not done.
+     * @param cornerManager  container where all the images are stored with their points
+     * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
+     * is thrown.
      */
     @Override
     public void alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            if(Objects.nonNull(this.thread) && !this.isAlive()) {
-                this.source = cornerManager.getSourceImage();
-                this.imagesAligned.clear();
+            if(Objects.isNull(this.thread) && !this.isAlive()) {
+                this.targetImage = cornerManager.getSourceImage().get();
+                this.alignedImages.clear();
                 this.imagesToAlign.clear();
-                this.imagesAligned.add(new AlignedImage(this.source.get().getMatImage(), this.source.get().getImage()));
+                this.alignedImages.add(new AlignedImage(this.targetImage.getMatImage(), this.targetImage.getImage()));
                 try {
                     this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
-                    this.thread = Optional.of(new Thread(this));
-                    this.thread.get().start();
+                    this.thread = new Thread(this);
+                    this.thread.start();
                 } catch (final Exception ex) {
                     throw new IllegalArgumentException("Error: " + ex.getMessage());
                 }
@@ -112,47 +116,41 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     }
 
     /**
-     *
+     * Inside this method we call the 'align' operation, It is strictly necessary that the 'align' method is present,
+     * otherwise It will throw a 'NoSuchMethodException'. Each image is stored inside the 'alignedImages' collection.
+     * In order to perform the alignment It is necessary that the targetImage is present.
      */
     @Override
     public void run(){
         try {
-            if(this.source.isPresent()) {
+            if(Objects.nonNull(this.targetImage)) {
                 for (final ImagePoints image : this.imagesToAlign) {
-                    final Optional<AlignedImage> output = this.align(this.source.get(), image);
-                    output.ifPresent(this.imagesAligned::add);
+                    final Optional<AlignedImage> output = this.align(this.targetImage, image);
+                    output.ifPresent(this.alignedImages::add);
                 }
             }
-            this.thread = Optional.empty();
+            this.thread = null;
         } catch (Exception e) {
-            this.thread = Optional.empty();
+            this.thread = null;
             throw new RuntimeException(e);
         }
     }
 
     /**
-     *
-     * @return
+     * With this method we return all the images aligned. If the thread is running an empty list is returned otherwise
+     * this method returns all the images.
+     * @return all the images aligned.
      */
     public List<AlignedImage> alignedImages(){
-        return new LinkedList<>(this.imagesAligned);
+        return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
 
     /**
-     *
-     * @return
+     * This method is called in order to have information about the alignment thread.
+     * @return true If it is alive, false otherwise
      */
     public boolean isAlive(){
-        return this.thread.isPresent() && this.thread.get().isAlive();
-    }
-
-    /**
-     * Number of needed points in order to perform the alignment algorithm.
-     * @return an integer showing how many points the algorithm needs for the alignment.
-     * @throws NoSuchMethodException in case this method is not override.
-     */
-    public int neededPoints() throws NoSuchMethodException{
-        throw new NoSuchMethodException("Not implemented");
+        return Objects.nonNull(this.thread) && this.thread.isAlive();
     }
 
 }

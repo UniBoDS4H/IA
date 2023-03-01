@@ -26,30 +26,30 @@ public class SurfAlignment extends AlignmentAlgorithm {
     }
     /**
      * Align two images using the SURF Algorithm
-     * @param sourceImage : the source image for the alignment
-     * @param targetImage : the image to align
+     * @param targetImage : the source image for the alignment
+     * @param imagePoints : the image to align
      * @return : the target image aligned to the source image
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints sourceImage, final ImagePoints targetImage){
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints){
 
         try {
             //sourceImage.getImage().show();
             //targetImage.getImage().show();
-            final Mat image1 = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-            final Mat image2 = super.toGrayscale(Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+            final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+            final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
             // Detect keypoints and compute descriptors using the SURF algorithm
             final SURF detector = SURF.create();
 
             // Detect the keypoints and compute the descriptors for both images:
             final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
             final Mat descriptors1 = new Mat();
-            detector.detectAndCompute(image1 , new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
+            detector.detectAndCompute(imagePointMat , new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
             // Detect key points for the second image
             final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
             final Mat descriptors2 = new Mat();
-            detector.detectAndCompute(image2, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            detector.detectAndCompute(targetImageMat, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
 
             // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
             final BFMatcher matcher = BFMatcher.create();
@@ -112,14 +112,12 @@ public class SurfAlignment extends AlignmentAlgorithm {
             NUMBER_OF_ITERATION : number of iteration for the RANSAC algorithm
          */
             final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
-            final Mat alignedImage1 = new Mat();
             // Align the first image to the second image using the homography matrix
-            return super.warpMatrix(image1, alignedImage1, H, image2.size(), targetImage.getFile());
+            return super.warpMatrix(imagePointMat, H, targetImageMat.size(), imagePoints.getFile());
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
         }
         return Optional.empty();
     }
-
 
 }
