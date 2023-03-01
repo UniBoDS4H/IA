@@ -3,10 +3,8 @@ package com.ds4h.model.alignment.manual;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imageCorners.ImageCorners;
-import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.core.*;
-import org.opencv.highgui.HighGui;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
@@ -14,11 +12,11 @@ import java.util.Optional;
 /**
  * This class is used for the manual alignment using the Translative technique
  */
-public class TranslativeAlignment extends AlignmentAlgorithm {
+public class TranslationAlignment extends AlignmentAlgorithm {
 
-    private static final int LOWER_BOUND = 1;
+    public static final int LOWER_BOUND = 1;
 
-    public TranslativeAlignment(){
+    public TranslationAlignment(){
         super();
     }
 
@@ -35,8 +33,6 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
             if(source.numberOfCorners() >= LOWER_BOUND && target.numberOfCorners() >= LOWER_BOUND) {
                 final Mat sourceMat = source.getMatImage();
                 final Mat targetMat = target.getMatImage();
-
-
 
                 final Point[] srcArray = source.getMatOfPoint().toArray();
                 final Point[] dstArray = target.getMatOfPoint().toArray();
@@ -57,7 +53,7 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
                 }
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Affine alignment you must at least: " + TranslativeAlignment.LOWER_BOUND + " points.");
+                        "In order to use the Affine alignment you must at least: " + TranslationAlignment.LOWER_BOUND + " points.");
             }
         }catch (Exception ex){
             throw ex;
@@ -81,6 +77,6 @@ public class TranslativeAlignment extends AlignmentAlgorithm {
 
     @Override
     public int neededPoints(){
-        return TranslativeAlignment.LOWER_BOUND;
+        return TranslationAlignment.LOWER_BOUND;
     }
 }

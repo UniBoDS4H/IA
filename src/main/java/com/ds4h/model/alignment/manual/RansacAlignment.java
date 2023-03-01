@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 public class RansacAlignment extends AlignmentAlgorithm {
 
-    private static final int LOWER_BOUND = 4;
+    public static final int LOWER_BOUND = 4;
 
     public RansacAlignment(){
         super();
@@ -41,7 +41,7 @@ public class RansacAlignment extends AlignmentAlgorithm {
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Affine alignment you must use at least: " + RansacAlignment.LOWER_BOUND + " points.");
+                        "In order to use the RANSAC alignment you must use at least: " + RansacAlignment.LOWER_BOUND + " points.");
             }
         }catch (Exception ex){
             throw ex;

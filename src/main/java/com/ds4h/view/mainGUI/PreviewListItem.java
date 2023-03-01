@@ -43,6 +43,7 @@ public class PreviewListItem extends JPanel {
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.updateTargetView();
+        this.setPreferredSize(new Dimension(10,10));
 
         this.centerPanel.add(this.idLabel);
         this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));

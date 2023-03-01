@@ -8,6 +8,10 @@ import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
+import com.ds4h.model.alignment.manual.AffineAlignment;
+import com.ds4h.model.alignment.manual.PerspectiveAlignment;
+import com.ds4h.model.alignment.manual.RansacAlignment;
+import com.ds4h.model.alignment.manual.TranslationAlignment;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
@@ -75,7 +79,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcPanel.fill = GridBagConstraints.BOTH;
         gbcPanel.weightx = 1;
         gbcPanel.weighty = 1;
-        this.panel.add(this.imagesPreview, gbcPanel); 
+        this.panel.add(new JScrollPane(this.imagesPreview), gbcPanel);
 
         GridBagConstraints gbcAuto = new GridBagConstraints();
         gbcAuto.gridx = 0;
@@ -114,7 +118,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.aboutGUI = new AboutGUI();
         this.settingsBunwarpj = new BunwarpjGUI(this.bunwarpJController);
-        this.alignmentConfigGUI = new AlignmentConfigGUI();
+        this.alignmentConfigGUI = new AlignmentConfigGUI(this);
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("Menu");
@@ -128,6 +132,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.addComponents();
         this.addListeners();
+        this.checkPointsForAlignment();
         this.showDialog();
     }
 
@@ -136,11 +141,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      */
     @Override
     public void addComponents(){
-
-        // Create a panel to hold the buttons
-        // Set the layout of the panel to be a vertical box layout
-
-
         // Create menu bar and add it to the frame
         setJMenuBar(this.menuBar);
 
@@ -154,6 +154,81 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.menu.add(this.alignmentItem);
         this.project.add(this.exportItem);
         this.project.add(this.importItem);
+    }
+    public void checkPointsForAlignment(){
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+        int nPoints;
+        if(!this.cornerControler.getCornerImagesImages().isEmpty()){
+            nPoints = this.cornerControler.getCornerImagesImages().get(0).getCorners().length;
+            this.cornerControler.getCornerImagesImages().forEach(i->{
+                switch (this.alignmentConfigGUI.getSelectedValue()){
+                    case AFFINE:
+                        if(i.getCorners().length != AffineAlignment.REQUIRED_POINTS){
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the Affine alignment you must use " + AffineAlignment.REQUIRED_POINTS + " points in each image."
+                                    + "</html>");
+                        }else{
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                    case RANSAC:
+                        if(i.getCorners().length < RansacAlignment.LOWER_BOUND) {
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
+                                    + "</html>");
+                        }else{
+                            if(i.getCorners().length != nPoints){
+                                this.manualAlignment.setEnabled(false);
+                                this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
+                            }
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                    case PERSPECTIVE:
+                        if(i.getCorners().length < PerspectiveAlignment.LOWER_BOUND) {
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
+                                    + "</html>");
+                        }else{
+                            if(i.getCorners().length != nPoints){
+                                this.manualAlignment.setEnabled(false);
+                                this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
+                            }
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                    case TRANSLATIVE:
+                        if(i.getCorners().length < TranslationAlignment.LOWER_BOUND) {
+                            this.manualAlignment.setEnabled(false);
+                            this.manualAlignment.setToolTipText("<html>"
+                                    + "The number of points inside the images is not correct."
+                                    +"<br>"
+                                    + "In order to use the Translation alignment you must use at least " + TranslationAlignment.LOWER_BOUND + " points in each image."
+                                    + "</html>");
+                        }else{
+                            if(i.getCorners().length != nPoints){
+                                this.manualAlignment.setEnabled(false);
+                                this.manualAlignment.setToolTipText("The number of points inside the images is not the same in all of them.");
+                            }
+                            this.manualAlignment.setEnabled(true);
+                            this.manualAlignment.setToolTipText("");
+                        }
+                        break;
+                }
+            });
+        }
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.PerspectiveAlignment;
 import com.ds4h.model.alignment.manual.RansacAlignment;
-import com.ds4h.model.alignment.manual.TranslativeAlignment;
+import com.ds4h.model.alignment.manual.TranslationAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 
 import java.util.*;
@@ -25,7 +25,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         this.lastAlgorithm = Optional.empty();
         this.perspectiveAlignment = new PerspectiveAlignment();
         this.affineAlignment = new AffineAlignment();
-        this.translativeAlignment = new TranslativeAlignment();
+        this.translativeAlignment = new TranslationAlignment();
         this.ransacAlignment = new RansacAlignment();
     }
 
