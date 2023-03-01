@@ -64,4 +64,8 @@ public class CornerController {
     public MenuItem getMenuItem(ImagePoints image){
         return new MenuItem(this.getCornerImagesImages().indexOf(image), image);
     }
+
+    public void clearProject(){
+        this.cornerManager.clearProject();
+    }
 }
