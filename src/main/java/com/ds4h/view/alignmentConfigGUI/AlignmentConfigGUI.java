@@ -95,7 +95,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     }
 
     private void populateCombo(){
-        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIVE;
+        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATION;
         for(AlignmentAlgorithmEnum algorithm : AlignmentAlgorithmEnum.values()){
             System.out.println(algorithm);
             this.algorithm.addItem(algorithm);

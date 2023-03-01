@@ -8,13 +8,18 @@ import java.awt.*;
 
 public class PreviewImagesPane extends JPanel {
     private final CornerController controller;
+    private final MainMenuGUI container;
     private JPanel currentPanel;
-    PreviewImagesPane(final CornerController controller){
+    PreviewImagesPane(CornerController controller, MainMenuGUI container){
+        this.container = container;
         this.controller = controller;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setVisible(true);
     }
 
+    public MainMenuGUI getMainMenu(){
+        return this.container;
+    }
     public void showPreviewImages(){
         this.removeAll();
         this.revalidate();
