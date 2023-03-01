@@ -1,4 +1,5 @@
 package com.ds4h.view.mainGUI;
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
@@ -310,61 +311,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.manualAlignment.addActionListener(event -> {
-            //ManualAlignmentController m = new ManualAlignmentController();
-            if(!manualAlignmentController.isAlive()) {
-                try {
-                    manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
-                    final Thread th = new Thread(() -> {
-                        final LoadingGUI loadingGUI = new LoadingGUI();
-                        while (manualAlignmentController.isAlive()) {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                IJ.showMessage(e.getMessage());
-                            }
-                        }
-                        if (manualAlignmentController.getAlignedImages().size() > 0) {
-                            new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
-                            loadingGUI.close();
-                        }
-                    });
-                    th.start();
-                }catch(final Exception e){
-                    JOptionPane.showMessageDialog(this,
-                            e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-
+            this.pollingManualAlignment();
         });
 
         this.semiAutomaticAlignment.addActionListener(event -> {
-            if(!semiAutomaticController.isAlive()) {
-                try {
-                    semiAutomaticController.align(this.cornerControler);
-                    final Thread pollingSemiautomaticThread = new Thread(() -> {
-                        final LoadingGUI loadingGUI = new LoadingGUI();
-                        while (semiAutomaticController.isAlive()) {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                IJ.showMessage(e.getMessage());
-                            }
-                        }
-                        if (semiAutomaticController.getAlignedImages().size() > 0) {
-                            new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
-                            loadingGUI.close();
-                        }
-                    });
-                    pollingSemiautomaticThread.start();
-                }catch(final Exception e){
-                    JOptionPane.showMessageDialog(this,
-                            e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            this.pollingSemiAutomaticAlignment();
         });
 
         this.alignmentItem.addActionListener(event -> {
@@ -399,32 +350,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.automaticAlignment.addActionListener(event -> {
-            if(!automaticAlignmentController.isAlive()) {
-                try {
-                    automaticAlignmentController.surfAlignment(this.cornerControler);
-                    final Thread th = new Thread(() -> {
-                        final LoadingGUI loadingGUI = new LoadingGUI();
-                        while (automaticAlignmentController.isAlive()) {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                IJ.showMessage(e.getMessage());
-                            }
-                        }
-                        if (automaticAlignmentController.getAlignedImages().size() > 0) {
-                            new OverlapImagesGUI(this.settingsBunwarpj, automaticAlignmentController, this.cornerControler, this.imagesPreview);
-                            loadingGUI.close();
-                        }
-
-                    });
-                    th.start();
-                }catch (final Exception e){
-                    JOptionPane.showMessageDialog(this,
-                        e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            this.pollingAutomaticAlignment();
         });
 
         this.addWindowListener(new WindowAdapter() {
@@ -434,17 +360,81 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 dispose();
             }
         });
+    }
 
+    private void pollingManualAlignment(){
+        if(!this.manualAlignmentController.isAlive()) {
+            try {
+                this.manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
+                this.startPollingThread(this.manualAlignmentController);
+            }catch(final Exception e){
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void pollingSemiAutomaticAlignment(){
+        if(!this.semiAutomaticController.isAlive()) {
+            try {
+                this.semiAutomaticController.align(this.cornerControler);
+                this.startPollingThread(this.semiAutomaticController);
+            }catch(final Exception e){
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface){
+        final Thread pollingSemiautomaticAlignment = new Thread(() -> {
+            final LoadingGUI loadingGUI = new LoadingGUI();
+            while (alignmentControllerInterface.isAlive()) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    IJ.showMessage(e.getMessage());
+                }
+            }
+            if (alignmentControllerInterface.getAlignedImages().size() > 0) {
+                if(alignmentControllerInterface instanceof ManualAlignmentController) {
+                    new CarouselGUI(this.settingsBunwarpj, alignmentControllerInterface, this.cornerControler, this.imagesPreview);
+
+                }else{
+                    new OverlapImagesGUI(this.settingsBunwarpj, alignmentControllerInterface, this.cornerControler, this.imagesPreview);
+                }
+                loadingGUI.close();
+            }
+        });
+        pollingSemiautomaticAlignment.start();
+    }
+
+    private void pollingAutomaticAlignment(){
+        if(!this.automaticAlignmentController.isAlive()) {
+            try {
+                this.automaticAlignmentController.surfAlignment(this.cornerControler);
+                this.startPollingThread(this.automaticAlignmentController);
+            }catch (final Exception e){
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**
      * Open a File dialog in order to choose all the images for our tool
      */
     private void pickImages(){
-        FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
+        final FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
         fd.setMultipleMode(true);
         fd.setVisible(true);
-        File[] files = fd.getFiles();//Get all the files
+        final File[] files = fd.getFiles();//Get all the files
         this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
         this.imagesPreview.showPreviewImages();
     }
@@ -454,9 +444,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      */
     private void setFrameSize(){
         // Get the screen size
-        Dimension screenSize = DisplayInfo.getDisplaySize(80);
-        int min_width = (int) (screenSize.width/5);
-        int min_height =(int) (screenSize.height);
+        final Dimension screenSize = DisplayInfo.getDisplaySize(80);
+        final int min_width = (int) (screenSize.width/5);
+        final int min_height =(int) (screenSize.height);
         // Set the size of the frame to be half of the screen width and height
         // Set the size of the frame to be half of the screen width and height
         setSize(min_width, min_height);
