@@ -1,6 +1,7 @@
 package com.ds4h.controller.alignmentController.ManualAlignmentController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
@@ -10,10 +11,7 @@ import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.model.alignment.manual.TranslativeAlignment;
 import com.ds4h.model.cornerManager.CornerManager;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm perspectiveAlignment;
@@ -72,7 +70,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * @param cornerManager for each Image we have its own points
      */
 
-    public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerManager cornerManager) throws IllegalArgumentException{
+    public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerController cornerManager) throws IllegalArgumentException{
         switch (alignmentAlgorithm){
             case TRANSLATIVE:
                 this.align(this.translativeAlignment, cornerManager);
@@ -91,8 +89,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         System.out.println(this.lastAlgorithm);
     }
 
-    private void align(final AlignmentAlgorithm algorithm, final CornerManager cornerManager){
-        algorithm.alignImages(cornerManager);
+    public void align(final AlignmentAlgorithm algorithm, final CornerController cornerManager){
+        if(!algorithm.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
+            algorithm.alignImages(cornerManager.getCornerManager());
+        }
     }
 
 }

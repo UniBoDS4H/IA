@@ -42,10 +42,22 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
     }
 
+    /**
+     *
+     * @param source
+     * @param target
+     * @return
+     * @throws NoSuchMethodException
+     */
     protected Optional<AlignedImage> align(final ImageCorners source, final ImageCorners target) throws NoSuchMethodException {
         throw new NoSuchMethodException("Method not implemented");
     }
 
+    /**
+     *
+     * @param mat
+     * @return
+     */
     protected Mat toGrayscale(final Mat mat) {
         Mat gray = new Mat();
         if (mat.channels() == RGB) {
@@ -58,6 +70,15 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         return gray;
     }
 
+    /**
+     *
+     * @param source
+     * @param destination
+     * @param H
+     * @param size
+     * @param targetImage
+     * @return
+     */
     protected Optional<AlignedImage> warpMatrix(final Mat source, final Mat destination, final Mat H, final Size size, final File targetImage){
         final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
@@ -93,11 +114,14 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void run(){
         try {
             if(this.source.isPresent()) {
-                for (ImageCorners image : this.imagesToAlign) {
+                for (final ImageCorners image : this.imagesToAlign) {
                     final Optional<AlignedImage> output = this.align(this.source.get(), image);
                     output.ifPresent(this.imagesAligned::add);
                 }
@@ -109,12 +133,19 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<AlignedImage> alignedImages(){
         return new LinkedList<>(this.imagesAligned);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isAlive(){
-        System.out.println(this.thread);
         return this.thread.isPresent() && this.thread.get().isAlive();
     }
 

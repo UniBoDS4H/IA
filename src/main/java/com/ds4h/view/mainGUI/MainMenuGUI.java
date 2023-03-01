@@ -1,6 +1,7 @@
 package com.ds4h.view.mainGUI;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
+import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
@@ -15,7 +16,7 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
-    private final JButton manualAlignment, automaticAlignment;
+    private final JButton manualAlignment, automaticAlignment, semiAutomaticAlignment;
     private final JMenuBar menuBar;
     private final JMenu menu, project;
     private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem, alignmentItem;
@@ -39,9 +40,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final PreviewImagesPane imagesPreview;
     private final AlignmentConfigGUI alignmentConfigGUI;
     private final BunwarpJController bunwarpJController;
-    private final AutomaticAlignmentController a = new AutomaticAlignmentController();
-
-    private final ManualAlignmentController m = new ManualAlignmentController();
+    private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
+    private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
+    private final SemiAutomaticController semiAutomaticController = new SemiAutomaticController();
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -57,6 +58,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
+        this.semiAutomaticAlignment = new JButton("SemiAutomatic Alignment");
 
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
@@ -94,6 +96,16 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcManual.weightx = 1;
         gbcManual.weighty = 0;
         this.panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
+
+        GridBagConstraints gbcSemi = new GridBagConstraints();
+        gbcManual.gridx = 0;
+        gbcManual.gridy = 12;
+        gbcManual.gridwidth = 1;
+        gbcManual.gridheight = 1;
+        gbcManual.fill = GridBagConstraints.BOTH;
+        gbcManual.weightx = 1;
+        gbcManual.weighty = 0;
+        this.panel.add(this.semiAutomaticAlignment, gbcManual); // aggiungo il terzo bottone al JFrame con il GridBagLayout
 
 
 
@@ -169,21 +181,38 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.manualAlignment.addActionListener(event -> {
             //ManualAlignmentController m = new ManualAlignmentController();
-            if(!m.isAlive()) {
+            if(!manualAlignmentController.isAlive()) {
                 final Thread th = new Thread(() -> {
-                    m.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler.getCornerManager());
-                    while (m.isAlive()) {
+                    manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
+                    while (manualAlignmentController.isAlive()) {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    new CarouselGUI(this.settingsBunwarpj, m, this.cornerControler, this.imagesPreview);
+                    new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
                 });
                 th.start();
             }
 
+        });
+
+        this.semiAutomaticAlignment.addActionListener(event -> {
+            if(!semiAutomaticController.isAlive()) {
+                final Thread th = new Thread(() -> {
+                    semiAutomaticController.align(this.cornerControler);
+                    while (semiAutomaticController.isAlive()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
+                });
+                th.start();
+            }
         });
 
         this.alignmentItem.addActionListener(event -> {
@@ -218,29 +247,24 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.automaticAlignment.addActionListener(event -> {
-            //Mat m = new Mat();
-            //bUnwarpJ_ b = new bUnwarpJ_();
-            //new BunwarpJController().transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, this.cornerControler.getCornerManager()).show();
-            if(!a.isAlive()) {
-                a.surfAlignment(this.cornerControler.getCornerManager());
+            if(!automaticAlignmentController.isAlive()) {
+                automaticAlignmentController.surfAlignment(this.cornerControler);
                 final Thread th = new Thread(() -> {
                     final LoadingGUI loadingGUI = new LoadingGUI();
-                    while (a.isAlive()) {
+                    while (automaticAlignmentController.isAlive()) {
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    if (a.getAlignedImages().size() > 0) {
-                        new OverlapImagesGUI(this.settingsBunwarpj, a, this.cornerControler, this.imagesPreview);
+                    if (automaticAlignmentController.getAlignedImages().size() > 0) {
+                        new OverlapImagesGUI(this.settingsBunwarpj, automaticAlignmentController, this.cornerControler, this.imagesPreview);
                         loadingGUI.close();
                     }
                 });
                 th.start();
             }
-            //new AutomaticAlignmentController().surfAlignment(this.cornerControler.getCornerManager()).forEach(ImagePlus::show);
-            //new CarouselGUI(a.getAlignedImages());
         });
 
         addWindowListener(new WindowAdapter() {
