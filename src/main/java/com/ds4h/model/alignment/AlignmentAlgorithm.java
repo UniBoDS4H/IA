@@ -74,9 +74,10 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     @Override
     public void alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
         if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            System.out.print(this.isAlive());
             if(Objects.nonNull(this.thread) && !this.isAlive()) {
                 this.source = cornerManager.getSourceImage();
+                this.imagesAligned.clear();
+                this.imagesToAlign.clear();
                 this.imagesAligned.add(new AlignedImage(this.source.get().getMatImage(), this.source.get().getImage()));
                 try {
                     this.imagesToAlign.addAll(cornerManager.getImagesToAlign());

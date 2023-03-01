@@ -34,6 +34,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     @Override
     public List<AlignedImage> getAlignedImages(){
         if(this.lastAlgorithm.isPresent()) {
+
             switch (this.lastAlgorithm.get()){
                 case TRANSLATIVE:
                     return new LinkedList<>(translativeAlignment.alignedImages());
