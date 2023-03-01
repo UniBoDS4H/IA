@@ -96,8 +96,9 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                     }else{
                         //ADD new point
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                            container.updatePointsForAlignment();
+                            //first i add the new point then i call the updatePointsForAlignment for checking if we can enable the manual alignment button
                             currentImage.addPoint(getMatIndexFromPoint(getScaledPoint(e)));
+                            container.updatePointsForAlignment();
                             repaint();
                         }else{
                             //if I single click a place where there is no point I clear the selection

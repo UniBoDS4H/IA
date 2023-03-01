@@ -94,6 +94,4 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
             algorithm.alignImages(cornerManager.getCornerManager());
         }
     }
-    
-
 }
