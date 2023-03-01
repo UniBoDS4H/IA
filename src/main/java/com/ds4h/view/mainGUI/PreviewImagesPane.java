@@ -9,7 +9,7 @@ import java.awt.*;
 public class PreviewImagesPane extends JPanel {
     private final CornerController controller;
     private JPanel currentPanel;
-    PreviewImagesPane(CornerController controller){
+    PreviewImagesPane(final CornerController controller){
         this.controller = controller;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setVisible(true);
@@ -18,13 +18,18 @@ public class PreviewImagesPane extends JPanel {
     public void showPreviewImages(){
         this.removeAll();
         this.revalidate();
-        for (ImagePoints image : this.controller.getCornerImagesImages()) {
-            PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image));
+        for (final ImagePoints image : this.controller.getCornerImagesImages()) {
+            final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image));
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
             this.add(panel);
         }
         this.revalidate();
+    }
+
+    public void clearPanels(){
+        this.removeAll();
+        this.repaint();
     }
 
     public void updateList(){

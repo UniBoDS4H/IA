@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
  *
  */
 public class CornerManager {
-    private final List<ImagePoints> imagesWithCorners;
+    private final List<ImagePoints> imagesWithPoints;
     private Optional<ImagePoints> sourceImage;
     public CornerManager(){
         this.sourceImage = Optional.empty();
-        this.imagesWithCorners = new ArrayList<>();
+        this.imagesWithPoints = new ArrayList<>();
     }
 
     /**
@@ -29,9 +29,9 @@ public class CornerManager {
                     .map(File::new)
                     .filter(CheckImage::checkImage)
                     .map(ImagePoints::new)
-                    .filter(image -> !this.imagesWithCorners.contains(image))
-                    .forEach(this.imagesWithCorners::add);
-            if (this.imagesWithCorners.size() > 0) {
+                    .filter(image -> !this.imagesWithPoints.contains(image))
+                    .forEach(this.imagesWithPoints::add);
+            if (this.imagesWithPoints.size() > 0) {
                 //setting the first image as default
                 this.setAsSource(new ImagePoints(new File(loadingImages.get(0))));
             } else {
@@ -51,8 +51,8 @@ public class CornerManager {
             final File file = new File(path);
             if (CheckImage.checkImage(file)) {
                 final ImagePoints image = new ImagePoints(file);
-                if (!this.imagesWithCorners.contains(image)) {
-                    this.imagesWithCorners.add(image);
+                if (!this.imagesWithPoints.contains(image)) {
+                    this.imagesWithPoints.add(image);
                 }
             }
         }else{
@@ -66,7 +66,7 @@ public class CornerManager {
      */
     public void addImages(final List<ImagePoints> images){
         if(Objects.nonNull(images) && images.size() > 0) {
-            this.imagesWithCorners.addAll(images);
+            this.imagesWithPoints.addAll(images);
             this.setAsSource(images.get(0));
         }
     }
@@ -77,7 +77,7 @@ public class CornerManager {
      */
     public void removeImage(final ImagePoints image){
         if(Objects.nonNull(image) && this.sourceImage.isPresent() && !this.sourceImage.get().equals(image)) {
-            this.imagesWithCorners.removeIf(img -> img.equals(image));
+            this.imagesWithPoints.removeIf(img -> img.equals(image));
         }
     }
 
@@ -85,7 +85,7 @@ public class CornerManager {
      *
      */
     public void clearList(){
-        this.imagesWithCorners.clear();
+        this.imagesWithPoints.clear();
     }
 
     /**
@@ -93,7 +93,7 @@ public class CornerManager {
      * @return
      */
     public List<ImagePoints> getCornerImages(){
-        return new ArrayList<>(this.imagesWithCorners);
+        return new ArrayList<>(this.imagesWithPoints);
     }
 
     /**
@@ -101,7 +101,7 @@ public class CornerManager {
      * @return
      */
     public List<ImagePoints> getImagesToAlign(){
-        return this.sourceImage.map(imageCorners -> this.imagesWithCorners.stream().filter(im -> !im.equals(imageCorners)).collect(Collectors.toList())).orElseGet(() -> new LinkedList<>(this.imagesWithCorners));
+        return this.sourceImage.map(imageCorners -> this.imagesWithPoints.stream().filter(im -> !im.equals(imageCorners)).collect(Collectors.toList())).orElseGet(() -> new LinkedList<>(this.imagesWithPoints));
     }
 
     /**
@@ -117,11 +117,16 @@ public class CornerManager {
      * @param image
      */
     public void setAsSource(final ImagePoints image){
-        if(Objects.nonNull(image) && this.imagesWithCorners.contains(image)){
+        if(Objects.nonNull(image) && this.imagesWithPoints.contains(image)){
             this.sourceImage = Optional.of(image);
             System.out.println(this.sourceImage);
         }else{
             throw new IllegalArgumentException("The given image was not fount among the loaded or the image input is NULL.");
         }
+    }
+
+    public void clearProject(){
+        this.sourceImage = Optional.empty();
+        this.imagesWithPoints.clear();
     }
 }

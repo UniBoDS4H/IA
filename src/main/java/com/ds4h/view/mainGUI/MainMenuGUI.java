@@ -20,6 +20,7 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.IJ;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
-    private final JButton manualAlignment, automaticAlignment, semiAutomaticAlignment;
+    private final JButton manualAlignment, automaticAlignment, semiAutomaticAlignment, clearProject;
     private final JMenuBar menuBar;
     private final JMenu menu, project;
     private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem, alignmentItem;
@@ -63,6 +64,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
         this.semiAutomaticAlignment = new JButton("SemiAutomatic Alignment");
+        this.clearProject = new JButton("Clear Project");
 
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
@@ -102,14 +104,24 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
 
         GridBagConstraints gbcSemi = new GridBagConstraints();
-        gbcManual.gridx = 0;
-        gbcManual.gridy = 12;
-        gbcManual.gridwidth = 1;
-        gbcManual.gridheight = 1;
-        gbcManual.fill = GridBagConstraints.BOTH;
-        gbcManual.weightx = 1;
-        gbcManual.weighty = 0;
-        this.panel.add(this.semiAutomaticAlignment, gbcManual); // aggiungo il terzo bottone al JFrame con il GridBagLayout
+        gbcSemi.gridx = 0;
+        gbcSemi.gridy = 12;
+        gbcSemi.gridwidth = 1;
+        gbcSemi.gridheight = 1;
+        gbcSemi.fill = GridBagConstraints.BOTH;
+        gbcSemi.weightx = 1;
+        gbcSemi.weighty = 0;
+        this.panel.add(this.semiAutomaticAlignment, gbcSemi); // aggiungo il terzo bottone al JFrame con il GridBagLayout
+
+        GridBagConstraints gbcClear = new GridBagConstraints();
+        gbcClear.gridx = 0;
+        gbcClear.gridy = 13;
+        gbcClear.gridwidth = 1;
+        gbcClear.gridheight = 1;
+        gbcClear.fill = GridBagConstraints.BOTH;
+        gbcClear.weightx = 1;
+        gbcClear.weighty = 0;
+        this.panel.add(this.clearProject, gbcClear); // aggiungo il terzo bottone al JFrame con il GridBagLayout
 
 
 
@@ -142,8 +154,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents(){
         // Create menu bar and add it to the frame
-        setJMenuBar(this.menuBar);
-
+        this.setJMenuBar(this.menuBar);
+        this.clearProject.setBackground(Color.RED);
+        this.clearProject.setForeground(Color.BLACK);
         // Create menu and add it to the menu bar
         this.menuBar.add(this.menu);
         this.menuBar.add(this.project);
@@ -228,6 +241,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         break;
                 }
             });
+
         }
     }
 
@@ -246,6 +260,19 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             this.aboutGUI.showDialog();
         });
 
+        this.clearProject.addActionListener(event -> {
+            //TODO: Launch a message dialog in order to confirm the deletion
+            final int result = JOptionPane.showConfirmDialog(this,
+                    "Are you sure to clear the entire project ?",
+                    "Confirm operation",
+                    JOptionPane.YES_NO_OPTION);
+            if(result == JOptionPane.YES_OPTION) {
+                this.cornerControler.clearProject();
+                this.imagesPreview.clearPanels();
+                this.imagesPreview.showPreviewImages();
+            }
+        });
+
         this.loadImages.addActionListener(event ->{
             this.pickImages();
         });
@@ -257,44 +284,58 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event -> {
             //ManualAlignmentController m = new ManualAlignmentController();
             if(!manualAlignmentController.isAlive()) {
-                final Thread th = new Thread(() -> {
+                try {
                     manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
-                    final LoadingGUI loadingGUI = new LoadingGUI();
-                    while (manualAlignmentController.isAlive()) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                    final Thread th = new Thread(() -> {
+                        final LoadingGUI loadingGUI = new LoadingGUI();
+                        while (manualAlignmentController.isAlive()) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                IJ.showMessage(e.getMessage());
+                            }
                         }
-                    }
-                    if(manualAlignmentController.getAlignedImages().size() > 0) {
-                        new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
-                        loadingGUI.close();
-                    }
-                });
-                th.start();
+                        if (manualAlignmentController.getAlignedImages().size() > 0) {
+                            new CarouselGUI(this.settingsBunwarpj, manualAlignmentController, this.cornerControler, this.imagesPreview);
+                            loadingGUI.close();
+                        }
+                    });
+                    th.start();
+                }catch(final Exception e){
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
 
         });
 
         this.semiAutomaticAlignment.addActionListener(event -> {
             if(!semiAutomaticController.isAlive()) {
-                final Thread th = new Thread(() -> {
+                try {
                     semiAutomaticController.align(this.cornerControler);
-                    final LoadingGUI loadingGUI = new LoadingGUI();
-                    while (semiAutomaticController.isAlive()) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                    final Thread pollingSemiautomaticThread = new Thread(() -> {
+                        final LoadingGUI loadingGUI = new LoadingGUI();
+                        while (semiAutomaticController.isAlive()) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                IJ.showMessage(e.getMessage());
+                            }
                         }
-                    }
-                    if(semiAutomaticController.getAlignedImages().size() > 0) {
-                        new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
-                        loadingGUI.close();
-                    }
-                });
-                th.start();
+                        if (semiAutomaticController.getAlignedImages().size() > 0) {
+                            new CarouselGUI(this.settingsBunwarpj, semiAutomaticController, this.cornerControler, this.imagesPreview);
+                            loadingGUI.close();
+                        }
+                    });
+                    pollingSemiautomaticThread.start();
+                }catch(final Exception e){
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -331,26 +372,34 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.automaticAlignment.addActionListener(event -> {
             if(!automaticAlignmentController.isAlive()) {
-                automaticAlignmentController.surfAlignment(this.cornerControler);
-                final Thread th = new Thread(() -> {
-                    final LoadingGUI loadingGUI = new LoadingGUI();
-                    while (automaticAlignmentController.isAlive()) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                try {
+                    automaticAlignmentController.surfAlignment(this.cornerControler);
+                    final Thread th = new Thread(() -> {
+                        final LoadingGUI loadingGUI = new LoadingGUI();
+                        while (automaticAlignmentController.isAlive()) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                IJ.showMessage(e.getMessage());
+                            }
                         }
-                    }
-                    if (automaticAlignmentController.getAlignedImages().size() > 0) {
-                        new OverlapImagesGUI(this.settingsBunwarpj, automaticAlignmentController, this.cornerControler, this.imagesPreview);
-                        loadingGUI.close();
-                    }
-                });
-                th.start();
+                        if (automaticAlignmentController.getAlignedImages().size() > 0) {
+                            new OverlapImagesGUI(this.settingsBunwarpj, automaticAlignmentController, this.cornerControler, this.imagesPreview);
+                            loadingGUI.close();
+                        }
+
+                    });
+                    th.start();
+                }catch (final Exception e){
+                    JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
-        addWindowListener(new WindowAdapter() {
+        this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 DirectoryManager.deleteTMPDirectories();
                 OpencvController.deleteLibrary();
