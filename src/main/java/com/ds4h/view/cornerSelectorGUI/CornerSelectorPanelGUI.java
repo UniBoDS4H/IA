@@ -235,6 +235,8 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         }
         this.drawPoints(g2d);
         this.container.updateSettings();
+        g2d.dispose();
+        System.gc();
     }
 
     /**
