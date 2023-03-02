@@ -53,7 +53,7 @@ public class TranslationAlignment extends AlignmentAlgorithm {
                 }
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Affine alignment you must at least: " + TranslationAlignment.LOWER_BOUND + " points.");
+                        "In order to use the Translation alignment you must at least: " + TranslationAlignment.LOWER_BOUND + " points.");
             }
         }catch (Exception ex){
             throw ex;
