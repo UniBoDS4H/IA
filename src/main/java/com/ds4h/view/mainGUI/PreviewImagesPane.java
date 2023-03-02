@@ -24,7 +24,7 @@ public class PreviewImagesPane extends JPanel {
         this.removeAll();
         this.revalidate();
         for (final ImagePoints image : this.controller.getCornerImagesImages()) {
-            final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image));
+            final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image)+1);
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
             this.add(panel);
