@@ -36,17 +36,13 @@ public class RansacAlignment extends AlignmentAlgorithm {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
                 final MatOfPoint2f targetPoint = targetImage.getMatOfPoint();
                 final MatOfPoint2f referencePoint = imagePoints.getMatOfPoint();
-
+                System.out.println(targetPoint);
                 final Mat homography = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
-                final Mat translationMatrix = new Mat(2, 3, CvType.CV_32FC1);
+                final Mat translationMatrix = Mat.zeros(2, 3, CvType.CV_32FC1);
                 translationMatrix.put(0,0, 1);
                 translationMatrix.put(1, 1, 1);
-                //translationMatrix.put(2, 2, 1);
-                final double deltaX = homography.get(0, 2)[0];
-                final double deltaY = homography.get(1, 2)[0];
-
-                translationMatrix.put(0, 2, deltaX);
-                translationMatrix.put(1, 2, deltaY);
+                translationMatrix.put(0, 2, homography.get(0, 2)[0]);
+                translationMatrix.put(1, 2, homography.get(1, 2)[0]);
                 final Mat warpedMat = new Mat();
                 Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, translationMatrix, targetImage.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
