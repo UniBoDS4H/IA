@@ -22,23 +22,23 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
     }
 
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints sourceImage, final ImagePoints targetImage){
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints){
         try {
-            if(sourceImage.numberOfPoints() == targetImage.numberOfPoints()) {
+            if(targetImage.numberOfPoints() == imagePoints.numberOfPoints()) {
                 //sourceImage.getImage().show();
                 //targetImage.getImage().show();
-                final Mat image1 = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-                final Mat image2 = super.toGrayscale(Imgcodecs.imread(sourceImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+                final Mat image1 = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+                final Mat image2 = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
                 // Detect keypoints and compute descriptors using the SURF algorithm
                 final SURF detector = SURF.create();
 
                 // Detect the keypoints and compute the descriptors for both images:
-                final MatOfKeyPoint keypoints1 = targetImage.getMatOfKeyPoint(); // Matrix where are stored all the key points
+                final MatOfKeyPoint keypoints1 = imagePoints.getMatOfKeyPoint(); // Matrix where are stored all the key points
                 final Mat descriptors1 = new Mat();
                 detector.detectAndCompute(image1, new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
                 // Detect key points for the second image
-                final MatOfKeyPoint keypoints2 = sourceImage.getMatOfKeyPoint(); //  Matrix where are stored all the key points
+                final MatOfKeyPoint keypoints2 = targetImage.getMatOfKeyPoint(); //  Matrix where are stored all the key points
                 final Mat descriptors2 = new Mat();
                 detector.detectAndCompute(image2, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
 
@@ -103,9 +103,8 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
             NUMBER_OF_ITERATION : number of iteration for the RANSAC algorithm
          */
                 final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
-                final Mat alignedImage1 = new Mat();
                 // Align the first image to the second image using the homography matrix
-                return super.warpMatrix(image1, alignedImage1, H, image2.size(), targetImage.getFile());
+                return super.warpMatrix(image1, H, image2.size(), imagePoints.getFile());
             }
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
@@ -117,4 +116,5 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
         final MatOfKeyPoint imageKeyPoint = image.getMatOfKeyPoint();
         return imageKeyPoint.toList();
     }
+
 }

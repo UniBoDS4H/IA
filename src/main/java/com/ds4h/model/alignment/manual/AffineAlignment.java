@@ -22,21 +22,21 @@ public class AffineAlignment extends AlignmentAlgorithm {
 
     /**
      * Manual alignment using the Affine alignment
-     * @param source : the source image used as reference
-     * @param  target : the target to align
+     * @param targetImage : the source image used as reference
+     * @param  imagePoints : the target to align
      * @throws IllegalArgumentException : in case the number of corners is not correct
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws IllegalArgumentException{
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
-            if(source.numberOfPoints() == REQUIRED_POINTS && target.numberOfPoints() == REQUIRED_POINTS) {
-                final MatOfPoint2f referencePoint = source.getMatOfPoint();
-                final MatOfPoint2f targetPoint = target.getMatOfPoint();
+            if(targetImage.numberOfPoints() == REQUIRED_POINTS && imagePoints.numberOfPoints() == REQUIRED_POINTS) {
+                final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
+                final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
                 final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(target.getMatImage(), warpedMat, H, source.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
-                final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
+                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
+                final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
@@ -47,8 +47,4 @@ public class AffineAlignment extends AlignmentAlgorithm {
         }
     }
 
-    @Override
-    public int neededPoints(){
-        return AffineAlignment.REQUIRED_POINTS;
-    }
 }

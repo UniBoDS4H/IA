@@ -23,21 +23,21 @@ public class RansacAlignment extends AlignmentAlgorithm {
     }
     /**
      * Manual alignment using the Homography alignment
-     * @param source : the source image used as reference
-     * @param  target : the target to align
+     * @param targetImage : the source image used as reference
+     * @param  imagePoints : the target to align
      * @throws IllegalArgumentException : in case the number of corners is not correct
      * @return : the list of all the images aligned to the source
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints source, final ImagePoints target) throws IllegalArgumentException{
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
-            if(source.numberOfPoints() >= LOWER_BOUND && target.numberOfPoints() >= LOWER_BOUND) {
-                final MatOfPoint2f referencePoint = source.getMatOfPoint();
-                final MatOfPoint2f targetPoint = target.getMatOfPoint();
+            if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+                final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
+                final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
                 final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpPerspective(target.getMatImage(), warpedMat, H, source.getMatImage().size());
-                final Optional<ImagePlus> finalImage = this.convertToImage(target.getFile(), warpedMat);
+                Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size());
+                final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
@@ -48,8 +48,4 @@ public class RansacAlignment extends AlignmentAlgorithm {
         }
     }
 
-    @Override
-    public int neededPoints(){
-        return RansacAlignment.LOWER_BOUND;
-    }
 }
