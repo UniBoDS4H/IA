@@ -5,10 +5,12 @@ import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -32,13 +34,19 @@ public class RansacAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
-                final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
-                final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
-                final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
+                final MatOfPoint2f targetPoint = targetImage.getMatOfPoint();
+                final MatOfPoint2f referencePoint = imagePoints.getMatOfPoint();
+                System.out.println(targetPoint);
+                final Mat homography = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
+                final Mat translationMatrix = Mat.zeros(2, 3, CvType.CV_32FC1);
+                translationMatrix.put(0,0, 1);
+                translationMatrix.put(1, 1, 1);
+                translationMatrix.put(0, 2, homography.get(0, 2)[0]);
+                translationMatrix.put(1, 2, homography.get(1, 2)[0]);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size());
+                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, translationMatrix, targetImage.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
-                return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
+                return finalImage.map(imagePlus -> new AlignedImage(warpedMat, translationMatrix, imagePlus));
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
                         "In order to use the RANSAC alignment you must use at least: " + RansacAlignment.LOWER_BOUND + " points.");
