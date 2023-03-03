@@ -2,11 +2,18 @@ package com.ds4h.model.cornerManager;
 
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.CheckImage;
+import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
+import org.apache.commons.io.FilenameUtils;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -18,48 +25,94 @@ public class CornerManager {
         this.sourceImage = Optional.empty();
         this.imagesWithPoints = new ArrayList<>();
     }
+    /**
+     * Splits all pages from the input TIFF file to one file per page in the
+     * output directory.
+     *
+     * @param inputFile
+     * @param outputDirectory
+     * @return generated files
+     * @throws IOException
+     */
+    private static List<File> split(File inputFile, File outputDirectory, String fileName) throws IOException {
+        ImageInputStream input = null;
+        List<File> outputFiles = new ArrayList<>();
+        try {
+            input = ImageIO.createImageInputStream(inputFile);
+            List<TIFFUtilities.TIFFPage> pages = TIFFUtilities.getPages(input);
+            int pageNo = 1;
+            for (TIFFUtilities.TIFFPage tiffPage : pages) {
+                ArrayList<TIFFUtilities.TIFFPage> outputPages = new ArrayList<TIFFUtilities.TIFFPage>(1);
+                ImageOutputStream outputStream = null;
+                try {
+                    File outputFile = new File(outputDirectory, fileName + "_" + String.format("%04d", pageNo) + ".tif");
+                    outputStream = ImageIO.createImageOutputStream(outputFile);
+                    outputPages.clear();
+                    outputPages.add(tiffPage);
+                    TIFFUtilities.writePages(outputStream, outputPages);
+                    outputFiles.add(outputFile);
+                }
+                finally {
+                    if (outputStream != null) {
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+                }
+                ++pageNo;
+            }
+        }
+        finally {
+            if (input != null) {
+                input.close();
+            }
+        }
+        return outputFiles;
+    }
 
+    public void  load(List<String> loadingImages) throws IOException {
+        loadingImages.stream().flatMap(path -> {
+            try {
+                //if we have a multipage tiff we split it into different files
+                if(TIFFUtilities.getPages(ImageIO.createImageInputStream(new File(path))).size() != 1) {
+                    String dir = DirectoryCreator.createTemporaryDirectory("images");
+                    List<File> files = split(new File(path), new File(System.getProperty("java.io.tmpdir") + "/" + dir), FilenameUtils.removeExtension(new File(path).getName()));
+                    return files.stream().map(File::getPath);
+                }
+                else {
+                    return Stream.of(path);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        })
+        .map(File::new)
+        .filter(CheckImage::checkImage)
+        .map(ImagePoints::new)
+        .filter(image -> !this.imagesWithPoints.contains(image))
+        .forEach(this.imagesWithPoints::add);
+    }
     /**
      *
      * @param loadingImages
      */
     public void loadImages(final List<String> loadingImages){
         if(Objects.nonNull(loadingImages) && !loadingImages.isEmpty()) {
-            loadingImages.stream()
-                    .map(File::new)
-                    .filter(CheckImage::checkImage)
-                    .map(ImagePoints::new)
-                    .filter(image -> !this.imagesWithPoints.contains(image))
-                    .forEach(this.imagesWithPoints::add);
+            try {
+                this.load(loadingImages);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             if (this.imagesWithPoints.size() > 0) {
                 //setting the first image as default
-                this.setAsSource(new ImagePoints(new File(loadingImages.get(0))));
+                this.setAsSource(this.imagesWithPoints.get(0));
             } else {
                 throw new IllegalArgumentException("Zero images found");
             }
+
         }else{
             throw new IllegalArgumentException("There are no input images, please pick some images from a path.");
         }
     }
-
-    /**
-     *
-     * @param path
-     */
-    public void loadImage(final String path){
-        if(Objects.isNull(path) && !path.isEmpty()) {
-            final File file = new File(path);
-            if (CheckImage.checkImage(file)) {
-                final ImagePoints image = new ImagePoints(file);
-                if (!this.imagesWithPoints.contains(image)) {
-                    this.imagesWithPoints.add(image);
-                }
-            }
-        }else{
-            throw new IllegalArgumentException("You have to insert a valid file for the image, please pick another file.");
-        }
-    }
-
     /**
      *
      * @param images
@@ -119,7 +172,6 @@ public class CornerManager {
     public void setAsSource(final ImagePoints image){
         if(Objects.nonNull(image) && this.imagesWithPoints.contains(image)){
             this.sourceImage = Optional.of(image);
-            System.out.println(this.sourceImage);
         }else{
             throw new IllegalArgumentException("The given image was not fount among the loaded or the image input is NULL.");
         }

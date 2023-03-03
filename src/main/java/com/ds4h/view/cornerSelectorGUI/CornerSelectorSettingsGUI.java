@@ -104,7 +104,9 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerDimension.setPaintLabels(true);
         this.addElement(new JLabel("Corner dimension: "), new JPanel(), this.pointerDimension);
         JPanel changeIndex = new JPanel();
+        changeIndex.add(new JLabel("From"));
         changeIndex.add(this.indexFrom);
+        changeIndex.add(new JLabel("To"));
         changeIndex.add(this.indexTo);
         changeIndex.add(changeButton);
         this.addElement(new JLabel("Change corner index: "), new JPanel(), changeIndex);
