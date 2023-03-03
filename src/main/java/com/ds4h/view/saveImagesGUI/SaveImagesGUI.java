@@ -1,6 +1,7 @@
 package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -15,8 +16,11 @@ public class SaveImagesGUI extends JFrame implements StandardGUI {
     private final JFileChooser fileChooser;
     private final SaveImagesPanel imagesPane;
     private final JScrollPane scrollPane;
-    private final AlignmentControllerInterface controller;
-    public SaveImagesGUI(final AlignmentControllerInterface controller){
+    private final ImageController controller;
+
+
+
+    public SaveImagesGUI(final ImageController controller){
         this.setSize();
         this.controller = controller;
         this.fileChooser = new JFileChooser();

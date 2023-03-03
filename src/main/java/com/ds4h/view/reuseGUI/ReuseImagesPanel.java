@@ -1,6 +1,7 @@
 package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 
 import javax.swing.*;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public class ReuseImagesPanel extends JPanel {
 
-    private final AlignmentControllerInterface controller;
+    private final ImageController controller;
     private JPanel currentPanel;
     private final List<PreviewListReuse> listPanels;
 
-    public ReuseImagesPanel(final AlignmentControllerInterface controller) {
+    public ReuseImagesPanel(final ImageController controller) {
         this.controller = controller;
         this.listPanels = new LinkedList<>();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -25,7 +26,7 @@ public class ReuseImagesPanel extends JPanel {
         this.removeAll();
         this.revalidate();
         for (AlignedImage image : this.controller.getAlignedImages()) {
-            final PreviewListReuse panel = new PreviewListReuse(controller, image, this);
+            final PreviewListReuse panel = new PreviewListReuse(this.controller, image, this);
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
             this.add(panel);

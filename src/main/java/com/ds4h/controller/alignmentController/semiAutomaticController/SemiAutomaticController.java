@@ -26,6 +26,11 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
         return semiAutomatic.isAlive();
     }
 
+    @Override
+    public String name() {
+        return "Semi-Automatic algorithm";
+    }
+
     public void align(final CornerController cornerController) {
         if(!this.semiAutomatic.isAlive() && Objects.nonNull(cornerController) && Objects.nonNull(cornerController.getCornerManager())){
             this.semiAutomatic.alignImages(cornerController.getCornerManager());

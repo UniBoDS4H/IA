@@ -23,7 +23,6 @@ public class BunwarpJController {
     /**
      * Use BunwarpJ in order to apply the elastic transformation using the Class Model.
      * @param images : the list of images to deform
-     * @return : the transformed image
      */
     public void transformation(final List<AlignedImage> images){
         if(!this.bunwarpjDeformation.isAlive()) {
@@ -31,8 +30,9 @@ public class BunwarpJController {
         }
     }
 
-    public List<ImagePlus> getImages(){
+    public List<AlignedImage> getImages(){
         if(!this.bunwarpjDeformation.isAlive()){
+            System.out.println("AO " + this.bunwarpjDeformation.getOutputList().size());
             return this.bunwarpjDeformation.getOutputList();
         }
         return Collections.emptyList();

@@ -1,6 +1,7 @@
 package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 
 import javax.swing.*;
@@ -10,10 +11,10 @@ import java.util.List;
 
 public class SaveImagesPanel extends JPanel {
 
-    private final AlignmentControllerInterface controller;
+    private final ImageController controller;
     private JPanel currentPanel;
     private final List<PreviewListSaves> listPanels;
-    public SaveImagesPanel(final AlignmentControllerInterface controller){
+    public SaveImagesPanel(final ImageController controller){
         this.controller = controller;
         this.listPanels = new LinkedList<>();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

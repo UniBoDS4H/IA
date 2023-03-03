@@ -22,7 +22,7 @@ public class BunwarpjDeformation implements Runnable{
     private BunwarpJMaxScale maxScale;
     private int sampleFactor;
 
-    private final List<ImagePlus> outputList;
+    private final List<AlignedImage> outputList;
     private final List<AlignedImage> alignedImages;
     private Optional<AlignedImage> source;
     private Thread thread;
@@ -43,7 +43,7 @@ public class BunwarpjDeformation implements Runnable{
         this.outputList = new CopyOnWriteArrayList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
         this.source = Optional.empty();
-        this.thread = new Thread();
+        this.thread = new Thread(this);
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
         this.maxScale = BunwarpJMaxScale.VERY_COARSE;
@@ -81,7 +81,6 @@ public class BunwarpjDeformation implements Runnable{
             this.outputList.clear();
             this.alignedImages.clear();
             this.alignedImages.addAll(images);
-            this.thread = new Thread(this);
             this.thread.start();
         }
     }
@@ -90,7 +89,7 @@ public class BunwarpjDeformation implements Runnable{
         return this.thread.isAlive();
     }
 
-    public List<ImagePlus> getOutputList(){
+    public List<AlignedImage> getOutputList(){
         return new LinkedList<>(this.outputList);
     }
 
@@ -100,25 +99,27 @@ public class BunwarpjDeformation implements Runnable{
      */
     @Override
     public void run() {
-        this.source.ifPresent(alignedImage -> this.alignedImages.stream().map(AlignedImage::getAlignedImage)
-                .map(alignedImg -> {
-                    final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImg,
-                            alignedImage.getAlignedImage(),
-                            alignedImg.getProcessor(),
-                            alignedImage.getAlignedImage().getProcessor(),
-                            this.modeInput.getValue(),
-                            this.sampleFactor,
-                            this.minScale.getValue(),
-                            this.maxScale.getValue(),
-                            this.parDivWeigth,
-                            this.parCurlWeigth,
-                            this.parLandmarkWeigth,
-                            this.parImageWeigth,
-                            this.parConsistencyWeigth,
-                            this.parThreshold);
-                    return transformation.getDirectResults();
-                })
-                .forEach(this.outputList::add));
+        if(this.source.isPresent()){
+            final ImagePlus alignedImg = this.source.get().getAlignedImage();
+            for(final AlignedImage alignedImage : this.alignedImages){
+                final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImg,
+                        alignedImage.getAlignedImage(),
+                        alignedImg.getProcessor(),
+                        alignedImage.getAlignedImage().getProcessor(),
+                        this.modeInput.getValue(),
+                        this.sampleFactor,
+                        this.minScale.getValue(),
+                        this.maxScale.getValue(),
+                        this.parDivWeigth,
+                        this.parCurlWeigth,
+                        this.parLandmarkWeigth,
+                        this.parImageWeigth,
+                        this.parConsistencyWeigth,
+                        this.parThreshold);
+                alignedImage.setDeformedImage(transformation.getDirectResults());
+                this.outputList.add(alignedImage);
+            }
+        }
     }
 
 

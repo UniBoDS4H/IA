@@ -7,6 +7,7 @@ import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.model.alignment.manual.AffineAlignment;
@@ -402,10 +403,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new CarouselGUI(this.settingsBunwarpj, alignmentControllerInterface, this.cornerControler, this.imagesPreview);
+                    new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
-                    new OverlapImagesGUI(this.settingsBunwarpj, alignmentControllerInterface, this.cornerControler, this.imagesPreview);
+                    final OverlapImagesGUI overlapImagesGUI = new OverlapImagesGUI(alignmentControllerInterface.name(),this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
+                    overlapImagesGUI.showDialog();
                 }
                 loadingGUI.close();
             }

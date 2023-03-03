@@ -12,4 +12,6 @@ public interface AlignmentControllerInterface {
     public List<AlignedImage> getAlignedImages();
 
     public boolean isAlive();
+
+    public String name();
 }
