@@ -7,17 +7,16 @@ import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
  * This class is used for the manual alignment using the Translative technique
  */
-public class TranslationAlignment extends AlignmentAlgorithm {
+public class TranslationalAlignment extends AlignmentAlgorithm {
 
     public static final int LOWER_BOUND = 1;
 
-    public TranslationAlignment(){
+    public TranslationalAlignment(){
         super();
     }
 
@@ -54,7 +53,7 @@ public class TranslationAlignment extends AlignmentAlgorithm {
                 }
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Translation alignment you must at least: " + TranslationAlignment.LOWER_BOUND + " points.");
+                        "In order to use the Translation alignment you must at least: " + TranslationalAlignment.LOWER_BOUND + " points.");
             }
         }catch (Exception ex){
             throw ex;

@@ -6,7 +6,6 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.manual.*;
-import com.ds4h.model.cornerManager.CornerManager;
 
 import java.util.*;
 
@@ -23,7 +22,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         this.lastAlgorithm = Optional.empty();
         this.perspectiveAlignment = new PerspectiveAlignment();
         this.affineAlignment = new AffineAlignment();
-        this.translativeAlignment = new TranslationAlignment();
+        this.translativeAlignment = new TranslationalAlignment();
         this.ransacAlignment = new RansacAlignment();
         this.leastMedianAlignment = new LeastMedianAlignment();
     }
@@ -33,11 +32,11 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         if(this.lastAlgorithm.isPresent()) {
 
             switch (this.lastAlgorithm.get()){
-                case TRANSLATION:
+                case TRANSLATIONAL:
                     return new LinkedList<>(translativeAlignment.alignedImages());
                 case AFFINE:
                     return new LinkedList<>(affineAlignment.alignedImages());
-                case PERSPECTIVE:
+                case PROJECTIVE:
                     return new LinkedList<>(perspectiveAlignment.alignedImages());
                 case RANSAC:
                     return new LinkedList<>(ransacAlignment.alignedImages());
@@ -51,11 +50,11 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     public boolean isAlive() {
         if(this.lastAlgorithm.isPresent()) {
             switch (this.lastAlgorithm.get()) {
-                case TRANSLATION:
+                case TRANSLATIONAL:
                     return translativeAlignment.isAlive();
                 case AFFINE:
                     return affineAlignment.isAlive();
-                case PERSPECTIVE:
+                case PROJECTIVE:
                     return perspectiveAlignment.isAlive();
                 case RANSAC:
                     return ransacAlignment.isAlive();
@@ -76,13 +75,13 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
 
     public void alignImages(final AlignmentAlgorithmEnum alignmentAlgorithm, final CornerController cornerManager) throws IllegalArgumentException{
         switch (alignmentAlgorithm){
-            case TRANSLATION:
+            case TRANSLATIONAL:
                 this.align(this.translativeAlignment, cornerManager);
                 break;
             case AFFINE:
                 this.align(this.affineAlignment, cornerManager);
                 break;
-            case PERSPECTIVE:
+            case PROJECTIVE:
                 this.align(this.perspectiveAlignment, cornerManager);
                 break;
             case RANSAC:
