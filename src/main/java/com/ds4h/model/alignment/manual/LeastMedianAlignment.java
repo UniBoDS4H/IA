@@ -10,34 +10,22 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-/**
- * This class is used for the manual alignment using the Homography technique
- */
-public class RansacAlignment extends AlignmentAlgorithm {
+public class LeastMedianAlignment extends AlignmentAlgorithm {
 
-    public static final int LOWER_BOUND = 4;
-
-    public RansacAlignment(){
+    public LeastMedianAlignment(){
         super();
     }
-    /**
-     * Manual alignment using the Homography alignment
-     * @param targetImage : the source image used as reference
-     * @param  imagePoints : the target to align
-     * @throws IllegalArgumentException : in case the number of corners is not correct
-     * @return : the list of all the images aligned to the source
-     */
+
     @Override
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
-            if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+            if(targetImage.numberOfPoints() >= 4 && imagePoints.numberOfPoints() >= 4) {
                 final MatOfPoint2f targetPoint = targetImage.getMatOfPoint();
                 final MatOfPoint2f referencePoint = imagePoints.getMatOfPoint();
                 System.out.println(targetPoint);
-                final Mat homography = Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
+                final Mat homography = Calib3d.findHomography(referencePoint, targetPoint, Calib3d.LMEDS, 5);
                 final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
                 translationMatrix.put(0, 2, homography.get(0, 2)[0]);
                 translationMatrix.put(1, 2, homography.get(1, 2)[0]);
@@ -54,5 +42,4 @@ public class RansacAlignment extends AlignmentAlgorithm {
             throw ex;
         }
     }
-
 }
