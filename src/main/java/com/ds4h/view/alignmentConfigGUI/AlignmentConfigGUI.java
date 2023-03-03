@@ -16,7 +16,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private AlignmentAlgorithmEnum selectedValue;
     private final MainMenuGUI container;
     public AlignmentConfigGUI(MainMenuGUI container){
-        this.setTitle("Pick manual alignment algorithm");
+        this.setTitle("Manual alignment algorithm");
         this.container = container;
         this.layout = new GroupLayout(this.getContentPane());
         this.layout.setAutoCreateGaps(true);
@@ -62,8 +62,8 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.populateCombo();
         this.setSize();
-        JLabel algLbl = new JLabel("Pick the algorithm: ");
-        JLabel infoLbl = new JLabel("Info about: ");
+        JLabel algLbl = new JLabel("Algorithm: ");
+        JLabel infoLbl = new JLabel("Info: ");
         this.layout.setVerticalGroup(this.layout.createSequentialGroup()
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(algLbl)
@@ -95,7 +95,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     }
 
     private void populateCombo(){
-        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATION;
+        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIONAL;
         for(AlignmentAlgorithmEnum algorithm : AlignmentAlgorithmEnum.values()){
             System.out.println(algorithm);
             this.algorithm.addItem(algorithm);

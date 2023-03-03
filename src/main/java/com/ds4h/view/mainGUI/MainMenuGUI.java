@@ -13,7 +13,7 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.PerspectiveAlignment;
 import com.ds4h.model.alignment.manual.RansacAlignment;
-import com.ds4h.model.alignment.manual.TranslationAlignment;
+import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
@@ -26,7 +26,9 @@ import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -38,8 +40,8 @@ import java.util.stream.Collectors;
 public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment, semiAutomaticAlignment, clearProject;
     private final JMenuBar menuBar;
-    private final JMenu menu, project;
-    private final JMenuItem aboutItem, loadImages,settingsItem, exportItem, importItem, alignmentItem;
+    private final JMenu menu, project, settings, about;
+    private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem;
     private final JPanel panel;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
@@ -136,14 +138,17 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.alignmentConfigGUI = new AlignmentConfigGUI(this);
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
-        this.menu = new JMenu("Menu");
+        this.menu = new JMenu("File");
+
         this.project = new JMenu("Project");
-        this.aboutItem = new JMenuItem("About");
+        this.about = new JMenu("About");
+        this.settings = new JMenu("Settings");
+        this.settingsItem = new JMenuItem("BunwarpJ");
         this.loadImages = new JMenuItem("Load Images");
-        this.settingsItem = new JMenuItem("Settings");
         this.exportItem = new JMenuItem("Export");
         this.importItem = new JMenuItem("Import");
-        this.alignmentItem = new JMenuItem("Alignment algorithm");
+        this.clearItem = new JMenuItem("Clear");
+        this.alignmentItem = new JMenuItem("Alignment");
 
         this.addComponents();
         this.addListeners();
@@ -163,13 +168,15 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         // Create menu and add it to the menu bar
         this.menuBar.add(this.menu);
         this.menuBar.add(this.project);
+        this.menuBar.add(this.settings);
+        this.menuBar.add(this.about);
         // Create menu items and add them to the menu
-        this.menu.add(this.aboutItem);
         this.menu.add(this.loadImages);
-        this.menu.add(this.settingsItem);
-        this.menu.add(this.alignmentItem);
+        this.settings.add(this.alignmentItem);
+        this.settings.add(this.settingsItem);
         this.project.add(this.exportItem);
         this.project.add(this.importItem);
+        this.project.add(this.clearItem);
     }
     public void checkPointsForAlignment() {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -218,7 +225,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 + "</html>");
                     }
                     break;
-                case PERSPECTIVE:
+                case PROJECTIVE:
                     ok = true;
                     for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
                         if (i.getPoints().length < PerspectiveAlignment.LOWER_BOUND) {
@@ -244,11 +251,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 + "</html>");
                     }
                     break;
-                case TRANSLATION:
+                case TRANSLATIONAL:
                     ok = true;
                     for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
                         System.out.println(i.getPoints().length);
-                        if (i.getPoints().length < TranslationAlignment.LOWER_BOUND) {
+                        if (i.getPoints().length < TranslationalAlignment.LOWER_BOUND) {
                             ok = false;
                             break;
                         }
@@ -267,7 +274,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         this.manualAlignment.setToolTipText("<html>"
                                 + "The number of points inside the images is not correct."
                                 + "<br>"
-                                + "In order to use the Translation alignment you must use at least " + TranslationAlignment.LOWER_BOUND + " points in each image."
+                                + "In order to use the Translation alignment you must use at least " + TranslationalAlignment.LOWER_BOUND + " points in each image."
                                 + "</html>");
                     }
                     break;
@@ -286,12 +293,45 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         // Add event listener to the menu items
-        this.aboutItem.addActionListener(event -> {
-            this.aboutGUI.showDialog();
+        this.about.addMouseListener(new MouseInputListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("ciao");
+                aboutGUI.showDialog();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+
+            }
         });
 
-        this.clearProject.addActionListener(event -> {
-            //TODO: Launch a message dialog in order to confirm the deletion
+        this.clearItem.addActionListener(event -> {
             final int result = JOptionPane.showConfirmDialog(this,
                     "Are you sure to clear the entire project ?",
                     "Confirm operation",
