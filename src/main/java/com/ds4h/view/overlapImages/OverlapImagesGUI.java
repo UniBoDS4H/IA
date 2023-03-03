@@ -9,6 +9,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
+import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
@@ -103,19 +104,24 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         });
         this.elasticItem.addActionListener(event -> {
             //TODO: understand what  to do with this images
-            this.controller.elastic(this.controller.getAlignedImages());
-            final Thread myThread = new Thread(() -> {
-                while (this.controller.isAlive()){
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        IJ.showMessage(e.getMessage());
+            if(!this.controller.deformationIsAlive()) {
+                this.controller.elastic(this.controller.getAlignedImages());
+                final LoadingGUI loadingGUI = new LoadingGUI();
+                final Thread myThread = new Thread(() -> {
+                    while (this.controller.deformationIsAlive()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            IJ.showMessage(e.getMessage());
+                        }
                     }
-                }
-                final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.controller.name(), this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
-                bunwarpOverlapped.showDialog();
-            });
-            myThread.start();
+                    final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.controller.name(), this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
+                    bunwarpOverlapped.showDialog();
+                    loadingGUI.close();
+                });
+
+                myThread.start();
+            }
         });
     }
 

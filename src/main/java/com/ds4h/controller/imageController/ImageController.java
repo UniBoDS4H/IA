@@ -38,14 +38,7 @@ public class ImageController {
     }
 
     public boolean isAlive(){
-        switch (this.imageEnum){
-            case ALIGNED:
-                return this.alignmentControllerInterface.isAlive();
-            case ELASTIC:
-                return this.bunwarpJController.isAlive();
-            default:
-                return false;
-        }
+        return this.alignmentControllerInterface.isAlive();
     }
 
     public String name(){
@@ -57,6 +50,10 @@ public class ImageController {
             default:
                 return "";
         }
+    }
+
+    public boolean deformationIsAlive(){
+        return this.bunwarpJController.isAlive();
     }
 
 }
