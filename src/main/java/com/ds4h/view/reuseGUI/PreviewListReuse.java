@@ -1,6 +1,7 @@
 package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.standardGUI.StandardGUI;
 
@@ -12,12 +13,12 @@ public class PreviewListReuse extends JPanel implements StandardGUI {
     private final JLabel imageLabel;
     private final JLabel removeLabel;
     private final JTextField textField;
-    private final AlignmentControllerInterface controller;
+    private final ImageController controller;
     private final AlignedImage image;
     private final ReuseImagesPanel container;
     private boolean reuse;
 
-    public PreviewListReuse(final AlignmentControllerInterface controller, final AlignedImage image, final ReuseImagesPanel container){
+    public PreviewListReuse(final ImageController controller, final AlignedImage image, final ReuseImagesPanel container){
         this.container = container;
         this.controller = controller;
         this.image = image;

@@ -2,6 +2,7 @@ package com.ds4h.view.carouselGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
@@ -31,13 +32,13 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private final SaveImagesGUI saveGui;
     private final JMenuItem overlappedItem, saveItem, reuseItem;
     private int currentImage;
-    private final AlignmentControllerInterface controller;
+    private final ImageController controller;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
     private final int max_number;
 
     private final BunwarpjGUI bunwarpjGUI;
-    public CarouselGUI(final BunwarpjGUI bunwarpjGUI, final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
+    public CarouselGUI(final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
         this.setTitle("Final Alignment Result");
         this.panel = new CarouselPanel();
         this.bunwarpjGUI = bunwarpjGUI;

@@ -4,6 +4,7 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.changeColorController.ChangeColorController;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
@@ -35,37 +36,45 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final JMenuBar menu;
     private final JMenu settingsMenu, saveMenu, reuseMenu, transformMenu;
     private final JMenuItem settingsImages, carouselItem, saveImages, reuseItem, elasticItem;
-    private final AlignmentControllerInterface alignmentControllerInterface;
-    private final BunwarpJController bunwarpJController;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
+    private final ImageController controller;
     private final BunwarpjGUI bunwarpjGUI;
-    public OverlapImagesGUI(final BunwarpjGUI bunwarpjGUI, final AlignmentControllerInterface controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
+    public OverlapImagesGUI(final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
         this.setTitle("Final Result");
         this.setLayout(new BorderLayout());
-        this.alignmentControllerInterface = controller;
-        this.bunwarpJController = new BunwarpJController();
+        this.controller = controller;
         this.bunwarpjGUI = bunwarpjGUI;
         this.previewImagesPane = previewImagesPane;
         this.cornerController = cornerController;
         this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
-        this.configureImagesGUI = new ConfigureImagesGUI(this.alignmentControllerInterface);
+        this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
         this.panel = new JLayeredPane();
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
         this.saveMenu = new JMenu("Save");
-        this.transformMenu = new JMenu("Transform");
+        this.transformMenu = new JMenu("Elastic Deformation");
         this.reuseMenu = new JMenu("Reuse");
         this.settingsImages = new JMenuItem("Configure images");
         this.saveImages = new JMenuItem("Save Images");
         this.elasticItem = new JMenuItem("Elastic transformation");
         this.carouselItem = new JMenuItem("View as Carousel");
         this.reuseItem = new JMenuItem("Reuse as Source");
-        this.saveGui = new SaveImagesGUI(this.alignmentControllerInterface);
+        this.saveGui = new SaveImagesGUI(this.controller);
         this.addComponents();
         this.addListeners();
-        this.showDialog();
+    }
+
+    public void changeImages(final List<ImagePlus> otherImages){
+        int layer = 0;
+        for(final ImagePlus image : otherImages){
+            final ImagePanel imagePanel = new ImagePanel(image);
+            this.imagePanels.add(imagePanel);
+            imagePanel.setBounds(new Rectangle(image.getWidth(), image.getHeight()));
+            imagePanel.setOpaque(false);
+            this.panel.add(imagePanel, new Integer(layer++));
+        }
     }
 
     @Override
@@ -85,25 +94,26 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.saveGui.showDialog();
         });
         this.carouselItem.addActionListener(event -> {
-            new CarouselGUI(this.bunwarpjGUI, this.alignmentControllerInterface, this.cornerController, this.previewImagesPane).showDialog();
+            new CarouselGUI(this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.cornerController, this.alignmentControllerInterface);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.cornerController, this.controller);
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
             //TODO: understand what  to do with this images
-            bunwarpJController.transformation(this.alignmentControllerInterface.getAlignedImages());
+            this.controller.elastic(this.controller.getAlignedImages());
             final Thread myThread = new Thread(() -> {
-                while (this.bunwarpJController.isAlive()){
+                while (this.controller.isAlive()){
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         IJ.showMessage(e.getMessage());
                     }
                 }
-                this.bunwarpJController.getImages().forEach(ImagePlus::show);
+                final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
+                bunwarpOverlapped.showDialog();
             });
             myThread.start();
         });

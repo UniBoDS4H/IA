@@ -1,6 +1,7 @@
 package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.standardGUI.StandardGUI;
 
@@ -12,12 +13,12 @@ public class PreviewListSaves extends JPanel implements StandardGUI {
     private final JLabel imageLabel;
     private final JLabel removeLabel;
     private final JTextField textField;
-    private final AlignmentControllerInterface controller;
+    private final ImageController controller;
     private final AlignedImage image;
     private final SaveImagesPanel container;
     private boolean save;
 
-    public PreviewListSaves(final AlignmentControllerInterface controller, final AlignedImage image, final SaveImagesPanel container){
+    public PreviewListSaves(final ImageController controller, final AlignedImage image, final SaveImagesPanel container){
         this.container = container;
         this.controller = controller;
         this.image = image;

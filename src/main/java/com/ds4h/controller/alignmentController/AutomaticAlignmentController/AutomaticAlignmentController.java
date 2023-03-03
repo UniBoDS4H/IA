@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
  * using the exact class model because we want to use the MVC Pattern.
  */
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
-    final AlignmentAlgorithm surfAlignment;
-    final List<AlignedImage> alignedImages;
+    private final AlignmentAlgorithm surfAlignment;
+    private final List<AlignedImage> alignedImages;
+    private final List<AlignedImage> deformedImages;
 
     /**
      * Constructor of the Controller
@@ -28,6 +29,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public AutomaticAlignmentController(){
         this.surfAlignment = new SurfAlignment();
         this.alignedImages = new LinkedList<>();
+        this.deformedImages = new LinkedList<>();
     }
 
     /**
@@ -42,6 +44,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
             this.surfAlignment.alignImages(cornerManager.getCornerManager());
         }
     }
+
 
     /**
      * When this method is called we get from the Alignment Algorithm all the images aligned. Be careful because maybe

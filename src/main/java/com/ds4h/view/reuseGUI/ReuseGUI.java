@@ -2,7 +2,9 @@ package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.savingController.SaveController;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -10,6 +12,7 @@ import ij.IJ;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -19,10 +22,10 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     private final ReuseImagesPanel imagesPane;
     private final JScrollPane scrollPane;
     private boolean done = false;
-    private final AlignmentControllerInterface controller;
+    private final ImageController controller;
     private final CornerController cornerController;
     private final PreviewImagesPane previewImagesPane;
-    public ReuseGUI(final PreviewImagesPane previewImagesPane, CornerController cornerController, final AlignmentControllerInterface controller){
+    public ReuseGUI(final PreviewImagesPane previewImagesPane, final CornerController cornerController, final ImageController controller){
         this.setSize();
         this.previewImagesPane = previewImagesPane;
         this.cornerController = cornerController;
@@ -47,6 +50,7 @@ public class ReuseGUI extends JFrame implements StandardGUI {
         this.reuseButton.addActionListener(event -> {
             try {
                 this.cornerController.reuseSource(this.imagesPane.getImagesToReuse());
+                this.previewImagesPane.clearPanels();
                 this.previewImagesPane.showPreviewImages();
                 this.dispose();
                 this.done = true;
@@ -67,9 +71,9 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     }
 
     private void setSize(){
-        Dimension screenSize = DisplayInfo.getDisplaySize(50);
-        int min_width = (int) (screenSize.width);
-        int min_height =(int) (screenSize.height);
+        final Dimension screenSize = DisplayInfo.getDisplaySize(50);
+        final int min_width = (int) (screenSize.width);
+        final int min_height =(int) (screenSize.height);
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
     }
