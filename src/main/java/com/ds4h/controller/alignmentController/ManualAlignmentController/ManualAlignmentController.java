@@ -5,10 +5,7 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
-import com.ds4h.model.alignment.manual.AffineAlignment;
-import com.ds4h.model.alignment.manual.PerspectiveAlignment;
-import com.ds4h.model.alignment.manual.RansacAlignment;
-import com.ds4h.model.alignment.manual.TranslationAlignment;
+import com.ds4h.model.alignment.manual.*;
 import com.ds4h.model.cornerManager.CornerManager;
 
 import java.util.*;
@@ -18,6 +15,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm affineAlignment;
     private final AlignmentAlgorithm translativeAlignment;
     private final AlignmentAlgorithm ransacAlignment;
+    private final AlignmentAlgorithm leastMedianAlignment;
     private final List<AlignedImage> images;
     private Optional<AlignmentAlgorithmEnum> lastAlgorithm;
     public ManualAlignmentController(){
@@ -27,6 +25,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         this.affineAlignment = new AffineAlignment();
         this.translativeAlignment = new TranslationAlignment();
         this.ransacAlignment = new RansacAlignment();
+        this.leastMedianAlignment = new LeastMedianAlignment();
     }
 
     @Override
