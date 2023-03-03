@@ -43,7 +43,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                     final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
-                    Imgproc.warpAffine(targetMat, alignedImage, translationMatrix, sourceMat.size());
+                    Imgproc.warpAffine(targetMat, alignedImage, translationMatrix, targetMat.size());
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     System.out.println(alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));

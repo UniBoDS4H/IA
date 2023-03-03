@@ -35,7 +35,7 @@ public class AffineAlignment extends AlignmentAlgorithm {
                 final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
                 final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
+                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, imagePoints.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
