@@ -66,4 +66,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         return this.surfAlignment.isAlive();
     }
 
+    @Override
+    public String name() {
+        return "SURF Algorithm";
+    }
+
 }

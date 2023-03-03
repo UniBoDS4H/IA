@@ -40,8 +40,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final PreviewImagesPane previewImagesPane;
     private final ImageController controller;
     private final BunwarpjGUI bunwarpjGUI;
-    public OverlapImagesGUI(final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
-        this.setTitle("Final Result");
+    public OverlapImagesGUI(final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
+        this.setTitle("Final Result: " + algorithm);
         this.setLayout(new BorderLayout());
         this.controller = controller;
         this.bunwarpjGUI = bunwarpjGUI;
@@ -94,7 +94,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.saveGui.showDialog();
         });
         this.carouselItem.addActionListener(event -> {
-            new CarouselGUI(this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane).showDialog();
+            new CarouselGUI(this.controller.name(), this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
@@ -112,7 +112,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
                         IJ.showMessage(e.getMessage());
                     }
                 }
-                final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
+                final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.controller.name(), this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
                 bunwarpOverlapped.showDialog();
             });
             myThread.start();

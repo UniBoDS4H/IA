@@ -403,10 +403,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new CarouselGUI(this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
+                    new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
-                    final OverlapImagesGUI overlapImagesGUI = new OverlapImagesGUI(this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
+                    final OverlapImagesGUI overlapImagesGUI = new OverlapImagesGUI(alignmentControllerInterface.name(),this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
                     overlapImagesGUI.showDialog();
                 }
                 loadingGUI.close();

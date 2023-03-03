@@ -64,6 +64,11 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         return false;
     }
 
+    @Override
+    public String name() {
+        return this.lastAlgorithm.map(algorithmEnum -> algorithmEnum + " " + "Algorithm").orElse("");
+    }
+
     /**
      * Align manually the images using the Homography alignment.
      * @param cornerManager for each Image we have its own points

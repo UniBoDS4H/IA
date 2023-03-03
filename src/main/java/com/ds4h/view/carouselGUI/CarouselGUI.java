@@ -38,8 +38,8 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     private final int max_number;
 
     private final BunwarpjGUI bunwarpjGUI;
-    public CarouselGUI(final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
-        this.setTitle("Final Alignment Result");
+    public CarouselGUI(final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane) {
+        this.setTitle("Final Alignment: " + algorithm);
         this.panel = new CarouselPanel();
         this.bunwarpjGUI = bunwarpjGUI;
         this.previewImagesPane = previewImagesPane;
@@ -90,7 +90,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.overlappedItem.addActionListener(event -> {
-            new OverlapImagesGUI(this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane);
+            new OverlapImagesGUI(this.controller.name() ,this.bunwarpjGUI, this.controller, this.cornerController, this.previewImagesPane).showDialog();
             this.dispose();
         });
         this.saveItem.addActionListener(event -> {

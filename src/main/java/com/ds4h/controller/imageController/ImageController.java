@@ -48,4 +48,15 @@ public class ImageController {
         }
     }
 
+    public String name(){
+        switch (this.imageEnum){
+            case ALIGNED:
+                return this.alignmentControllerInterface.name();
+            case ELASTIC:
+                return "Elastic Deformation";
+            default:
+                return "";
+        }
+    }
+
 }
