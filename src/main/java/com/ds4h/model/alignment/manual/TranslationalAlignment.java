@@ -5,8 +5,11 @@ import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import java.awt.*;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -43,7 +46,22 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                     final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
-                    Imgproc.warpAffine(targetMat, alignedImage, translationMatrix, sourceMat.size());
+                    Mat pts = new Mat();
+                    Core.hconcat(Arrays.asList(targetImage.getMatOfPoint(), imagePoints.getMatOfPoint()), pts);
+
+                    Point pts_min = Core.minMaxLoc(pts, new Mat()).minLoc;
+                    Point pts_max = Core.minMaxLoc(pts, new Mat()).maxLoc;
+                    int xmin = (int) Math.floor(pts_min.x - 0.5);
+                    int ymin = (int) Math.floor(pts_min.y - 0.5);
+                    int xmax = (int) Math.ceil(pts_max.x + 0.5);
+                    int ymax = (int) Math.ceil(pts_max.y + 0.5);
+                    double[] t = {-xmin, -ymin};
+                    Mat Ht = new Mat(3, 3, CvType.CV_64F);
+                    Ht.put(1, 0, t[0]);
+                    Ht.put(0, 1, t[1]);
+                    Ht.put(0, 0, 1);
+
+                    Imgproc.warpAffine(targetMat, alignedImage, Ht.mul(translationMatrix), new Size(sourceMat.size().width+Math.abs(translation.x), sourceMat.size().height+Math.abs(translation.y)));
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     System.out.println(alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
