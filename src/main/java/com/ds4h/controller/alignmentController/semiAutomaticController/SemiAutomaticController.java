@@ -1,7 +1,7 @@
 package com.ds4h.controller.alignmentController.semiAutomaticController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.semiAutomatic.SemiAutomaticAlignment;
@@ -30,9 +30,9 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
         return "Semi-Automatic algorithm";
     }
 
-    public void align(final CornerController cornerController) {
-        if(!this.semiAutomatic.isAlive() && Objects.nonNull(cornerController) && Objects.nonNull(cornerController.getCornerManager())){
-            this.semiAutomatic.alignImages(cornerController.getCornerManager());
+    public void align(final PointController pointController) {
+        if(!this.semiAutomatic.isAlive() && Objects.nonNull(pointController) && Objects.nonNull(pointController.getCornerManager())){
+            this.semiAutomatic.alignImages(pointController.getCornerManager());
         }
     }
 }

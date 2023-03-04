@@ -1,6 +1,6 @@
 package com.ds4h.view.mainGUI;
 
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
 
@@ -16,12 +16,12 @@ public class PreviewListItem extends JPanel {
     private final JButton targetButton, deleteButton;
     private final JLabel idLabel;
     private final JLabel imageLabel;
-    private final CornerController controller;
+    private final PointController controller;
     private final ImagePoints image;
     private final PreviewImagesPane container;
     private final CornerSelectorGUI cornerSelector;
     private final JPanel centerPanel;
-    PreviewListItem(CornerController controller, ImagePoints image, PreviewImagesPane container, int id){
+    PreviewListItem(PointController controller, ImagePoints image, PreviewImagesPane container, int id){
         this.container = container;
         this.controller = controller;
         this.centerPanel = new JPanel();

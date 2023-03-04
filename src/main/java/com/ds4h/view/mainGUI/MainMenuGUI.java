@@ -4,7 +4,7 @@ import com.ds4h.controller.alignmentController.AutomaticAlignmentController.Auto
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
@@ -23,7 +23,6 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -46,7 +45,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
-    private final CornerController cornerControler;
+    private final PointController cornerControler;
     private final PreviewImagesPane imagesPreview;
     private final AlignmentConfigGUI alignmentConfigGUI;
     private final BunwarpJController bunwarpJController;
@@ -64,7 +63,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.setFrameSize();
         this.bunwarpJController = new BunwarpJController();
         this.fileChooser = new JFileChooser();
-        this.cornerControler = new CornerController();
+        this.cornerControler = new PointController();
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");

@@ -1,4 +1,4 @@
-package com.ds4h.controller.cornerController;
+package com.ds4h.controller.pointController;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.PointManager;
@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CornerController {
+public class PointController {
     PointManager pointManager = new PointManager();
     public void loadImages(final List<String> paths) throws Exception {
         final List<ImagePoints> imagePoints = ImagingConversion.fromPath(paths)
@@ -32,7 +32,7 @@ public class CornerController {
     public List<ImagePoints> getCornerImagesImages() {
         return this.pointManager.getCornerImages();
     }
-    public boolean isSource(ImagePoints image){
+    public boolean isSource(final ImagePoints image){
         return this.pointManager.getSourceImage().isPresent() && this.pointManager.getSourceImage().get().equals(image);
     }
 
@@ -54,7 +54,7 @@ public class CornerController {
         }
     }
 
-    public boolean copyCorners(List<Point> selectedPoints, ImagePoints img) {
+    public boolean copyCorners(final List<Point> selectedPoints, ImagePoints img) {
         boolean res = true;
         for (Point p:selectedPoints) {
             if(this.insideImage(p,img)){
@@ -66,11 +66,12 @@ public class CornerController {
         return res;
     }
 
-    private boolean insideImage(Point p, ImagePoints img) {
+    private boolean insideImage(final Point p, final ImagePoints img) {
         return img.getMatImage().rows() >= p.y && img.getMatImage().cols() >= p.x;
     }
 
-    public MenuItem getMenuItem(ImagePoints image){
+    public MenuItem getMenuItem(final ImagePoints image){
+        //TODO: non penso vada bene, non ci deve essere nulla della view per MVC
         return new MenuItem(this.getCornerImagesImages().indexOf(image)+1, image);
     }
 
