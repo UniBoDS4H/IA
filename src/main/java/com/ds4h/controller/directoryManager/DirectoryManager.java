@@ -5,11 +5,13 @@ import com.ds4h.model.util.saveProject.SaveImages;
 
 public class DirectoryManager {
 
+    private static final String PROJECT_NAME = "DS4H";
+
     private DirectoryManager(){
 
     }
 
     public static void deleteTMPDirectories(){
-        DirectoryDeleter.deleteTMP(SaveImages.TMP_DIRECTORY);
+        DirectoryDeleter.deleteTMP(PROJECT_NAME);
     }
 }

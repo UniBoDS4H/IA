@@ -437,8 +437,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             while (alignmentControllerInterface.isAlive()) {
                 try {
                     Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    IJ.showMessage(e.getMessage());
+                } catch (final InterruptedException e) {
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    loadingGUI.close();
+                    return;
                 }
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
