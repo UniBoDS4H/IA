@@ -23,6 +23,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
     private Thread thread;
+
     protected AlignmentAlgorithm(){
         targetImage = null;
         this.thread = null;
@@ -100,7 +101,6 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                 this.targetImage = cornerManager.getSourceImage().get();
                 this.alignedImages.clear();
                 this.imagesToAlign.clear();
-                this.alignedImages.add(new AlignedImage(this.targetImage.getMatImage(), this.targetImage.getImage()));
                 try {
                     this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
                     this.thread = new Thread(this);
@@ -124,9 +124,10 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                ImagePoints target = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign);
+                ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign);
+                this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
                 for (final ImagePoints image : this.imagesToAlign) {
-                    final Optional<AlignedImage> output = this.align(target, image);
+                    final Optional<AlignedImage> output = this.align(processedTarget, image);
                     output.ifPresent(this.alignedImages::add);
                 }
             }
@@ -145,6 +146,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public List<AlignedImage> alignedImages(){
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
+
 
     /**
      * This method is called in order to have information about the alignment thread.

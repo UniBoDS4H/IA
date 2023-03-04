@@ -6,6 +6,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.manual.*;
+import com.ds4h.model.imagePoints.ImagePoints;
 
 import java.util.*;
 
@@ -45,6 +46,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         }
         return Collections.emptyList();
     }
+
 
     @Override
     public boolean isAlive() {

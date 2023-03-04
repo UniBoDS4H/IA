@@ -32,7 +32,6 @@ public class TargetImagePreprocessing {
         String path = DirectoryCreator.createTemporaryDirectory("DS4H_processedTarget");
         Optional<ImagePlus> iP = ImagingConversion.fromMatToImagePlus(target.getFirst(),targetImage.getFile().getName());
         if(iP.isPresent()){
-            iP.get().show();
             IJ.save(iP.get(), System.getProperty("java.io.tmpdir") + "/" + path+"/"+ FilenameUtils.removeExtension(targetImage.getFile().getName()));
             ImagePoints result = new ImagePoints(new File(System.getProperty("java.io.tmpdir") + "/" +path+"/"+ targetImage.getFile().getName()));
             target.getSecond().toList().forEach(point->result.addPoint(point));
