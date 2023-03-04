@@ -119,7 +119,7 @@ public class CornerManager {
      */
     public void addImages(final List<ImagePoints> images){
         if(Objects.nonNull(images) && images.size() > 0) {
-            this.imagesWithPoints.addAll(images);
+            images.stream().filter(img -> !this.imagesWithPoints.contains(img)).forEach(this.imagesWithPoints::add);
             this.setAsSource(images.get(0));
         }
     }

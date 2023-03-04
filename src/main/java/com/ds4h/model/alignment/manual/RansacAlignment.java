@@ -10,7 +10,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,7 +45,7 @@ public class RansacAlignment extends AlignmentAlgorithm {
                 translationMatrix.put(1, 2, homography.get(1, 2)[0]);
 
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, translationMatrix, imagePoints.getMatImage().size());
+                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, translationMatrix, targetImage.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, translationMatrix, imagePlus));
             }else{
