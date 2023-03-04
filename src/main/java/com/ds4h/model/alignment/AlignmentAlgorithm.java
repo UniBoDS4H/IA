@@ -124,7 +124,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign);
+                ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                 this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
                 for (final ImagePoints image : this.imagesToAlign) {
                     final Optional<AlignedImage> output = this.align(processedTarget, image);

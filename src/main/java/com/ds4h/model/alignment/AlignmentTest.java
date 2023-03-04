@@ -55,4 +55,9 @@ public class AlignmentTest extends AlignmentAlgorithm{
         HighGui.imshow("Good Matches", imgMatches);
         HighGui.waitKey(0);
     }
+
+    @Override
+    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
+        return null;
+    }
 }

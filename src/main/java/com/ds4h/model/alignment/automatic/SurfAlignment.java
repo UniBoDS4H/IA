@@ -120,4 +120,8 @@ public class SurfAlignment extends AlignmentAlgorithm {
         return Optional.empty();
     }
 
+    @Override
+    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
+        return null;
+    }
 }

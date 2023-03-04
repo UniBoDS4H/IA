@@ -98,4 +98,8 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
         return imageKeyPoint.toList();
     }
 
+    @Override
+    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
+        return null;
+    }
 }

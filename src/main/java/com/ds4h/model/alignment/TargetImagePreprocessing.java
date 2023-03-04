@@ -1,22 +1,14 @@
 package com.ds4h.model.alignment;
 
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.saveProject.SaveImages;
-import ij.IJ;
 import ij.ImagePlus;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.opencv.core.*;
-import org.opencv.core.Point;
-import org.opencv.imgproc.Imgproc;
 
-import javax.swing.text.html.Option;
-import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -28,17 +20,16 @@ public class TargetImagePreprocessing {
     private final static String DIRECTORY_NAME = "DS4H_processedTarget";
     private final static String TMP_PATH = System.getProperty("java.io.tmpdir");
     private TargetImagePreprocessing(){}
-    static public ImagePoints process(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign) throws IllegalArgumentException{
+    static public ImagePoints process(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         Pair<Mat, MatOfPoint2f> target = new Pair<>(targetImage.getMatImage(),targetImage.getMatOfPoint());
         for (final ImagePoints image : imagesToAlign) {
-            target = TargetImagePreprocessing.singleProcess(target.getFirst(), target.getSecond(), image);
+            target = TargetImagePreprocessing.singleProcess(target.getFirst(), target.getSecond(), image, algorithm);
         }
         final String directoryName = DirectoryCreator.createTemporaryDirectory(TargetImagePreprocessing.DIRECTORY_NAME);
         final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(target.getFirst(),targetImage.getFile().getName());
         if(imagePlus.isPresent()){
             imagePlus.get().setTitle(targetImage.getFile().getName());
             SaveImages.save(imagePlus.get(), TargetImagePreprocessing.TMP_PATH + "/" + directoryName);
-            //IJ.save(iP.get(), System.getProperty("java.io.tmpdir") + "/" + path+"/"+ FilenameUtils.removeExtension(targetImage.getFile().getName()));
             final ImagePoints result = new ImagePoints(new File(TargetImagePreprocessing.TMP_PATH + "/" +directoryName+"/" + targetImage.getFile().getName()));
             target.getSecond().toList().forEach(result::addPoint);
             return result;
@@ -48,13 +39,13 @@ public class TargetImagePreprocessing {
 
     }
 
-    private static Pair<Mat,MatOfPoint2f> singleProcess(final Mat targetMat, final MatOfPoint2f targetPoints, final ImagePoints imagePoints) {
+    private static Pair<Mat,MatOfPoint2f> singleProcess(final Mat targetMat, final MatOfPoint2f targetPoints, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
         try {
             final Mat imageToShiftMat = imagePoints.getMatImage();
 
             final Point[] srcArray = targetPoints.toArray();
             final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
-            final Mat translationMatrix = TranslationalAlignment.getTransformationMatrix(dstArray, srcArray);
+            final Mat translationMatrix = algorithm.getTransformationMatrix(dstArray, srcArray);
 
             final int h1 = targetMat.rows();
             final int w1 = targetMat.cols();

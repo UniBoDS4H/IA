@@ -44,11 +44,9 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                 final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
-                    final Mat translationMatrix = TranslationalAlignment.getTransformationMatrix(dstArray,srcArray);
+                    final Mat translationMatrix = this.getTransformationMatrix(dstArray,srcArray);
                     Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetMat.size());
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
-                    System.out.println(alignedImage);
-                    System.out.println(targetMat);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
@@ -62,7 +60,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
             throw ex;
         }
     }
-    public static Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray){
+    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray){
         final Point translation = minimumLeastSquare(dstArray, srcArray);
         // Shift one image by the estimated amount of translation to align it with the other
         final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
