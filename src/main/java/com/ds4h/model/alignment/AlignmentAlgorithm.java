@@ -130,9 +130,10 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                     final Optional<AlignedImage> output = this.align(processedTarget, image);
                     output.ifPresent(this.alignedImages::add);
                 }
-                this.thread = new Thread(this);
             }
+            this.thread = new Thread(this);
         } catch (Exception e) {
+            this.thread = new Thread(this);
             throw new RuntimeException(e);
         }
     }
