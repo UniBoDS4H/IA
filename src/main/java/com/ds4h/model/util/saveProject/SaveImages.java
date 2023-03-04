@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,12 @@ public class SaveImages {
     public static void save(final List<ImagePlus> images, final String path){
         for(final ImagePlus image : images){
             IJ.save(image, path+"/"+image.getTitle());
+        }
+    }
+
+    public static void save(final ImagePlus image, final String path){
+        if(!path.isEmpty() && Objects.nonNull(image)) {
+            IJ.save(image, path + "/" + image.getTitle());
         }
     }
 

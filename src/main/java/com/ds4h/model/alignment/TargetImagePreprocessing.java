@@ -6,6 +6,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
 import org.apache.commons.io.FileUtils;
@@ -34,7 +35,7 @@ public class TargetImagePreprocessing {
         if(iP.isPresent()){
             IJ.save(iP.get(), System.getProperty("java.io.tmpdir") + "/" + path+"/"+ FilenameUtils.removeExtension(targetImage.getFile().getName()));
             ImagePoints result = new ImagePoints(new File(System.getProperty("java.io.tmpdir") + "/" +path+"/"+ targetImage.getFile().getName()));
-            target.getSecond().toList().forEach(point->result.addPoint(point));
+            target.getSecond().toList().forEach(result::addPoint);
             return result;
         }else{
             throw new IllegalArgumentException("the file doesn't exist");
