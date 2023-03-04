@@ -2,13 +2,16 @@ package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.TargetImagePreprocessing;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -34,21 +37,18 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
-                final Mat sourceMat = targetImage.getMatImage();
-                final Mat targetMat = imagePoints.getMatImage();
+                final Mat targetMat = targetImage.getMatImage();
+                final Mat imageToShiftMat = imagePoints.getMatImage();
 
                 final Point[] srcArray = targetImage.getMatOfPoint().toArray();
                 final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
-                    final Point translation = minimumLeastSquare(dstArray, srcArray);
-                    // Shift one image by the estimated amount of translation to align it with the other
                     final Mat alignedImage = new Mat();
-                    final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
-                    translationMatrix.put(0, 2, translation.x);
-                    translationMatrix.put(1, 2, translation.y);
-                    Imgproc.warpAffine(targetMat, alignedImage, translationMatrix, targetMat.size());
+                    final Mat translationMatrix = TranslationalAlignment.getTransformationMatrix(dstArray,srcArray);
+                    Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetMat.size());
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     System.out.println(alignedImage);
+                    System.out.println(targetMat);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
@@ -62,15 +62,22 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
             throw ex;
         }
     }
+    public static Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray){
+        final Point translation = minimumLeastSquare(dstArray, srcArray);
+        // Shift one image by the estimated amount of translation to align it with the other
+        final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
+        translationMatrix.put(0, 2, translation.x);
+        translationMatrix.put(1, 2, translation.y);
+        return translationMatrix;
+    }
 
-    private Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
+    private static Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
         final double[] deltaX = new double[srcArray.length];
         final double[] deltaY = new double[srcArray.length];
 
         for (int i = 0; i < srcArray.length; i++) {
             deltaX[i] = dstArray[i].x - srcArray[i].x;
             deltaY[i] = dstArray[i].y - srcArray[i].y;
-            System.out.println(deltaX[i] + " " + deltaY[i]);
         }
 
         final double meanDeltaX = Core.mean(new MatOfDouble(deltaX)).val[0];
