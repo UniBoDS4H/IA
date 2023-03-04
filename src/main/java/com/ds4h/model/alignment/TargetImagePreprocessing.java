@@ -77,8 +77,7 @@ public class TargetImagePreprocessing {
             Mat s = new Mat();
             Core.multiply(Ht,translationMatrix, s);
 
-            Mat alignedImage = new Mat();
-            Imgproc.warpPerspective(imageToShiftMat, alignedImage, Ht.mul(translationMatrix), new Size(xmax-xmin, ymax-ymin));
+            Mat alignedImage = Mat.zeros(new Size(xmax-xmin, ymax-ymin),imageToShiftMat.type());
             targetMat.copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
             MatOfPoint2f points = new MatOfPoint2f();
             points.fromList(targetPoints.toList().stream().map(p-> new Point(p.x+t[0], p.y+t[1])).collect(Collectors.toList()));
