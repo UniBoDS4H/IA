@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PointController {
-    PointManager pointManager = new PointManager();
+    private final PointManager pointManager;
+    public PointController(){
+        this.pointManager = new PointManager();
+    }
     public void loadImages(final List<String> paths) throws Exception {
         final List<ImagePoints> imagePoints = ImagingConversion.fromPath(paths)
                     .stream().map(ImagePoints::new)
@@ -54,7 +57,7 @@ public class PointController {
         }
     }
 
-    public boolean copyCorners(final List<Point> selectedPoints, ImagePoints img) {
+    public boolean copyPoints(final List<Point> selectedPoints, final ImagePoints img) {
         boolean res = true;
         for (Point p:selectedPoints) {
             if(this.insideImage(p,img)){

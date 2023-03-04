@@ -51,7 +51,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         });
         this.copyButton.addActionListener(e->{
             MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
-            if(!pointController.copyCorners(container.getSelectedPoints(), item.getImage())){
+            if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
                 JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Some of the points are out of the selected image, they have not been copied");
             }else{
                 JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
