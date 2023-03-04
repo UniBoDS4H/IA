@@ -33,11 +33,9 @@ public class SaveMatrix {
                 for (int row = 0; row < matrix.rows(); row++) {
                     for (int col = 0; col < matrix.cols(); col++) {
                         final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));
-                        final int diff = 22 - element.length();
-                        for(int i = 0; i < (diff); i++){
-                            element.append(" ");
-                        }
-                        stringBuilder.append("| ").append(element).append(" |");
+                        final String output = String.format("%-22s", element);
+                        System.out.println(output.length());
+                        stringBuilder.append("| ").append(output).append(" |");
                     }
                     stringBuilder.append("\n");
                 }
