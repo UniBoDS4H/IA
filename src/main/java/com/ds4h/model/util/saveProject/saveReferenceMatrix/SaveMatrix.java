@@ -32,7 +32,8 @@ public class SaveMatrix {
                 final StringBuilder stringBuilder = new StringBuilder();
                 for (int row = 0; row < matrix.rows(); row++) {
                     for (int col = 0; col < matrix.cols(); col++) {
-                        stringBuilder.append(matrix.get(row, col)[0]).append(" ");
+                        //TODO: format the output in a pretty way
+                        stringBuilder.append("| ").append(matrix.get(row, col)[0]).append(" | ").append(" ");
                     }
                     stringBuilder.append("\n");
                 }
