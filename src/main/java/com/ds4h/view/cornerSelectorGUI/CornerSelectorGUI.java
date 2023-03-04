@@ -126,7 +126,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         System.out.println("A");
         this.mainMenu.checkPointsForAlignment();
     }
-    private class RenderImage{
+    private static class RenderImage{
         private final ImagePoints imagePoints;
         private ImagePlus imagePlus;
 
@@ -135,7 +135,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
             this.imagePlus = imagePlus;
         }
 
-        public ImagePlus setImage(final ImagePlus imagePlus){
+        public void setImage(final ImagePlus imagePlus){
             this.imagePlus = imagePlus;
         }
 
