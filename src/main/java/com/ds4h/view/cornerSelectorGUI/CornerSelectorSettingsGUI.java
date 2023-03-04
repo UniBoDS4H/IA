@@ -1,5 +1,7 @@
 package com.ds4h.view.cornerSelectorGUI;
 
+import com.ds4h.controller.changeColorController.ChangeColorController;
+import com.ds4h.controller.imagingConversion.ImagingController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ColorComboBox;
@@ -16,7 +18,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
 
     private final GridBagConstraints constraints;
     private final CornerSelectorGUI container;
-    private final JSlider pointerDimension;
+    private final JSlider pointerDimension, contrastSlider;
     private final JButton changeButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
@@ -29,6 +31,8 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.indexTo = new JComboBox<>();
         this.selectedPointerColor = new ColorComboBox();
         this.textColor = new ColorComboBox();
+        this.contrastSlider = new JSlider();
+
         this.setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
         this.constraints.insets = new Insets(0, 0, 5, 5);
@@ -89,7 +93,12 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
             int from = (int)indexFrom.getSelectedItem();
             int to = (int)indexTo.getSelectedItem();
             container.getImage().editPointIndex(from-1, to-1);
+
             container.repaint();
+        });
+        this.contrastSlider.addChangeListener(e -> {
+            //TODO: FIX HOW TO IMAGES RENDERED.
+            ChangeColorController.changeContrast(container.getImage().getImage(), this.contrastSlider.getValue() / 10);
         });
     }
 
@@ -102,7 +111,14 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerDimension.setMinorTickSpacing(1);
         this.pointerDimension.setPaintTicks(true);
         this.pointerDimension.setPaintLabels(true);
+        this.contrastSlider.setMaximum(20);
+        this.contrastSlider.setMinimum(0);
+        this.contrastSlider.setMajorTickSpacing(9);
+        this.contrastSlider.setMinorTickSpacing(1);
+        this.contrastSlider.setPaintLabels(true);
+        this.contrastSlider.setPaintTicks(true);
         this.addElement(new JLabel("Corner dimension: "), new JPanel(), this.pointerDimension);
+        this.addElement(new JLabel("Contrast: "), new JPanel(), this.contrastSlider);
         JPanel changeIndex = new JPanel();
         changeIndex.add(new JLabel("From"));
         changeIndex.add(this.indexFrom);

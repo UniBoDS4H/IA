@@ -24,7 +24,7 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.loadingLabel.setSize(new Dimension(20, 20));
         this.setLayout(new GridLayout(1, 2));
         this.text = new JLabel();
-        this.setSize(new Dimension(500, 300));
+        this.setSize(new Dimension(300, 200));
         this.addComponents();
         this.addListeners();
         this.setVisible(true);
@@ -50,8 +50,8 @@ public class LoadingGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        this.text.setVerticalAlignment(JLabel.TOP);
-        this.text.setHorizontalAlignment(JLabel.LEFT);
+        this.text.setVerticalAlignment(JLabel.CENTER);
+        this.text.setHorizontalAlignment(JLabel.CENTER);
         this.text.setText("<html>The algorithm is running, please wait.<br/> </html>");
         this.add(this.loadingLabel, FlowLayout.LEFT);
         this.add(this.text);

@@ -1,5 +1,7 @@
-package com.ds4h.model.alignment;
+package com.ds4h.model.alignment.preprocessImage;
 
+import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
@@ -8,6 +10,8 @@ import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.ImagePlus;
 import org.opencv.core.*;
+import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.Arrays;
@@ -45,7 +49,7 @@ public class TargetImagePreprocessing {
 
             final Point[] srcArray = targetPoints.toArray();
             final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
-            final Mat translationMatrix = algorithm.getTransformationMatrix(dstArray, srcArray);
+            final Mat translationMatrix = algorithm.getTransformationMatrix(srcArray, dstArray);
 
             final int h1 = targetMat.rows();
             final int w1 = targetMat.cols();
@@ -55,26 +59,28 @@ public class TargetImagePreprocessing {
             final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
             final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
             final MatOfPoint2f pts2_ = new MatOfPoint2f();
-            Core.perspectiveTransform(pts2, pts2_, translationMatrix);
+            if(algorithm instanceof AffineAlignment){
+                Core.transform(pts2, pts2_, translationMatrix);
+            }else if(algorithm instanceof TranslationalAlignment){
+                Core.perspectiveTransform(pts2, pts2_, translationMatrix);
+            }
+            pts2.toList().forEach(System.out::println);
+            pts2_.toList().forEach(System.out::println);
 
             final MatOfPoint2f pts = new MatOfPoint2f();
             Core.hconcat(Arrays.asList(pts1, pts2_), pts);
             final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(), pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
             final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(), pts.toList().stream().map(p->p.y).max(Double::compareTo).get());
 
+
             final int xmin = (int) Math.floor(pts_min.x - 0.5);
             final int ymin = (int) Math.floor(pts_min.y - 0.5);
             final int xmax = (int) Math.ceil(pts_max.x + 0.5);
             final int ymax = (int) Math.ceil(pts_max.y + 0.5);
             final double[] t = {-xmin, -ymin};
-            final Mat Ht = Mat.eye(3, 3, CvType.CV_32FC1);
 
-            Ht.put(0, 2, t[0]);
-            Ht.put(1, 2, t[1]);
-            final Mat s = new Mat();
-            Core.multiply(Ht,translationMatrix, s);
-
-            final Mat alignedImage = Mat.zeros(new Size(xmax-xmin, ymax-ymin),imageToShiftMat.type());
+            Size s = new Size(xmax-xmin, ymax-ymin);
+            final Mat alignedImage = Mat.zeros(s,imageToShiftMat.type());
             targetMat.copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
             final MatOfPoint2f points = new MatOfPoint2f();
             points.fromList(targetPoints.toList().stream().map(p-> new Point(p.x+t[0], p.y+t[1])).collect(Collectors.toList()));

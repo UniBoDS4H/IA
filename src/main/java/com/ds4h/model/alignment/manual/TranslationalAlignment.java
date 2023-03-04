@@ -2,17 +2,12 @@ package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.alignment.TargetImagePreprocessing;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -61,7 +56,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
         }
     }
     public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray){
-        final Point translation = minimumLeastSquare(dstArray, srcArray);
+        final Point translation = minimumLeastSquare(srcArray, dstArray);
         // Shift one image by the estimated amount of translation to align it with the other
         final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
         translationMatrix.put(0, 2, translation.x);

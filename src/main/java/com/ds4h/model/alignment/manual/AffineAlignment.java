@@ -4,10 +4,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Optional;
@@ -36,7 +33,7 @@ public class AffineAlignment extends AlignmentAlgorithm {
                 final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
                 final Mat H = this.getTransformationMatrix(referencePoint.toArray(), targetPoint.toArray());
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, imagePoints.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
+                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
@@ -48,9 +45,7 @@ public class AffineAlignment extends AlignmentAlgorithm {
         }
     }
 
-    @Override
     public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
-        Mat H = Imgproc.getAffineTransform(new MatOfPoint2f(srcArray), new MatOfPoint2f(dstArray));
-        return H;
+        return Imgproc.getAffineTransform(new MatOfPoint2f(srcArray), new MatOfPoint2f(dstArray));
     }
 }

@@ -1,6 +1,6 @@
 package com.ds4h.controller.exportController;
 
-import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.util.projectManager.exportProject.ExportProject;
 
 import java.io.IOException;
@@ -11,9 +11,9 @@ public class ExportController {
 
     }
 
-    public static void exportProject(final CornerManager cornerManager, final String path) throws IOException {
-        if(!cornerManager.getCornerImages().isEmpty()) {
-            ExportProject.exportProject(cornerManager, path);
+    public static void exportProject(final PointManager pointManager, final String path) throws IOException {
+        if(!pointManager.getCornerImages().isEmpty()) {
+            ExportProject.exportProject(pointManager, path);
         }
     }
 }

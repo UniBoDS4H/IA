@@ -44,7 +44,6 @@ public class LeastMedianAlignment extends AlignmentAlgorithm {
         }
     }
 
-    @Override
     public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
         return null;
     }

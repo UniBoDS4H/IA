@@ -5,6 +5,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.ImagePlus;
 import org.opencv.core.Point;
 
 import java.awt.*;
@@ -28,6 +29,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         this.mainMenu = mainMenu;
         this.cornerController = controller;
         this.image = image;
+        //TODO: use the RENDERIMAGE in order to apply contrast and other options
         this.panel = new CornerSelectorPanelGUI(this);
         this.panel.setCurrentImage(image);
         this.menu = new CornerSelectorMenuGUI(this.cornerController, this.image, this);
@@ -110,6 +112,8 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     public ImagePoints getImage(){
         return this.image;
     }
+    public void setImage(final ImagePlus imagePlus){
+    }
 
     public void updateMenu() {
         this.menu.updateView();
@@ -121,5 +125,22 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     public void updatePointsForAlignment(){
         System.out.println("A");
         this.mainMenu.checkPointsForAlignment();
+    }
+    private static class RenderImage{
+        private final ImagePoints imagePoints;
+        private ImagePlus imagePlus;
+
+        public RenderImage(final ImagePoints imagePoints, final ImagePlus imagePlus){
+            this.imagePoints = imagePoints;
+            this.imagePlus = imagePlus;
+        }
+
+        public void setImage(final ImagePlus imagePlus){
+            this.imagePlus = imagePlus;
+        }
+
+        public ImagePoints getImagePoints(){
+            return this.imagePoints;
+        }
     }
 }

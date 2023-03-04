@@ -2,19 +2,26 @@ package com.ds4h.model.util;
 
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import org.apache.commons.io.FilenameUtils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
 import static org.opencv.imgproc.Imgproc.cvtColor;
@@ -35,18 +42,63 @@ public class ImagingConversion {
         return Optional.empty();
     }
 
-    public static List<ImagePlus> fromPathToImagePlus(final List<String> paths){
-        List<ImagePlus> images = new LinkedList<>();
-        for(final String path : paths){
-            try {
-                if(!path.isEmpty()){
-                    images.add(IJ.openImage(path));
+    public static List<File> fromPath(final List<String> paths) throws IOException{
+        return paths.stream().map(File::new)
+                .filter(File::isFile)
+                .filter(CheckImage::checkImage)
+                .flatMap(file -> {
+                    try{
+                        return ImagingConversion.isMulti(file);
+                    }catch (final IOException exception){
+                        return Stream.empty();
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Stream<File> isMulti(final File file) throws IOException {
+        if (TIFFUtilities.getPages(ImageIO.createImageInputStream(file)).size() != 1) {
+            final String dir = DirectoryCreator.createTemporaryDirectory("DS4H_Images");
+            final List<File> files = ImagingConversion.split(file, new File(System.getProperty("java.io.tmpdir") + "/" + dir), FilenameUtils.removeExtension(file.getName()));
+            return files.stream();
+        } else {
+            return Stream.of(file);
+        }
+    }
+
+    private static List<File> split(final File inputFile, final File outputDirectory, final String fileName) throws IOException {
+        ImageInputStream input = null;
+        final List<File> outputFiles = new ArrayList<>();
+        try {
+            input = ImageIO.createImageInputStream(inputFile);
+            final List<TIFFUtilities.TIFFPage> pages = TIFFUtilities.getPages(input);
+            int pageNo = 1;
+            for (final TIFFUtilities.TIFFPage tiffPage : pages) {
+                final ArrayList<TIFFUtilities.TIFFPage> outputPages = new ArrayList<TIFFUtilities.TIFFPage>(1);
+                ImageOutputStream outputStream = null;
+                try {
+                    final File outputFile = new File(outputDirectory, fileName + "_" + String.format("%04d", pageNo) + ".tif");
+                    outputStream = ImageIO.createImageOutputStream(outputFile);
+                    //outputPages.clear();
+                    outputPages.add(tiffPage);
+                    TIFFUtilities.writePages(outputStream, outputPages);
+                    outputFiles.add(outputFile);
                 }
-            }catch (Exception e){
-                IJ.showMessage("An error occurred with this file : " + path + ". Are you sure that is correct ?");
+                finally {
+                    if (outputStream != null) {
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+                }
+                ++pageNo;
             }
         }
-        return images;
+        finally {
+            if (input != null) {
+                input.close();
+            }
+        }
+        return outputFiles;
     }
 
     public static Optional<ImagePlus> fromSinglePathToImagePlus(final String path){
@@ -65,6 +117,8 @@ public class ImagingConversion {
         Imgproc.cvtColor(matrix, rgb, COLOR_GRAY2RGB);
         return rgb;
     }
+
+
 
 
 }

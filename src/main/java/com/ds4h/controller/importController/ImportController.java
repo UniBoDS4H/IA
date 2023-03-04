@@ -1,6 +1,6 @@
 package com.ds4h.controller.importController;
 
-import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.util.projectManager.importProject.ImportProject;
 
 import java.io.File;
@@ -12,11 +12,11 @@ public class ImportController {
 
     }
 
-    public static void importProject(final File directory, final CornerManager cornerManager) throws FileNotFoundException {
-        if(directory.isDirectory() && Objects.nonNull(cornerManager)) {
-            cornerManager.addImages(ImportProject.importProject(directory));
+    public static void importProject(final File directory, final PointManager pointManager) throws FileNotFoundException {
+        if(directory.isDirectory() && Objects.nonNull(pointManager)) {
+            pointManager.addImages(ImportProject.importProject(directory));
             if(ImportProject.getTargetImage().isPresent()){
-                cornerManager.setAsSource(ImportProject.getTargetImage().get());
+                pointManager.setAsSource(ImportProject.getTargetImage().get());
             }
         }
     }

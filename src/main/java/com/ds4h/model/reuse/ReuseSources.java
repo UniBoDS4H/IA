@@ -1,7 +1,7 @@
 package com.ds4h.model.reuse;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.projectManager.importProject.ImportProject;
 import com.ds4h.model.util.saveProject.SaveImages;
@@ -24,19 +24,19 @@ public class ReuseSources {
 
     /**
      * Method used in order to create a new project with the selected images from the input.
-     * @param cornerManager : Inside the corner manager we will be going to store the now images
+     * @param pointManager : Inside the corner manager we will be going to store the now images
      * @param images : The list of images that we want to use
      */
-    public static void reuseSources(final CornerManager cornerManager, final List<AlignedImage> images) {
+    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) {
         if(!images.isEmpty()) {
             final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
             if (!path.isEmpty()) {
-                final List<ImagePoints> backUpList = cornerManager.getCornerImages();
+                final List<ImagePoints> backUpList = pointManager.getCornerImages();
                 try {
-                    cornerManager.clearList();
-                    cornerManager.addImages(ImportProject.importProject(new File(path)));
+                    pointManager.clearList();
+                    pointManager.addImages(ImportProject.importProject(new File(path)));
                 }catch(final FileNotFoundException ex){
-                    cornerManager.addImages(backUpList);
+                    pointManager.addImages(backUpList);
                 }
             }
         }

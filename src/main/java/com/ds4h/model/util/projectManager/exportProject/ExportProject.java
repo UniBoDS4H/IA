@@ -1,6 +1,6 @@
 package com.ds4h.model.util.projectManager.exportProject;
 
-import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
@@ -21,20 +21,20 @@ public class ExportProject {
     //TODO: add better doc
     /**
      * Export the entire project
-     * @param cornerManager the corner manager of all the images.
+     * @param pointManager the corner manager of all the images.
      * @param path the path where store the project
      * @throws IOException error in the saving s
      */
-    public static void exportProject(final CornerManager cornerManager, final String path) throws IOException {
+    public static void exportProject(final PointManager pointManager, final String path) throws IOException {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         if(!directory.isEmpty()){
-            SaveImages.save(cornerManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path+"/"+directory);
-            JSONSerializer.createJSON(cornerManager, path+"/"+directory);
+            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path+"/"+directory);
+            JSONSerializer.createJSON(pointManager, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.
-            SaveImages.save(cornerManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path);
-            JSONSerializer.createJSON(cornerManager, path);
+            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path);
+            JSONSerializer.createJSON(pointManager, path);
         }
     }
 

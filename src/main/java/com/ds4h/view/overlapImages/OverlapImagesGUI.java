@@ -42,7 +42,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private final ImageController controller;
     private final BunwarpjGUI bunwarpjGUI;
     public OverlapImagesGUI(final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final CornerController cornerController, final PreviewImagesPane previewImagesPane){
-        this.setTitle("Final Result: " + algorithm);
+        this.setTitle("Final Alignment: " + algorithm);
         this.setLayout(new BorderLayout());
         this.controller = controller;
         this.bunwarpjGUI = bunwarpjGUI;

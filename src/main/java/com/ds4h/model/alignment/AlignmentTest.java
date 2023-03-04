@@ -56,7 +56,6 @@ public class AlignmentTest extends AlignmentAlgorithm{
         HighGui.waitKey(0);
     }
 
-    @Override
     public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
         return null;
     }

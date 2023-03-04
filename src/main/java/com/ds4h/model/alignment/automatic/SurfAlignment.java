@@ -113,14 +113,13 @@ public class SurfAlignment extends AlignmentAlgorithm {
          */
             final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
             // Align the first image to the second image using the homography matrix
-            return super.warpMatrix(imagePointMat, H, imagePointMat.size(), imagePoints.getFile());
+            return super.warpMatrix(imagePointMat, H, targetImageMat.size(), imagePoints.getFile());
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
         }
         return Optional.empty();
     }
 
-    @Override
     public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
         return null;
     }

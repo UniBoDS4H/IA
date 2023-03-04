@@ -84,7 +84,7 @@ public class ImagePoints {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ImagePoints that = (ImagePoints) o;
-        return Objects.equals(image, that.image);
+        return Objects.equals(that.getFile().getName(), this.getFile().getName());
     }
 
     /**

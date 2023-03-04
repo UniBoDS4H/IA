@@ -437,8 +437,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             while (alignmentControllerInterface.isAlive()) {
                 try {
                     Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    IJ.showMessage(e.getMessage());
+                } catch (final InterruptedException e) {
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    loadingGUI.close();
+                    return;
                 }
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
@@ -477,8 +482,15 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         fd.setMultipleMode(true);
         fd.setVisible(true);
         final File[] files = fd.getFiles();//Get all the files
-        this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
-        this.imagesPreview.showPreviewImages();
+        try {
+            this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
+            this.imagesPreview.showPreviewImages();
+        }catch (final Exception exception){
+            JOptionPane.showMessageDialog(this,
+                    exception.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
