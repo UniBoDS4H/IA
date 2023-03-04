@@ -4,6 +4,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.CheckImage;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
+import ij.ImagePlus;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
@@ -25,94 +26,7 @@ public class CornerManager {
         this.sourceImage = Optional.empty();
         this.imagesWithPoints = new ArrayList<>();
     }
-    /**
-     * Splits all pages from the input TIFF file to one file per page in the
-     * output directory.
-     *
-     * @param inputFile
-     * @param outputDirectory
-     * @return generated files
-     * @throws IOException
-     */
-    private static List<File> split(File inputFile, File outputDirectory, String fileName) throws IOException {
-        ImageInputStream input = null;
-        List<File> outputFiles = new ArrayList<>();
-        try {
-            input = ImageIO.createImageInputStream(inputFile);
-            List<TIFFUtilities.TIFFPage> pages = TIFFUtilities.getPages(input);
-            int pageNo = 1;
-            for (TIFFUtilities.TIFFPage tiffPage : pages) {
-                ArrayList<TIFFUtilities.TIFFPage> outputPages = new ArrayList<TIFFUtilities.TIFFPage>(1);
-                ImageOutputStream outputStream = null;
-                try {
-                    File outputFile = new File(outputDirectory, fileName + "_" + String.format("%04d", pageNo) + ".tif");
-                    outputStream = ImageIO.createImageOutputStream(outputFile);
-                    outputPages.clear();
-                    outputPages.add(tiffPage);
-                    TIFFUtilities.writePages(outputStream, outputPages);
-                    outputFiles.add(outputFile);
-                }
-                finally {
-                    if (outputStream != null) {
-                        outputStream.flush();
-                        outputStream.close();
-                    }
-                }
-                ++pageNo;
-            }
-        }
-        finally {
-            if (input != null) {
-                input.close();
-            }
-        }
-        return outputFiles;
-    }
 
-    public void  load(List<String> loadingImages) throws IOException {
-        loadingImages.stream().flatMap(path -> {
-            try {
-                //if we have a multipage tiff we split it into different files
-                if(TIFFUtilities.getPages(ImageIO.createImageInputStream(new File(path))).size() != 1) {
-                    String dir = DirectoryCreator.createTemporaryDirectory("images");
-                    List<File> files = split(new File(path), new File(System.getProperty("java.io.tmpdir") + "/" + dir), FilenameUtils.removeExtension(new File(path).getName()));
-                    return files.stream().map(File::getPath);
-                }
-                else {
-                    return Stream.of(path);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        })
-        .map(File::new)
-        .filter(CheckImage::checkImage)
-        .map(ImagePoints::new)
-        .filter(image -> !this.imagesWithPoints.contains(image))
-        .forEach(this.imagesWithPoints::add);
-    }
-    /**
-     *
-     * @param loadingImages
-     */
-    public void loadImages(final List<String> loadingImages){
-        if(Objects.nonNull(loadingImages) && !loadingImages.isEmpty()) {
-            try {
-                this.load(loadingImages);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (this.imagesWithPoints.size() > 0) {
-                //setting the first image as default
-                this.setAsSource(this.imagesWithPoints.get(0));
-            } else {
-                throw new IllegalArgumentException("Zero images found");
-            }
-
-        }else{
-            throw new IllegalArgumentException("There are no input images, please pick some images from a path.");
-        }
-    }
     /**
      *
      * @param images

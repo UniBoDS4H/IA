@@ -4,16 +4,26 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.cornerManager.CornerManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.reuse.ReuseSources;
+import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.view.cornerSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CornerController {
     CornerManager cornerManager = new CornerManager();
-    public void loadImages(final List<String> paths){
-        this.cornerManager.loadImages(paths);
+    public void loadImages(final List<String> paths) throws Exception {
+        final List<ImagePoints> imagePoints = ImagingConversion.fromPath(paths)
+                    .stream().map(ImagePoints::new)
+                    .collect(Collectors.toList());
+        if(imagePoints.size() > 1) {
+            this.cornerManager.addImages(imagePoints);
+        }else{
+            throw new IllegalArgumentException("You can not upload one single photo.");
+        }
     }
 
     public CornerManager getCornerManager(){
