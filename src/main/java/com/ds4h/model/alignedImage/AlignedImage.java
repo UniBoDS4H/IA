@@ -40,6 +40,7 @@ public class AlignedImage {
         this.matrix = matrix;
         this.registrationMatrix = Optional.empty();
         this.alignedImage = image;
+        this.deformedImage = Optional.empty();
     }
 
     public void setDeformedImage(final ImagePlus image){
