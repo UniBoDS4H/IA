@@ -32,14 +32,18 @@ public class SaveMatrix {
                 final StringBuilder stringBuilder = new StringBuilder();
                 for (int row = 0; row < matrix.rows(); row++) {
                     for (int col = 0; col < matrix.cols(); col++) {
-                        //TODO: format the output in a pretty way
-                        stringBuilder.append("| ").append(matrix.get(row, col)[0]).append(" | ").append(" ");
+                        final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));
+                        final int diff = 22 - element.length();
+                        for(int i = 0; i < (diff); i++){
+                            element.append(" ");
+                        }
+                        stringBuilder.append("| ").append(element).append(" |");
                     }
                     stringBuilder.append("\n");
                 }
                 content.append(stringBuilder.toString());
             }
-            content.append("\n \n \n");
+            content.append("\n \n");
         }
         SaveMatrix.save(path, content.toString());
     }
