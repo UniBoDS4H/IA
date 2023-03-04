@@ -1,23 +1,15 @@
-package com.ds4h.model.alignment;
+package com.ds4h.model.alignment.preprocessImage;
 
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.saveProject.SaveImages;
-import ij.IJ;
 import ij.ImagePlus;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
-import org.opencv.imgproc.Imgproc;
 
-import javax.swing.text.html.Option;
-import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;

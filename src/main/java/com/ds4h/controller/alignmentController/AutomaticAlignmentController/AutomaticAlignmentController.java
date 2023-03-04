@@ -5,14 +5,10 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.SurfAlignment;
-import com.ds4h.model.cornerManager.CornerManager;
-import com.ds4h.model.util.Pair;
-import ij.ImagePlus;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This class is used in order to call all the Model methods of the SURF Alignment inside the view, without

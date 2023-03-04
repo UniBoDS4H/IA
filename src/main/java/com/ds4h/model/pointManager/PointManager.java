@@ -1,28 +1,17 @@
-package com.ds4h.model.cornerManager;
+package com.ds4h.model.pointManager;
 
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.CheckImage;
-import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
-import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
-import ij.ImagePlus;
-import org.apache.commons.io.FilenameUtils;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
  */
-public class CornerManager {
+public class PointManager {
     private final List<ImagePoints> imagesWithPoints;
     private Optional<ImagePoints> sourceImage;
-    public CornerManager(){
+    public PointManager(){
         this.sourceImage = Optional.empty();
         this.imagesWithPoints = new ArrayList<>();
     }

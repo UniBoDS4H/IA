@@ -1,7 +1,8 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.cornerManager.CornerManager;
+import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
+import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
@@ -22,11 +23,11 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
-    private Thread thread;
+    private final Thread thread;
 
     protected AlignmentAlgorithm(){
         targetImage = null;
-        this.thread = null;
+        this.thread = new Thread(this);
         this.imagesToAlign = new LinkedList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
     }
@@ -90,20 +91,19 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      * When this method is called we start the real process of image alignment. If the thread is not alive and the
      * target image is present we can start the operation. Take in mind that the alignment is done inside a separate Thread,
      * so if you need the images you have to wait until the alignment is not done.
-     * @param cornerManager  container where all the images are stored with their points
+     * @param pointManager  container where all the images are stored with their points
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
     @Override
-    public void alignImages(final CornerManager cornerManager) throws IllegalArgumentException{
-        if(Objects.nonNull(cornerManager) && cornerManager.getSourceImage().isPresent()) {
-            if(Objects.isNull(this.thread) && !this.isAlive()) {
-                this.targetImage = cornerManager.getSourceImage().get();
+    public void alignImages(final PointManager pointManager) throws IllegalArgumentException{
+        if(Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
+            if(!this.isAlive()) {
+                this.targetImage = pointManager.getSourceImage().get();
                 this.alignedImages.clear();
                 this.imagesToAlign.clear();
                 try {
-                    this.imagesToAlign.addAll(cornerManager.getImagesToAlign());
-                    this.thread = new Thread(this);
+                    this.imagesToAlign.addAll(pointManager.getImagesToAlign());
                     this.thread.start();
                 } catch (final Exception ex) {
                     throw new IllegalArgumentException("Error: " + ex.getMessage());
@@ -124,16 +124,14 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign);
+                final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign);
                 this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
                 for (final ImagePoints image : this.imagesToAlign) {
                     final Optional<AlignedImage> output = this.align(processedTarget, image);
                     output.ifPresent(this.alignedImages::add);
                 }
             }
-            this.thread = null;
         } catch (Exception e) {
-            this.thread = null;
             throw new RuntimeException(e);
         }
     }
@@ -153,7 +151,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      * @return true If it is alive, false otherwise
      */
     public boolean isAlive(){
-        return Objects.nonNull(this.thread) && this.thread.isAlive();
+        return this.thread.isAlive();
     }
 
 }

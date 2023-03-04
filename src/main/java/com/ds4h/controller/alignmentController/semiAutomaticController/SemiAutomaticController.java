@@ -5,7 +5,6 @@ import com.ds4h.controller.cornerController.CornerController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.semiAutomatic.SemiAutomaticAlignment;
-import com.ds4h.model.cornerManager.CornerManager;
 
 import java.util.LinkedList;
 import java.util.List;
