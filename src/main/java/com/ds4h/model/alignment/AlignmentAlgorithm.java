@@ -23,7 +23,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
-    private final Thread thread;
+    private Thread thread;
 
     protected AlignmentAlgorithm(){
         targetImage = null;
@@ -130,6 +130,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                     final Optional<AlignedImage> output = this.align(processedTarget, image);
                     output.ifPresent(this.alignedImages::add);
                 }
+                this.thread = new Thread(this);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
