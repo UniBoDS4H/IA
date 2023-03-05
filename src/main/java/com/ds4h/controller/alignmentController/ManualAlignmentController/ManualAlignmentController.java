@@ -9,6 +9,9 @@ import com.ds4h.model.alignment.manual.*;
 
 import java.util.*;
 
+/**
+ *
+ */
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm perspectiveAlignment;
     private final AlignmentAlgorithm affineAlignment;
@@ -27,6 +30,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         this.leastMedianAlignment = new LeastMedianAlignment();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<AlignedImage> getAlignedImages(){
         if(this.lastAlgorithm.isPresent()) {
@@ -46,7 +53,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         return Collections.emptyList();
     }
 
-
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isAlive() {
         if(this.lastAlgorithm.isPresent()) {
@@ -64,6 +74,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String name() {
         return this.lastAlgorithm.map(algorithmEnum -> algorithmEnum + " " + "Algorithm").orElse("");
@@ -93,6 +107,11 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         System.out.println(this.lastAlgorithm);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param cornerManager
+     */
     public void align(final AlignmentAlgorithm algorithm, final PointController cornerManager){
         if(!algorithm.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
             algorithm.alignImages(cornerManager.getCornerManager());

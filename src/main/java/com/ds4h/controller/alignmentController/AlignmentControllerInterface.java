@@ -4,6 +4,9 @@ import com.ds4h.model.alignedImage.AlignedImage;
 
 import java.util.List;
 
+/**
+ *
+ */
 public interface AlignmentControllerInterface {
 
     public List<AlignedImage> getAlignedImages();

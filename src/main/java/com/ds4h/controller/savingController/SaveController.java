@@ -8,9 +8,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ *
+ */
 public class SaveController {
 
     //TODO:ADD DOC
+
+    /**
+     *
+     * @param images
+     * @param path
+     * @throws IOException
+     */
     public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
         SaveImages.saveImages(images, path);
     }
