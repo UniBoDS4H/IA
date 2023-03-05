@@ -29,9 +29,9 @@ public class AffineAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() == REQUIRED_POINTS && imagePoints.numberOfPoints() == REQUIRED_POINTS) {
-                final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
-                final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
-                final Mat H = this.getTransformationMatrix(referencePoint.toArray(), targetPoint.toArray());
+                final MatOfPoint2f targetPoints = targetImage.getMatOfPoint();
+                final MatOfPoint2f imageToShiftPoints = imagePoints.getMatOfPoint();
+                final Mat H = this.getTransformationMatrix(targetPoints.toArray(), imageToShiftPoints.toArray());
                 final Mat warpedMat = new Mat();
                 Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);

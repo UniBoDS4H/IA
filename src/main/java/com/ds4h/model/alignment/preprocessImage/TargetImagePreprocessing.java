@@ -59,10 +59,16 @@ public class TargetImagePreprocessing {
             final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
             final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
             final MatOfPoint2f pts2_ = new MatOfPoint2f();
+            for(int i = 0; i < translationMatrix.rows(); i++){
+                for (int j = 0; j < translationMatrix.cols(); j++){
+                    System.out.println(Arrays.toString(translationMatrix.get(i, j)));
+                }
+            }
             if(algorithm instanceof AffineAlignment){
                 Core.transform(pts2, pts2_, translationMatrix);
             }else if(algorithm instanceof TranslationalAlignment){
                 Core.perspectiveTransform(pts2, pts2_, translationMatrix);
+                pts2_.toList().forEach(System.out::println);
             }
             pts2.toList().forEach(System.out::println);
             pts2_.toList().forEach(System.out::println);
@@ -78,6 +84,7 @@ public class TargetImagePreprocessing {
             final int xmax = (int) Math.ceil(pts_max.x + 0.5);
             final int ymax = (int) Math.ceil(pts_max.y + 0.5);
             final double[] t = {-xmin, -ymin};
+            System.out.println(-xmin + " " + -ymin);
 
             Size s = new Size(xmax-xmin, ymax-ymin);
             final Mat alignedImage = Mat.zeros(s,imageToShiftMat.type());
