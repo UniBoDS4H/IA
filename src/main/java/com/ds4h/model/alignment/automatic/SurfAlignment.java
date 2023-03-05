@@ -18,11 +18,18 @@ import java.util.*;
  */
 public class SurfAlignment extends AlignmentAlgorithm {
     private static final int NUMBER_OF_ITERATION = 5;
-
+    private final List<KeyPoint> keypoints1List, keypoints2List;
+    private final List<DMatch> matchesList;
+    private final List<Point> points1, points2;
 
 
     public SurfAlignment(){
         super();
+        this.keypoints1List = new ArrayList<>();
+        this.keypoints2List = new ArrayList<>();
+        this.matchesList = new ArrayList<>();
+        this.points1 = new ArrayList<>();
+        this.points2 = new ArrayList<>();
     }
     /**
      * Align two images using the SURF Algorithm
@@ -34,84 +41,14 @@ public class SurfAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints){
 
         try {
-            //sourceImage.getImage().show();
-            //targetImage.getImage().show();
+
             final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
             final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-            // Detect keypoints and compute descriptors using the SURF algorithm
-            final SURF detector = SURF.create();
 
-            // Detect the keypoints and compute the descriptors for both images:
-            final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
-            final Mat descriptors1 = new Mat();
-            detector.detectAndCompute(imagePointMat , new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
-
-            // Detect key points for the second image
-            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
-            final Mat descriptors2 = new Mat();
-            detector.detectAndCompute(targetImageMat, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-
-            // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
-            final BFMatcher matcher = BFMatcher.create();
-            final MatOfDMatch matches = new MatOfDMatch();
-            matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
-
-            final MatOfDMatch matches_ = new MatOfDMatch();
-            matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
-            // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
-            final List<DMatch> matchesList = matches.toList();
-
-            // convert the matrices of keypoints in to list of keypoints, which represent the list of keypoints in the two images
-            final List<KeyPoint> keypoints1List = keypoints1.toList();
-            final List<KeyPoint> keypoints2List = keypoints2.toList();
-
-
-            final List<Point> points1 = new ArrayList<>();
-        /* the loop is used to iterate through the matches list, and for each match , it adds the corresponding point from the
-           first image to the "points1", and the corresponding point from the second image to the "points2" list.
-
-           The goal of this code is to extract the keypoints from the two images that were matched together and store them in two
-           lists, "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix
-           that aligns the two images.
-        * */
-            for (DMatch match : matchesList) {
-            /*EXPLANATION :
-                matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
-                .queryIdx : is a property of the DMatch that represents the index of the keypoint in the query image(the first image passed to the BFMatcher)
-                .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
-            */
-                // Adds the point from the query image that corresponding to the current match to the "points1" list.
-                points1.add(keypoints1List.get(match.queryIdx).pt);
-            }
-
-        /*
-            The goal of this code is to extract the keypoints from the two images that were matched together and store them in two lists
-            "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix that aligns
-            the two images
-         */
-            final List<Point> points2 = new ArrayList<>();
-            for (DMatch dMatch : matchesList) {
-            /*EXPLANATION :
-                matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
-                .trainIdx : is a property of the DMatch object that represents the index of the keypoint in the train image(the second image passed to the BFMatcher)
-                .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
-            */
-                points2.add(keypoints2List.get(dMatch.trainIdx).pt);
-            }
-
-            final MatOfPoint2f points1_ = new MatOfPoint2f();
-            points1_.fromList(points1);
-            final MatOfPoint2f points2_ = new MatOfPoint2f();
-            points2_.fromList(points2);
-
-            // Compute the homography matrix that aligns two images.
-        /*
-            points1_ : a matrix of 2D points in the first image (query image)
-            points2_ : a matrix of 2D points in the second image (train image)
-            Calib3d.RANSAC : the algorithm used to compute the Homography.
-            NUMBER_OF_ITERATION : number of iteration for the RANSAC algorithm
-         */
-            final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+            this.detectPoints(imagePointMat, targetImageMat);
+            this.mergePoints();
+            final Mat H = this.getTransformationMatrix(imagePoints, targetImage);
+            //Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
             // Align the first image to the second image using the homography matrix
             return super.warpMatrix(imagePointMat, H, targetImageMat.size(), imagePoints.getFile());
         }catch (Exception e){
@@ -120,7 +57,84 @@ public class SurfAlignment extends AlignmentAlgorithm {
         return Optional.empty();
     }
 
-    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
-        return null;
+    @Override
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage) {
+        this.detectPoints(imageToAlign.getMatImage(), targetImage.getMatImage());
+        this.mergePoints();
+        final MatOfPoint2f points1_ = new MatOfPoint2f();
+        points1_.fromList(this.points1);
+        final MatOfPoint2f points2_ = new MatOfPoint2f();
+        points2_.fromList(this.points2);
+        return Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+    }
+
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        Core.perspectiveTransform(source, destination, H);
+    }
+
+    private void detectPoints(final Mat imagePointMat, final Mat targetImageMat){
+        this.keypoints1List.clear();
+        this.keypoints2List.clear();
+        this.matchesList.clear();
+        final SURF detector = SURF.create();
+        // Detect the keypoints and compute the descriptors for both images:
+        final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
+        final Mat descriptors1 = new Mat();
+        detector.detectAndCompute(imagePointMat , new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
+
+        // Detect key points for the second image
+        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+        final Mat descriptors2 = new Mat();
+        detector.detectAndCompute(targetImageMat, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+
+        // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
+        final BFMatcher matcher = BFMatcher.create();
+        final MatOfDMatch matches = new MatOfDMatch();
+        matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
+
+        final MatOfDMatch matches_ = new MatOfDMatch();
+        matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
+        // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
+        this.matchesList.addAll(matches.toList());
+
+        // convert the matrices of keypoints in to list of keypoints, which represent the list of keypoints in the two images
+        this.keypoints1List.addAll(keypoints1.toList());
+        this.keypoints2List.addAll(keypoints2.toList());
+    }
+
+    private void mergePoints(){
+        /* the loop is used to iterate through the matches list, and for each match , it adds the corresponding point from the
+           first image to the "points1", and the corresponding point from the second image to the "points2" list.
+
+           The goal of this code is to extract the keypoints from the two images that were matched together and store them in two
+           lists, "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix
+           that aligns the two images.
+        * */
+        this.points1.clear();
+        this.points2.clear();
+        for (final DMatch match : this.matchesList) {
+            /*EXPLANATION :
+                matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
+                .queryIdx : is a property of the DMatch that represents the index of the keypoint in the query image(the first image passed to the BFMatcher)
+                .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
+            */
+            // Adds the point from the query image that corresponding to the current match to the "points1" list.
+            this.points1.add(keypoints1List.get(match.queryIdx).pt);
+        }
+
+        /*
+            The goal of this code is to extract the keypoints from the two images that were matched together and store them in two lists
+            "points1" and "points2", which will be used later by the findHomography method to compute the Homography matrix that aligns
+            the two images
+         */
+        for (final DMatch dMatch : this.matchesList) {
+            /*EXPLANATION :
+                matchesList.get(i) : get the i-th element of the matchesList, which is s DMatch object representing a match between two keypoints
+                .trainIdx : is a property of the DMatch object that represents the index of the keypoint in the train image(the second image passed to the BFMatcher)
+                .pt : is a property of the keypoint object that represents the 2D point in the image that corresponding to the keypoint
+            */
+            this.points2.add(keypoints2List.get(dMatch.trainIdx).pt);
+        }
     }
 }

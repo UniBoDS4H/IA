@@ -5,10 +5,7 @@ import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -37,16 +34,13 @@ public class RansacAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
-                final MatOfPoint2f targetPoint = targetImage.getMatOfPoint();
-                final MatOfPoint2f referencePoint = imagePoints.getMatOfPoint();
-                System.out.println(targetPoint);
-                final Mat homography = Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
-                final Mat translationMatrix = Mat.eye(2, 3, CvType.CV_32FC1);
+                final Mat homography = this.getTransformationMatrix(imagePoints, targetImage);//Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
+                final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
                 translationMatrix.put(0, 2, homography.get(0, 2)[0]);
                 translationMatrix.put(1, 2, homography.get(1, 2)[0]);
 
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, translationMatrix, targetImage.getMatImage().size());
+                Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, translationMatrix, targetImage.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, translationMatrix, imagePlus));
             }else{
@@ -58,7 +52,17 @@ public class RansacAlignment extends AlignmentAlgorithm {
         }
     }
 
-    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
-        return null;
+    @Override
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage) {
+        final MatOfPoint2f targetPoint = new MatOfPoint2f();
+        targetPoint.fromArray(targetImage.getPoints());
+        final MatOfPoint2f referencePoint = new MatOfPoint2f();
+        referencePoint.fromArray(imageToAlign.getPoints());
+        return Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
+    }
+
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        Core.perspectiveTransform(source, destination, H);
     }
 }

@@ -4,6 +4,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -33,11 +34,12 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
-                final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
-                final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
+                //final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
+                //final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
                 //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);
                 //final Mat H = Calib3d.findHomography(targetPoint, referencePoint, Calib3d.RANSAC, 5);
-                final Mat H = Imgproc.getPerspectiveTransform(targetPoint, referencePoint);
+                final Mat H = this.getTransformationMatrix(imagePoints, targetImage);
+                //Imgproc.getPerspectiveTransform(targetPoint, referencePoint);
                 final Mat warpedMat = new Mat();
                 Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size());
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
@@ -51,8 +53,18 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
         }
     }
 
-
-    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
-        return null;
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        Core.perspectiveTransform(source, destination, H);
     }
+
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage) {
+        final MatOfPoint2f targetPoint = new MatOfPoint2f();
+        final MatOfPoint2f imagePoint = new MatOfPoint2f();
+        targetPoint.fromArray(targetImage.getPoints());
+        imagePoint.fromArray(imageToAlign.getPoints());
+        return Imgproc.getPerspectiveTransform(imagePoint, targetPoint);
+    }
+
+
 }

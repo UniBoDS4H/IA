@@ -10,6 +10,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.util.*;
@@ -24,7 +25,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
-    private final Thread thread;
+    private Thread thread;
 
     protected AlignmentAlgorithm(){
         targetImage = null;
@@ -132,7 +133,9 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                     output.ifPresent(this.alignedImages::add);
                 }
             }
-        } catch (Exception e) {
+            this.thread = new Thread(this);
+        } catch (final Exception e) {
+            this.thread = new Thread(this);
             throw new RuntimeException(e);
         }
     }
@@ -146,7 +149,15 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
 
+    @Override
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){
+        throw new NotImplementedException();
+    }
 
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        throw new NotImplementedException();
+    }
     /**
      * This method is called in order to have information about the alignment thread.
      * @return true If it is alive, false otherwise

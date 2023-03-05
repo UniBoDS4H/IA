@@ -21,7 +21,7 @@ public class PointController {
         final List<ImagePoints> imagePoints = ImagingConversion.fromPath(paths)
                     .stream().map(ImagePoints::new)
                     .collect(Collectors.toList());
-        if(imagePoints.size() > 1) {
+        if(imagePoints.size() > 1 || (imagePoints.size() == 1 && this.pointManager.getCornerImages().size() > 0)) {
             this.pointManager.addImages(imagePoints);
         }else{
             throw new IllegalArgumentException("You can not upload one single photo.");

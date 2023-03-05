@@ -39,7 +39,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                 final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
-                    final Mat translationMatrix = this.getTransformationMatrix(srcArray,dstArray);
+                    final Mat translationMatrix = this.getTransformationMatrix(imagePoints,targetImage);
                     Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetMat.size());
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
@@ -55,8 +55,10 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
             throw ex;
         }
     }
-    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray){
-        final Point translation = minimumLeastSquare(srcArray, dstArray);
+
+    @Override
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){
+        final Point translation = minimumLeastSquare(imageToAlign.getPoints(), targetImage.getPoints());
         // Shift one image by the estimated amount of translation to align it with the other
         final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
         translationMatrix.put(0, 2, translation.x);
@@ -76,6 +78,11 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
         final double meanDeltaX = Core.mean(new MatOfDouble(deltaX)).val[0];
         final double meanDeltaY = Core.mean(new MatOfDouble(deltaY)).val[0];
         return new Point(meanDeltaX, meanDeltaY);
+    }
+
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        Core.perspectiveTransform(source, destination, H);
     }
 
 }

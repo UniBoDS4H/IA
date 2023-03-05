@@ -1,7 +1,10 @@
 package com.ds4h.model.alignment.preprocessImage;
 
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.alignment.manual.AffineAlignment;
+import com.ds4h.model.alignment.manual.PerspectiveAlignment;
+import com.ds4h.model.alignment.manual.RansacAlignment;
 import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
@@ -26,7 +29,7 @@ public class TargetImagePreprocessing {
     static public ImagePoints process(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         Pair<Mat, MatOfPoint2f> target = new Pair<>(targetImage.getMatImage(),targetImage.getMatOfPoint());
         for (final ImagePoints image : imagesToAlign) {
-            target = TargetImagePreprocessing.singleProcess(target.getFirst(), target.getSecond(), image, algorithm);
+            target = TargetImagePreprocessing.singleProcess(target.getFirst(), target.getSecond(), targetImage, image, algorithm);
         }
         final String directoryName = DirectoryCreator.createTemporaryDirectory(TargetImagePreprocessing.DIRECTORY_NAME);
         final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(target.getFirst(),targetImage.getFile().getName());
@@ -42,14 +45,13 @@ public class TargetImagePreprocessing {
 
     }
 
-    private static Pair<Mat,MatOfPoint2f> singleProcess(final Mat targetMat, final MatOfPoint2f targetPoints, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
+    private static Pair<Mat,MatOfPoint2f> singleProcess(final Mat targetMat, final MatOfPoint2f targetPoints, final ImagePoints targetImage,  final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
         try {
             final Mat imageToShiftMat = imagePoints.getMatImage();
 
             final Point[] srcArray = targetPoints.toArray();
             final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
-            final Mat translationMatrix = algorithm.getTransformationMatrix(srcArray, dstArray);
-
+            final Mat translationMatrix = algorithm.getTransformationMatrix(imagePoints, targetImage);
             final int h1 = targetMat.rows();
             final int w1 = targetMat.cols();
             final int h2 = imageToShiftMat.rows();
@@ -58,17 +60,9 @@ public class TargetImagePreprocessing {
             final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
             final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
             final MatOfPoint2f pts2_ = new MatOfPoint2f();
-            for(int i = 0; i < translationMatrix.rows(); i++){
-                for (int j = 0; j < translationMatrix.cols(); j++){
-                    System.out.println(Arrays.toString(translationMatrix.get(i, j)));
-                }
-            }
-            if(algorithm instanceof AffineAlignment){
-                Core.transform(pts2, pts2_, translationMatrix);
-            }else if(algorithm instanceof TranslationalAlignment){
-                Core.perspectiveTransform(pts2, pts2_, translationMatrix);
-                pts2_.toList().forEach(System.out::println);
-            }
+
+            algorithm.transform(pts2, pts2_, translationMatrix);
+
             pts2.toList().forEach(System.out::println);
             pts2_.toList().forEach(System.out::println);
 
@@ -85,7 +79,7 @@ public class TargetImagePreprocessing {
             final double[] t = {-xmin, -ymin};
             System.out.println(-xmin + " " + -ymin);
 
-            Size s = new Size(xmax-xmin, ymax-ymin);
+            final Size s = new Size(xmax-xmin, ymax-ymin);
             final Mat alignedImage = Mat.zeros(s,imageToShiftMat.type());
             targetMat.copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
             final MatOfPoint2f points = new MatOfPoint2f();

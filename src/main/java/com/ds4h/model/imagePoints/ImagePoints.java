@@ -8,10 +8,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -63,6 +60,9 @@ public class ImagePoints {
      */
     public Point[] getPoints(){
         return this.points.toArray(new Point[0]);
+    }
+    public List<Point> getListPoints(){
+        return new LinkedList<>(this.points);
     }
 
     /**
