@@ -1,5 +1,7 @@
 package com.ds4h.model.util;
 
+import java.util.Objects;
+
 public class Pair<T, U> {
     final private T first;
     final private U second;
@@ -15,5 +17,10 @@ public class Pair<T, U> {
 
     public U getSecond() {
         return second;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.first, this.second);
     }
 }

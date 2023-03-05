@@ -5,6 +5,7 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.Pair;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -26,6 +27,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
+    private final Map<ImagePoints, Mat> trasformationMatrix;
     private Thread thread;
 
     protected AlignmentAlgorithm(){
@@ -33,6 +35,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         this.thread = new Thread(this);
         this.imagesToAlign = new LinkedList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
+        this.trasformationMatrix = new HashMap<>();
     }
     /**
      * Convert the new matrix in to an image
@@ -42,6 +45,26 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      */
     protected Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
+    }
+
+    protected void addMatrix(final ImagePoints key, final Mat matrix){
+        if(Objects.nonNull(key) && Objects.nonNull(matrix)) {
+            this.trasformationMatrix.putIfAbsent(key, matrix);
+        }
+    }
+
+    protected void removeMatrix(final ImagePoints key){
+        if(Objects.nonNull(key)) {
+            this.trasformationMatrix.remove(key);
+        }
+    }
+
+    public void clearMap(){
+        this.trasformationMatrix.clear();
+    }
+
+    protected Mat traslationMatrix(final ImagePoints key){
+        return this.trasformationMatrix.get(Objects.requireNonNull(key));
     }
 
     /**
@@ -55,6 +78,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) {
         throw new NotImplementedException();
     }
+
 
     /**
      * This method can be used inside the alignment in order to convert an RGB matrix in to a GrayScale matrix, because
@@ -129,8 +153,10 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
             if(Objects.nonNull(this.targetImage)) {
                 final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                 this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
+
                 this.imagesToAlign.parallelStream()
                         .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
+
 
                 /*
                 final List<Callable<Optional<AlignedImage>>> alignmentTasks = imagesToAlign.stream().parallel()
@@ -155,12 +181,13 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                 } finally {
                     executorService.shutdown();
                 }
-            }
                  */
             }
             this.thread = new Thread(this);
+            this.clearMap();
         } catch (final Exception e) {
             this.thread = new Thread(this);
+            this.clearMap();
             throw new RuntimeException(e);
         }
     }

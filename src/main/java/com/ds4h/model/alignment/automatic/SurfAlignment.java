@@ -3,6 +3,7 @@ package com.ds4h.model.alignment.automatic;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.Pair;
 import ij.IJ;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
@@ -41,11 +42,9 @@ public class SurfAlignment extends AlignmentAlgorithm {
     protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints){
 
         try {
-
             final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
             final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-
-            final Mat H = this.getTransformationMatrix(imagePoints, targetImage);
+            final Mat H = super.traslationMatrix(imagePoints);
             this.keypoints1List.clear();
             this.keypoints2List.clear();
             this.matchesList.clear();
@@ -66,7 +65,9 @@ public class SurfAlignment extends AlignmentAlgorithm {
         points1_.fromList(this.points1);
         final MatOfPoint2f points2_ = new MatOfPoint2f();
         points2_.fromList(this.points2);
-        return Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+        final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+        super.addMatrix(imageToAlign, H);
+        return H;
     }
 
     @Override
