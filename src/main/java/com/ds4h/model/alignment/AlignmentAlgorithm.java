@@ -7,6 +7,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -23,7 +24,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
-    private Thread thread;
+    private final Thread thread;
 
     protected AlignmentAlgorithm(){
         targetImage = null;
@@ -124,16 +125,14 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign);
+                final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                 this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
                 for (final ImagePoints image : this.imagesToAlign) {
                     final Optional<AlignedImage> output = this.align(processedTarget, image);
                     output.ifPresent(this.alignedImages::add);
                 }
             }
-            this.thread = new Thread(this);
         } catch (Exception e) {
-            this.thread = new Thread(this);
             throw new RuntimeException(e);
         }
     }
