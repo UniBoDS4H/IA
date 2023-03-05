@@ -41,7 +41,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                 final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
-                    final Mat translationMatrix = super.traslationMatrix(imagePoints);
+                    final Mat translationMatrix = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
                     Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetMat.size());
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));

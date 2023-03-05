@@ -44,7 +44,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
         try {
             final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
             final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-            final Mat H = super.traslationMatrix(imagePoints);
+            final Mat H = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
             this.keypoints1List.clear();
             this.keypoints2List.clear();
             this.matchesList.clear();
