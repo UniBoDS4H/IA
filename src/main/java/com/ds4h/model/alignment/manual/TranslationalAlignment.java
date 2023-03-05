@@ -8,7 +8,9 @@ import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * This class is used for the manual alignment using the Translative technique
@@ -70,10 +72,10 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
         final double[] deltaX = new double[srcArray.length];
         final double[] deltaY = new double[srcArray.length];
 
-        for (int i = 0; i < srcArray.length; i++) {
+        IntStream.range(0, srcArray.length).parallel().forEach(i -> {
             deltaX[i] = dstArray[i].x - srcArray[i].x;
             deltaY[i] = dstArray[i].y - srcArray[i].y;
-        }
+        });
 
         final double meanDeltaX = Core.mean(new MatOfDouble(deltaX)).val[0];
         final double meanDeltaY = Core.mean(new MatOfDouble(deltaY)).val[0];

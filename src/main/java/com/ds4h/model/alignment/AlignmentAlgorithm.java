@@ -14,7 +14,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
@@ -51,8 +52,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      * @return the Optional aligned containing the final aligned image
      * @throws NoSuchMethodException in case this method is called from a child class without having the implementation of it
      */
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws NoSuchMethodException {
-        throw new NoSuchMethodException("Method not implemented");
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -128,10 +129,34 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
             if(Objects.nonNull(this.targetImage)) {
                 final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                 this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
-                for (final ImagePoints image : this.imagesToAlign) {
-                    final Optional<AlignedImage> output = this.align(processedTarget, image);
-                    output.ifPresent(this.alignedImages::add);
+                this.imagesToAlign.parallelStream()
+                        .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
+
+                /*
+                final List<Callable<Optional<AlignedImage>>> alignmentTasks = imagesToAlign.stream().parallel()
+                        .map(img -> (Callable<Optional<AlignedImage>>)() -> this.align(processedTarget, img))
+                        .collect(Collectors.toList());
+
+                ExecutorService executorService = Executors.newFixedThreadPool(imagesToAlign.size());
+                try {
+                    List<Future<Optional<AlignedImage>>> alignmentResults = executorService.invokeAll(alignmentTasks);
+
+                    alignmentResults.stream().forEach(img -> {
+                        try {
+                            img.get().ifPresent(this.alignedImages::add);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        } catch (ExecutionException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    // handle exceptions
+                } finally {
+                    executorService.shutdown();
                 }
+            }
+                 */
             }
             this.thread = new Thread(this);
         } catch (final Exception e) {

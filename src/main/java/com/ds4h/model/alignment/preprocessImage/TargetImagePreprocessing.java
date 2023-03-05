@@ -28,6 +28,7 @@ public class TargetImagePreprocessing {
     private TargetImagePreprocessing(){}
     static public ImagePoints process(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         Pair<Mat, MatOfPoint2f> target = new Pair<>(targetImage.getMatImage(),targetImage.getMatOfPoint());
+
         for (final ImagePoints image : imagesToAlign) {
             target = TargetImagePreprocessing.singleProcess(target.getFirst(), target.getSecond(), targetImage, image, algorithm);
         }
@@ -63,28 +64,28 @@ public class TargetImagePreprocessing {
 
             algorithm.transform(pts2, pts2_, translationMatrix);
 
-            pts2.toList().forEach(System.out::println);
-            pts2_.toList().forEach(System.out::println);
-
             final MatOfPoint2f pts = new MatOfPoint2f();
             Core.hconcat(Arrays.asList(pts1, pts2_), pts);
-            final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(), pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
-            final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(), pts.toList().stream().map(p->p.y).max(Double::compareTo).get());
+            if(!pts.toList().isEmpty()) {
+                final Point pts_min = new Point(pts.toList().stream().map(p -> p.x).min(Double::compareTo).get(), pts.toList().stream().map(p -> p.y).min(Double::compareTo).get());
+                final Point pts_max = new Point(pts.toList().stream().map(p -> p.x).max(Double::compareTo).get(), pts.toList().stream().map(p -> p.y).max(Double::compareTo).get());
 
 
-            final int xmin = (int) Math.floor(pts_min.x - 0.5);
-            final int ymin = (int) Math.floor(pts_min.y - 0.5);
-            final int xmax = (int) Math.ceil(pts_max.x + 0.5);
-            final int ymax = (int) Math.ceil(pts_max.y + 0.5);
-            final double[] t = {-xmin, -ymin};
-            System.out.println(-xmin + " " + -ymin);
+                final int xmin = (int) Math.floor(pts_min.x - 0.5);
+                final int ymin = (int) Math.floor(pts_min.y - 0.5);
+                final int xmax = (int) Math.ceil(pts_max.x + 0.5);
+                final int ymax = (int) Math.ceil(pts_max.y + 0.5);
+                final double[] t = {-xmin, -ymin};
 
-            final Size s = new Size(xmax-xmin, ymax-ymin);
-            final Mat alignedImage = Mat.zeros(s,imageToShiftMat.type());
-            targetMat.copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
-            final MatOfPoint2f points = new MatOfPoint2f();
-            points.fromList(targetPoints.toList().stream().map(p-> new Point(p.x+t[0], p.y+t[1])).collect(Collectors.toList()));
-            return new Pair<>(alignedImage, points);
+                final Size s = new Size(xmax - xmin, ymax - ymin);
+                final Mat alignedImage = Mat.zeros(s, imageToShiftMat.type());
+                targetMat.copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
+                final MatOfPoint2f points = new MatOfPoint2f();
+                points.fromList(targetPoints.toList().stream().map(p -> new Point(p.x + t[0], p.y + t[1])).collect(Collectors.toList()));
+                return new Pair<>(alignedImage, points);
+            }else{
+                throw new IllegalArgumentException("Please check your images.");
+            }
         }catch (Exception ex){
             throw ex;
         }
