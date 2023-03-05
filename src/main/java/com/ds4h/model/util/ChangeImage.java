@@ -36,4 +36,24 @@ public class ChangeImage {
         BufferedImage adjustedImage = rescaleOp.filter(bufferedImage, null);
         return new ImagePlus(inputImage.getTitle(), adjustedImage);
     }
+
+    public static ImagePlus invert(final ImagePlus imagePlus){
+        final BufferedImage originalImage = imagePlus.getBufferedImage();
+
+        for (int y = 0; y < originalImage.getHeight(); y++) {
+            for (int x = 0; x < originalImage.getWidth(); x++) {
+                int pixel = originalImage.getRGB(x, y);
+                int alpha = (pixel >> 24) & 0xff;
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = pixel & 0xff;
+                red = 255 - red;
+                green = 255 - green;
+                blue = 255 - blue;
+                pixel = (alpha << 24) | (red << 16) | (green << 8) | blue;
+                originalImage.setRGB(x, y, pixel);
+            }
+        }
+        return new ImagePlus(imagePlus.getTitle(), originalImage);
+    }
 }

@@ -20,8 +20,12 @@ import java.util.Optional;
 
 public class SemiAutomaticAlignment extends AlignmentAlgorithm {
 
+    private final List<Point> points1, points2;
+
     public SemiAutomaticAlignment(){
         super();
+        this.points1 = new ArrayList<>();
+        this.points2 = new ArrayList<>();
     }
 
     @Override
@@ -59,21 +63,23 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
                 final List<KeyPoint> keypoints2List = keypoints2.toList();
 
 
-                final List<Point> points1 = new ArrayList<>();
                 for (DMatch match : matchesList) {
                     points1.add(keypoints1List.get(match.queryIdx).pt);
                 }
-                final List<Point> points2 = new ArrayList<>();
                 for (DMatch dMatch : matchesList) {
                     points2.add(keypoints2List.get(dMatch.trainIdx).pt);
                 }
-
-                final MatOfPoint2f points1_ = targetImage.getMatOfPoint();
-                points1_.fromList(points1);
-                final MatOfPoint2f points2_ = imagePoints.getMatOfPoint();
-                points2_.fromList(points2);
-                final Mat homography = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
+                this.points1.addAll(targetImage.getListPoints());
+                this.points2.addAll(imagePoints.getListPoints());
+                //********
+                //final MatOfPoint2f points1_ = targetImage.getMatOfPoint()
+                //points1_.fromArray(points1);
+                //final MatOfPoint2f points2_ = imagePoints.getMatOfPoint()
+                //points2_.fromArray(points1);
+                final Mat homography = this.getTransformationMatrix(imagePoints, targetImage);
+                //Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
                 // Compute translation matrix from homography matrix
+                //*******
                 double tx = homography.get(0, 2)[0];
                 double ty = homography.get(1, 2)[0];
                 final Mat translationMatrix = new Mat(2, 3, CvType.CV_64F);
@@ -99,7 +105,16 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
     }
 
     @Override
-    public Mat getTransformationMatrix(Point[] dstArray, Point[] srcArray) {
-        return null;
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage) {
+        final MatOfPoint2f points1_ = new MatOfPoint2f();
+        points1_.fromList(this.points1);
+        final MatOfPoint2f points2_ = new MatOfPoint2f();
+        points2_.fromList(this.points2);
+        return Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
+    }
+
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        Core.perspectiveTransform(source, destination, H);
     }
 }

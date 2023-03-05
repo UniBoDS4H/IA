@@ -10,10 +10,12 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
@@ -24,7 +26,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
-    private final Thread thread;
+    private Thread thread;
 
     protected AlignmentAlgorithm(){
         targetImage = null;
@@ -50,8 +52,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
      * @return the Optional aligned containing the final aligned image
      * @throws NoSuchMethodException in case this method is called from a child class without having the implementation of it
      */
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws NoSuchMethodException {
-        throw new NoSuchMethodException("Method not implemented");
+    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -127,12 +129,38 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
             if(Objects.nonNull(this.targetImage)) {
                 final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                 this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
-                for (final ImagePoints image : this.imagesToAlign) {
-                    final Optional<AlignedImage> output = this.align(processedTarget, image);
-                    output.ifPresent(this.alignedImages::add);
+                this.imagesToAlign.parallelStream()
+                        .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
+
+                /*
+                final List<Callable<Optional<AlignedImage>>> alignmentTasks = imagesToAlign.stream().parallel()
+                        .map(img -> (Callable<Optional<AlignedImage>>)() -> this.align(processedTarget, img))
+                        .collect(Collectors.toList());
+
+                ExecutorService executorService = Executors.newFixedThreadPool(imagesToAlign.size());
+                try {
+                    List<Future<Optional<AlignedImage>>> alignmentResults = executorService.invokeAll(alignmentTasks);
+
+                    alignmentResults.stream().forEach(img -> {
+                        try {
+                            img.get().ifPresent(this.alignedImages::add);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        } catch (ExecutionException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    // handle exceptions
+                } finally {
+                    executorService.shutdown();
                 }
             }
-        } catch (Exception e) {
+                 */
+            }
+            this.thread = new Thread(this);
+        } catch (final Exception e) {
+            this.thread = new Thread(this);
             throw new RuntimeException(e);
         }
     }
@@ -146,7 +174,15 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
 
+    @Override
+    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){
+        throw new NotImplementedException();
+    }
 
+    @Override
+    public void transform(final Mat source, final Mat destination, final Mat H){
+        throw new NotImplementedException();
+    }
     /**
      * This method is called in order to have information about the alignment thread.
      * @return true If it is alive, false otherwise
