@@ -1,6 +1,6 @@
 package com.ds4h.view.cornerSelectorGUI;
 
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CornerSelectorGUI extends Frame implements StandardGUI {
 
-    private final CornerController cornerController;
+    private final PointController pointController;
     private final CornerSelectorPanelGUI panel;
     private final ImagePoints image;
     private List<Point> selectedPoints;
@@ -24,15 +24,15 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     private final MainMenuGUI mainMenu;
 
 
-    public CornerSelectorGUI(final ImagePoints image, final CornerController controller, MainMenuGUI mainMenu){
+    public CornerSelectorGUI(final ImagePoints image, final PointController controller, MainMenuGUI mainMenu){
         super(controller.getMenuItem(image).toString());
         this.mainMenu = mainMenu;
-        this.cornerController = controller;
+        this.pointController = controller;
         this.image = image;
         //TODO: use the RENDERIMAGE in order to apply contrast and other options
         this.panel = new CornerSelectorPanelGUI(this);
         this.panel.setCurrentImage(image);
-        this.menu = new CornerSelectorMenuGUI(this.cornerController, this.image, this);
+        this.menu = new CornerSelectorMenuGUI(this.pointController, this.image, this);
         this.selectedPoints = new ArrayList<>();
         setLayout(new BorderLayout());
         this.setFrameSize();

@@ -1,11 +1,11 @@
 package com.ds4h.view.cornerSelectorGUI;
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import javax.swing.*;
 import java.awt.*;
 
 public class CornerSelectorMenuGUI extends JPanel {
-    private final CornerController cornerController;
+    private final PointController pointController;
     private final ImagePoints image;
     private final JButton deleteButton;
     private final JLabel copyToLabel;
@@ -14,14 +14,14 @@ public class CornerSelectorMenuGUI extends JPanel {
     private final JComboBox<MenuItem> copyToCombo;
     private final CornerSelectorGUI container;
     private final CornerSelectorSettingsGUI settings;
-    public CornerSelectorMenuGUI(CornerController controller, ImagePoints image, CornerSelectorGUI container){
+    public CornerSelectorMenuGUI(PointController controller, ImagePoints image, CornerSelectorGUI container){
         this.container = container;
         this.image = image;
-        this.cornerController = controller;
+        this.pointController = controller;
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-        final MenuItem[] options = this.cornerController.getCornerImagesImages().stream()
-                .filter(i -> !i.equals(this.image)).map(this.cornerController::getMenuItem).toArray(MenuItem[]::new);
+        final MenuItem[] options = this.pointController.getCornerImagesImages().stream()
+                .filter(i -> !i.equals(this.image)).map(this.pointController::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
         this.copyToCombo.setSelectedIndex(0);
@@ -51,7 +51,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         });
         this.copyButton.addActionListener(e->{
             MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
-            if(!cornerController.copyCorners(container.getSelectedPoints(), item.getImage())){
+            if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
                 JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Some of the points are out of the selected image, they have not been copied");
             }else{
                 JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Successfully copied " + container.getSelectedPoints().size() + " points.");

@@ -30,6 +30,10 @@ public class ImageController {
         }
     }
 
+    public void align(){
+        this.imageEnum = ImageEnum.ALIGNED;
+    }
+
     public void elastic(final List<AlignedImage> alignedImages){
         if(Objects.nonNull(alignedImages) && !alignedImages.isEmpty()) {
             this.bunwarpJController.transformation(alignedImages);

@@ -1,19 +1,13 @@
 package com.ds4h.view.reuseGUI;
 
-import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.controller.savingController.SaveController;
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.io.File;
 import java.io.FileNotFoundException;
 
 public class ReuseGUI extends JFrame implements StandardGUI {
@@ -23,12 +17,12 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     private final JScrollPane scrollPane;
     private boolean done = false;
     private final ImageController controller;
-    private final CornerController cornerController;
+    private final PointController pointController;
     private final PreviewImagesPane previewImagesPane;
-    public ReuseGUI(final PreviewImagesPane previewImagesPane, final CornerController cornerController, final ImageController controller){
+    public ReuseGUI(final PreviewImagesPane previewImagesPane, final PointController pointController, final ImageController controller){
         this.setSize();
         this.previewImagesPane = previewImagesPane;
-        this.cornerController = cornerController;
+        this.pointController = pointController;
         this.controller = controller;
         this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());
@@ -49,7 +43,7 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.reuseButton.addActionListener(event -> {
             try {
-                this.cornerController.reuseSource(this.imagesPane.getImagesToReuse());
+                this.pointController.reuseSource(this.imagesPane.getImagesToReuse());
                 this.previewImagesPane.clearPanels();
                 this.previewImagesPane.showPreviewImages();
                 this.dispose();

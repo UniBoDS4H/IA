@@ -22,6 +22,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final JButton changeButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
+    private float contrast = 0.0f;
     public CornerSelectorSettingsGUI(CornerSelectorGUI container){
         super("Settings");
         this.container = container;
@@ -93,12 +94,12 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
             int from = (int)indexFrom.getSelectedItem();
             int to = (int)indexTo.getSelectedItem();
             container.getImage().editPointIndex(from-1, to-1);
-
+            //ChangeColorController.changeContrast(container.getImage().getImage(), this.contrast);
             container.repaint();
         });
         this.contrastSlider.addChangeListener(e -> {
             //TODO: FIX HOW TO IMAGES RENDERED.
-            ChangeColorController.changeContrast(container.getImage().getImage(), this.contrastSlider.getValue() / 10);
+            this.contrast  = this.contrastSlider.getValue()/10.0f;
         });
     }
 

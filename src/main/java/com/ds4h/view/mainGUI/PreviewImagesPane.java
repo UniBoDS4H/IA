@@ -1,16 +1,16 @@
 package com.ds4h.view.mainGUI;
 
-import com.ds4h.controller.cornerController.CornerController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class PreviewImagesPane extends JPanel {
-    private final CornerController controller;
+    private final PointController controller;
     private final MainMenuGUI container;
     private JPanel currentPanel;
-    PreviewImagesPane(CornerController controller, MainMenuGUI container){
+    PreviewImagesPane(PointController controller, MainMenuGUI container){
         this.container = container;
         this.controller = controller;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

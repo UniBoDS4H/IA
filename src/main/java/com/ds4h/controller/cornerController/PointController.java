@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CornerController {
+public class PointController {
     PointManager pointManager = new PointManager();
     public void loadImages(final List<String> paths) throws Exception {
         final List<ImagePoints> imagePoints = ImagingConversion.fromPath(paths)
