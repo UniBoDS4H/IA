@@ -7,6 +7,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
+import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.reuseGUI.ReuseGUI;
@@ -58,8 +59,14 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.carouselItem = new JMenuItem("View as Carousel");
         this.reuseItem = new JMenuItem("Reuse as Source");
         this.saveGui = new SaveImagesGUI(this.controller);
+
         this.addComponents();
         this.addListeners();
+        this.panel.setPreferredSize(this.imagePanels.get(0).getPreferredSize());
+        System.out.println("AAA"+ this.panel.getPreferredSize());
+        Dimension d = new Dimension((int)this.panel.getPreferredSize().getWidth()+ this.menu.getWidth(), (int)this.panel.getPreferredSize().getHeight()+this.menu.getHeight());
+        //setSize(d);
+        this.pack();
     }
 
     public void changeImages(final List<ImagePlus> otherImages){
@@ -134,15 +141,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.saveMenu.add(this.saveImages);
         this.reuseMenu.add(this.reuseItem);
         this.setJMenuBar(this.menu);
-        //TODO: set the correct size
-        this.setMinimumSize(new Dimension(images.stream().map(AlignedImage::getAlignedImage)
-                .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
-                images.stream().map(AlignedImage::getAlignedImage)
-                        .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight()));
-        this.setMaximumSize( new Dimension(images.stream().map(AlignedImage::getAlignedImage)
-                    .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
-                images.stream().map(AlignedImage::getAlignedImage)
-                        .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight()));
     }
 
     private void overlapImages(){
@@ -205,7 +203,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
 
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, this.opacity));
-            g2d.drawImage(this.alignedImage.getImage(), 0, 0, null);
+            g2d.drawImage(this.alignedImage.getImage(), 0, 0, (int)this.getPreferredSize().getWidth(), (int)this.getPreferredSize().getHeight(), null);
             g2d.dispose();
         }
         @Override
@@ -213,12 +211,9 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             if (images.isEmpty()) {
                 return new Dimension(100, 100);
             } else {
-                return new Dimension(images.stream()
-                            .map(AlignedImage::getAlignedImage)
-                            .max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
-                        images.stream()
-                                .map(AlignedImage::getAlignedImage)
-                                .max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight());
+                return DisplayInfo.getScaledImageDimension(
+                        new Dimension(images.get(0).getAlignedImage().getWidth(),images.get(0).getAlignedImage().getHeight()),
+                        DisplayInfo.getDisplaySize(80));
             }
         }
     }

@@ -4,6 +4,7 @@ import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
+import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
@@ -58,11 +59,15 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.reuseItem = new JMenuItem("Reuse as resource");
         this.overlappedItem = new JMenuItem("View Overlapped");
         this.saveItem = new JMenuItem("Save Project");
+        //setSize((int)this.panel.getPreferredSize().getWidth()+ this.menuBar.getWidth(), (int)this.panel.getPreferredSize().getHeight()+this.menuBar.getHeight());
+
         // Create a timer to automatically change slides
-        this.pack();
+
         this.addListeners();
         this.addComponents();
         this.showDialog();
+        this.pack();
+
     }
 
 
@@ -70,14 +75,12 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.currentImage = (this.currentImage - 1 + this.images.size()) % this.images.size();
         this.label.setText((this.currentImage+1) + "/" + this.max_number);
         this.panel.repaint();
-        this.setSize(this.panel.getPreferredSize());
     }
 
     private void swipeLeft(){
         this.currentImage = (this.currentImage + 1) % this.images.size();
         this.label.setText((this.currentImage+1) + "/" + this.max_number);
         this.panel.repaint();
-        this.setSize(this.panel.getPreferredSize());
     }
 
     @Override
@@ -130,14 +133,14 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.settings.add(this.overlappedItem);
         this.save.add(this.saveItem);
         this.reuse.add(this.reuseItem);
-        this.setSize(this.panel.getPreferredSize());
+        //this.setSize(this.panel.getPreferredSize());
     }
     private class CarouselPanel extends JPanel{
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             // Draw the current image
-            g.drawImage(images.get(currentImage).getImage(), 0, 0, null);
+            g.drawImage(images.get(currentImage).getImage(), 0, 0, (int)this.getPreferredSize().getWidth(), (int)this.getPreferredSize().getHeight(), null);
         }
 
         @Override
@@ -145,8 +148,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             if (images.isEmpty()) {
                 return new Dimension(100, 100);
             } else {
-                return new Dimension(images.stream().max(Comparator.comparingInt(ImagePlus::getWidth)).get().getWidth(),
-                        images.stream().max(Comparator.comparingInt(ImagePlus::getHeight)).get().getHeight());
+                return DisplayInfo.getScaledImageDimension(
+                        new Dimension(images.get(0).getWidth(),images.get(0).getHeight()),
+                        DisplayInfo.getDisplaySize(80));
             }
         }
     }
