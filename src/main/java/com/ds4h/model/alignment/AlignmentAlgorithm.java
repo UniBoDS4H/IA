@@ -1,6 +1,7 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
@@ -151,13 +152,19 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
-                this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
+                if(this instanceof SurfAlignment){this.alignedImages.add(new AlignedImage(this.targetImage.getMatImage(), this.targetImage.getImage()));
 
-                this.imagesToAlign.parallelStream()
-                        .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
+                    this.imagesToAlign.parallelStream()
+                            .forEach(img -> this.align(this.targetImage, img).ifPresent(this.alignedImages::add));
+                    System.out.println("AA");
+                }else {
+                    final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
+                    this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
 
+                    this.imagesToAlign.parallelStream()
+                            .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
 
+                }
                 /*
                 final List<Callable<Optional<AlignedImage>>> alignmentTasks = imagesToAlign.stream().parallel()
                         .map(img -> (Callable<Optional<AlignedImage>>)() -> this.align(processedTarget, img))

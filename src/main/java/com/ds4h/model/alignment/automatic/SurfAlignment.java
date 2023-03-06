@@ -68,11 +68,11 @@ public class SurfAlignment extends AlignmentAlgorithm {
         points2_.fromList(this.points2);
         System.out.println(this.points1.size());
         System.out.println(this.points2.size());
-        this.points1.forEach(p->imageToAlign.addPoint(p));
-        this.points2.forEach(p->targetImage.addPoint(p));
+        //this.points1.forEach(p->imageToAlign.addPoint(p));
+        //this.points2.forEach(p->targetImage.addPoint(p));
 
-        final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
-        //final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+        //final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
+        final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
         super.addMatrix(imageToAlign, H);
         return H;
     }
