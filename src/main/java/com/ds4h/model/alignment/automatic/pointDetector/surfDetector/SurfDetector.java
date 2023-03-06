@@ -18,12 +18,12 @@ public class SurfDetector extends PointDetector {
     }
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final Mat targetImage, final ImagePoints imagePoint) {
         this.keypoints1List.clear();
         this.keypoints2List.clear();
         this.matchesList.clear();
         final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoint.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-        final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+        final Mat targetImageMat = super.toGrayscale(targetImage);
 
         // Detect the keypoints and compute the descriptors for both images:
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points

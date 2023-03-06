@@ -25,7 +25,7 @@ public abstract class PointDetector {
         this.goodMatches = new HashMap<>();
     }
 
-    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
+    public abstract void detectPoint(final Mat targetImage, final ImagePoints imagePoint);
     public abstract void matchPoint();
 
     public List<Point> getPoints1(){
