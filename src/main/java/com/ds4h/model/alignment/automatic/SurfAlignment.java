@@ -2,6 +2,7 @@ package com.ds4h.model.alignment.automatic;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.Pair;
 import ij.IJ;
@@ -65,7 +66,13 @@ public class SurfAlignment extends AlignmentAlgorithm {
         points1_.fromList(this.points1);
         final MatOfPoint2f points2_ = new MatOfPoint2f();
         points2_.fromList(this.points2);
-        final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+        System.out.println(this.points1.size());
+        System.out.println(this.points2.size());
+        this.points1.forEach(p->imageToAlign.addPoint(p));
+        this.points2.forEach(p->targetImage.addPoint(p));
+
+        final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
+        //final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
         super.addMatrix(imageToAlign, H);
         return H;
     }
@@ -103,7 +110,15 @@ public class SurfAlignment extends AlignmentAlgorithm {
         final MatOfDMatch matches_ = new MatOfDMatch();
         matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
-        this.matchesList.addAll(matches.toList());
+        double maxDist = 0.7;
+        double minDist = 0.2;
+        List<DMatch> goodMatches = new ArrayList<>();
+        for (DMatch match : matches.toList()) {
+            if (match.distance < maxDist * minDist) {
+                goodMatches.add(match);
+            }
+        }
+        this.matchesList.addAll(goodMatches);
 
         // convert the matrices of keypoints in to list of keypoints, which represent the list of keypoints in the two images
         this.keypoints1List.addAll(keypoints1.toList());
@@ -125,11 +140,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
         this.matchesList
                 .forEach(match -> {
                     this.points1.add(this.keypoints1List.get(match.queryIdx).pt);
-                });
-
-        this.matchesList
-                .forEach(dMatch -> {
-                    this.points2.add(this.keypoints2List.get(dMatch.trainIdx).pt);
+                    this.points2.add(this.keypoints2List.get(match.trainIdx).pt);
                 });
 
     }

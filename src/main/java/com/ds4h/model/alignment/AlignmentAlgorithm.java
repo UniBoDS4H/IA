@@ -151,11 +151,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
-                this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
-
                 this.imagesToAlign.parallelStream()
-                        .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
+                        .forEach(img -> new SURFPointsDetector().detect(img, targetImage));
 
 
                 /*

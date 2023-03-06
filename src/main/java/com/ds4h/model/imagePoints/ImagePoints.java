@@ -101,9 +101,7 @@ public class ImagePoints {
      * @param point
      */
     public void addPoint(final Point point){
-        if(!this.points.contains(point)){
             this.points.add(point);
-        }
     }
 
     /**

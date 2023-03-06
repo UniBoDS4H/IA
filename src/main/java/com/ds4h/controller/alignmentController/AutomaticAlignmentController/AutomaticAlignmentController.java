@@ -4,6 +4,7 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.SURFPointsDetector;
 import com.ds4h.model.alignment.automatic.SurfAlignment;
 
 import java.util.LinkedList;
