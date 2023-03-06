@@ -7,8 +7,11 @@ import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
+import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.saveProject.SaveImages;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -152,41 +155,22 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                if(this instanceof SurfAlignment){this.alignedImages.add(new AlignedImage(this.targetImage.getMatImage(), this.targetImage.getImage()));
+                if(this instanceof SurfAlignment){
+                    TargetImagePreprocessing t = new TargetImagePreprocessing();
+                    final Pair<Mat, Map<ImagePoints, MatOfPoint2f>> k = t.automaticProcess(this.targetImage.getMatImage(), targetImage.getMatOfPoint(), targetImage,
+                            this.imagesToAlign, this, new SurfAlignment());
+                    final String directoryName = DirectoryCreator.createTemporaryDirectory("DIO_PORCO_DIO");
 
-                    this.imagesToAlign.parallelStream()
-                            .forEach(img -> this.align(this.targetImage, img).ifPresent(this.alignedImages::add));
-                    System.out.println("AA");
+                    final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getFile().getName());
+                        imagePlus.get().setTitle(targetImage.getFile().getName());
+                        SaveImages.save(imagePlus.get(), System.getProperty("java.io.tmpdir") + "/" + directoryName);
                 }else {
-                    final ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
+                    ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                     this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
-
                     this.imagesToAlign.parallelStream()
                             .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
 
                 }
-                /*
-                final List<Callable<Optional<AlignedImage>>> alignmentTasks = imagesToAlign.stream().parallel()
-                        .map(img -> (Callable<Optional<AlignedImage>>)() -> this.align(processedTarget, img))
-                        .collect(Collectors.toList());
-                ExecutorService executorService = Executors.newFixedThreadPool(imagesToAlign.size());
-                try {
-                    List<Future<Optional<AlignedImage>>> alignmentResults = executorService.invokeAll(alignmentTasks);
-                    alignmentResults.stream().forEach(img -> {
-                        try {
-                            img.get().ifPresent(this.alignedImages::add);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        } catch (ExecutionException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    // handle exceptions
-                } finally {
-                    executorService.shutdown();
-                }
-                 */
             }
             this.thread = new Thread(this);
             this.clearMap();
@@ -205,6 +189,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public List<AlignedImage> alignedImages(){
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
+
 
     @Override
     public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){

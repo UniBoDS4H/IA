@@ -60,11 +60,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
 
     @Override
     public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){
-
-        System.out.println(imageToAlign.getPoints().length);
-        System.out.println(targetImage.getPoints().length);
         final Point translation = minimumLeastSquare(imageToAlign.getPoints(), targetImage.getPoints());
-        // Shift one image by the estimated amount of translation to align it with the other
         final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
         translationMatrix.put(0, 2, translation.x);
         translationMatrix.put(1, 2, translation.y);

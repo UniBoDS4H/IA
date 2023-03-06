@@ -2,6 +2,8 @@ package com.ds4h.model.alignment.automatic;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SurfDetector;
 import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.Pair;
@@ -19,6 +21,8 @@ import java.util.*;
  * The SURF method is a fast and robust algorithm for similar images.
  */
 public class SurfAlignment extends AlignmentAlgorithm {
+
+    private final SurfDetector surfDetector;
     private static final int NUMBER_OF_ITERATION = 5;
     private final List<KeyPoint> keypoints1List, keypoints2List;
     private final List<DMatch> matchesList;
@@ -27,6 +31,7 @@ public class SurfAlignment extends AlignmentAlgorithm {
 
     public SurfAlignment(){
         super();
+        this.surfDetector = new SurfDetector();
         this.keypoints1List = new ArrayList<>();
         this.keypoints2List = new ArrayList<>();
         this.matchesList = new ArrayList<>();
@@ -58,6 +63,20 @@ public class SurfAlignment extends AlignmentAlgorithm {
         return Optional.empty();
     }
 
+    protected Optional<AlignedImage> codio(final ImagePoints img , MatOfPoint2f p, final ImagePoints target){
+
+        try {
+            final Mat H = Calib3d.findHomography(img.getMatOfPoint(), p, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
+            this.keypoints1List.clear();
+            this.keypoints2List.clear();
+            this.matchesList.clear();
+            return super.warpMatrix(img.getMatImage(), H, target.getMatImage().size(), img.getFile());
+        }catch (Exception e){
+            IJ.showMessage(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
     @Override
     public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage) {
         this.detectPoints(imageToAlign.getMatImage(), targetImage.getMatImage());
@@ -68,13 +87,15 @@ public class SurfAlignment extends AlignmentAlgorithm {
         points2_.fromList(this.points2);
         System.out.println(this.points1.size());
         System.out.println(this.points2.size());
-        //this.points1.forEach(p->imageToAlign.addPoint(p));
-        //this.points2.forEach(p->targetImage.addPoint(p));
 
         //final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
         final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
         super.addMatrix(imageToAlign, H);
         return H;
+    }
+
+    public PointDetector getPointDetector(){
+        return this.surfDetector;
     }
 
     @Override
