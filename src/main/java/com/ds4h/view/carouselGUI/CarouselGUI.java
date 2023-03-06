@@ -59,8 +59,6 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.reuseItem = new JMenuItem("Reuse as resource");
         this.overlappedItem = new JMenuItem("View Overlapped");
         this.saveItem = new JMenuItem("Save Project");
-        //setSize((int)this.panel.getPreferredSize().getWidth()+ this.menuBar.getWidth(), (int)this.panel.getPreferredSize().getHeight()+this.menuBar.getHeight());
-
         // Create a timer to automatically change slides
 
         this.addListeners();
@@ -133,7 +131,6 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.settings.add(this.overlappedItem);
         this.save.add(this.saveItem);
         this.reuse.add(this.reuseItem);
-        //this.setSize(this.panel.getPreferredSize());
     }
     private class CarouselPanel extends JPanel{
         @Override

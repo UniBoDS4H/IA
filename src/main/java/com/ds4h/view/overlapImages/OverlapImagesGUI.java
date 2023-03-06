@@ -63,9 +63,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.addComponents();
         this.addListeners();
         this.panel.setPreferredSize(this.imagePanels.get(0).getPreferredSize());
-        System.out.println("AAA"+ this.panel.getPreferredSize());
-        Dimension d = new Dimension((int)this.panel.getPreferredSize().getWidth()+ this.menu.getWidth(), (int)this.panel.getPreferredSize().getHeight()+this.menu.getHeight());
-        //setSize(d);
         this.pack();
     }
 
