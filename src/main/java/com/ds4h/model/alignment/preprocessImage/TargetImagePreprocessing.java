@@ -106,8 +106,8 @@ public class TargetImagePreprocessing {
             }
             s.getPointDetector().matchPoint(imagePoints);
             final Mat translationMatrix = s.getTransformationMatrix(imagePoints, newTarget);
-            final int h1 = targetMat.rows();
-            final int w1 = targetMat.cols();
+            final int h1 = lastTargetImage.rows();
+            final int w1 = lastTargetImage.cols();
             final int h2 = imagePoints.getMatImage().rows();
             final int w2 = imagePoints.getMatImage().cols();
 
