@@ -117,23 +117,13 @@ public abstract class AbstractAutomaticAlignment implements Runnable{
 
     @Override
     public void run(){
-        TargetImagePreprocessing t = new TargetImagePreprocessing();
-        final AbstractAutomaticAlignment a = new AutomaticAlgorithm(new SURFDetector(), new TranslationalAlignment());
-        final Pair<Mat, Map<ImagePoints, MatOfPoint2f>> k = t.automaticProcess(this.targetImage.getMatImage(), targetImage.getMatOfPoint(), targetImage,
-                this.imagesToAlign, a);
-        final String directoryName = DirectoryCreator.createTemporaryDirectory("DS4H_TMPPPP");
-
-        final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getFile().getName());
-        imagePlus.get().setTitle(targetImage.getFile().getName());
-        SaveImages.save(imagePlus.get(), System.getProperty("java.io.tmpdir") + "/" + directoryName);
-        imagePlus.get().show();
-        final ImagePoints result = new ImagePoints(new File(System.getProperty("java.io.tmpdir") + "/" +directoryName+"/" + targetImage.getFile().getName()));
-
-
+        final TargetImagePreprocessing targetImagePreprocessing = new TargetImagePreprocessing();
+        final Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> k = targetImagePreprocessing.processImage( targetImage, this.imagesToAlign, this);
+        final ImagePoints result = k.getFirst();
         this.alignedImages.add(new AlignedImage(result.getMatImage(), result.getImage()));
         System.out.println("MAT OF POINT RESULT : " + result.getMatOfPoint());
-        t.map.entrySet().parallelStream().peek(u -> System.out.println("BEFORE ALIGN T POINTS: " + u.getValue()))
-                .forEach(img -> a.align(img.getValue(), img.getKey(), result.getMatImage().size())
+        k.getSecond().entrySet().parallelStream().peek(u -> System.out.println("BEFORE ALIGN T POINTS: " + u.getValue()))
+                .forEach(img -> this.align(img.getValue(), img.getKey(), result.getMatImage().size())
                         .ifPresent(this.alignedImages::add));
     }
 
