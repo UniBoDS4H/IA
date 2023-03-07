@@ -4,10 +4,12 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -39,12 +41,34 @@ public class TranslationalAlignment extends ManualAlgorithm {
                 final Point[] dstArray = targetPoints.toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
+
                     final Point translation = minimumLeastSquare(srcArray, dstArray);
                     final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
                     //final Mat translationMatrix = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
-                    Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetSize);
+
+                    //Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetSize);
+                    for(int i = 0; i < translationMatrix.rows(); i++){
+                        for(int j = 0; j < translationMatrix.cols(); j++){
+                            System.out.print(Arrays.toString(translationMatrix.get(i, j)));
+                        }
+                        System.out.println();
+                    }
+                    System.out.println();
+                    Mat H = Calib3d.estimateAffinePartial2D(imagePoints.getMatOfPoint(),targetPoints);
+                    H.put(0,0,1);
+                    H.put(0,1,0);
+                    H.put(1,0,0);
+                    H.put(1,1,1);
+
+                    for(int i = 0; i < H.rows(); i++){
+                        for(int j = 0; j < H.cols(); j++){
+                            System.out.print(Arrays.toString(H.get(i, j)));
+                        }
+                        System.out.println();
+                    }
+                    Imgproc.warpAffine(imageToShiftMat,alignedImage,H,targetSize);
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getName(), alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{

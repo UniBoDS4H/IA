@@ -88,17 +88,6 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
      * @param mat the Matrix to convert from RGB to GrayScale
      * @return the new GrayScale matrix
      */
-    protected Mat toGrayscale(final Mat mat) {
-        Mat gray = new Mat();
-        if (mat.channels() == RGB) {
-            // Convert the BGR image to a single channel grayscale image
-            Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
-        } else {
-            // If the image is already single channel, just return it
-            return mat;
-        }
-        return gray;
-    }
 
     /**
      * This method is used for the warping of the final Matrix, this warping is used in order to store the new aligned image.
