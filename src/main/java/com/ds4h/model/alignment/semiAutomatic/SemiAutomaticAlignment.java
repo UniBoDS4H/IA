@@ -1,21 +1,6 @@
 package com.ds4h.model.alignment.semiAutomatic;
 
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
-import com.ds4h.model.imagePoints.ImagePoints;
-import ij.IJ;
-import ij.ImagePlus;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.*;
-import org.opencv.features2d.BFMatcher;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.xfeatures2d.SURF;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 /*
 public class SemiAutomaticAlignment extends AlignmentAlgorithm {
 

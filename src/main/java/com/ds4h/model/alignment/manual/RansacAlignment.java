@@ -1,20 +1,19 @@
 package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * This class is used for the manual alignment using the Homography technique
  */
-public class RansacAlignment extends AlignmentAlgorithm {
+public class RansacAlignment extends ManualAlgorithm {
 
     public static final int LOWER_BOUND = 4;
 
@@ -31,9 +30,9 @@ public class RansacAlignment extends AlignmentAlgorithm {
      * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetImage.size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+            if(targetImage.toList().size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
                 final Mat homography = null;// this.getTransformationMatrix(imagePoints, targetImage);//Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
                 final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
                 translationMatrix.put(0, 2, homography.get(0, 2)[0]);

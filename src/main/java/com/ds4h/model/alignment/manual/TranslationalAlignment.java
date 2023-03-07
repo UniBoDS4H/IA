@@ -1,21 +1,20 @@
 package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
  * This class is used for the manual alignment using the Translative technique
  */
-public class TranslationalAlignment extends AlignmentAlgorithm {
+public class TranslationalAlignment extends ManualAlgorithm {
 
     public static final int LOWER_BOUND = 1;
 
@@ -32,16 +31,16 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
      * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    public Optional<AlignedImage> align(final List<Point> targetPoints, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final MatOfPoint2f targetPoints, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetPoints.size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+            if(targetPoints.toList().size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
                 final Mat imageToShiftMat = imagePoints.getMatImage();
 
-                final Point[] srcArray = targetPoints.toArray(new Point[0]);
-                final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
+                final Point[] srcArray = imagePoints.getMatOfPoint().toArray();
+                final Point[] dstArray = targetPoints.toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
-                    final Point translation = minimumLeastSquare(dstArray, srcArray);
+                    final Point translation = minimumLeastSquare(srcArray, dstArray);
                     final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
@@ -55,7 +54,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                 }
             }else{
                 System.out.println("INSIDE T: " + imagePoints.getMatOfPoint());
-                System.out.println("INSIDE T: " + targetPoints.size());
+                System.out.println("INSIDE T: " + targetPoints);
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
                         "In order to use the Translation alignment you must at least: " + TranslationalAlignment.LOWER_BOUND + " points.");
             }
@@ -70,7 +69,6 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
         final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
         translationMatrix.put(0, 2, translation.x);
         translationMatrix.put(1, 2, translation.y);
-        super.addMatrix(imageToAlign, translationMatrix);
         return translationMatrix;
     }
 

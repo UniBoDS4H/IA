@@ -3,7 +3,7 @@ package com.ds4h.controller.alignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.manual.*;
 
@@ -13,11 +13,11 @@ import java.util.*;
  *
  */
 public class ManualAlignmentController implements AlignmentControllerInterface {
-    private final AlignmentAlgorithm perspectiveAlignment;
-    private final AlignmentAlgorithm affineAlignment;
-    private final AlignmentAlgorithm translativeAlignment;
-    private final AlignmentAlgorithm ransacAlignment;
-    private final AlignmentAlgorithm leastMedianAlignment;
+    private final ManualAlgorithm perspectiveAlignment;
+    private final ManualAlgorithm affineAlignment;
+    private final ManualAlgorithm translativeAlignment;
+    private final ManualAlgorithm ransacAlignment;
+    private final ManualAlgorithm leastMedianAlignment;
     private final List<AlignedImage> images;
     private Optional<AlignmentAlgorithmEnum> lastAlgorithm;
     public ManualAlignmentController(){
@@ -112,7 +112,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * @param algorithm
      * @param cornerManager
      */
-    public void align(final AlignmentAlgorithm algorithm, final PointController cornerManager){
+    public void align(final ManualAlgorithm algorithm, final PointController cornerManager){
         if(!algorithm.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
             algorithm.alignImages(cornerManager.getCornerManager());
         }

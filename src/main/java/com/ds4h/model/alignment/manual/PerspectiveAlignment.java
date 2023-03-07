@@ -1,20 +1,19 @@
 package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * This class is used for the manual alignment using the Perspective technique
  */
 
-public class PerspectiveAlignment extends AlignmentAlgorithm {
+public class PerspectiveAlignment extends ManualAlgorithm {
     public static final int LOWER_BOUND = 4;
 
     public PerspectiveAlignment(){
@@ -31,9 +30,9 @@ public class PerspectiveAlignment extends AlignmentAlgorithm {
      * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetImage.size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+            if(targetImage.toList().size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
                 //final MatOfPoint2f referencePoint = targetImage.getMatOfPoint();
                 //final MatOfPoint2f targetPoint = imagePoints.getMatOfPoint();
                 //final Mat H = Imgproc.getAffineTransform(targetPoint, referencePoint);

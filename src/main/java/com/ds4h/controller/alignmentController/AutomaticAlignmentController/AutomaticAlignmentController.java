@@ -3,7 +3,6 @@ package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.AbstractAutomaticAlignment;
 import com.ds4h.model.alignment.automatic.AutomaticAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
@@ -26,7 +25,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * Constructor of the Controller
      */
     public AutomaticAlignmentController(){
-        this.surfAlignment = new AutomaticAlgorithm(new SURFDetector(), new TranslationalAlignment());
+        this.surfAlignment = new AutomaticAlgorithm(new SURFDetector());
         this.alignedImages = new LinkedList<>();
         this.deformedImages = new LinkedList<>();
     }

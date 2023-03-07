@@ -1,19 +1,18 @@
 package com.ds4h.model.alignment.manual;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * This class is used for the manual alignment using the Affine technique
  */
-public class AffineAlignment extends AlignmentAlgorithm {
+public class AffineAlignment extends ManualAlgorithm {
     public static final int REQUIRED_POINTS = 3;
     public AffineAlignment(){
         super();
@@ -29,9 +28,10 @@ public class AffineAlignment extends AlignmentAlgorithm {
      * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetImage.size() == REQUIRED_POINTS && imagePoints.numberOfPoints() == REQUIRED_POINTS) {
+
+            if(targetImage.toList().size() == REQUIRED_POINTS && imagePoints.numberOfPoints() == REQUIRED_POINTS) {
                 //final MatOfPoint2f targetPoints = targetImage.getMatOfPoint();
                 //final MatOfPoint2f imageToShiftPoints = imagePoints.getMatOfPoint();
                 final Mat H = super.traslationMatrix(imagePoints);
