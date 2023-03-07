@@ -14,10 +14,12 @@ import java.util.*;
  *
  */
 public class ImagePoints {
-    private final File image;
+    private final Mat image;
     private final List<Point> points;
+    private final String name;
 
-    public ImagePoints(final File image){
+    public ImagePoints(final Mat image, final String name){
+        this.name = name;
         this.image = image;
         this.points = new ArrayList<>();
     }
@@ -27,7 +29,7 @@ public class ImagePoints {
      * @return
      */
     public ImagePlus getImage(){
-        final Optional<ImagePlus> img = ImagingConversion.fromSinglePathToImagePlus(this.image.getPath());
+        final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.image, this.name);
         if(img.isPresent()){
             return img.get();
         }
@@ -39,19 +41,10 @@ public class ImagePoints {
      * @return
      */
     public BufferedImage getBufferedImage(){
-        final Mat mat = this.getMatImage();
-        final BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
+        final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
         final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        mat.get(0, 0, data);
+        this.image.get(0, 0, data);
         return image;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getPath(){
-        return this.image.getPath();
     }
 
     /**
@@ -74,26 +67,18 @@ public class ImagePoints {
         return this.points.indexOf(point)+1;
     }
 
-    /**
-     *
-     * @param
-     * @return
-     */
+
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ImagePoints that = (ImagePoints) o;
-        return Objects.equals(that.getFile().getName(), this.getFile().getName());
+        return Objects.equals(image, that.image) && Objects.equals(points, that.points) && Objects.equals(name, that.name);
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(this.image, this.points);
+        return Objects.hash(image, points, name);
     }
 
     /**
@@ -102,14 +87,6 @@ public class ImagePoints {
      */
     public void addPoint(final Point point){
             this.points.add(point);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public File getFile(){
-        return this.image;
     }
 
     /**
@@ -150,7 +127,7 @@ public class ImagePoints {
      * @return
      */
     public Mat getMatImage(){
-        return Imgcodecs.imread(this.image.getPath());
+        return this.image;
     }
 
     /**
@@ -176,7 +153,7 @@ public class ImagePoints {
      */
     @Override
     public String toString() {
-        return this.getFile().getName();
+        return this.name;
     }
 
     /**
