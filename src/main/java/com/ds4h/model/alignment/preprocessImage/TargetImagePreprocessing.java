@@ -1,6 +1,7 @@
 package com.ds4h.model.alignment.preprocessImage;
 
 import com.ds4h.model.alignment.AlignmentAlgorithm;
+import com.ds4h.model.alignment.automatic.AbstractAutomaticAlignment;
 import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.alignment.manual.AffineAlignment;
 import com.ds4h.model.alignment.manual.PerspectiveAlignment;
@@ -93,19 +94,20 @@ public class TargetImagePreprocessing {
     }
 
     public Pair<Mat, Map<ImagePoints, MatOfPoint2f>> automaticProcess(final Mat targetMat, final MatOfPoint2f targetPoints, final ImagePoints targetImage,
-                                 final List<ImagePoints> imagesPoints, final AlignmentAlgorithm algorithm,
-                                 final SurfAlignment s){
+                                                                      final List<ImagePoints> imagesPoints,
+                                                                      final AbstractAutomaticAlignment automaticAlignment){
         for(final ImagePoints i : imagesPoints) {
             final ImagePoints imagePoints = new ImagePoints(i.getFile());
             final ImagePoints newTarget = new ImagePoints(targetImage.getFile());
             if (lastTargetImage != null) {
-                s.getPointDetector().detectPoint(lastTargetImage, imagePoints);
+                automaticAlignment.detectPoint(lastTargetImage, imagePoints);
             } else {
                 this.lastTargetImage = targetMat;
-                s.getPointDetector().detectPoint(newTarget.getMatImage(), imagePoints);
+                automaticAlignment.detectPoint(newTarget.getMatImage(), imagePoints);
             }
-            s.getPointDetector().matchPoint(imagePoints);
-            final Mat translationMatrix = s.getTransformationMatrix(imagePoints, newTarget);
+            automaticAlignment.mergePoint(newTarget, imagePoints);
+            final Mat translationMatrix = automaticAlignment.getTransformationMatrix(newTarget, imagePoints);
+            System.out.println(translationMatrix);
             final int h1 = lastTargetImage.rows();
             final int w1 = lastTargetImage.cols();
             final int h2 = imagePoints.getMatImage().rows();
@@ -115,7 +117,7 @@ public class TargetImagePreprocessing {
             final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
             final MatOfPoint2f pts2_ = new MatOfPoint2f();
 
-            algorithm.transform(pts2, pts2_, translationMatrix);
+            automaticAlignment.transform(pts2, pts2_, translationMatrix);
 
             final MatOfPoint2f pts = new MatOfPoint2f();
             Core.hconcat(Arrays.asList(pts1, pts2_), pts);

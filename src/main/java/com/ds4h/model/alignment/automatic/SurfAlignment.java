@@ -4,9 +4,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SurfDetector;
-import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.Pair;
 import ij.IJ;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
@@ -40,17 +38,19 @@ public class SurfAlignment extends AlignmentAlgorithm {
     }
     /**
      * Align two images using the SURF Algorithm
+     *
      * @param targetImage : the source image for the alignment
      * @param imagePoints : the image to align
+     * @param targetSize
      * @return : the target image aligned to the source image
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints){
+    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize){
 
         try {
             final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-            final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
-            final Mat H = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
+            final Mat targetImageMat = null;//super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+            final Mat H = this.getTransformationMatrix(imagePoints, null);//super.traslationMatrix(imagePoints);
             this.keypoints1List.clear();
             this.keypoints2List.clear();
             this.matchesList.clear();
@@ -81,9 +81,6 @@ public class SurfAlignment extends AlignmentAlgorithm {
         points1_.fromList(this.surfDetector.getPoints1());
         final MatOfPoint2f points2_ = new MatOfPoint2f();
         points2_.fromList(this.surfDetector.getPoints2());
-
-        this.surfDetector.getPoints1().forEach(imageToAlign::addPoint);
-        this.surfDetector.getPoints2().forEach(targetImage::addPoint);
         //final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
         return Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
     }
@@ -150,7 +147,6 @@ public class SurfAlignment extends AlignmentAlgorithm {
         * */
         this.points1.clear();
         this.points2.clear();
-
 
         this.matchesList
                 .forEach(match -> {

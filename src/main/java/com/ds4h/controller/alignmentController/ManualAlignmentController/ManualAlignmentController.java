@@ -27,7 +27,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         this.affineAlignment = new AffineAlignment();
         this.translativeAlignment = new TranslationalAlignment();
         this.ransacAlignment = new RansacAlignment();
-        this.leastMedianAlignment = new LeastMedianAlignment();
+        this.leastMedianAlignment = null;//new LeastMedianAlignment();
     }
 
     /**

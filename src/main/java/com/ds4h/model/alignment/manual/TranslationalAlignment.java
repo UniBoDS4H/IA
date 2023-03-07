@@ -8,7 +8,7 @@ import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -25,24 +25,28 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
 
     /**
      * Manual alignment using the translative alignment
-     * @param targetImage : the source image used as reference
-     * @param  imagePoints : the target to align
-     * @throws IllegalArgumentException : in case the number of corners is not correct
+     *
+     * @param imagePoints : the target to align
+     * @param targetSize
      * @return : the list of all the images aligned to the source
+     * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final List<Point> targetPoints, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
-                final Mat targetMat = targetImage.getMatImage();
+            if(targetPoints.size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
                 final Mat imageToShiftMat = imagePoints.getMatImage();
 
-                final Point[] srcArray = targetImage.getMatOfPoint().toArray();
+                final Point[] srcArray = targetPoints.toArray(new Point[0]);
                 final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
-                    final Mat translationMatrix = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
-                    Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetMat.size());
+                    final Point translation = minimumLeastSquare(dstArray, srcArray);
+                    final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
+                    translationMatrix.put(0, 2, translation.x);
+                    translationMatrix.put(1, 2, translation.y);
+                    //final Mat translationMatrix = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
+                    Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetSize);
                     final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{
@@ -50,6 +54,8 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
                             "inside the target image.");
                 }
             }else{
+                System.out.println("INSIDE T: " + imagePoints.getMatOfPoint());
+                System.out.println("INSIDE T: " + targetPoints.size());
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
                         "In order to use the Translation alignment you must at least: " + TranslationalAlignment.LOWER_BOUND + " points.");
             }

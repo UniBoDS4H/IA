@@ -6,8 +6,8 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,20 +21,22 @@ public class AffineAlignment extends AlignmentAlgorithm {
 
     /**
      * Manual alignment using the Affine alignment
+     *
      * @param targetImage : the source image used as reference
-     * @param  imagePoints : the target to align
-     * @throws IllegalArgumentException : in case the number of corners is not correct
+     * @param imagePoints : the target to align
+     * @param targetSize
      * @return : the list of all the images aligned to the source
+     * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetImage.numberOfPoints() == REQUIRED_POINTS && imagePoints.numberOfPoints() == REQUIRED_POINTS) {
+            if(targetImage.size() == REQUIRED_POINTS && imagePoints.numberOfPoints() == REQUIRED_POINTS) {
                 //final MatOfPoint2f targetPoints = targetImage.getMatOfPoint();
                 //final MatOfPoint2f imageToShiftPoints = imagePoints.getMatOfPoint();
                 final Mat H = super.traslationMatrix(imagePoints);
                 final Mat warpedMat = new Mat();
-                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetImage.getMatImage().size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
+                Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetSize, Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{

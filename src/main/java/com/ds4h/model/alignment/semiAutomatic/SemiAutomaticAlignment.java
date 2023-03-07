@@ -4,7 +4,6 @@ package com.ds4h.model.alignment.semiAutomatic;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.ImagingConversion;
 import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
@@ -17,7 +16,7 @@ import org.opencv.xfeatures2d.SURF;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+/*
 public class SemiAutomaticAlignment extends AlignmentAlgorithm {
 
     private final List<Point> points1, points2;
@@ -29,9 +28,9 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
     }
 
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints){
+    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize){
         try {
-            if(targetImage.numberOfPoints() == imagePoints.numberOfPoints()) {
+            if(targetImage.size() == imagePoints.numberOfPoints()) {
                 //************************
                 final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
                 final Mat targetImageMat = super.toGrayscale(Imgcodecs.imread(targetImage.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
@@ -118,3 +117,4 @@ public class SemiAutomaticAlignment extends AlignmentAlgorithm {
         Core.perspectiveTransform(source, destination, H);
     }
 }
+ */

@@ -64,13 +64,17 @@ public class SurfDetector extends PointDetector {
     }
 
     @Override
-    public void matchPoint(final ImagePoints img) {
+    public void matchPoint(final ImagePoints targetImage, final ImagePoints imagePoints) {
         this.points1.clear();
         this.points2.clear();
         this.matchesList.forEach(match -> {
                     this.points1.add(this.keypoints1List.get(match.queryIdx).pt);
                     this.points2.add(this.keypoints2List.get(match.trainIdx).pt);
                 });
-        System.out.println("INSIDE MATCH :" + img.getMatOfPoint());
+
+
+        this.points1.forEach(imagePoints::addPoint);
+        this.points2.forEach(targetImage::addPoint);
+        System.out.println("INSIDE MATCH SURF DETECTOR :" + imagePoints.getMatOfPoint());
     }
 }

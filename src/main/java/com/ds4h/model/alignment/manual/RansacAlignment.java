@@ -8,8 +8,6 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,22 +23,24 @@ public class RansacAlignment extends AlignmentAlgorithm {
     }
     /**
      * Manual alignment using the Homography alignment
+     *
      * @param targetImage : the source image used as reference
-     * @param  imagePoints : the target to align
-     * @throws IllegalArgumentException : in case the number of corners is not correct
+     * @param imagePoints : the target to align
+     * @param targetSize
      * @return : the list of all the images aligned to the source
+     * @throws IllegalArgumentException : in case the number of corners is not correct
      */
     @Override
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final List<Point> targetImage, final ImagePoints imagePoints, Size targetSize) throws IllegalArgumentException{
         try {
-            if(targetImage.numberOfPoints() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
-                final Mat homography = this.getTransformationMatrix(imagePoints, targetImage);//Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
+            if(targetImage.size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
+                final Mat homography = null;// this.getTransformationMatrix(imagePoints, targetImage);//Calib3d.findHomography(referencePoint, targetPoint, Calib3d.RANSAC, 5);
                 final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
                 translationMatrix.put(0, 2, homography.get(0, 2)[0]);
                 translationMatrix.put(1, 2, homography.get(1, 2)[0]);
 
                 final Mat warpedMat = new Mat();
-                Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, translationMatrix, targetImage.getMatImage().size());
+                Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, translationMatrix, targetSize);
                 final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, translationMatrix, imagePlus));
             }else{
