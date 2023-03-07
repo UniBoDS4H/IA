@@ -1,18 +1,14 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.automatic.SurfAlignment;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
-import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
-import com.ds4h.model.util.saveProject.SaveImages;
 import ij.ImagePlus;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -20,13 +16,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 /**
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
  * Every child class must implement the 'align' method.
  */
-public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface, Runnable{
+public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Runnable{
     private final static int RGB = 3;
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
@@ -34,7 +29,7 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     private final Map<ImagePoints, Mat> trasformationMatrix;
     private Thread thread;
 
-    protected AlignmentAlgorithm(){
+    protected ManualAlgorithm(){
         targetImage = null;
         this.thread = new Thread(this);
         this.imagesToAlign = new LinkedList<>();
@@ -74,12 +69,15 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     /**
      * This method must be overridden from all the children classes. Inside this method we have the
      * real implementation of the alignment algorithm.
+     *
      * @param targetImage the targetImage image for the alignment, this Object will be used in order to align the imagePoints.
      * @param imagePoints the image to align base to the targetImage object
+     * @param targetSize
      * @return the Optional aligned containing the final aligned image
      * @throws NoSuchMethodException in case this method is called from a child class without having the implementation of it
      */
-    protected Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imagePoints) {
+    public
+    Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) {
         throw new NotImplementedException();
     }
 
@@ -155,22 +153,13 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                if(this instanceof SurfAlignment){
-                    TargetImagePreprocessing t = new TargetImagePreprocessing();
-                    final Pair<Mat, Map<ImagePoints, MatOfPoint2f>> k = t.automaticProcess(this.targetImage.getMatImage(), targetImage.getMatOfPoint(), targetImage,
-                            this.imagesToAlign, this, new SurfAlignment());
-                    final String directoryName = DirectoryCreator.createTemporaryDirectory("DIO_PORCO_DIO");
-
-                    final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getFile().getName());
-                        imagePlus.get().setTitle(targetImage.getFile().getName());
-                        SaveImages.save(imagePlus.get(), System.getProperty("java.io.tmpdir") + "/" + directoryName);
-                }else {
-                    ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
-                    this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));
-                    this.imagesToAlign.parallelStream()
-                            .forEach(img -> this.align(processedTarget, img).ifPresent(this.alignedImages::add));
-
-                }
+                final TargetImagePreprocessing targetImagePreprocessing = new TargetImagePreprocessing();
+                final Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> pair =  targetImagePreprocessing.processManualImage(this.targetImage, this.imagesToAlign, this);
+                final ImagePoints result = pair.getFirst();
+                this.alignedImages.add(new AlignedImage(result.getMatImage(), result.getImage()));
+                pair.getSecond().entrySet().parallelStream().peek(u -> System.out.println("BEFORE ALIGN " + u.getValue()))
+                        .forEach(img -> this.align(img.getValue(), img.getKey(), result.getMatImage().size())
+                                .ifPresent(this.alignedImages::add));
             }
             this.thread = new Thread(this);
             this.clearMap();

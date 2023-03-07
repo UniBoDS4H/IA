@@ -26,7 +26,7 @@ public abstract class PointDetector {
     }
 
     public abstract void detectPoint(final Mat targetImage, final ImagePoints imagePoint);
-    public abstract void matchPoint();
+    public abstract void matchPoint(final ImagePoints targetImage, final ImagePoints imagePoints);
 
     public List<Point> getPoints1(){
         return this.points1;
