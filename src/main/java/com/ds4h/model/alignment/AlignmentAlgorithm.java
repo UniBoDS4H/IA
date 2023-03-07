@@ -161,8 +161,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                             this.imagesToAlign, this, new SurfAlignment());
                     final String directoryName = DirectoryCreator.createTemporaryDirectory("DIO_PORCO_DIO");
 
-                    final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getFile().getName());
-                        imagePlus.get().setTitle(targetImage.getFile().getName());
+                    final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getName());
+                        imagePlus.get().setTitle(targetImage.getName());
                         SaveImages.save(imagePlus.get(), System.getProperty("java.io.tmpdir") + "/" + directoryName);
                 }else {
                     ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);

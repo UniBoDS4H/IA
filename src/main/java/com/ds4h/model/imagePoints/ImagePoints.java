@@ -23,6 +23,11 @@ public class ImagePoints {
         this.image = image;
         this.points = new ArrayList<>();
     }
+    public ImagePoints(final File image){
+        this.name = image.getName();
+        this.image = Imgcodecs.imread(image.getPath());
+        this.points = new ArrayList<>();
+    }
 
     /**
      *
@@ -167,5 +172,9 @@ public class ImagePoints {
             this.points.remove(indexToEdit);
             this.points.add(newIndex, pointToMove);
         }
+    }
+
+    public String getName() {
+        return this.name;
     }
 }
