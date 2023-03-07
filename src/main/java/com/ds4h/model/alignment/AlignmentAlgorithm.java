@@ -159,11 +159,20 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                     TargetImagePreprocessing t = new TargetImagePreprocessing();
                     final Pair<Mat, Map<ImagePoints, MatOfPoint2f>> k = t.automaticProcess(this.targetImage.getMatImage(), targetImage.getMatOfPoint(), targetImage,
                             this.imagesToAlign, this, new SurfAlignment());
-                    final String directoryName = DirectoryCreator.createTemporaryDirectory("DIO_PORCO_DIO");
+                    final String directoryName = DirectoryCreator.createTemporaryDirectory("DS4H_TMPPPP");
 
                     final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getFile().getName());
                         imagePlus.get().setTitle(targetImage.getFile().getName());
                         SaveImages.save(imagePlus.get(), System.getProperty("java.io.tmpdir") + "/" + directoryName);
+                        imagePlus.get().show();
+                    final ImagePoints result = new ImagePoints(new File(System.getProperty("java.io.tmpdir") + "/" +directoryName+"/" + targetImage.getFile().getName()));
+
+
+                    final SurfAlignment s = (SurfAlignment) this;
+                    this.alignedImages.add(new AlignedImage(result.getMatImage(), result.getImage()));
+                    t.map.entrySet().parallelStream().peek(u -> System.out.println("BEFORE: " + u.getValue()))
+                            .forEach(img -> s.codio(img.getKey(), k.getSecond().get(img.getKey()), result)
+                                    .ifPresent(this.alignedImages::add));
                 }else {
                     ImagePoints processedTarget = TargetImagePreprocessing.process(this.targetImage, this.imagesToAlign, this);
                     this.alignedImages.add(new AlignedImage(processedTarget.getMatImage(), processedTarget.getImage()));

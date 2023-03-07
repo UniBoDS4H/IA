@@ -63,13 +63,11 @@ public class SurfAlignment extends AlignmentAlgorithm {
         return Optional.empty();
     }
 
-    protected Optional<AlignedImage> codio(final ImagePoints img , MatOfPoint2f p, final ImagePoints target){
-
+    public Optional<AlignedImage> codio(final ImagePoints img , MatOfPoint2f p, final ImagePoints target){
         try {
+            System.out.println("IMG: " + img.getMatOfPoint());
+            System.out.println("TARGET: " + p);
             final Mat H = Calib3d.findHomography(img.getMatOfPoint(), p, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
-            this.keypoints1List.clear();
-            this.keypoints2List.clear();
-            this.matchesList.clear();
             return super.warpMatrix(img.getMatImage(), H, target.getMatImage().size(), img.getFile());
         }catch (Exception e){
             IJ.showMessage(e.getMessage());
@@ -79,19 +77,15 @@ public class SurfAlignment extends AlignmentAlgorithm {
 
     @Override
     public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage) {
-        this.detectPoints(imageToAlign.getMatImage(), targetImage.getMatImage());
-        this.mergePoints();
         final MatOfPoint2f points1_ = new MatOfPoint2f();
-        points1_.fromList(this.points1);
+        points1_.fromList(this.surfDetector.getPoints1());
         final MatOfPoint2f points2_ = new MatOfPoint2f();
-        points2_.fromList(this.points2);
-        System.out.println(this.points1.size());
-        System.out.println(this.points2.size());
+        points2_.fromList(this.surfDetector.getPoints2());
 
+        this.surfDetector.getPoints1().forEach(imageToAlign::addPoint);
+        this.surfDetector.getPoints2().forEach(targetImage::addPoint);
         //final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
-        final Mat H = Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
-        super.addMatrix(imageToAlign, H);
-        return H;
+        return Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, SurfAlignment.NUMBER_OF_ITERATION);
     }
 
     public PointDetector getPointDetector(){

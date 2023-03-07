@@ -68,6 +68,7 @@ public class TranslationalAlignment extends AlignmentAlgorithm {
         return translationMatrix;
     }
 
+
     private static Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
         final double[] deltaX = new double[srcArray.length];
         final double[] deltaY = new double[srcArray.length];

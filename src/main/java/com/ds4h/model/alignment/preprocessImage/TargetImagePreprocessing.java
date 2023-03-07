@@ -21,10 +21,9 @@ import java.util.stream.Collectors;
 
 public class TargetImagePreprocessing {
 
-    private final Queue<Pair<Point, Mat>> queuePoints = new LinkedList<>();
     //Image -> Punti del target
-    private final Map<ImagePoints, MatOfPoint2f> map = new HashMap<>();
-    private Mat lastTargetImage = null;
+    public final Map<ImagePoints, MatOfPoint2f> map = new HashMap<>();
+    public Mat lastTargetImage = null;
     private final static String DIRECTORY_NAME = "DS4H_processedTarget";
     private final static String TMP_PATH = System.getProperty("java.io.tmpdir");
     public TargetImagePreprocessing(){}
@@ -96,16 +95,17 @@ public class TargetImagePreprocessing {
     public Pair<Mat, Map<ImagePoints, MatOfPoint2f>> automaticProcess(final Mat targetMat, final MatOfPoint2f targetPoints, final ImagePoints targetImage,
                                  final List<ImagePoints> imagesPoints, final AlignmentAlgorithm algorithm,
                                  final SurfAlignment s){
-        for(final ImagePoints imagePoints : imagesPoints) {
+        for(final ImagePoints i : imagesPoints) {
+            final ImagePoints imagePoints = new ImagePoints(i.getFile());
+            final ImagePoints newTarget = new ImagePoints(targetImage.getFile());
             if (lastTargetImage != null) {
                 s.getPointDetector().detectPoint(lastTargetImage, imagePoints);
             } else {
                 this.lastTargetImage = targetMat;
-                s.getPointDetector().detectPoint(targetMat, imagePoints);
+                s.getPointDetector().detectPoint(newTarget.getMatImage(), imagePoints);
             }
-            final Point[] srcArray = targetPoints.toArray();
-            final Point[] dstArray = imagePoints.getMatOfPoint().toArray();
-            final Mat translationMatrix = algorithm.getTransformationMatrix(imagePoints, targetImage);
+            s.getPointDetector().matchPoint(imagePoints);
+            final Mat translationMatrix = s.getTransformationMatrix(imagePoints, newTarget);
             final int h1 = targetMat.rows();
             final int w1 = targetMat.cols();
             final int h2 = imagePoints.getMatImage().rows();
@@ -132,17 +132,18 @@ public class TargetImagePreprocessing {
 
                 final Size size = new Size(xmax - xmin, ymax - ymin);
                 final Mat aligneImage = Mat.zeros(size, targetImage.getMatImage().type());
-                targetMat.copyTo(aligneImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
+                this.lastTargetImage.copyTo(aligneImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
                 this.lastTargetImage = aligneImage;
+
                 final MatOfPoint2f points = new MatOfPoint2f();
-                points.fromList(targetPoints.toList().stream().map(p -> new Point(p.x + t[0], p.y + t[1])).collect(Collectors.toList()));
+                System.out.println("INSIDE PREPROCESS: " + newTarget.getMatOfPoint());
+                points.fromList(newTarget.getMatOfPoint().toList().stream().map(p -> new Point(p.x + t[0], p.y + t[1])).collect(Collectors.toList()));
                 this.map.entrySet().parallelStream().forEach(entry -> {
-                    entry.getValue().fromList(targetPoints.toList().stream().map(p -> new Point(p.x + t[0], p.y + t[1])).collect(Collectors.toList()));
+                    entry.getValue().fromList(entry.getValue().toList().stream().map(p -> new Point(p.x + t[0], p.y + t[1])).collect(Collectors.toList()));
                 });
                 this.map.put(imagePoints, points);
             }
         }
-        System.out.println("dio cane");
         return new Pair<>(this.lastTargetImage, this.map);
     }
 }
