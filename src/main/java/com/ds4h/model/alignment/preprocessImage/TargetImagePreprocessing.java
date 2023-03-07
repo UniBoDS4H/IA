@@ -3,16 +3,13 @@ package com.ds4h.model.alignment.preprocessImage;
 import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.alignment.automatic.AbstractAutomaticAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
-import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
-import com.ds4h.model.util.saveProject.SaveImages;
-import ij.ImagePlus;
 import org.opencv.core.*;
-import org.opencv.core.Point;
 
-import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TargetImagePreprocessing {
@@ -20,8 +17,6 @@ public class TargetImagePreprocessing {
     //Image -> Punti del target
     private final Map<ImagePoints, MatOfPoint2f> map = new HashMap<>();
     private  Mat lastTargetImage = null;
-    private final static String DIRECTORY_NAME = "DS4H_processedTarget";
-    private final static String TMP_PATH = System.getProperty("java.io.tmpdir");
     public TargetImagePreprocessing(){}
 
     private Mat manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesPoints, final ManualAlgorithm manualAlgorithm) {
@@ -129,25 +124,13 @@ public class TargetImagePreprocessing {
     public Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> processAutomaticImage(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AbstractAutomaticAlignment algorithm) throws Exception {
         this.map.clear();
         final Mat finalTargetMat = this.automaticProcess(targetImage, imagesToAlign, algorithm);
-        return new Pair<>(this.saveProcessedImage(finalTargetMat, targetImage.getName()), this.map);
+        return new Pair<>(new ImagePoints(finalTargetMat, targetImage.getName()), this.map);
     }
     public Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> processManualImage(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final ManualAlgorithm algorithm) throws Exception {
         this.map.clear();
         final Mat finalTargetMat = this.manualProcess(targetImage, imagesToAlign, algorithm);
-        return new Pair<>(this.saveProcessedImage(finalTargetMat, targetImage.getName()), this.map);
+        return new Pair<>(new ImagePoints(finalTargetMat, targetImage.getName()), this.map);
     }
 
-    private ImagePoints saveProcessedImage(final Mat finalTarget, final String fileName) throws Exception {
-        final String directoryName = DirectoryCreator.createTemporaryDirectory(TargetImagePreprocessing.DIRECTORY_NAME);
-        final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(finalTarget, fileName);
-        if(imagePlus.isPresent()) {
-            imagePlus.get().setTitle(fileName);
-            SaveImages.save(imagePlus.get(), TargetImagePreprocessing.TMP_PATH + "/" + directoryName);
-            imagePlus.get().show();
-            return new ImagePoints(new File(TargetImagePreprocessing.TMP_PATH + "/" + directoryName + "/" +
-                    fileName));
-        }
-        throw new Exception("");
-    }
 
 }
