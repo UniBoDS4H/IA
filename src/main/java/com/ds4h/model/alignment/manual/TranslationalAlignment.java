@@ -35,7 +35,6 @@ public class TranslationalAlignment extends ManualAlgorithm {
         try {
             if(targetPoints.toList().size() >= LOWER_BOUND && imagePoints.numberOfPoints() >= LOWER_BOUND) {
                 final Mat imageToShiftMat = imagePoints.getMatImage();
-
                 final Point[] srcArray = imagePoints.getMatOfPoint().toArray();
                 final Point[] dstArray = targetPoints.toArray();
                 if(srcArray.length == dstArray.length) {
@@ -65,7 +64,7 @@ public class TranslationalAlignment extends ManualAlgorithm {
 
     @Override
     public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){
-        final Point translation = minimumLeastSquare(imageToAlign.getPoints(), targetImage.getPoints());
+        final Point translation = this.minimumLeastSquare(imageToAlign.getPoints(), targetImage.getPoints());
         final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
         translationMatrix.put(0, 2, translation.x);
         translationMatrix.put(1, 2, translation.y);
@@ -73,7 +72,7 @@ public class TranslationalAlignment extends ManualAlgorithm {
     }
 
 
-    private static Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
+    private Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
         final double[] deltaX = new double[srcArray.length];
         final double[] deltaY = new double[srcArray.length];
 

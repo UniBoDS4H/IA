@@ -121,7 +121,6 @@ public abstract class AbstractAutomaticAlignment implements Runnable{
             this.alignmentThread = new Thread(this);
         }catch (Exception exception){
             this.alignmentThread = new Thread(this);
-            throw exception;
         }
     }
 

@@ -65,6 +65,7 @@ public class TargetImagePreprocessing {
                     entry.getValue().fromList(entry.getValue().toList().stream().map(p -> new Point(p.x + t[0], p.y + t[1])).collect(Collectors.toList()));
                 });
                 this.map.put(imagePoints, points);
+                System.out.println("FINAL MAP : " + this.map);
             }
         }
         return this.lastTargetImage;
