@@ -3,6 +3,7 @@ package com.ds4h.view.mainGUI;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
+import com.ds4h.view.displayInfo.DisplayInfo;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -28,7 +29,7 @@ public class PreviewListItem extends JPanel {
         this.image = image;
         this.cornerSelector = new CornerSelectorGUI(this.image, this.controller, this.container.getMainMenu());
         this.idLabel = new JLabel(Integer.toString(id));
-        this.idLabel.setFont(new Font("Serif", Font.BOLD, 16));
+        this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
         ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
         ImageIcon resized = new ImageIcon(deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
@@ -56,7 +57,7 @@ public class PreviewListItem extends JPanel {
 
 
         JLabel nameLabel = new JLabel(this.image.toString());
-        nameLabel.setFont(new Font("Serif", Font.PLAIN, 10));
+        nameLabel.setFont(new Font("Serif", Font.PLAIN, DisplayInfo.getTextSize(3)));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(this.leftJustify(nameLabel));
         this.add(Box.createRigidArea(new Dimension(0, 5)));

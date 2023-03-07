@@ -1,5 +1,6 @@
 package com.ds4h.view.aboutGUI;
 
+import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class AboutGUI extends Frame implements StandardGUI {
             "Copyright (©) 2019 Data Science for Health (DS4H) Group.\n" +
             "University of Bologna. All rights reserved\n" +
             "License: GNU General Public License version 3.";
-    private static final Font FONT = new Font("Arial", Font.PLAIN, 20);
+    private static final Font FONT = new Font("Arial", Font.PLAIN, DisplayInfo.getTextSize(6));
     public AboutGUI(){
         setTitle("About DS4H Image Alignment");
         setLayout(new BorderLayout());

@@ -1,6 +1,7 @@
 package com.ds4h.view.cornerSelectorGUI;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.CoordinateConverter;
+import com.ds4h.view.displayInfo.DisplayInfo;
 import org.opencv.core.Point;
 import javax.swing.*;
 import java.awt.*;
@@ -248,7 +249,8 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
             //point.getValue() -> is the matrix index of the point.
             //point.getKey() -> is the position of the point to show
             AbstractMap.SimpleEntry<Point, Point> point = new AbstractMap.SimpleEntry<>(this.getPointFromMatIndex(p), p);
-            Font f = new Font("Serif", Font.BOLD, 16);
+            System.out.println(DisplayInfo.getTextSize(5));
+            Font f = new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5));
             g2d.setColor(this.textColor);
             g2d.setFont(f);
             int textX = (int) point.getKey().x - this.pointerDimension * 3 - 12;
