@@ -3,8 +3,15 @@ package com.ds4h.model.alignment.automatic;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
+import com.ds4h.model.alignment.manual.TranslationalAlignment;
+import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.Pair;
+import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.saveProject.SaveImages;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Mat;
@@ -14,15 +21,24 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class AbstractAutomaticAlignment {
+public abstract class AbstractAutomaticAlignment implements Runnable{
 
     private final PointDetector pointDetector;
     private final AlignmentAlgorithm alignmentAlgorithm;
+    private ImagePoints targetImage;
+    private final List<ImagePoints> imagesToAlign;
+    private final List<AlignedImage> alignedImages;
+    private Thread alignmentThread;
     protected AbstractAutomaticAlignment(final PointDetector pointDetector, final AlignmentAlgorithm algorithm){
         this.pointDetector = pointDetector;
         this.alignmentAlgorithm = algorithm;
+        this.alignmentThread = new Thread(this);
+        this.targetImage = null;
+        this.imagesToAlign = new LinkedList<>();
+        this.alignedImages = new CopyOnWriteArrayList<>();
     }
 
     protected PointDetector pointDetector(){
@@ -32,10 +48,7 @@ public abstract class AbstractAutomaticAlignment {
     protected AlignmentAlgorithm alignmentAlgorithm(){
         return this.alignmentAlgorithm;
     }
-
-    //Detect dei punti delle due immagini.
     public abstract void detectPoint(final Mat targetMat, final ImagePoints imagePoints);
-    //Aggiungo i punti nelle due immagini.
     public abstract void mergePoint(final ImagePoints targetImage, final ImagePoints imagePoints);
 
     public Mat getTransformationMatrix(final ImagePoints targetImage, final ImagePoints imagePoints){
@@ -43,7 +56,6 @@ public abstract class AbstractAutomaticAlignment {
         points1_.fromList(this.pointDetector().getPoints1());
         final MatOfPoint2f points2_ = new MatOfPoint2f();
         points2_.fromList(this.pointDetector().getPoints2());
-        //final Mat H = new TranslationalAlignment().getTransformationMatrix(imageToAlign,targetImage);
         return Calib3d.findHomography(points1_, points2_, Calib3d.RANSAC, 5);
     }
 
@@ -54,43 +66,75 @@ public abstract class AbstractAutomaticAlignment {
     public Optional<AlignedImage> align(final MatOfPoint2f targetPoints, final ImagePoints imagePoints, final Size targetSize){
         final Mat imagePointMat = this.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
         final Mat H = Calib3d.findHomography(imagePoints.getMatOfPoint(), targetPoints, Calib3d.RANSAC, 5);
-        // Align the first image to the second image using the homography matrix
         return this.warpMatrix(imagePointMat, H, targetSize, imagePoints.getFile());
-
-
-
-        //return this.alignmentAlgorithm.align(targetPoints.toList(), imagePoints, targetSize);
     }
 
     protected Mat toGrayscale(final Mat mat) {
         Mat gray = new Mat();
         if (mat.channels() == 3) {
-            // Convert the BGR image to a single channel grayscale image
             Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
         } else {
-            // If the image is already single channel, just return it
             return mat;
         }
         return gray;
     }
-
-    /**
-     * This method is used for the warping of the final Matrix, this warping is used in order to store the new aligned image.
-     * @param source this is the original Matrix of the image to align
-     * @param H the Homography Matrix
-     * @param size the size of the TargetMatrix
-     * @param alignedFile the name of the aligned file
-     * @return an Optional where is stored the new Aligned Image
-     */
     private Optional<AlignedImage> warpMatrix(final Mat source, final Mat H, final Size size, final File alignedFile){
         final Mat alignedImage1 = new Mat();
-        // Align the first image to the second image using the homography matrix
         Imgproc.warpPerspective(source, alignedImage1, H, size);
         final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile, alignedImage1);
         return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
     }
     private Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
         return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
+    }
+
+    public void alignImages(final PointManager pointManager){
+        if(Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
+            if(!this.isAlive()) {
+                this.targetImage = pointManager.getSourceImage().get();
+                this.alignedImages.clear();
+                this.imagesToAlign.clear();
+                try {
+                    this.imagesToAlign.addAll(pointManager.getImagesToAlign());
+                    this.alignmentThread.start();
+                } catch (final Exception ex) {
+                    throw new IllegalArgumentException("Error: " + ex.getMessage());
+                }
+            }
+        }else{
+            throw new IllegalArgumentException("In order to do the alignment It is necessary to have a target," +
+                    " please pick a target image.");
+        }
+    }
+
+    public boolean isAlive(){
+        return this.alignmentThread.isAlive();
+    }
+
+    public List<AlignedImage> alignedImages(){
+        return this.alignedImages;
+    }
+
+    @Override
+    public void run(){
+        TargetImagePreprocessing t = new TargetImagePreprocessing();
+        final AbstractAutomaticAlignment a = new AutomaticAlgorithm(new SURFDetector(), new TranslationalAlignment());
+        final Pair<Mat, Map<ImagePoints, MatOfPoint2f>> k = t.automaticProcess(this.targetImage.getMatImage(), targetImage.getMatOfPoint(), targetImage,
+                this.imagesToAlign, a);
+        final String directoryName = DirectoryCreator.createTemporaryDirectory("DS4H_TMPPPP");
+
+        final Optional<ImagePlus> imagePlus = ImagingConversion.fromMatToImagePlus(k.getFirst(),targetImage.getFile().getName());
+        imagePlus.get().setTitle(targetImage.getFile().getName());
+        SaveImages.save(imagePlus.get(), System.getProperty("java.io.tmpdir") + "/" + directoryName);
+        imagePlus.get().show();
+        final ImagePoints result = new ImagePoints(new File(System.getProperty("java.io.tmpdir") + "/" +directoryName+"/" + targetImage.getFile().getName()));
+
+
+        this.alignedImages.add(new AlignedImage(result.getMatImage(), result.getImage()));
+        System.out.println("MAT OF POINT RESULT : " + result.getMatOfPoint());
+        t.map.entrySet().parallelStream().peek(u -> System.out.println("BEFORE ALIGN T POINTS: " + u.getValue()))
+                .forEach(img -> a.align(img.getValue(), img.getKey(), result.getMatImage().size())
+                        .ifPresent(this.alignedImages::add));
     }
 
 }

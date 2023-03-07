@@ -3,8 +3,7 @@ package com.ds4h.model.alignment;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.automatic.AbstractAutomaticAlignment;
 import com.ds4h.model.alignment.automatic.AutomaticAlgorithm;
-import com.ds4h.model.alignment.automatic.SurfAlignment;
-import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SurfDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
@@ -161,9 +160,8 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                if(this instanceof SurfAlignment){
                     TargetImagePreprocessing t = new TargetImagePreprocessing();
-                    final AbstractAutomaticAlignment a = new AutomaticAlgorithm(new SurfDetector(), new TranslationalAlignment());
+                    final AbstractAutomaticAlignment a = new AutomaticAlgorithm(new SURFDetector(), new TranslationalAlignment());
                     final Pair<Mat, Map<ImagePoints, MatOfPoint2f>> k = t.automaticProcess(this.targetImage.getMatImage(), targetImage.getMatOfPoint(), targetImage,
                             this.imagesToAlign, a);
                     final String directoryName = DirectoryCreator.createTemporaryDirectory("DS4H_TMPPPP");
@@ -175,13 +173,11 @@ public abstract class AlignmentAlgorithm implements AlignmentAlgorithmInterface,
                     final ImagePoints result = new ImagePoints(new File(System.getProperty("java.io.tmpdir") + "/" +directoryName+"/" + targetImage.getFile().getName()));
 
 
-                    final SurfAlignment s = (SurfAlignment) this;
                     this.alignedImages.add(new AlignedImage(result.getMatImage(), result.getImage()));
                     System.out.println("MAT OF POINT RESULT : " + result.getMatOfPoint());
                     t.map.entrySet().parallelStream().peek(u -> System.out.println("BEFORE ALIGN T POINTS: " + u.getValue()))
                             .forEach(img -> a.align(img.getValue(), img.getKey(), result.getMatImage().size())
                                     .ifPresent(this.alignedImages::add));
-                }
             }
             this.thread = new Thread(this);
             this.clearMap();

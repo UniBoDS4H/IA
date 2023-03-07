@@ -10,10 +10,10 @@ import org.opencv.xfeatures2d.SURF;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SurfDetector extends PointDetector {
+public class SURFDetector extends PointDetector {
 
     private final SURF detector = SURF.create();
-    public SurfDetector(){
+    public SURFDetector(){
         super();
     }
 

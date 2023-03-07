@@ -2,11 +2,6 @@ package com.ds4h.model.alignment.preprocessImage;
 
 import com.ds4h.model.alignment.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.AbstractAutomaticAlignment;
-import com.ds4h.model.alignment.automatic.SurfAlignment;
-import com.ds4h.model.alignment.manual.AffineAlignment;
-import com.ds4h.model.alignment.manual.PerspectiveAlignment;
-import com.ds4h.model.alignment.manual.RansacAlignment;
-import com.ds4h.model.alignment.manual.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
