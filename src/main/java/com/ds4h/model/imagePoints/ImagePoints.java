@@ -4,6 +4,7 @@ import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -27,6 +28,11 @@ public class ImagePoints {
         this.name = image.getName();
         this.image = Imgcodecs.imread(image.getPath());
         this.points = new ArrayList<>();
+    }
+    public Mat getGrayScaleMat(){
+        Mat grayImage = new Mat();
+        Imgproc.cvtColor(this.image, grayImage, Imgproc.COLOR_BGR2GRAY);
+        return grayImage;
     }
 
     /**

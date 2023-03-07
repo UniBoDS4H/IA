@@ -13,8 +13,8 @@ import java.util.List;
 
 public class AlignmentTest extends ManualAlgorithm {
     public static void Aling(final ImagePoints imgf1, final ImagePoints imgf2){
-        Mat img1 = Imgcodecs.imread(imgf1.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
-        Mat img2 = Imgcodecs.imread(imgf2.getPath(), Imgcodecs.IMREAD_GRAYSCALE);
+        Mat img1 = imgf1.getGrayScaleMat();
+        Mat img2 = imgf2.getGrayScaleMat();
         if (img1.empty() || img2.empty()) {
             System.err.println("Cannot read images!");
             System.exit(0);

@@ -41,7 +41,7 @@ public class PerspectiveAlignment extends ManualAlgorithm {
                 //Imgproc.getPerspectiveTransform(targetPoint, referencePoint);
                 final Mat warpedMat = new Mat();
                 Imgproc.warpPerspective(imagePoints.getMatImage(), warpedMat, H, targetSize);
-                final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
+                final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getName(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +

@@ -73,8 +73,8 @@ public class TargetImagePreprocessing {
 
     private Mat automaticProcess(final ImagePoints targetImage, final List<ImagePoints> imagesPoints, final AbstractAutomaticAlignment automaticAlignment){
         for(final ImagePoints i : imagesPoints) {
-            final ImagePoints imagePoints = new ImagePoints(i.getFile());
-            final ImagePoints newTarget = new ImagePoints(targetImage.getFile());
+            final ImagePoints imagePoints = new ImagePoints(i.getMatImage(),i.getName());
+            final ImagePoints newTarget = new ImagePoints(targetImage.getMatImage(),targetImage.getName());
             if (lastTargetImage != null) {
                 automaticAlignment.detectPoint(lastTargetImage, imagePoints);
             } else {
@@ -129,12 +129,12 @@ public class TargetImagePreprocessing {
     public Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> processAutomaticImage(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AbstractAutomaticAlignment algorithm) throws Exception {
         this.map.clear();
         final Mat finalTargetMat = this.automaticProcess(targetImage, imagesToAlign, algorithm);
-        return new Pair<>(this.saveProcessedImage(finalTargetMat, targetImage.getFile().getName()), this.map);
+        return new Pair<>(this.saveProcessedImage(finalTargetMat, targetImage.getName()), this.map);
     }
     public Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> processManualImage(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final ManualAlgorithm algorithm) throws Exception {
         this.map.clear();
         final Mat finalTargetMat = this.manualProcess(targetImage, imagesToAlign, algorithm);
-        return new Pair<>(this.saveProcessedImage(finalTargetMat, targetImage.getFile().getName()), this.map);
+        return new Pair<>(this.saveProcessedImage(finalTargetMat, targetImage.getName()), this.map);
     }
 
     private ImagePoints saveProcessedImage(final Mat finalTarget, final String fileName) throws Exception {

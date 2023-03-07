@@ -23,7 +23,7 @@ public class SURFDetector extends PointDetector {
         this.keypoints1List.clear();
         this.keypoints2List.clear();
         this.matchesList.clear();
-        final Mat imagePointMat = super.toGrayscale(Imgcodecs.imread(imagePoint.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+        final Mat imagePointMat = imagePoint.getGrayScaleMat();
         final Mat targetImageMat = super.toGrayscale(targetImage);
 
         // Detect the keypoints and compute the descriptors for both images:

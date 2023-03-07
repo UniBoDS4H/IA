@@ -37,7 +37,7 @@ public class AffineAlignment extends ManualAlgorithm {
                 final Mat H = super.traslationMatrix(imagePoints);
                 final Mat warpedMat = new Mat();
                 Imgproc.warpAffine(imagePoints.getMatImage(), warpedMat, H, targetSize, Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
-                final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), warpedMat);
+                final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getName(), warpedMat);
                 return finalImage.map(imagePlus -> new AlignedImage(warpedMat, H, imagePlus));
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +

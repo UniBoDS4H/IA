@@ -58,28 +58,18 @@ public abstract class AbstractAutomaticAlignment implements Runnable{
     }
 
     public Optional<AlignedImage> align(final MatOfPoint2f targetPoints, final ImagePoints imagePoints, final Size targetSize){
-        final Mat imagePointMat = this.toGrayscale(Imgcodecs.imread(imagePoints.getPath(), Imgcodecs.IMREAD_ANYCOLOR));
+        final Mat imagePointMat = imagePoints.getGrayScaleMat();
         final Mat H = Calib3d.findHomography(imagePoints.getMatOfPoint(), targetPoints, Calib3d.RANSAC, 5);
-        return this.warpMatrix(imagePointMat, H, targetSize, imagePoints.getFile());
+        return this.warpMatrix(imagePointMat, H, targetSize, imagePoints);
     }
-
-    protected Mat toGrayscale(final Mat mat) {
-        Mat gray = new Mat();
-        if (mat.channels() == 3) {
-            Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
-        } else {
-            return mat;
-        }
-        return gray;
-    }
-    private Optional<AlignedImage> warpMatrix(final Mat source, final Mat H, final Size size, final File alignedFile){
+    private Optional<AlignedImage> warpMatrix(final Mat source, final Mat H, final Size size, final ImagePoints alignedFile){
         final Mat alignedImage1 = new Mat();
         Imgproc.warpPerspective(source, alignedImage1, H, size);
-        final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile, alignedImage1);
+        final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile.getName(), alignedImage1);
         return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
     }
-    private Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
+    private Optional<ImagePlus> convertToImage(final String name, final Mat matrix){
+        return ImagingConversion.fromMatToImagePlus(matrix, name);
     }
 
     public void alignImages(final PointManager pointManager){

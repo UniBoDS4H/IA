@@ -38,12 +38,12 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
     }
     /**
      * Convert the new matrix in to an image
-     * @param file : this will be used in order to get the name and store used it for the creation of the new file.
+     * @param name : used for the creation of the new file.
      * @param matrix : the image aligned matrix
      * @return : the new image created by the Matrix.
      */
-    protected Optional<ImagePlus> convertToImage(final File file, final Mat matrix){
-        return ImagingConversion.fromMatToImagePlus(matrix, file.getName());
+    protected Optional<ImagePlus> convertToImage(final String name, final Mat matrix){
+        return ImagingConversion.fromMatToImagePlus(matrix, name);
     }
 
     protected void addMatrix(final ImagePoints key, final Mat matrix){
@@ -112,7 +112,7 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
         final Mat alignedImage1 = new Mat();
         // Align the first image to the second image using the homography matrix
         Imgproc.warpPerspective(source, alignedImage1, H, size);
-        final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile, alignedImage1);
+        final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile.getName(), alignedImage1);
         return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
     }
 

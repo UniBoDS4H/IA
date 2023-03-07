@@ -45,7 +45,7 @@ public class TranslationalAlignment extends ManualAlgorithm {
                     translationMatrix.put(1, 2, translation.y);
                     //final Mat translationMatrix = this.getTransformationMatrix(imagePoints, targetImage);//super.traslationMatrix(imagePoints);
                     Imgproc.warpPerspective(imageToShiftMat, alignedImage, translationMatrix, targetSize);
-                    final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getFile(), alignedImage);
+                    final Optional<ImagePlus> finalImage = this.convertToImage(imagePoints.getName(), alignedImage);
                     return finalImage.map(imagePlus -> new AlignedImage(alignedImage, translationMatrix, imagePlus));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
