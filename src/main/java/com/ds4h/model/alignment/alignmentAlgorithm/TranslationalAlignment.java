@@ -67,7 +67,7 @@ public class TranslationalAlignment{
             translationMatrix.put(1, 2, translation.y);
             return translationMatrix;
         }else{
-            Mat H = Calib3d.estimateAffinePartial2D(dstPoints, srcPoints);
+            Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
             H.put(0,0,1);
             H.put(0,1,0);
             H.put(1,0,0);

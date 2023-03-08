@@ -3,13 +3,12 @@ package com.ds4h.model.alignment.preprocessImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.Pair;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 
-import java.util.Arrays;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TargetImagePreprocessing {
@@ -17,37 +16,38 @@ public class TargetImagePreprocessing {
         ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         for (final ImagePoints image : imagesToAlign) {
             Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
+            System.out.println("TRASLATION: " + res.getSecond());
             MatOfPoint2f points = new MatOfPoint2f();
             points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
             target = new ImagePoints(res.getFirst(),target.getName(),  points);
+
         }
         return target;
     }
 
-    static public ImagePoints automaticProcess(final Map<ImagePoints,ImagePoints> images, final TranslationalAlignment algorithm) throws IllegalArgumentException{
+    static public ImagePoints automaticProcess(Map<ImagePoints,ImagePoints> images, final TranslationalAlignment algorithm) throws IllegalArgumentException{
        // ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
-        for (final Map.Entry<ImagePoints, ImagePoints> entry : images.entrySet()) {
-            Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(entry.getValue(), entry.getKey(), algorithm);
-
-            for (final Map.Entry<ImagePoints, ImagePoints> entry1 : images.entrySet()){
-                ImagePoints target = entry1.getValue();
-                ImagePoints img = entry1.getKey();
+        List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
+        for(int i = 0; i < s.size(); i++){
+            Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
+            System.out.println("TRASLATION: " + res.getSecond());
+            for (int j = 0; j < s.size(); j++){
+                ImagePoints target = s.get(j).getValue();
+                ImagePoints img = s.get(j).getKey();
                 MatOfPoint2f points = new MatOfPoint2f();
                 points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
                 target = new ImagePoints(res.getFirst(),target.getName(), points);
-                points = new MatOfPoint2f();
-                points.fromList(img.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
-                ImagePoints oldImg = img;
-                img = new ImagePoints(img.getMatImage(), img.getName(), points);
-                target.getImage().show();
-                images.remove(oldImg);
-                images.put(img,target);
+
+                //target.getImage().show();
+                s.set(j, new AbstractMap.SimpleEntry<>(img,target));
             }
 
         }
-        System.out.println(images.entrySet().size());
-        ImagePoints a = images.entrySet().iterator().next().getValue();
-        a.getImage().show();
+        images.clear();
+        s.stream().forEach(e->images.put(e.getKey(),e.getValue()));
+
+        ImagePoints a = s.get(s.size()-1).getValue();
+        //a.getImage().show();
         return a;
     }
 
@@ -59,11 +59,7 @@ public class TargetImagePreprocessing {
         final Mat targetMat = target.getMatImage();
         final Mat translationMatrix = algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(), target.getMatOfPoint());
         //final Mat translationMatrix = Calib3d.findHomography(imagePoints.getMatOfPoint(), )
-        System.out.println();
-        System.out.println();
-        printMat(target.getMatOfPoint());
-        System.out.println();
-        System.out.println();
+        System.out.println("T1");
         printMat(translationMatrix);
 
         final int h1 = targetMat.rows();
@@ -77,8 +73,6 @@ public class TargetImagePreprocessing {
 
         algorithm.transform(pts2, pts2_, translationMatrix,target.numberOfPoints());
 
-        printMat(pts2);
-        printMat(pts2_);
 
         final MatOfPoint2f pts = new MatOfPoint2f();
         Core.hconcat(Arrays.asList(pts1, pts2_), pts);
@@ -103,12 +97,14 @@ public class TargetImagePreprocessing {
     }
 
     public static void printMat(Mat translationMatrix) {
+        System.out.println();
         for(int i = 0; i < translationMatrix.rows(); i++){
             for(int j = 0; j < translationMatrix.cols(); j++){
                 System.out.print(Arrays.toString(translationMatrix.get(i, j)));
             }
             System.out.println();
         }
+        System.out.println();
     }
 
 }

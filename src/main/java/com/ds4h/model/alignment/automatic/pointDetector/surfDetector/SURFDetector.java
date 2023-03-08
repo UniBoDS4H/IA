@@ -53,8 +53,8 @@ public class SURFDetector {
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
         goodMatches.forEach(match -> {
-            targetImage.addPoint(keypoints1List.get(match.queryIdx).pt);
-            imagePoint.addPoint(keypoints2List.get(match.trainIdx).pt);
+            imagePoint.addPoint(keypoints1List.get(match.queryIdx).pt);
+            targetImage.addPoint(keypoints2List.get(match.trainIdx).pt);
         });
     }
 

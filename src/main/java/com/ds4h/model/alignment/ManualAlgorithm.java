@@ -101,9 +101,11 @@ public class ManualAlgorithm implements Runnable{
             s.detectPoint(t, i);
             images.put(i,t);
         });
-        images.entrySet().stream().forEach(p->System.out.println(p.getKey().getName()));
+        images.entrySet().stream().forEach(p->System.out.println("PRIMA: " + p.getValue().getListPoints().get(0)));
 
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, translationalAlignment);
+        images.entrySet().stream().forEach(p->System.out.println("DOPO: " + p.getValue().getListPoints().get(0)));
+
         this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
         images.entrySet().stream().forEach(e->{
             translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
