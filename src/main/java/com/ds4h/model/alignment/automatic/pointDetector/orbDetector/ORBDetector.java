@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ORBDetector extends PointDetector {
     private final ORB detector = ORB.create();
-    private final BFMatcher matcher = BFMatcher.create();
+    private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE_HAMMING);
     public ORBDetector(){
         super();
     }
@@ -45,7 +45,7 @@ public class ORBDetector extends PointDetector {
         double minDist = 0.2;
         final List<DMatch> goodMatches = new ArrayList<>();
         for (final DMatch match : matches.toList()) {
-            if (match.distance < maxDist * minDist) {
+            if (match.distance < 30) {
                 goodMatches.add(match);
             }
         }

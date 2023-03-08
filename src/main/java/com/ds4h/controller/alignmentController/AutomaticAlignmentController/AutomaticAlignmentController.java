@@ -6,6 +6,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Objects;
  */
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
     private final Alignment alignment;
+    private final AlignmentAlgorithm traslational = new TranslationalAlignment();
 
     /**
      * Constructor of the Controller
@@ -35,9 +37,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(alignment.alignedImages());
     }
-    public void align(final AlignmentAlgorithm algorithm, final PointController cornerManager){
+    public void align(final PointController cornerManager){
         if(!this.alignment.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.alignment.alignImages(cornerManager.getCornerManager(), algorithm, AlignmentEnum.AUTOMATIC);
+            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational, AlignmentEnum.AUTOMATIC);
         }
     }
 

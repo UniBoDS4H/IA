@@ -15,7 +15,7 @@ import java.util.Optional;
 public class ProjectiveAlignment implements AlignmentAlgorithm{
     public static int LOWER_BOUND = 4;
     @Override
-    public Optional<AlignedImage> align(ImagePoints targetImage, ImagePoints imageToShift) throws IllegalArgumentException {
+    public Optional<AlignedImage> align(ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException {
         if(targetImage.getPoints().length >= LOWER_BOUND && imageToShift.getPoints().length >= LOWER_BOUND){
             final Mat imageToShiftMat = imageToShift.getMatImage();
             final Mat alignedImage = new Mat();
