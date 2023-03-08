@@ -3,9 +3,9 @@ package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.ManualAlgorithm;
-import com.ds4h.model.alignment.automatic.AutomaticAlgorithm;
-import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
+import com.ds4h.model.alignment.Alignment;
+import com.ds4h.model.alignment.AlignmentEnum;
+import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,32 +16,13 @@ import java.util.Objects;
  * using the exact class model because we want to use the MVC Pattern.
  */
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
-    //private final AbstractAutomaticAlignment surfAlignment;
-    private final ManualAlgorithm translative = new ManualAlgorithm();
-    private final List<AlignedImage> alignedImages;
-    private final List<AlignedImage> deformedImages;
+    private final Alignment alignment;
 
     /**
      * Constructor of the Controller
      */
     public AutomaticAlignmentController(){
-        //this.surfAlignment = new AutomaticAlgorithm(new SURFDetector());
-        this.alignedImages = new LinkedList<>();
-        this.deformedImages = new LinkedList<>();
-    }
-
-    /**
-     * When this method is called, we check if the alignment is already running, if it is so, we do nothing otherwise
-     * if the thread is not alive it means that the alignment algorithm is not running, we can start the alignment thread.
-     * @param cornerManager in order to get all the images to align
-     * @throws IllegalArgumentException if some of ImagePoints are not correct, an exception is thrown.
-     * if the alignment algorithm we do nothing
-     */
-    public void surfAlignment(final PointController cornerManager) throws IllegalArgumentException{
-        if(!this.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.align(this.translative, cornerManager);
-            //this.surfAlignment.alignImages(cornerManager.getCornerManager());
-        }
+        this.alignment = new Alignment();
     }
 
 
@@ -52,12 +33,11 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     @Override
     public List<AlignedImage> getAlignedImages() {
-        return null;
-        //return new LinkedList<>(this.surfAlignment.alignedImages());
+        return new LinkedList<>(alignment.alignedImages());
     }
-    public void align(final ManualAlgorithm algorithm, final PointController cornerManager){
-        if(!algorithm.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            algorithm.alignImages(cornerManager.getCornerManager());
+    public void align(final AlignmentAlgorithm algorithm, final PointController cornerManager){
+        if(!this.alignment.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
+            this.alignment.alignImages(cornerManager.getCornerManager(), algorithm, AlignmentEnum.AUTOMATIC);
         }
     }
 
@@ -68,12 +48,12 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     @Override
     public boolean isAlive(){
-        return true;//this.surfAlignment.isAlive();
+        return this.alignment.isAlive();
     }
 
     @Override
     public String name() {
-        return "SURF Algorithm";
+        return "AUTOMATIC";
     }
 
 }

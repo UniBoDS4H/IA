@@ -10,7 +10,7 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
-import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
+import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
@@ -331,11 +331,22 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
         });
     }
+    private AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e){
+        switch (e){
+            case TRANSLATIONAL:
+                return new TranslationalAlignment();
+            case PROJECTIVE:
+                return new ProjectiveAlignment();
+            case AFFINE:
+                return new AffineAlignment();
+        }
+        throw new IllegalArgumentException("Algorithm not present");
+    }
 
     private void pollingManualAlignment(){
         if(!this.manualAlignmentController.isAlive()) {
             try {
-                this.manualAlignmentController.alignImages(this.alignmentConfigGUI.getSelectedValue(), this.cornerControler);
+                this.manualAlignmentController.align(this.getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue()), this.cornerControler);
                 this.startPollingThread(this.manualAlignmentController);
             }catch(final Exception e){
                 JOptionPane.showMessageDialog(this,
@@ -392,7 +403,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                this.automaticAlignmentController.surfAlignment(this.cornerControler);
+                this.automaticAlignmentController.align(this.getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue()), this.cornerControler);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,

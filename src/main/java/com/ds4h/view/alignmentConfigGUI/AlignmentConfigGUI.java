@@ -1,6 +1,6 @@
 package com.ds4h.view.alignmentConfigGUI;
 
-import com.ds4h.model.alignment.AlignmentAlgorithmEnum;
+import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;

@@ -3,8 +3,8 @@ package com.ds4h.controller.alignmentController.semiAutomaticController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.ManualAlgorithm;
-
+import com.ds4h.model.alignment.Alignment;
+import com.ds4h.model.alignment.AlignmentEnum;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  */
 public class SemiAutomaticController implements AlignmentControllerInterface {
-    private final ManualAlgorithm semiAutomatic = null;//new SemiAutomaticAlignment();
+    private final Alignment alignment = new Alignment();
     public SemiAutomaticController(){
 
     }
@@ -24,7 +24,7 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
      */
     @Override
     public List<AlignedImage> getAlignedImages() {
-        return new LinkedList<>(this.semiAutomatic.alignedImages());
+        return new LinkedList<>(this.alignment.alignedImages());
     }
 
     /**
@@ -33,7 +33,7 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
      */
     @Override
     public boolean isAlive() {
-        return semiAutomatic.isAlive();
+        return alignment.isAlive();
     }
 
     /**
@@ -50,8 +50,8 @@ public class SemiAutomaticController implements AlignmentControllerInterface {
      * @param pointController
      */
     public void align(final PointController pointController) {
-        if(!this.semiAutomatic.isAlive() && Objects.nonNull(pointController) && Objects.nonNull(pointController.getCornerManager())){
-            this.semiAutomatic.alignImages(pointController.getCornerManager());
-        }
+        /*if(!this.alignment.isAlive() && Objects.nonNull(pointController) && Objects.nonNull(pointController.getCornerManager())){
+            this.alignment.alignImages(pointController.getCornerManager(), AlignmentEnum.SEMIAUTOMATIC);
+        }*/
     }
 }

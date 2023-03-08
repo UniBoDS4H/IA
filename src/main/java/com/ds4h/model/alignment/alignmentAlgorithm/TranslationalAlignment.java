@@ -1,8 +1,6 @@
 package com.ds4h.model.alignment.alignmentAlgorithm;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.AlignmentAlgorithmInterface;
-import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
@@ -10,23 +8,19 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
-import static com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing.printMat;
 
 /**
  * This class is used for the manual alignment using the Translative technique
  */
-public class TranslationalAlignment{
+public class TranslationalAlignment implements AlignmentAlgorithm {
 
-    public static final int LOWER_BOUND = 1;
-
+    public static int LOWER_BOUND = 1;
     public TranslationalAlignment(){
     }
 
+    @Override
     public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
@@ -35,9 +29,7 @@ public class TranslationalAlignment{
                 final Point[] dstArray = targetImage.getMatOfPoint().toArray();
                 if(srcArray.length == dstArray.length) {
                     final Mat alignedImage = new Mat();
-                    final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());//Calib3d.findHomography(targetImage.getMatOfPoint(), imageToShift.getMatOfPoint(), Calib3d.RANSAC, 5);
-
-                    printMat(transformationMatrix);
+                    final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                     if(srcArray.length <=2){//if less than 2 points mininum least square otherwise RANSAC
                        Imgproc.warpPerspective(imageToShiftMat,alignedImage,transformationMatrix, targetImage.getGrayScaleMat().size());
                      }else{
@@ -59,6 +51,7 @@ public class TranslationalAlignment{
         }
     }
 
+    @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
         if(srcPoints.toArray().length <=2){
             final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
@@ -93,6 +86,7 @@ public class TranslationalAlignment{
         return new Point(meanDeltaX, meanDeltaY);
     }
 
+    @Override
     public void transform(final Mat source, final Mat destination, final Mat H, int nPoints){
         if(nPoints <=2){//if less than 2 points mininum least square otherwise RANSAC
             Core.perspectiveTransform(source,destination,H);

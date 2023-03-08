@@ -1,22 +1,13 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.model.util.Pair;
-import ij.ImagePlus;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.awt.*;
-import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -25,32 +16,19 @@ import java.util.concurrent.*;
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
  * Every child class must implement the 'align' method.
  */
-public class ManualAlgorithm implements Runnable{
+public class Alignment implements Runnable{
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
     private Thread thread;
+    private AlignmentEnum type;
+    private AlignmentAlgorithm algorithm;
 
-    public ManualAlgorithm(){
+    public Alignment(){
         this.thread = new Thread(this);
         this.imagesToAlign = new LinkedList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
     }
-
-    /**
-     * This method must be overridden from all the children classes. Inside this method we have the
-     * real implementation of the alignment algorithm.
-     *
-     * @param targetImage the targetImage image for the alignment, this Object will be used in order to align the imagePoints.
-     * @param imagePoints the image to align base to the targetImage object
-     * @param targetSize
-     * @return the Optional aligned containing the final aligned image
-     * @throws NoSuchMethodException in case this method is called from a child class without having the implementation of it
-     */
-    public Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) {
-        throw new NotImplementedException();
-    }
-
 
     /**
      * When this method is called we start the real process of image alignment. If the thread is not alive and the
@@ -60,12 +38,14 @@ public class ManualAlgorithm implements Runnable{
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    public void alignImages(final PointManager pointManager) throws IllegalArgumentException{
+    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws IllegalArgumentException{
         if(Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
             if(!this.isAlive()) {
                 this.targetImage = pointManager.getSourceImage().get();
                 this.alignedImages.clear();
                 this.imagesToAlign.clear();
+                this.type = type;
+                this.algorithm = algorithm;
                 try {
                     this.imagesToAlign.addAll(pointManager.getImagesToAlign());
                     this.thread.start();
@@ -80,19 +60,14 @@ public class ManualAlgorithm implements Runnable{
     }
 
     private void manual(){
-        final TranslationalAlignment translationalAlignment = new TranslationalAlignment();
-        final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, translationalAlignment);
-
-
-
+        final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm);
         this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
         this.imagesToAlign.parallelStream()
-                .forEach(img -> translationalAlignment.align(target, img)
+                .forEach(img -> this.algorithm.align(target, img)
                         .ifPresent(this.alignedImages::add));
 
     }
     private void auto(){
-        final TranslationalAlignment translationalAlignment = new TranslationalAlignment();
         SURFDetector s = new SURFDetector();
         Map<ImagePoints,ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
@@ -101,23 +76,11 @@ public class ManualAlgorithm implements Runnable{
             s.detectPoint(t, i);
             images.put(i,t);
         });
-        images.entrySet().stream().forEach(p->System.out.println("PRIMA: " + p.getValue().getListPoints().get(0)));
-
-        final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, translationalAlignment);
-        images.entrySet().stream().forEach(p->System.out.println("DOPO: " + p.getValue().getListPoints().get(0)));
-
+        final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
         this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
         images.entrySet().stream().forEach(e->{
-            translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+            this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
         });
-
-
-        /*images.entrySet().stream().forEach(e->{
-            translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
-        });
-
-         */
-
     }
 
     /**
@@ -129,23 +92,13 @@ public class ManualAlgorithm implements Runnable{
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
+                if(type == AlignmentEnum.MANUAL){
+                    manual();
+                }else if(type == AlignmentEnum.AUTOMATIC){
+                    auto();
+                }else{
 
-                //manual();
-                auto();
-
-
-                /*
-                images.entrySet().stream().forEach(e->{
-                    translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
-                });
-                */
-
-
-
-
-
-
-
+                }
             }
             this.thread = new Thread(this);
         } catch (final Exception e) {
