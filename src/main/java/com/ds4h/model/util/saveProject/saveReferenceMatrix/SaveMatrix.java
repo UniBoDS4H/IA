@@ -39,6 +39,14 @@ public class SaveMatrix {
                     }
                     stringBuilder.append("\n");
                 }
+                if(matrix.rows() < 3){
+                    for(int i = 0; i < 3; i++){
+                        final StringBuilder element = new StringBuilder(String.valueOf(i%3));
+                        final String output = String.format("%-22s", element);
+                        stringBuilder.append("| ").append(output).append(" |");
+                    }
+                    stringBuilder.append("\n");
+                }
                 content.append(stringBuilder.toString());
             }
             content.append("\n \n");

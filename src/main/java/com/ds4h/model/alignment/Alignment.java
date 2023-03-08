@@ -3,6 +3,7 @@ package com.ds4h.model.alignment;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
+import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
@@ -68,17 +69,17 @@ public class Alignment implements Runnable{
 
     }
     private void auto(){
-        SURFDetector surf = new SURFDetector();
-        Map<ImagePoints,ImagePoints> images = new HashMap<>();
+        final SURFDetector surf = new SURFDetector();
+        final Map<ImagePoints,ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
-            ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
-            ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
+            final ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
+            final ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
             surf.detectPoint(t, i);
             images.put(i,t);
         });
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
         this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
-        images.entrySet().stream().forEach(e->{
+        images.entrySet().parallelStream().forEach(e->{
             this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
         });
     }
@@ -96,8 +97,6 @@ public class Alignment implements Runnable{
                     manual();
                 }else if(type == AlignmentEnum.AUTOMATIC){
                     auto();
-                }else{
-
                 }
             }
             this.thread = new Thread(this);
