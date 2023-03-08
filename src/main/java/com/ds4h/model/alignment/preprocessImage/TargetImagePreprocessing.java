@@ -10,37 +10,36 @@ import org.opencv.core.Point;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TargetImagePreprocessing {
     static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         for (final ImagePoints image : imagesToAlign) {
-            Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
+            final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
             System.out.println("TRASLATION: " + res.getSecond());
-            MatOfPoint2f points = new MatOfPoint2f();
+            final MatOfPoint2f points = new MatOfPoint2f();
             points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
             target = new ImagePoints(res.getFirst(),target.getName(),  points);
-
         }
         return target;
     }
 
-    static public ImagePoints automaticProcess(Map<ImagePoints,ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
-        List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
-        for(int i = 0; i < s.size(); i++){
-            Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
-            for (int j = 0; j < s.size(); j++){
+    static public ImagePoints automaticProcess(final Map<ImagePoints,ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
+        final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
+        IntStream.range(0, s.size()).forEach(i -> {
+            final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
+            IntStream.range(0, s.size()).forEach(j -> {
                 ImagePoints target = s.get(j).getValue();
-                ImagePoints img = s.get(j).getKey();
-                MatOfPoint2f points = new MatOfPoint2f();
-                points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
+                final ImagePoints img = s.get(j).getKey();
+                final MatOfPoint2f points = new MatOfPoint2f();
+                points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
                 target = new ImagePoints(res.getFirst(),target.getName(), points);
                 s.set(j, new AbstractMap.SimpleEntry<>(img,target));
-            }
-        }
+            });
+        });
         images.clear();
-        s.forEach(e->images.put(e.getKey(),e.getValue()));
-
+        s.parallelStream().forEach(e->images.put(e.getKey(),e.getValue()));
         return s.get(s.size()-1).getValue();
     }
 

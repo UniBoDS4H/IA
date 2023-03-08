@@ -4,13 +4,12 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.xfeatures2d.SURF;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SURFDetector {
+public class SURFDetector extends PointDetector {
 
     private final SURF detector = SURF.create();
     private final BFMatcher matcher = BFMatcher.create();
@@ -18,6 +17,7 @@ public class SURFDetector {
         super();
     }
 
+    @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
         final Mat imagePointMat = imagePoint.getGrayScaleMat();
         final Mat targetImageMat = targetImage.getGrayScaleMat();

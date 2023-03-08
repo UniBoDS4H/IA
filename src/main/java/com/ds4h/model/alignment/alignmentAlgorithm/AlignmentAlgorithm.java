@@ -9,10 +9,9 @@ import java.util.Optional;
 
 public interface AlignmentAlgorithm {
 
+    Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException;
 
-    Optional<AlignedImage> align(ImagePoints targetImage, ImagePoints imageToShift) throws IllegalArgumentException;
+    Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints);
 
-    Mat getTransformationMatrix(MatOfPoint2f srcPoints, MatOfPoint2f dstPoints);
-
-    void transform(Mat source, Mat destination, Mat H, int nPoints);
+    void transform(final Mat source, final Mat destination, Mat H, final int nPoints);
 }
