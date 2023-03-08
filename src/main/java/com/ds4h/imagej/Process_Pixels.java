@@ -9,7 +9,7 @@
 package com.ds4h.imagej;
 
 import com.ds4h.controller.opencvController.OpencvController;
-import com.ds4h.model.util.opencvManager.opencvLoader.OpenCVLoader;
+import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.plugin.PlugIn;
 
@@ -39,6 +39,7 @@ public class Process_Pixels implements PlugIn {
 	@Override
 	public void run(String s) {
 		OpencvController.loadLibrary();
+		new KAZEDetector();
 		EventQueue.invokeLater(MainMenuGUI::new);
 
 	}

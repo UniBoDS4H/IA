@@ -32,9 +32,12 @@ public class ImagePoints {
         this(Imgcodecs.imread(image.getPath()), image.getName());
     }
     public Mat getGrayScaleMat(){
-        Mat grayImage = new Mat();
-        Imgproc.cvtColor(this.image, grayImage, Imgproc.COLOR_BGR2GRAY);
-        return grayImage;
+        if(this.image.channels() == 3){
+            final Mat grayImage = new Mat();
+            Imgproc.cvtColor(this.image, grayImage, Imgproc.COLOR_BGR2GRAY);
+            return grayImage;
+        }
+        return this.image;
     }
 
     /**

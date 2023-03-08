@@ -2,8 +2,8 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
-import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
-import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
@@ -23,6 +23,7 @@ public class Alignment implements Runnable{
     private final List<AlignedImage> alignedImages;
     private Thread thread;
     private AlignmentEnum type;
+    private PointDetector pointDetector;
     private AlignmentAlgorithm algorithm;
 
     public Alignment(){
@@ -39,9 +40,9 @@ public class Alignment implements Runnable{
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws IllegalArgumentException{
-        if(Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
-            if(!this.isAlive()) {
+    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws IllegalArgumentException {
+        if (Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
+            if (!this.isAlive()) {
                 this.targetImage = pointManager.getSourceImage().get();
                 this.alignedImages.clear();
                 this.imagesToAlign.clear();
@@ -54,10 +55,15 @@ public class Alignment implements Runnable{
                     throw new IllegalArgumentException("Error: " + ex.getMessage());
                 }
             }
-        }else{
+        } else {
             throw new IllegalArgumentException("In order to do the alignment It is necessary to have a target," +
                     " please pick a target image.");
         }
+    }
+
+    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type, final PointDetector pointDetector) throws IllegalArgumentException{
+        this.pointDetector = Objects.requireNonNull(pointDetector);
+        this.alignImages(pointManager, algorithm, type);
     }
 
     private void manual(){
@@ -69,12 +75,11 @@ public class Alignment implements Runnable{
 
     }
     private void auto(){
-        final SURFDetector surf = new SURFDetector();
         final Map<ImagePoints,ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
             final ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
-            surf.detectPoint(t, i);
+            this.pointDetector.detectPoint(t, i);
             images.put(i,t);
         });
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
