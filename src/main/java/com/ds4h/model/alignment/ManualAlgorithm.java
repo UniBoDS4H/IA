@@ -1,6 +1,8 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
+import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
@@ -13,57 +15,26 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.awt.*;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
  * Every child class must implement the 'align' method.
  */
-public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Runnable{
-    private final static int RGB = 3;
+public class ManualAlgorithm implements Runnable{
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
-    private final Map<ImagePoints, Mat> trasformationMatrix;
     private Thread thread;
 
-    protected ManualAlgorithm(){
-        targetImage = null;
+    public ManualAlgorithm(){
         this.thread = new Thread(this);
         this.imagesToAlign = new LinkedList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
-        this.trasformationMatrix = new HashMap<>();
-    }
-    /**
-     * Convert the new matrix in to an image
-     * @param name : used for the creation of the new file.
-     * @param matrix : the image aligned matrix
-     * @return : the new image created by the Matrix.
-     */
-    protected Optional<ImagePlus> convertToImage(final String name, final Mat matrix){
-        return ImagingConversion.fromMatToImagePlus(matrix, name);
-    }
-
-    protected void addMatrix(final ImagePoints key, final Mat matrix){
-        if(Objects.nonNull(key) && Objects.nonNull(matrix)) {
-            this.trasformationMatrix.putIfAbsent(key, matrix);
-        }
-    }
-
-    protected void removeMatrix(final ImagePoints key){
-        if(Objects.nonNull(key)) {
-            this.trasformationMatrix.remove(key);
-        }
-    }
-
-    public void clearMap(){
-        this.trasformationMatrix.clear();
-    }
-
-    protected Mat traslationMatrix(final ImagePoints key){
-        return this.trasformationMatrix.get(Objects.requireNonNull(key));
     }
 
     /**
@@ -76,34 +47,10 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
      * @return the Optional aligned containing the final aligned image
      * @throws NoSuchMethodException in case this method is called from a child class without having the implementation of it
      */
-    public
-    Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) {
+    public Optional<AlignedImage> align(final MatOfPoint2f targetImage, final ImagePoints imagePoints, Size targetSize) {
         throw new NotImplementedException();
     }
 
-
-    /**
-     * This method can be used inside the alignment in order to convert an RGB matrix in to a GrayScale matrix, because
-     * some alignment can require GrayScale images so because of that It is necessary to convert the current Matrix.
-     * @param mat the Matrix to convert from RGB to GrayScale
-     * @return the new GrayScale matrix
-     */
-
-    /**
-     * This method is used for the warping of the final Matrix, this warping is used in order to store the new aligned image.
-     * @param source this is the original Matrix of the image to align
-     * @param H the Homography Matrix
-     * @param size the size of the TargetMatrix
-     * @param alignedFile the name of the aligned file
-     * @return an Optional where is stored the new Aligned Image
-     */
-    protected Optional<AlignedImage> warpMatrix(final Mat source, final Mat H, final Size size, final File alignedFile){
-        final Mat alignedImage1 = new Mat();
-        // Align the first image to the second image using the homography matrix
-        Imgproc.warpPerspective(source, alignedImage1, H, size);
-        final Optional<ImagePlus> finalImage = this.convertToImage(alignedFile.getName(), alignedImage1);
-        return finalImage.map(imagePlus -> new AlignedImage(alignedImage1, H, imagePlus));
-    }
 
     /**
      * When this method is called we start the real process of image alignment. If the thread is not alive and the
@@ -113,7 +60,6 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    @Override
     public void alignImages(final PointManager pointManager) throws IllegalArgumentException{
         if(Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
             if(!this.isAlive()) {
@@ -133,6 +79,45 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
         }
     }
 
+    private void manual(){
+        final TranslationalAlignment translationalAlignment = new TranslationalAlignment();
+        final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, translationalAlignment);
+
+
+
+        this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
+        this.imagesToAlign.parallelStream()
+                .forEach(img -> translationalAlignment.align(target, img)
+                        .ifPresent(this.alignedImages::add));
+
+    }
+    private void auto(){
+        final TranslationalAlignment translationalAlignment = new TranslationalAlignment();
+        SURFDetector s = new SURFDetector();
+        Map<ImagePoints,ImagePoints> images = new HashMap<>();
+        this.imagesToAlign.forEach(img->{
+            ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
+            ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
+            s.detectPoint(t, i);
+            images.put(i,t);
+        });
+        images.entrySet().stream().forEach(p->System.out.println(p.getKey().getName()));
+
+        final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, translationalAlignment);
+        this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
+        images.entrySet().stream().forEach(e->{
+            translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+        });
+
+
+        /*images.entrySet().stream().forEach(e->{
+            translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+        });
+
+         */
+
+    }
+
     /**
      * Inside this method we call the 'align' operation, It is strictly necessary that the 'align' method is present,
      * otherwise It will throw a 'NoSuchMethodException'. Each image is stored inside the 'alignedImages' collection.
@@ -142,19 +127,27 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
-                final TargetImagePreprocessing targetImagePreprocessing = new TargetImagePreprocessing();
-                final Pair<ImagePoints, Map<ImagePoints, MatOfPoint2f>> pair =  targetImagePreprocessing.processManualImage(this.targetImage, this.imagesToAlign, this);
-                final ImagePoints result = pair.getFirst();
-                this.alignedImages.add(new AlignedImage(result.getMatImage(), result.getImage()));
-                pair.getSecond().entrySet().parallelStream().peek(u -> System.out.println("BEFORE ALIGN " + u.getValue()))
-                        .forEach(img -> this.align(img.getValue(), img.getKey(), result.getMatImage().size())
-                                .ifPresent(this.alignedImages::add));
+
+                //manual();
+                auto();
+
+
+                /*
+                images.entrySet().stream().forEach(e->{
+                    translationalAlignment.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+                });
+                */
+
+
+
+
+
+
+
             }
             this.thread = new Thread(this);
-            this.clearMap();
         } catch (final Exception e) {
             this.thread = new Thread(this);
-            this.clearMap();
             throw new RuntimeException(e);
         }
     }
@@ -168,20 +161,6 @@ public abstract class ManualAlgorithm implements AlignmentAlgorithmInterface, Ru
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
 
-
-    @Override
-    public Mat getTransformationMatrix(final ImagePoints imageToAlign, final ImagePoints targetImage){
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void transform(final Mat source, final Mat destination, final Mat H){
-        throw new NotImplementedException();
-    }
-    /**
-     * This method is called in order to have information about the alignment thread.
-     * @return true If it is alive, false otherwise
-     */
     public boolean isAlive(){
         return this.thread.isAlive();
     }

@@ -10,10 +10,7 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
-import com.ds4h.model.alignment.manual.AffineAlignment;
-import com.ds4h.model.alignment.manual.PerspectiveAlignment;
-import com.ds4h.model.alignment.manual.RansacAlignment;
-import com.ds4h.model.alignment.manual.TranslationalAlignment;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
@@ -183,75 +180,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         if (!this.cornerControler.getCornerImagesImages().isEmpty()) {
             nPoints = this.cornerControler.getCornerImagesImages().get(0).getPoints().length;
             switch (this.alignmentConfigGUI.getSelectedValue()) {
-                case AFFINE:
-                    boolean ok = true;
-                    for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                        if (i.getPoints().length != AffineAlignment.REQUIRED_POINTS) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    this.manualAlignment.setEnabled(ok);
-                    this.manualAlignment.setToolTipText(ok?"":"<html>"
-                            + "The number of points inside the images is not correct."
-                            + "<br>"
-                            + "In order to use the Affine alignment you must use " + AffineAlignment.REQUIRED_POINTS + " points in each image."
-                            + "</html>");
-                    break;
-                case RANSAC:
-                    ok = true;
-                    for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                        if (i.getPoints().length < RansacAlignment.LOWER_BOUND) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if(ok){
-                        for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                            if (i.getPoints().length != nPoints) {
-                                ok = false;
-                                break;
-                            }
-                        }
-                        this.manualAlignment.setEnabled(ok);
-                        this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
-                    }else{
-                        this.manualAlignment.setEnabled(false);
-                        this.manualAlignment.setToolTipText("<html>"
-                                + "The number of points inside the images is not correct."
-                                + "<br>"
-                                + "In order to use the RANSAC alignment you must use at least " + RansacAlignment.LOWER_BOUND + " points in each image."
-                                + "</html>");
-                    }
-                    break;
-                case PROJECTIVE:
-                    ok = true;
-                    for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                        if (i.getPoints().length < PerspectiveAlignment.LOWER_BOUND) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if(ok){
-                        for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                            if (i.getPoints().length != nPoints) {
-                                ok = false;
-                                break;
-                            }
-                        }
-                        this.manualAlignment.setEnabled(ok);
-                        this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
-                    }else{
-                        this.manualAlignment.setEnabled(false);
-                        this.manualAlignment.setToolTipText("<html>"
-                                + "The number of points inside the images is not correct."
-                                + "<br>"
-                                + "In order to use the Perspective alignment you must use at least " + PerspectiveAlignment.LOWER_BOUND + " points in each image."
-                                + "</html>");
-                    }
-                    break;
                 case TRANSLATIONAL:
-                    ok = true;
+                    boolean ok = true;
                     for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
                         System.out.println(i.getPoints().length);
                         if (i.getPoints().length < TranslationalAlignment.LOWER_BOUND) {

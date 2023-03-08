@@ -10,7 +10,7 @@ import org.opencv.xfeatures2d.SURF;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SURFDetector extends PointDetector {
+public class SURFDetector {
 
     private final SURF detector = SURF.create();
     private final BFMatcher matcher = BFMatcher.create();
@@ -18,13 +18,9 @@ public class SURFDetector extends PointDetector {
         super();
     }
 
-    @Override
-    public void detectPoint(final Mat targetImage, final ImagePoints imagePoint) {
-        this.keypoints1List.clear();
-        this.keypoints2List.clear();
-        this.matchesList.clear();
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
         final Mat imagePointMat = imagePoint.getGrayScaleMat();
-        final Mat targetImageMat = super.toGrayscale(targetImage);
+        final Mat targetImageMat = targetImage.getGrayScaleMat();
 
         // Detect the keypoints and compute the descriptors for both images:
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
@@ -54,24 +50,12 @@ public class SURFDetector extends PointDetector {
                 goodMatches.add(match);
             }
         }
-        this.matchesList.addAll(goodMatches);
-        // convert the matrices of keypoints in to list of keypoints, which represent the list of keypoints in the two images
-        this.keypoints1List.addAll(keypoints1.toList());
-        this.keypoints2List.addAll(keypoints2.toList());
+        final List<KeyPoint> keypoints1List = keypoints1.toList();
+        final List<KeyPoint> keypoints2List = keypoints2.toList();
+        goodMatches.forEach(match -> {
+            targetImage.addPoint(keypoints1List.get(match.queryIdx).pt);
+            imagePoint.addPoint(keypoints2List.get(match.trainIdx).pt);
+        });
     }
 
-    @Override
-    public void matchPoint(final ImagePoints targetImage, final ImagePoints imagePoints) {
-        this.points1.clear();
-        this.points2.clear();
-        this.matchesList.forEach(match -> {
-                    this.points1.add(this.keypoints1List.get(match.queryIdx).pt);
-                    this.points2.add(this.keypoints2List.get(match.trainIdx).pt);
-                });
-
-
-        this.points1.forEach(imagePoints::addPoint);
-        this.points2.forEach(targetImage::addPoint);
-        System.out.println("INSIDE MATCH SURF DETECTOR :" + imagePoints.getMatOfPoint());
-    }
 }

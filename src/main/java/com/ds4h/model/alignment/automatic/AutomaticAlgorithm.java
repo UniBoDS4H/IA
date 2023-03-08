@@ -5,8 +5,8 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.Mat;
 
-public class AutomaticAlgorithm extends AbstractAutomaticAlignment {
-
+public class AutomaticAlgorithm {
+/*
     public AutomaticAlgorithm(final PointDetector pointDetector){
         super(pointDetector);
     }
@@ -20,4 +20,5 @@ public class AutomaticAlgorithm extends AbstractAutomaticAlignment {
     public void mergePoint(final ImagePoints targetImage, final ImagePoints imagePoints) {
         super.pointDetector().matchPoint(targetImage, imagePoints);
     }
+    */
 }

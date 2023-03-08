@@ -3,10 +3,9 @@ package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.automatic.AbstractAutomaticAlignment;
+import com.ds4h.model.alignment.ManualAlgorithm;
 import com.ds4h.model.alignment.automatic.AutomaticAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
-import com.ds4h.model.alignment.manual.TranslationalAlignment;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +16,8 @@ import java.util.Objects;
  * using the exact class model because we want to use the MVC Pattern.
  */
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
-    private final AbstractAutomaticAlignment surfAlignment;
+    //private final AbstractAutomaticAlignment surfAlignment;
+    private final ManualAlgorithm translative = new ManualAlgorithm();
     private final List<AlignedImage> alignedImages;
     private final List<AlignedImage> deformedImages;
 
@@ -25,7 +25,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * Constructor of the Controller
      */
     public AutomaticAlignmentController(){
-        this.surfAlignment = new AutomaticAlgorithm(new SURFDetector());
+        //this.surfAlignment = new AutomaticAlgorithm(new SURFDetector());
         this.alignedImages = new LinkedList<>();
         this.deformedImages = new LinkedList<>();
     }
@@ -39,7 +39,8 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     public void surfAlignment(final PointController cornerManager) throws IllegalArgumentException{
         if(!this.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.surfAlignment.alignImages(cornerManager.getCornerManager());
+            this.align(this.translative, cornerManager);
+            //this.surfAlignment.alignImages(cornerManager.getCornerManager());
         }
     }
 
@@ -51,7 +52,13 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     @Override
     public List<AlignedImage> getAlignedImages() {
-        return new LinkedList<>(this.surfAlignment.alignedImages());
+        return null;
+        //return new LinkedList<>(this.surfAlignment.alignedImages());
+    }
+    public void align(final ManualAlgorithm algorithm, final PointController cornerManager){
+        if(!algorithm.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
+            algorithm.alignImages(cornerManager.getCornerManager());
+        }
     }
 
     /**
@@ -61,7 +68,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     @Override
     public boolean isAlive(){
-        return this.surfAlignment.isAlive();
+        return true;//this.surfAlignment.isAlive();
     }
 
     @Override

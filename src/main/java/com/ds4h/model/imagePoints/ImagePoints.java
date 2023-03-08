@@ -15,9 +15,13 @@ import java.util.*;
  *
  */
 public class ImagePoints {
-    private final Mat image;
+    private Mat image;
     private final List<Point> points;
     private final String name;
+    public ImagePoints(final Mat image, final String name, final MatOfPoint2f points){
+        this(image,name);
+        points.toList().forEach(this::addPoint);
+    }
 
     public ImagePoints(final Mat image, final String name){
         this.name = name;
@@ -25,9 +29,7 @@ public class ImagePoints {
         this.points = new ArrayList<>();
     }
     public ImagePoints(final File image){
-        this.name = image.getName();
-        this.image = Imgcodecs.imread(image.getPath());
-        this.points = new ArrayList<>();
+        this(Imgcodecs.imread(image.getPath()), image.getName());
     }
     public Mat getGrayScaleMat(){
         Mat grayImage = new Mat();
@@ -117,6 +119,10 @@ public class ImagePoints {
         mat.fromList(this.points);
 
         return mat;
+    }
+
+    public void setMat(Mat mat){
+        this.image = mat;
     }
 
     /**
