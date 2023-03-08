@@ -17,20 +17,16 @@ import java.util.stream.IntStream;
 public class TranslationalAlignment implements AlignmentAlgorithm {
 
     public static int LOWER_BOUND = 1;
-    public TranslationalAlignment(){
-    }
 
     @Override
     public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
                 final Mat imageToShiftMat = imageToShift.getMatImage();
-                final Point[] srcArray = imageToShift.getMatOfPoint().toArray();
-                final Point[] dstArray = targetImage.getMatOfPoint().toArray();
-                if(srcArray.length == dstArray.length) {
+                if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
-                    if(srcArray.length <=2){//if less than 2 points mininum least square otherwise RANSAC
+                    if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
                        Imgproc.warpPerspective(imageToShiftMat,alignedImage,transformationMatrix, targetImage.getGrayScaleMat().size());
                      }else{
                         Imgproc.warpAffine(imageToShiftMat,alignedImage,transformationMatrix, targetImage.getMatImage().size());

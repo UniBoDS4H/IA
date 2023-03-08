@@ -68,12 +68,12 @@ public class Alignment implements Runnable{
 
     }
     private void auto(){
-        SURFDetector s = new SURFDetector();
+        SURFDetector surf = new SURFDetector();
         Map<ImagePoints,ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
             ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
             ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
-            s.detectPoint(t, i);
+            surf.detectPoint(t, i);
             images.put(i,t);
         });
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
