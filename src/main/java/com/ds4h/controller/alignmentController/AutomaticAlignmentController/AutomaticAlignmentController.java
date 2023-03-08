@@ -7,6 +7,8 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
+import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +41,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
     public void align(final PointController cornerManager){
         if(!this.alignment.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational, AlignmentEnum.AUTOMATIC);
+            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational, AlignmentEnum.AUTOMATIC, new SURFDetector());
         }
     }
 
