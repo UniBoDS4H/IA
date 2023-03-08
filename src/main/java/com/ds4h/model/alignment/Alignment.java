@@ -2,8 +2,6 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
-import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
-import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
