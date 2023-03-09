@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KAZEDetector extends PointDetector {
-    private final AKAZE detector = AKAZE.create();
+    private final KAZE detector = KAZE.create();
     private final BFMatcher matcher = BFMatcher.create();
     public KAZEDetector(){
         super();
