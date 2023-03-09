@@ -39,9 +39,9 @@ public class SURFDetector extends PointDetector {
 
         // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
         final MatOfDMatch matches = new MatOfDMatch();
-        final MatOfDMatch matches_ = new MatOfDMatch();
+        //final MatOfDMatch matches_ = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
-        matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
+        //matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         final double threshold = 0.2*0.7;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
