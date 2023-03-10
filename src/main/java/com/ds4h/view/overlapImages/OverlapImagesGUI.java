@@ -15,6 +15,9 @@ import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -198,7 +201,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         protected void paintComponent(final Graphics g) {
             super.paintComponent(g);
 
-            Graphics2D g2d = (Graphics2D) g.create();
+            final Graphics2D g2d = (Graphics2D) g.create();
             g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, this.opacity));
             g2d.drawImage(this.alignedImage.getImage(), 0, 0, (int)this.getPreferredSize().getWidth(), (int)this.getPreferredSize().getHeight(), null);
             g2d.dispose();

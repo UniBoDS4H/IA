@@ -4,6 +4,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
+import org.opencv.features2d.Feature2D;
 import org.opencv.xfeatures2d.SURF;
 
 import java.util.ArrayList;
@@ -20,22 +21,17 @@ public class SURFDetector extends PointDetector {
 
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
-        final Mat imagePointMat = imagePoint.getGrayScaleMat();
-        final Mat targetImageMat = targetImage.getGrayScaleMat();
 
         // Detect the keypoints and compute the descriptors for both images:
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
-        this.detector.detectAndCompute(imagePointMat , new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
-
+        this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
         final Mat descriptors2 = new Mat();
-        this.detector.detectAndCompute(targetImageMat, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-
+        this.detector.detectAndCompute(targetImage.getGrayScaleMat(), new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
 
         // Detect key points for the second image
-
 
         // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
         final MatOfDMatch matches = new MatOfDMatch();
