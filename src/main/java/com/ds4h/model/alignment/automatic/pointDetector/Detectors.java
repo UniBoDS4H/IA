@@ -2,6 +2,8 @@ package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.briskDetector.BRISKDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.siftDetector.SIFTDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 
 import java.awt.*;
@@ -9,6 +11,8 @@ import java.awt.*;
 public enum Detectors {
     BRISK("BRISK", new BRISKDetector()),
     KAZE("KAZE", new KAZEDetector()),
+    ORB("ORB", new ORBDetector()),
+    SIFT("SIFT", new SIFTDetector()),
     SURF("SURF", new SURFDetector());
 
     private final String name;
