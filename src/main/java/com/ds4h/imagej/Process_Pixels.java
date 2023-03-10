@@ -12,8 +12,11 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.plugin.PlugIn;
+import org.opencv.core.Core;
+import org.opencv.features2d.*;
 
 import java.awt.*;
+import java.beans.FeatureDescriptor;
 
 /**
  * A template for processing each pixel of either
@@ -39,7 +42,6 @@ public class Process_Pixels implements PlugIn {
 	@Override
 	public void run(String s) {
 		OpencvController.loadLibrary();
-		new KAZEDetector();
 		EventQueue.invokeLater(MainMenuGUI::new);
 
 	}

@@ -7,7 +7,9 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
+import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.akazeDetector.AKAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 
 import java.util.LinkedList;
@@ -39,12 +41,11 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(alignment.alignedImages());
     }
-    public void align(final PointController cornerManager){
+    public void align(final Detectors detector, final PointController cornerManager){
         if(!this.alignment.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational, AlignmentEnum.AUTOMATIC, new SURFDetector());
+            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational, AlignmentEnum.AUTOMATIC, Objects.requireNonNull(detector.pointDetector()));
         }
     }
-
     /**
      * This method is used in order to get all the infos about the running thread, if it still alive it means
      * the alignment algorithm is not done yet, otherwise the alignment is done.

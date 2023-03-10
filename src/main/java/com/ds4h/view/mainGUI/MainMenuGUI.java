@@ -14,12 +14,19 @@ import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
+import com.ds4h.view.automaticSettingsGUI.AutomaticSettingsGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.gui.ImageRoi;
+import ij.gui.Overlay;
+import ij.gui.Roi;
+import ij.process.ImageProcessor;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -34,10 +41,10 @@ import java.util.stream.Collectors;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
-    private final JButton manualAlignment, automaticAlignment, semiAutomaticAlignment, clearProject;
+    private final JButton manualAlignment, automaticAlignment;
     private final JMenuBar menuBar;
     private final JMenu menu, project, settings, about;
-    private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem;
+    private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem, automaticItem;
     private final JPanel panel;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
@@ -49,6 +56,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
     private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
     private final SemiAutomaticController semiAutomaticController = new SemiAutomaticController();
+    private final AutomaticSettingsGUI automaticSettingsGUI;
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -64,8 +72,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
-        this.semiAutomaticAlignment = new JButton("SemiAutomatic Alignment");
-        this.clearProject = new JButton("Clear Project");
 
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
@@ -104,34 +110,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcManual.weighty = 0;
         this.panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
 
-        GridBagConstraints gbcSemi = new GridBagConstraints();
-        gbcSemi.gridx = 0;
-        gbcSemi.gridy = 12;
-        gbcSemi.gridwidth = 1;
-        gbcSemi.gridheight = 1;
-        gbcSemi.fill = GridBagConstraints.BOTH;
-        gbcSemi.weightx = 1;
-        gbcSemi.weighty = 0;
-        this.panel.add(this.semiAutomaticAlignment, gbcSemi); // aggiungo il terzo bottone al JFrame con il GridBagLayout
-
-        GridBagConstraints gbcClear = new GridBagConstraints();
-        gbcClear.gridx = 0;
-        gbcClear.gridy = 13;
-        gbcClear.gridwidth = 1;
-        gbcClear.gridheight = 1;
-        gbcClear.fill = GridBagConstraints.BOTH;
-        gbcClear.weightx = 1;
-        gbcClear.weighty = 0;
-        this.panel.add(this.clearProject, gbcClear); // aggiungo il terzo bottone al JFrame con il GridBagLayout
-
-
-
         add(this.panel);
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
 
         this.aboutGUI = new AboutGUI();
         this.settingsBunwarpj = new BunwarpjGUI(this.bunwarpJController);
         this.alignmentConfigGUI = new AlignmentConfigGUI(this);
+        this.automaticSettingsGUI = new AutomaticSettingsGUI(this);
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("File");
@@ -144,8 +129,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.exportItem = new JMenuItem("Export");
         this.importItem = new JMenuItem("Import");
         this.clearItem = new JMenuItem("Clear");
-        this.alignmentItem = new JMenuItem("Alignment");
-
+        this.alignmentItem = new JMenuItem("Manual");
+        this.automaticItem = new JMenuItem("Automatic");
         this.addComponents();
         this.addListeners();
         this.checkPointsForAlignment();
@@ -159,8 +144,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     public void addComponents(){
         // Create menu bar and add it to the frame
         this.setJMenuBar(this.menuBar);
-        this.clearProject.setBackground(Color.RED);
-        this.clearProject.setForeground(Color.BLACK);
         // Create menu and add it to the menu bar
         this.menuBar.add(this.menu);
         this.menuBar.add(this.project);
@@ -169,6 +152,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         // Create menu items and add them to the menu
         this.menu.add(this.loadImages);
         this.settings.add(this.alignmentItem);
+        this.settings.add(this.automaticItem);
         this.settings.add(this.settingsItem);
         this.project.add(this.exportItem);
         this.project.add(this.importItem);
@@ -284,12 +268,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             this.pollingManualAlignment();
         });
 
-        this.semiAutomaticAlignment.addActionListener(event -> {
-            this.pollingSemiAutomaticAlignment();
-        });
-
         this.alignmentItem.addActionListener(event -> {
             this.alignmentConfigGUI.showDialog();
+        });
+
+        this.automaticItem.addActionListener(event -> {
+            this.automaticSettingsGUI.showDialog();
         });
 
         this.exportItem.addActionListener(event -> {
@@ -357,20 +341,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         }
     }
 
-    private void pollingSemiAutomaticAlignment(){
-        if(!this.semiAutomaticController.isAlive()) {
-            try {
-                this.semiAutomaticController.align(this.cornerControler);
-                this.startPollingThread(this.semiAutomaticController);
-            }catch(final Exception e){
-                JOptionPane.showMessageDialog(this,
-                        e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
     private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface){
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
             final LoadingGUI loadingGUI = new LoadingGUI();
@@ -403,7 +373,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                this.automaticAlignmentController.align(this.cornerControler);
+                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(), this.cornerControler);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,

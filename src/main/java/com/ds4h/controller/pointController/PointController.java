@@ -60,7 +60,7 @@ public class PointController {
 
     public boolean copyPoints(final List<Point> selectedPoints, final ImagePoints img) {
         boolean res = true;
-        for (Point p:selectedPoints) {
+        for (final Point p:selectedPoints) {
             if(this.insideImage(p,img)){
                 img.addPoint(p);
             }else{
