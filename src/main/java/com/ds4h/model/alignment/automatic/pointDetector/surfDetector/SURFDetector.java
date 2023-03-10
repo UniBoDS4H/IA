@@ -4,6 +4,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
+import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.Feature2D;
 import org.opencv.xfeatures2d.SURF;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 public class SURFDetector extends PointDetector {
 
     private final SURF detector = SURF.create();
-    private final BFMatcher matcher = BFMatcher.create();
+    private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
     public SURFDetector(){
         super();
     }

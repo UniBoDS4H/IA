@@ -41,7 +41,8 @@ public class SIFTDetector extends PointDetector {
         double threshold = 1.8 * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
-        matches.toList().stream().filter(match -> match.distance < threshold)
+        matches.toList().stream()
+                .filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
                     imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
                     targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);

@@ -55,18 +55,11 @@ public class ORBDetector extends PointDetector {
 
         final double threshold = 2.0 * min_dist;
 
-        final List<DMatch> goodMatches = new ArrayList<>();
-        for (int i = 0; i < matches.rows(); i++) {
-            double dist = matches.toList().get(i).distance;
-            if (dist < threshold) {
-                goodMatches.add(matches.toList().get(i));
-            }
-        }
-        goodMatches.stream()
-                .peek(match -> System.out.println(match.distance))
-                .filter(match -> match.distance < threshold).forEach(goodMatch -> {
-            imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
-            targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
-        });
+        matches.toList().stream()
+                .filter(match -> match.distance < threshold)
+                .forEach(goodMatch -> {
+                    imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
+                    targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
+                });
     }
 }
