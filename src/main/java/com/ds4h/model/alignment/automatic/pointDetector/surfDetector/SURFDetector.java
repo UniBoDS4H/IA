@@ -33,7 +33,6 @@ public class SURFDetector extends PointDetector {
 
         // Detect key points for the second image
 
-        // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
         final MatOfDMatch matches = new MatOfDMatch();
         //final MatOfDMatch matches_ = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
