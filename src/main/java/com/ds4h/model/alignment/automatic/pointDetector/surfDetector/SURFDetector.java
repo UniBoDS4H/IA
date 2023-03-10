@@ -39,11 +39,18 @@ public class SURFDetector extends PointDetector {
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
         //matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
-        final double threshold = 0.2*0.7;
+        double max_dist = 0;
+        double min_dist = Double.MAX_VALUE;
+
+        for (int i = 0; i < matches.rows(); i++) {
+            double dist = matches.toList().get(i).distance;
+            if (dist < min_dist) min_dist = dist;
+            if (dist > max_dist) max_dist = dist;
+        }
+        double threshold = 1.1 * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
-        matches.toList().stream()
-                .filter(match -> match.distance < threshold)
+        matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
                     imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
                     targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
