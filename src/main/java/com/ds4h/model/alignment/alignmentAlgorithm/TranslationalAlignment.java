@@ -8,6 +8,8 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.ximgproc.Ximgproc;
+
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -56,11 +58,16 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             translationMatrix.put(1, 2, translation.y);
             return translationMatrix;
         }else{
-            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
+            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints,);
+            Calib3d.decomposeEssentialMat();
+
+
             H.put(0,0,1);
             H.put(0,1,0);
             H.put(1,0,0);
             H.put(1,1,1);
+
+
             return H;
         }
 

@@ -9,10 +9,14 @@ import java.awt.*;
 public class PreviewImagesPane extends JPanel {
     private final PointController controller;
     private final MainMenuGUI container;
-    private JPanel currentPanel;
+    private final JScrollPane scrollPane;
+    JPanel innerPanel;
     PreviewImagesPane(PointController controller, MainMenuGUI container){
         this.container = container;
         this.controller = controller;
+        this.scrollPane = new JScrollPane();
+        this.innerPanel = new JPanel();
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setVisible(true);
     }
@@ -23,12 +27,18 @@ public class PreviewImagesPane extends JPanel {
     public void showPreviewImages(){
         this.removeAll();
         this.revalidate();
+        this.innerPanel.removeAll();
+
+        innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         for (final ImagePoints image : this.controller.getCornerImagesImages()) {
             final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image)+1);
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            this.add(panel);
+            panel.setPreferredSize(new Dimension(0,this.getHeight()/6)); // Imposta la dimensione preferita del pannello di anteprima
+            innerPanel.add(panel);
         }
+        scrollPane.setViewportView(innerPanel);
+        this.add(scrollPane);
         this.revalidate();
     }
 
@@ -40,8 +50,5 @@ public class PreviewImagesPane extends JPanel {
     public void updateList(){
         this.showPreviewImages();
         this.repaint();
-    }
-    public void setCurrentPanel(JPanel panel) {
-        this.currentPanel = panel;
     }
 }
