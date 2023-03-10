@@ -2,7 +2,6 @@ package com.ds4h.model.alignment.automatic.pointDetector.akazeDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
-import org.bytedeco.javacpp.opencv_stitching;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
