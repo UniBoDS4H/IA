@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
+import com.ds4h.model.alignment.automatic.pointDetector.akazeDetector.AKAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.briskDetector.BRISKDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;

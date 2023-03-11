@@ -53,15 +53,18 @@ public class ImagingConversion {
                         return Stream.empty();
                     }
                 })
+                .peek(file -> System.out.println("UEILA: " + file.getName()))
                 .collect(Collectors.toList());
     }
 
     private static Stream<File> isMulti(final File file) throws IOException {
-        if (TIFFUtilities.getPages(ImageIO.createImageInputStream(file)).size() != 1) {
+        if (CheckImage.isTiff(file) && TIFFUtilities.getPages(ImageIO.createImageInputStream(file)).size() != 1) {
+            System.out.println("UEILA 2 volte: " + file.getName());
             final String dir = DirectoryCreator.createTemporaryDirectory("DS4H_Images");
             final List<File> files = ImagingConversion.split(file, new File(System.getProperty("java.io.tmpdir") + "/" + dir), FilenameUtils.removeExtension(file.getName()));
             return files.stream();
         } else {
+            System.out.println("NO MULTI : " + file.getName());
             return Stream.of(file);
         }
     }

@@ -24,6 +24,11 @@ public class CheckImage {
         return false;
     }
 
+    public static boolean isTiff(final File file){
+        return Objects.nonNull(file) && (file.getName().contains(".tiff")
+                || file.getName().contains(".tif"));
+    }
+
     private static boolean checkSize(final File image) throws IllegalArgumentException{
         final double length = CheckImage.getFileSizeGigaBytes(image);
         if(length < UPPER_LIMIT){

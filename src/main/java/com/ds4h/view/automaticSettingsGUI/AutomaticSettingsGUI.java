@@ -54,6 +54,7 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
         });
         this.saveButton.addActionListener(event -> {
             this.selectedValue = (Detectors) this.detectors.getSelectedItem();
+            assert this.selectedValue != null;
             this.selectedValue.setFactor(this.slider.getValue());
             this.dispose();
         });
