@@ -6,8 +6,6 @@ import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.ORB;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ORBDetector extends PointDetector {
@@ -53,7 +51,7 @@ public class ORBDetector extends PointDetector {
             if (dist > max_dist) max_dist = dist;
         }
 
-        final double threshold = 2.0 * min_dist;
+        final double threshold = (2.0 + this.getFactor()) * min_dist;
 
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)

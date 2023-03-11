@@ -43,7 +43,10 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
     public void align(final Detectors detector, final PointController cornerManager){
         if(!this.alignment.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational, AlignmentEnum.AUTOMATIC, Objects.requireNonNull(detector.pointDetector()));
+            this.alignment.alignImages(cornerManager.getCornerManager(), this.traslational,
+                    AlignmentEnum.AUTOMATIC,
+                    Objects.requireNonNull(detector.pointDetector()),
+                    detector.getFactor());
         }
     }
     /**

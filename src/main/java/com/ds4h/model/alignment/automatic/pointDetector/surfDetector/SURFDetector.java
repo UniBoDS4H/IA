@@ -3,14 +3,10 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
-import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.Feature2D;
 import org.opencv.xfeatures2d.SURF;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SURFDetector extends PointDetector {
 
@@ -47,7 +43,7 @@ public class SURFDetector extends PointDetector {
             if (dist < min_dist) min_dist = dist;
             if (dist > max_dist) max_dist = dist;
         }
-        double threshold = 1.1 * min_dist;
+        double threshold = (1.1+this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
         matches.toList().stream().filter(match -> match.distance < threshold)

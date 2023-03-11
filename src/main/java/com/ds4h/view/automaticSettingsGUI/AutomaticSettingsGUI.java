@@ -9,6 +9,7 @@ import javax.swing.*;
 
 public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
     private final JComboBox<Detectors> detectors;
+    private final JSlider slider;
     private final GroupLayout layout;
     private final JButton saveButton;
     private Detectors selectedValue;
@@ -21,6 +22,12 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
         this.layout.setAutoCreateContainerGaps(true);
         this.getContentPane().setLayout(this.layout);
         this.detectors = new JComboBox<>();
+        this.slider = new JSlider(0, 20);
+        this.slider.setMajorTickSpacing(5);
+        this.slider.setMinorTickSpacing(1);
+        this.slider.setPaintTicks(true);
+        this.slider.setPaintLabels(true);
+        this.slider.setValue(0);
         this.saveButton = new JButton("Save");
         this.addComponents();
         this.addListeners();
@@ -28,7 +35,8 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
     @Override
     public void showDialog() {
         this.setVisible(true);
-        //this.algorithm.setSelectedItem(this.selectedValue);
+        this.detectors.setSelectedItem(this.selectedValue);
+        this.slider.setValue((int)(this.selectedValue.getFactor()*10));
     }
 
     public Detectors getSelectedValue(){
@@ -41,10 +49,12 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
         this.detectors.addActionListener(event -> {
             this.selectedValue = (Detectors) this.detectors.getSelectedItem();
             assert this.selectedValue != null;
+            this.slider.setValue((int)(this.selectedValue.getFactor()*10));
             this.container.checkPointsForAlignment();
         });
         this.saveButton.addActionListener(event -> {
             this.selectedValue = (Detectors) this.detectors.getSelectedItem();
+            this.selectedValue.setFactor(this.slider.getValue());
             this.dispose();
         });
     }
@@ -57,19 +67,24 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.populateCombo();
         this.setSize();
+        final JLabel slidLbl = new JLabel("Threshold factor: ");
         final JLabel algLbl = new JLabel("Detector: ");
         this.layout.setVerticalGroup(this.layout.createSequentialGroup()
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(algLbl)
                         .addComponent(this.detectors))
+                        .addComponent(slidLbl)
+                        .addComponent(this.slider)
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING))
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(this.saveButton)));
         this.layout.setHorizontalGroup(this.layout.createSequentialGroup()
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                         .addComponent(algLbl)
+                        .addComponent(slidLbl)
                         .addComponent(this.saveButton))
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(this.detectors)));
+                        .addComponent(this.detectors))
+                        .addComponent(this.slider));
         this.pack();
     }
 
