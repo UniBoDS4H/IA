@@ -22,7 +22,7 @@ public class PreviewListItem extends JPanel {
     private final PreviewImagesPane container;
     private final CornerSelectorGUI cornerSelector;
     private final JPanel centerPanel;
-    PreviewListItem(PointController controller, ImagePoints image, PreviewImagesPane container, int id){
+    PreviewListItem(final PointController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
         this.container = container;
         this.controller = controller;
         this.centerPanel = new JPanel();

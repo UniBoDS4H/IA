@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 
 public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final ColorComboBox pointerColor;
@@ -19,20 +20,21 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final GridBagConstraints constraints;
     private final CornerSelectorGUI container;
     private final JSlider pointerDimension, contrastSlider;
-    private final JButton changeButton;
+    private final JButton changeButton, invertButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
     private float contrast = 0.0f;
-    public CornerSelectorSettingsGUI(CornerSelectorGUI container){
+    public CornerSelectorSettingsGUI(final CornerSelectorGUI container){
         super("Settings");
         this.container = container;
         this.pointerColor = new ColorComboBox();
         this.changeButton = new JButton("Change");
+        this.invertButton = new JButton("Invert");
         this.indexFrom = new JComboBox<>();
         this.indexTo = new JComboBox<>();
         this.selectedPointerColor = new ColorComboBox();
         this.textColor = new ColorComboBox();
-        this.contrastSlider = new JSlider();
+        this.contrastSlider = new JSlider(0, 20);
 
         this.setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
@@ -101,6 +103,10 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
             //TODO: FIX HOW TO IMAGES RENDERED.
             this.contrast  = this.contrastSlider.getValue()/10.0f;
         });
+        this.invertButton.addActionListener(event -> {
+            this.container.setImage(ChangeColorController.invert(this.container.getImage().getImage()));
+            this.container.repaint();
+        });
     }
 
     @Override
@@ -114,7 +120,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerDimension.setPaintLabels(true);
         this.contrastSlider.setMaximum(20);
         this.contrastSlider.setMinimum(0);
-        this.contrastSlider.setMajorTickSpacing(9);
+        this.contrastSlider.setMajorTickSpacing(5);
         this.contrastSlider.setMinorTickSpacing(1);
         this.contrastSlider.setPaintLabels(true);
         this.contrastSlider.setPaintTicks(true);
@@ -127,6 +133,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         changeIndex.add(this.indexTo);
         changeIndex.add(changeButton);
         this.addElement(new JLabel("Change corner index: "), new JPanel(), changeIndex);
+        this.addElement(new JLabel("Change contrast: "), new JPanel(), this.invertButton);
         this.constraints.gridy++;
     }
     private void setFrameSize(){

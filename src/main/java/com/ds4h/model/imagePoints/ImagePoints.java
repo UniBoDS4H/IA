@@ -18,9 +18,27 @@ public class ImagePoints {
     private Mat image;
     private final List<Point> points;
     private final String name;
+    private boolean useAnotherImage;
+    private Optional<ImagePlus> otherImage;
     public ImagePoints(final Mat image, final String name, final MatOfPoint2f points){
         this(image,name);
+        this.otherImage = Optional.empty();
+        this.useAnotherImage = false;
         points.toList().forEach(this::addPoint);
+    }
+
+    public void useAnotherImage(){
+        this.useAnotherImage = true;
+    }
+
+    public void useDefaultImage(){
+        useAnotherImage = false;
+    }
+
+    public void setAnotherImage(final ImagePlus image){
+        if(this.useAnotherImage){
+            this.otherImage = Optional.of(image);
+        }
     }
 
     public ImagePoints(final Mat image, final String name){
@@ -45,6 +63,11 @@ public class ImagePoints {
      * @return
      */
     public ImagePlus getImage(){
+
+        if(this.useAnotherImage && this.otherImage.isPresent()){
+            return this.otherImage.get();
+        }
+
         final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.image, this.name);
         if(img.isPresent()){
             return img.get();
@@ -89,7 +112,7 @@ public class ImagePoints {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ImagePoints that = (ImagePoints) o;
-        return Objects.equals(image, that.image) && Objects.equals(points, that.points) && Objects.equals(name, that.name);
+        return Objects.equals(image, that.image) && Objects.equals(name, that.name);
     }
 
     @Override

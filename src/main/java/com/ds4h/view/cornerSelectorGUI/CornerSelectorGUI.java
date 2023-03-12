@@ -113,6 +113,9 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         return this.image;
     }
     public void setImage(final ImagePlus imagePlus){
+        this.image.useAnotherImage();
+        this.image.setAnotherImage(imagePlus);
+        this.repaintPanel();
     }
 
     public void updateMenu() {
