@@ -69,7 +69,6 @@ public class ImagePoints {
     public ImagePlus getImage(){
 
         if(this.useAnotherImage && this.otherImage.isPresent()){
-            System.out.println("UEILA VIVA LA FIGA");
             return this.otherImage.get();
         }
 
