@@ -35,6 +35,10 @@ public class ImagePoints {
         useAnotherImage = false;
     }
 
+    public boolean isAnother(){
+        return this.useAnotherImage;
+    }
+
     public void setAnotherImage(final ImagePlus image){
         if(this.useAnotherImage){
             this.otherImage = Optional.of(image);
@@ -65,6 +69,7 @@ public class ImagePoints {
     public ImagePlus getImage(){
 
         if(this.useAnotherImage && this.otherImage.isPresent()){
+            System.out.println("UEILA VIVA LA FIGA");
             return this.otherImage.get();
         }
 
@@ -80,10 +85,16 @@ public class ImagePoints {
      * @return
      */
     public BufferedImage getBufferedImage(){
-        final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
-        final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        this.image.get(0, 0, data);
-        return image;
+        final BufferedImage image;
+        if(this.useAnotherImage && this.otherImage.isPresent()){
+            return this.otherImage.get().getBufferedImage();//new BufferedImage(this.otherImage.get().width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
+        }else{
+            image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
+            final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            this.image.get(0, 0, data);
+            return image;
+        }
+        //final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
     }
 
     /**

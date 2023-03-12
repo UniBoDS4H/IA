@@ -17,10 +17,7 @@ public class CheckImage {
     private CheckImage(){}
     public static boolean checkImage(final File file) throws IllegalArgumentException{
         if(Objects.nonNull(file) && file.isFile()) {
-            final String fileName = file.getName();
-            //final String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
             final String fileExtension = FilenameUtils.getExtension(file.getName());
-            System.out.println(fileExtension);
             if(CheckImage.EXTENSIONS.contains(fileExtension.toLowerCase())){
                 return CheckImage.checkSize(file);
             }
@@ -29,8 +26,9 @@ public class CheckImage {
     }
 
     public static boolean isTiff(final File file){
-        return Objects.nonNull(file) && (file.getName().contains(".tiff")
-                || file.getName().contains(".tif"));
+        final String fileExtension = FilenameUtils.getExtension(Objects.requireNonNull(file.getName()));
+        return !fileExtension.isEmpty() && (fileExtension.contains("tif")
+                || fileExtension.contains("tiff"));
     }
 
     private static boolean checkSize(final File image) throws IllegalArgumentException{
