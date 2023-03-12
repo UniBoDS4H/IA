@@ -52,9 +52,9 @@ public class SaveMatrix {
                             stringBuilder.append("| ").append(output).append(" |");
                         });
                         stringBuilder.append("\n");
-            }
-            content.append(stringBuilder.toString());
-            content.append("\n \n");
+                    }
+                    content.append(stringBuilder.toString());
+                    content.append("\n \n");
         });
         SaveMatrix.save(path, content.toString());
     }

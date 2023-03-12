@@ -27,6 +27,9 @@ import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class ImagingConversion {
+
+    private static final String TMP_DIRECTORY_NAME = "DS4H_Images";
+    private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
     private ImagingConversion(){}
 
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
@@ -59,12 +62,11 @@ public class ImagingConversion {
 
     private static Stream<File> isMulti(final File file) throws IOException {
         if (CheckImage.isTiff(file) && TIFFUtilities.getPages(ImageIO.createImageInputStream(file)).size() != 1) {
-            System.out.println("UEILA 2 volte: " + file.getName());
-            final String dir = DirectoryCreator.createTemporaryDirectory("DS4H_Images");
-            final List<File> files = ImagingConversion.split(file, new File(System.getProperty("java.io.tmpdir") + "/" + dir), FilenameUtils.removeExtension(file.getName()));
+            final String dir = DirectoryCreator.createTemporaryDirectory(ImagingConversion.TMP_DIRECTORY_NAME);
+            final List<File> files = ImagingConversion.split(file, new File( ImagingConversion.TMP_DIRECTORY+ "/" + dir),
+                    FilenameUtils.removeExtension(file.getName()));
             return files.stream();
         } else {
-            System.out.println("NO MULTI : " + file.getName());
             return Stream.of(file);
         }
     }

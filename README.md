@@ -6,19 +6,29 @@ With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by 
 
 ## Implementation
 
-DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji. TO BE DONE
+DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji. 
+
+
+## How to Align
+In order to align the images first of all we have to *load the images* inside the Java Application. This operation can be done in two ways:
+1. By using the *File -> Load Images*, with the use of a file chooser you will be able to load 1 or more images. Be carefull if there are no images inside the project and you try to load a single Image you will get an error, but if you do the same operation but there are other images inside the project you will be able to load the choosed image.
+2. By using the *Project -> Import*
 
 
 ### Manual Alignment
 The manual aligmment algorithm used inside this project are two : 
-   1. [Homography Alignment]()
-   2. [Second]
-TBD
+   - Translational Alignment
+   - Perspective Alignment
+   - Affine Alignment
     
 
 
 ### Automatic Alignment
-The automatic alignment algorithm used is [**SURF**](https://en.wikipedia.org/wiki/Speeded_up_robust_features). TBD
+The automatic alignment use what is called a *Point Detector*. A *Point Detector* is a class used for the detection of points for the alignment of the images. The Point Detector used inside this project are:
+* **BRISK**
+* **ORB**
+* **SIFT**
+* **SURF** 
 
 
 
