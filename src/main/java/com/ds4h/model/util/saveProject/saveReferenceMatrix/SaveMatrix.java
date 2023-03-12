@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -25,62 +26,36 @@ public class SaveMatrix {
 
     public static void saveMatrix(final List<AlignedImage> images, final String path){
         final StringBuilder content = new StringBuilder();
-        /*
-        images.stream().filter(alignedImage -> alignedImage.getRegistrationMatrix().isPresent()).parallel().forEach(alignedImage -> {
-            content.append("REFERENCE: ").append(alignedImage.getAlignedImage().getTitle()).append("\n");
-            content.append("MATRIX: ").append("\n");
-            final Mat matrix = alignedImage.getRegistrationMatrix().get();
-            final StringBuilder stringBuilder = new StringBuilder();
-            for (int row = 0; row < matrix.rows(); row++) {
-                for (int col = 0; col < matrix.cols(); col++) {
-                    final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));
-                    final String output = String.format("%-22s", element);
-                    System.out.println(output.length());
-                    stringBuilder.append("| ").append(output).append(" |");
-                }
-                stringBuilder.append("\n");
-            }
-            if(matrix.rows() < 3){
-                for(int i = 0; i < 3; i++){
-                    final StringBuilder element = new StringBuilder((i != 2 ? "0" : "1"));
-                    final String output = String.format("%-22s", element);
-                    stringBuilder.append("| ").append(output).append(" |");
-                }
-                stringBuilder.append("\n");
+
+        images.stream()
+                .filter(alignedImage -> alignedImage.getRegistrationMatrix().isPresent())
+                .forEach(alignedImage -> {
+                    content.append("REFERENCE: ").append(alignedImage.getAlignedImage().getTitle()).append("\n");
+                    content.append("MATRIX: ").append("\n");
+                    final Mat matrix = alignedImage.getRegistrationMatrix().get();
+                    final StringBuilder stringBuilder = new StringBuilder();
+                    final int rows = matrix.rows();
+                    final int cols = matrix.cols();
+                    IntStream.range(0, rows).forEach(row -> {
+                        IntStream.range(0, cols).forEach(col -> {
+                            final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));
+                            final String output = String.format("%-22s", element);
+                            System.out.println(output.length());
+                            stringBuilder.append("| ").append(output).append(" |");
+                        });
+                        stringBuilder.append("\n");
+                    });
+                    if(rows < 3){
+                        IntStream.range(0, 3).forEach(i -> {
+                            final StringBuilder element = new StringBuilder((i != 2 ? "0" : "1"));
+                            final String output = String.format("%-22s", element);
+                            stringBuilder.append("| ").append(output).append(" |");
+                        });
+                        stringBuilder.append("\n");
             }
             content.append(stringBuilder.toString());
             content.append("\n \n");
-
-
         });
-        */
-        for(final AlignedImage alignedImage : images){
-            if(alignedImage.getRegistrationMatrix().isPresent()) {
-                content.append("REFERENCE: ").append(alignedImage.getAlignedImage().getTitle()).append("\n");
-                content.append("MATRIX: ").append("\n");
-                final Mat matrix = alignedImage.getRegistrationMatrix().get();
-                final StringBuilder stringBuilder = new StringBuilder();
-                for (int row = 0; row < matrix.rows(); row++) {
-                    for (int col = 0; col < matrix.cols(); col++) {
-                        final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));
-                        final String output = String.format("%-22s", element);
-                        System.out.println(output.length());
-                        stringBuilder.append("| ").append(output).append(" |");
-                    }
-                    stringBuilder.append("\n");
-                }
-                if(matrix.rows() < 3){
-                    for(int i = 0; i < 3; i++){
-                        final StringBuilder element = new StringBuilder((i != 2 ? "0" : "1"));
-                        final String output = String.format("%-22s", element);
-                        stringBuilder.append("| ").append(output).append(" |");
-                    }
-                    stringBuilder.append("\n");
-                }
-                content.append(stringBuilder.toString());
-            }
-            content.append("\n \n");
-        }
         SaveMatrix.save(path, content.toString());
     }
 

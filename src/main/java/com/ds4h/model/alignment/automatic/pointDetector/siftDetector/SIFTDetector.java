@@ -29,12 +29,13 @@ public class SIFTDetector extends PointDetector {
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
 
-        for (int i = 0; i < matches.rows(); i++) {
-            double dist = matches.toList().get(i).distance;
+        for(final DMatch match : matches.toList()){
+            final double dist = match.distance;
             if (dist < min_dist) min_dist = dist;
             if (dist > max_dist) max_dist = dist;
         }
-        double threshold = (1.8 + this.getFactor()) * min_dist;
+
+        final double threshold = (1.8 + this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
         matches.toList().stream()
