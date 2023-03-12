@@ -17,7 +17,7 @@ public class CheckImage {
         if(Objects.nonNull(file) && file.isFile()) {
             final String fileName = file.getName();
             final String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-            if(CheckImage.EXTENSIONS.contains(fileExtension.toLowerCase())){
+            if(fileExtension.toLowerCase().contains(CheckImage.EXTENSIONS)){
                 return CheckImage.checkSize(file);
             }
         }
