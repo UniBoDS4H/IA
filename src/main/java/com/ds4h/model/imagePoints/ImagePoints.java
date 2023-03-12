@@ -28,19 +28,23 @@ public class ImagePoints {
     }
 
     public void useAnotherImage(){
-        this.useAnotherImage = true;
+        //TODO: refactor this
+        // this.useAnotherImage = true;
     }
 
-    public void useDefaultImage(){
+    public void useDefaultImage() {
+        //TODO: refactor this
         useAnotherImage = false;
     }
 
     public boolean isAnother(){
+        //TODO: refactor this
         return this.useAnotherImage;
     }
 
     public void setAnotherImage(final ImagePlus image){
         if(this.useAnotherImage){
+            //TODO: refactor this
             this.otherImage = Optional.of(image);
         }
     }
@@ -67,7 +71,7 @@ public class ImagePoints {
      * @return
      */
     public ImagePlus getImage(){
-
+        //TODO: refactor this
         if(this.useAnotherImage && this.otherImage.isPresent()){
             return this.otherImage.get();
         }
