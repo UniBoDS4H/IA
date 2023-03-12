@@ -176,7 +176,7 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         }
     }
 
-    public void setCurrentImage(ImagePoints image){
+    public void setCurrentImage(final ImagePoints image){
         this.currentImage = image;
         repaint();
     }
