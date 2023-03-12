@@ -90,6 +90,7 @@ public class ImagePoints {
     public BufferedImage getBufferedImage(){
         final BufferedImage image;
         if(this.useAnotherImage && this.otherImage.isPresent()){
+            //TODO: refactor this
             return this.otherImage.get().getBufferedImage();//new BufferedImage(this.otherImage.get().width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
         }else{
             image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
