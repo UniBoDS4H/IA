@@ -88,12 +88,11 @@ public class ImagePoints {
      * @return
      */
     public BufferedImage getBufferedImage(){
-        final BufferedImage image;
         if(this.useAnotherImage && this.otherImage.isPresent()){
             //TODO: refactor this
             return this.otherImage.get().getBufferedImage();//new BufferedImage(this.otherImage.get().width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
         }else{
-            image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
+            final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
             final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
             this.image.get(0, 0, data);
             return image;
