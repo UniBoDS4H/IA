@@ -100,12 +100,12 @@ public class BunwarpjDeformation implements Runnable{
     @Override
     public void run() {
         if(this.source.isPresent()){
-            final ImagePlus alignedImg = this.source.get().getAlignedImage();
+            final ImagePlus sourceImage = this.source.get().getAlignedImage();
             for(final AlignedImage alignedImage : this.alignedImages){
-                final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImg,
-                        alignedImage.getAlignedImage(),
-                        alignedImg.getProcessor(),
+                final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImage.getAlignedImage(),
+                        sourceImage,
                         alignedImage.getAlignedImage().getProcessor(),
+                        sourceImage.getProcessor(),
                         this.modeInput.getValue(),
                         this.sampleFactor,
                         this.minScale.getValue(),
@@ -120,6 +120,7 @@ public class BunwarpjDeformation implements Runnable{
                 this.outputList.add(alignedImage);
             }
         }
+        this.thread = new Thread(this);
     }
 
 
