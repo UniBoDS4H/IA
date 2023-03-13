@@ -49,10 +49,4 @@ public class SaveImagesPanel extends JPanel {
         this.showPreviewImages();
         this.repaint();
     }
-    public void setCurrentPanel(JPanel panel) {
-        this.currentPanel = panel;
-    }
-    public JPanel getCurrentPanel(){
-        return this.currentPanel;
-    }
 }
