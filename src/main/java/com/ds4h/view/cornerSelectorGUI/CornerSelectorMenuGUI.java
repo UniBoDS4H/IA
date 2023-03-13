@@ -25,7 +25,9 @@ public class CornerSelectorMenuGUI extends JPanel {
                 .filter(i -> !i.equals(this.image)).map(this.pointController::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
-        this.copyToCombo.setSelectedIndex(0);
+        if(pointController.getCornerImagesImages().size() > 1) {
+            this.copyToCombo.setSelectedIndex(0);
+        }
         this.copyToLabel = new JLabel("Copy to");
         this.deleteButton = new JButton("Delete");
         this.copyButton = new JButton("Copy");
