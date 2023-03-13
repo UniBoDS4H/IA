@@ -6,6 +6,7 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
@@ -27,11 +28,12 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.text = new JTextArea();
         this.addComponents();
         this.addListeners();
+        this.setSize(DisplayInfo.getDisplaySize(25));
     }
     @Override
     public void showDialog() {
         this.setVisible(true);
-        //this.algorithm.setSelectedItem(this.selectedValue);
+        this.algorithm.setSelectedItem(this.selectedValue);
     }
 
     public AlignmentAlgorithmEnum getSelectedValue(){

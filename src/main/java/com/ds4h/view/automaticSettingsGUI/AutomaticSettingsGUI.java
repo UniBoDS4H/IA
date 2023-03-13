@@ -31,6 +31,7 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
         this.saveButton = new JButton("Save");
         this.addComponents();
         this.addListeners();
+        this.setSize(DisplayInfo.getDisplaySize(25));
     }
     @Override
     public void showDialog() {
@@ -74,9 +75,9 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(algLbl)
                         .addComponent(this.detectors))
+                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(slidLbl)
-                        .addComponent(this.slider)
-                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING))
+                        .addComponent(this.slider))
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(this.saveButton)));
         this.layout.setHorizontalGroup(this.layout.createSequentialGroup()
                 .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
