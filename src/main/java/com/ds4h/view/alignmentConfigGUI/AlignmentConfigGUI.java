@@ -32,11 +32,14 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.translationCheckbox = new JCheckBox("Translation");
         this.rotationCheckbox = new JCheckBox("Rotation");
         this.scalingCheckbox = new JCheckBox("Scaling");
+        this.addComponents();
+        this.addListeners();
+        this.setSize(DisplayInfo.getDisplaySize(25));
     }
     @Override
     public void showDialog() {
         this.setVisible(true);
-        //this.algorithm.setSelectedItem(this.selectedValue);
+        this.algorithm.setSelectedItem(this.selectedValue);
     }
 
     public AlignmentAlgorithmEnum getSelectedValue(){

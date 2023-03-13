@@ -3,6 +3,7 @@ import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class CornerSelectorMenuGUI extends JPanel {
     private final PointController pointController;
@@ -24,11 +25,13 @@ public class CornerSelectorMenuGUI extends JPanel {
                 .filter(i -> !i.equals(this.image)).map(this.pointController::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
-        this.copyToCombo.setSelectedIndex(0);
+        if(pointController.getCornerImagesImages().size() > 1) {
+            this.copyToCombo.setSelectedIndex(0);
+        }
         this.copyToLabel = new JLabel("Copy to");
         this.deleteButton = new JButton("Delete");
         this.copyButton = new JButton("Copy");
-        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/icons/settings.png"));
+        ImageIcon settingsIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/settings.png")));
         ImageIcon resized = new ImageIcon(settingsIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
         this.cornerSetting = new JButton(resized);
@@ -50,7 +53,8 @@ public class CornerSelectorMenuGUI extends JPanel {
             container.repaintPanel();
         });
         this.copyButton.addActionListener(e->{
-            MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
+            final MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
+            assert item != null;
             if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
                 JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Some of the points are out of the selected image, they have not been copied");
             }else{

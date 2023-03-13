@@ -4,6 +4,7 @@ import com.ds4h.controller.alignmentController.AutomaticAlignmentController.Auto
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
+import com.ds4h.controller.changeColorController.ChangeColorController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;

@@ -6,8 +6,6 @@ import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.ORB;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ORBDetector extends PointDetector {
@@ -53,20 +51,13 @@ public class ORBDetector extends PointDetector {
             if (dist > max_dist) max_dist = dist;
         }
 
-        final double threshold = 2.0 * min_dist;
+        final double threshold = (2.0 + this.getFactor()) * min_dist;
 
-        final List<DMatch> goodMatches = new ArrayList<>();
-        for (int i = 0; i < matches.rows(); i++) {
-            double dist = matches.toList().get(i).distance;
-            if (dist < threshold) {
-                goodMatches.add(matches.toList().get(i));
-            }
-        }
-        goodMatches.stream()
-                .peek(match -> System.out.println(match.distance))
-                .filter(match -> match.distance < threshold).forEach(goodMatch -> {
-            imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
-            targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
-        });
+        matches.toList().stream()
+                .filter(match -> match.distance < threshold)
+                .forEach(goodMatch -> {
+                    imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
+                    targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
+                });
     }
 }

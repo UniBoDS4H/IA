@@ -21,4 +21,8 @@ public class ChangeColorController {
         }
         return null;
     }
+
+    public static ImagePlus invert(final ImagePlus imagePlus){
+        return ChangeImage.invert(imagePlus);
+    }
 }

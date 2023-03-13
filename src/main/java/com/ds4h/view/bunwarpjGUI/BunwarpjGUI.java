@@ -196,19 +196,19 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
     }
 
     private void fillCombo(final BunwarpJMode[] values){
-        for(BunwarpJMode mode : values){
+        for(final BunwarpJMode mode : values){
             this.modeMenu.addItem(mode);
         }
     }
 
     private void fillCombo(final BunwarpJMinScale[] values){
-        for(BunwarpJMinScale mode : values){
+        for(final BunwarpJMinScale mode : values){
             this.initialDef.addItem(mode);
         }
     }
 
     private void fillCombo(final BunwarpJMaxScale[] values){
-        for(BunwarpJMaxScale mode : values){
+        for(final BunwarpJMaxScale mode : values){
             this.finalDef.addItem(mode);
         }
     }

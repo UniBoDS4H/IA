@@ -18,9 +18,35 @@ public class ImagePoints {
     private Mat image;
     private final List<Point> points;
     private final String name;
+    private boolean useAnotherImage;
+    private Optional<ImagePlus> otherImage;
     public ImagePoints(final Mat image, final String name, final MatOfPoint2f points){
         this(image,name);
+        this.otherImage = Optional.empty();
+        this.useAnotherImage = false;
         points.toList().forEach(this::addPoint);
+    }
+
+    public void useAnotherImage(){
+        //TODO: refactor this
+        this.useAnotherImage = true;
+    }
+
+    public void useDefaultImage() {
+        //TODO: refactor this
+        useAnotherImage = false;
+    }
+
+    public boolean isAnother(){
+        //TODO: refactor this
+        return this.useAnotherImage;
+    }
+
+    public void setAnotherImage(final ImagePlus image){
+        if(this.useAnotherImage){
+            //TODO: refactor this
+            this.otherImage = Optional.of(image);
+        }
     }
 
     public ImagePoints(final Mat image, final String name){
@@ -45,6 +71,11 @@ public class ImagePoints {
      * @return
      */
     public ImagePlus getImage(){
+        //TODO: refactor this
+        if(this.useAnotherImage && this.otherImage.isPresent()){
+            return this.otherImage.get();
+        }
+
         final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.image, this.name);
         if(img.isPresent()){
             return img.get();
@@ -57,10 +88,16 @@ public class ImagePoints {
      * @return
      */
     public BufferedImage getBufferedImage(){
-        final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
-        final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        this.image.get(0, 0, data);
-        return image;
+        if(this.useAnotherImage && this.otherImage.isPresent()){
+            //TODO: refactor this
+            return this.otherImage.get().getBufferedImage();//new BufferedImage(this.otherImage.get().width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
+        }else{
+            final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
+            final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            this.image.get(0, 0, data);
+            return image;
+        }
+        //final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
     }
 
     /**
@@ -89,7 +126,7 @@ public class ImagePoints {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ImagePoints that = (ImagePoints) o;
-        return Objects.equals(image, that.image) && Objects.equals(points, that.points) && Objects.equals(name, that.name);
+        return Objects.equals(image, that.image) && Objects.equals(name, that.name);
     }
 
     @Override

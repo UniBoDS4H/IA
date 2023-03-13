@@ -1,5 +1,7 @@
 package com.ds4h.model.util;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.util.Objects;
 
@@ -15,13 +17,18 @@ public class CheckImage {
     private CheckImage(){}
     public static boolean checkImage(final File file) throws IllegalArgumentException{
         if(Objects.nonNull(file) && file.isFile()) {
-            final String fileName = file.getName();
-            final String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            final String fileExtension = FilenameUtils.getExtension(file.getName());
             if(CheckImage.EXTENSIONS.contains(fileExtension.toLowerCase())){
                 return CheckImage.checkSize(file);
             }
         }
         return false;
+    }
+
+    public static boolean isTiff(final File file){
+        final String fileExtension = FilenameUtils.getExtension(Objects.requireNonNull(file.getName()));
+        return !fileExtension.isEmpty() && (fileExtension.contains("tif")
+                || fileExtension.contains("tiff"));
     }
 
     private static boolean checkSize(final File image) throws IllegalArgumentException{

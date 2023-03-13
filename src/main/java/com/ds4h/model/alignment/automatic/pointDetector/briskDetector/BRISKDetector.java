@@ -19,7 +19,7 @@ public class BRISKDetector extends PointDetector {
         super();
     }
     @Override
-    public void detectPoint(ImagePoints targetImage, ImagePoints imagePoint) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
@@ -39,7 +39,7 @@ public class BRISKDetector extends PointDetector {
             if (dist < min_dist) min_dist = dist;
             if (dist > max_dist) max_dist = dist;
         }
-        double threshold = 1.8 * min_dist;
+        double threshold = (1.8 + this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
         matches.toList().stream().filter(match -> match.distance < threshold)

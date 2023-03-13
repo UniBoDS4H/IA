@@ -5,9 +5,6 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class KAZEDetector extends PointDetector {
     private final KAZE detector = KAZE.create();
     private final BFMatcher matcher = BFMatcher.create();
@@ -30,7 +27,7 @@ public class KAZEDetector extends PointDetector {
         // Match keypoints between the two images using a BFMatcher
         final MatOfDMatch matches = new MatOfDMatch();
         matcher.match(descriptors1, descriptors2, matches);
-        final double threshold = 0.7 * 0.2;
+        final double threshold = (0.7 * 0.2)+this.getFactor();
         matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
                     imagePoint.addPoint(keypoints1.toList().get(goodMatch.queryIdx).pt);

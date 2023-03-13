@@ -3,8 +3,6 @@ package com.ds4h.model.alignment;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
-import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
@@ -61,8 +59,12 @@ public class Alignment implements Runnable{
         }
     }
 
-    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type, final PointDetector pointDetector) throws IllegalArgumentException{
-        this.pointDetector = Objects.requireNonNull(pointDetector);
+    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
+                            final AlignmentEnum type,
+                            final PointDetector pointDetector,
+                            final double factor) throws IllegalArgumentException{
+        this.pointDetector = (pointDetector);
+        this.pointDetector.setFactor(factor);
         this.alignImages(pointManager, algorithm, type);
     }
 
@@ -76,6 +78,7 @@ public class Alignment implements Runnable{
     }
     private void auto(){
         final Map<ImagePoints,ImagePoints> images = new HashMap<>();
+        final double factor = this.pointDetector.getFactor();
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
             final ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
