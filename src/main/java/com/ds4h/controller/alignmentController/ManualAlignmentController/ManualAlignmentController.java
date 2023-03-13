@@ -48,11 +48,15 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     /**
      *
      * @param algorithm
-     * @param cornerManager
+     * @param pointManager
      */
-    public void align(final AlignmentAlgorithm algorithm, final PointController cornerManager){
-        if(!this.alignment.isAlive() && Objects.nonNull(cornerManager) && Objects.nonNull(cornerManager.getCornerManager())) {
-            this.alignment.alignImages(cornerManager.getCornerManager(), algorithm, AlignmentEnum.MANUAL);
+    public void align(final AlignmentAlgorithm algorithm, final PointController pointManager){
+        if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getCornerManager())) {
+            if(pointManager.getCornerManager().getCornerImages().size() > 1) {
+                this.alignment.alignImages(pointManager.getCornerManager(), algorithm, AlignmentEnum.MANUAL);
+            }else{
+                throw new IllegalArgumentException("For the alignment are needed at least TWO images.");
+            }
         }
     }
 }
