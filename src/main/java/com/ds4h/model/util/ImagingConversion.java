@@ -12,11 +12,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.HighGui;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -29,6 +31,7 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 public class ImagingConversion {
 
     private static final String TMP_DIRECTORY_NAME = "DS4H_Images";
+    private static final String TMP_DIRECTORY_NAME_MAT = "DS4H_ImagesMat";
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
     private ImagingConversion(){}
 
@@ -56,7 +59,6 @@ public class ImagingConversion {
                         return Stream.empty();
                     }
                 })
-                .peek(file -> System.out.println("UEILA: " + file.getName()))
                 .collect(Collectors.toList());
     }
 
@@ -121,6 +123,17 @@ public class ImagingConversion {
         final Mat rgb = new Mat();
         Imgproc.cvtColor(matrix, rgb, COLOR_GRAY2RGB);
         return rgb;
+    }
+
+    public static Optional<Mat> fromImagePlus2Mat(final ImagePlus imagePlus){
+        try{
+            final String dir = DirectoryCreator.createTemporaryDirectory(ImagingConversion.TMP_DIRECTORY_NAME_MAT);
+            final String path = ImagingConversion.TMP_DIRECTORY+ "/"+dir+"/" + "Converted"+imagePlus.getTitle();
+            IJ.save(imagePlus, path);
+            return Optional.of(Imgcodecs.imread(path));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
 
