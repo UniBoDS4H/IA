@@ -6,6 +6,7 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
@@ -13,6 +14,9 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final GroupLayout layout;
     private final JButton saveButton;
     private final JTextArea text;
+    private final JCheckBox translationCheckbox;
+    private final JCheckBox rotationCheckbox;
+    private final JCheckBox scalingCheckbox;
     private AlignmentAlgorithmEnum selectedValue;
     private final MainMenuGUI container;
     public AlignmentConfigGUI(MainMenuGUI container){
@@ -25,8 +29,9 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.algorithm = new JComboBox<>();
         this.saveButton = new JButton("Save");
         this.text = new JTextArea();
-        this.addComponents();
-        this.addListeners();
+        this.translationCheckbox = new JCheckBox("Translation");
+        this.rotationCheckbox = new JCheckBox("Rotation");
+        this.scalingCheckbox = new JCheckBox("Scaling");
     }
     @Override
     public void showDialog() {

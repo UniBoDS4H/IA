@@ -8,8 +8,8 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.ximgproc.Ximgproc;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -51,6 +51,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
 
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
+        System.out.println(srcPoints.toList().size());
         if(srcPoints.toArray().length <=2){
             final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
             final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
@@ -58,17 +59,66 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             translationMatrix.put(1, 2, translation.y);
             return translationMatrix;
         }else{
-            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints,);
-            Calib3d.decomposeEssentialMat();
+            System.out.println("AAAAAA");
+            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
+            for(int i = 0; i < 2; i++){
+                for (int j = 0; j < 3; j++){
+                    System.out.print(Arrays.toString(H.get(i, j)));
+                }
+                System.out.println();
+            }
+            double a = H.get(0,0)[0];
+            double b = H.get(1,0)[0];
+            double scaling = Math.sqrt(a*a + b*b);
+            double theta = Math.acos(a/scaling);
+            double x = H.get(0,2)[0];
+            double y = H.get(1,2)[0];
+            boolean translate = true;
+            boolean scale = true;
+            boolean rotate = false;
+            Mat transformation = Mat.eye(2,3,H.type());
+            if(translate){
+                transformation.put(0,2, x);
+                transformation.put(1,2, y);
+            }
+            if(scale){
+                transformation.put(0,0,scaling);
+                transformation.put(0,1,scaling);
+                transformation.put(1,0,scaling);
+                transformation.put(1,1,scaling);
+            }else{
+                transformation.put(0,0,1);
+                transformation.put(0,1,1);
+                transformation.put(1,0,1);
+                transformation.put(1,1,1);
+            }
+            if(rotate){
+                transformation.put(0,0,transformation.get(0,0)[0]*Math.cos(theta));
+                transformation.put(0,1,transformation.get(0,1)[0]*(-Math.sin(theta)));
+                transformation.put(1,0,transformation.get(1,0)[0]*Math.sin(theta));
+                transformation.put(1,1,transformation.get(1,1)[0]*Math.cos(theta));
+            }else{
+                transformation.put(0,1,0);
+                transformation.put(1,0,0);
+            }
+            System.out.println();
+            for(int i = 0; i < 2; i++){
+                for (int j = 0; j < 3; j++){
+                    System.out.print(Arrays.toString(transformation.get(i, j)));
+                }
+                System.out.println();
+            }
 
-
+/*
             H.put(0,0,1);
             H.put(0,1,0);
             H.put(1,0,0);
             H.put(1,1,1);
 
+ */
 
-            return H;
+
+            return transformation;
         }
 
 
