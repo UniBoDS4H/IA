@@ -29,7 +29,7 @@ public class ImagePoints {
 
     public void useAnotherImage(){
         //TODO: refactor this
-        // this.useAnotherImage = true;
+        this.useAnotherImage = true;
     }
 
     public void useDefaultImage() {
