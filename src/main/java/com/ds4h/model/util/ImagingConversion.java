@@ -9,6 +9,7 @@ import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.apache.commons.io.FilenameUtils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.HighGui;
@@ -17,6 +18,8 @@ import org.opencv.imgproc.Imgproc;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -121,6 +124,14 @@ public class ImagingConversion {
         final Mat rgb = new Mat();
         Imgproc.cvtColor(matrix, rgb, COLOR_GRAY2RGB);
         return rgb;
+    }
+    public static Mat getMatFromImagePlus(ImagePlus img){
+        BufferedImage bimg = img.getBufferedImage();
+        Mat mat = new Mat(bimg.getHeight(), bimg.getWidth(), CvType.CV_8UC3);
+        byte[] data = ((DataBufferByte) bimg.getRaster().getDataBuffer()).getData();
+        mat.put(0, 0, data);
+        Core.flip(mat, mat, 0);
+        return mat;
     }
 
 

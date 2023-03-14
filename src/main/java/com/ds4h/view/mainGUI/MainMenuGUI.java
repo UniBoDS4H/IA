@@ -331,7 +331,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingManualAlignment(){
         if(!this.manualAlignmentController.isAlive()) {
             try {
-                this.manualAlignmentController.align(this.getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue()), this.cornerControler);
+                AlignmentAlgorithm alg = this.getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue());
+                if(alg instanceof  TranslationalAlignment){
+                    ((TranslationalAlignment) alg).setTransformation(this.alignmentConfigGUI.getTranslation(),this.alignmentConfigGUI.getRotation(), this.alignmentConfigGUI.getScaling());
+                }
+                this.manualAlignmentController.align(alg, this.cornerControler);
                 this.startPollingThread(this.manualAlignmentController);
             }catch(final Exception e){
                 JOptionPane.showMessageDialog(this,

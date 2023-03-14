@@ -11,7 +11,6 @@ import java.awt.*;
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
-    private final GroupLayout layout;
     private final JButton saveButton;
     private final JTextArea text;
     private final JCheckBox translationCheckbox;
@@ -22,10 +21,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     public AlignmentConfigGUI(MainMenuGUI container){
         this.setTitle("Manual alignment algorithm");
         this.container = container;
-        this.layout = new GroupLayout(this.getContentPane());
-        this.layout.setAutoCreateGaps(true);
-        this.layout.setAutoCreateContainerGaps(true);
-        this.getContentPane().setLayout(this.layout);
+        this.getContentPane().setLayout(new GridBagLayout());
         this.algorithm = new JComboBox<>();
         this.saveButton = new JButton("Save");
         this.text = new JTextArea();
@@ -72,34 +68,73 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.setSize();
         JLabel algLbl = new JLabel("Algorithm: ");
         JLabel infoLbl = new JLabel("Info: ");
-        this.layout.setVerticalGroup(this.layout.createSequentialGroup()
-                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(algLbl)
-                .addComponent(this.algorithm))
-                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(infoLbl)
-                .addComponent(this.text))
-                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(this.saveButton)));
-        this.layout.setHorizontalGroup(this.layout.createSequentialGroup()
-                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(algLbl)
-                        .addComponent(infoLbl)
-                        .addComponent(this.saveButton))
-                .addGroup(this.layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(this.algorithm)
-                        .addComponent(this.text)));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Aggiunta dei componenti al layout
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(algLbl, gbc);
+        gbc.gridx = 1;
+        add(this.algorithm, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(infoLbl, gbc);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        add(this.text, gbc);
+
+        // Add translation checkbox
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        add(translationCheckbox, gbc);
+
+        // Add scaling checkbox
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        add(scalingCheckbox, gbc);
+
+        // Add rotation checkbox
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        add(rotationCheckbox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        add(this.saveButton, gbc);
         this.pack();
+    }
+    public boolean getScaling(){
+        return this.scalingCheckbox.isSelected();
+    }
+    public boolean getRotation(){
+        return this.rotationCheckbox.isSelected();
+    }
+    public boolean getTranslation(){
+        return this.translationCheckbox.isSelected();
     }
 
     private void setSize(){
         this.setSize(DisplayInfo.getDisplaySize(30));
-    }
-
-    private void addElement(final JLabel label, final JComponent component){
-        JPanel panel = new JPanel();
-        panel.add(label);
-        panel.add(component);
-        this.add(panel);
     }
 
     private void populateCombo(){

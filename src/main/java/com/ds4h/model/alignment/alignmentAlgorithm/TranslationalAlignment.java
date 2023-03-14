@@ -19,7 +19,13 @@ import java.util.stream.IntStream;
 public class TranslationalAlignment implements AlignmentAlgorithm {
 
     public static int LOWER_BOUND = 1;
+    private boolean rotate;
+    private boolean scale;
+    private boolean translate;
 
+    public TranslationalAlignment(){
+        this.setTransformation(true, false,false);
+    }
     @Override
     public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException{
         try {
@@ -48,7 +54,11 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             throw ex;
         }
     }
-
+    public void setTransformation(boolean translate,boolean rotate, boolean scale){
+        this.translate = translate;
+        this.rotate = rotate;
+        this.scale = scale;
+    }
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
         System.out.println(srcPoints.toList().size());
@@ -59,7 +69,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             translationMatrix.put(1, 2, translation.y);
             return translationMatrix;
         }else{
-            System.out.println("AAAAAA");
             final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
             for(int i = 0; i < 2; i++){
                 for (int j = 0; j < 3; j++){
@@ -73,15 +82,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             double theta = Math.acos(a/scaling);
             double x = H.get(0,2)[0];
             double y = H.get(1,2)[0];
-            boolean translate = true;
-            boolean scale = true;
-            boolean rotate = false;
             Mat transformation = Mat.eye(2,3,H.type());
-            if(translate){
+            if(this.translate){
                 transformation.put(0,2, x);
                 transformation.put(1,2, y);
             }
-            if(scale){
+            if(this.scale){
                 transformation.put(0,0,scaling);
                 transformation.put(0,1,scaling);
                 transformation.put(1,0,scaling);
@@ -92,7 +98,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 transformation.put(1,0,1);
                 transformation.put(1,1,1);
             }
-            if(rotate){
+            if(this.rotate){
                 transformation.put(0,0,transformation.get(0,0)[0]*Math.cos(theta));
                 transformation.put(0,1,transformation.get(0,1)[0]*(-Math.sin(theta)));
                 transformation.put(1,0,transformation.get(1,0)[0]*Math.sin(theta));
@@ -101,23 +107,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 transformation.put(0,1,0);
                 transformation.put(1,0,0);
             }
-            System.out.println();
-            for(int i = 0; i < 2; i++){
-                for (int j = 0; j < 3; j++){
-                    System.out.print(Arrays.toString(transformation.get(i, j)));
-                }
-                System.out.println();
-            }
-
-/*
-            H.put(0,0,1);
-            H.put(0,1,0);
-            H.put(1,0,0);
-            H.put(1,1,1);
-
- */
-
-
             return transformation;
         }
 

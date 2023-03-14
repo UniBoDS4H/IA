@@ -3,13 +3,16 @@ package com.ds4h.model.imagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import ij.ImagePlus;
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -18,34 +21,33 @@ public class ImagePoints {
     private Mat image;
     private final List<Point> points;
     private final String name;
-    private boolean useAnotherImage;
-    private Optional<ImagePlus> otherImage;
+    private boolean useProcessedImage;
+    private Optional<Mat> processedImage;
     public ImagePoints(final Mat image, final String name, final MatOfPoint2f points){
         this(image,name);
-        this.otherImage = Optional.empty();
-        this.useAnotherImage = false;
+        this.processedImage = Optional.empty();
+        this.useProcessedImage = false;
         points.toList().forEach(this::addPoint);
     }
 
-    public void useAnotherImage(){
+    public void useProcessed(){
         //TODO: refactor this
-        this.useAnotherImage = true;
+        this.useProcessedImage = true;
     }
 
-    public void useDefaultImage() {
+    public void useDefault() {
         //TODO: refactor this
-        useAnotherImage = false;
+        useProcessedImage = false;
     }
 
-    public boolean isAnother(){
+    public boolean isProcessed(){
         //TODO: refactor this
-        return this.useAnotherImage;
+        return this.useProcessedImage;
     }
 
-    public void setAnotherImage(final ImagePlus image){
-        if(this.useAnotherImage){
-            //TODO: refactor this
-            this.otherImage = Optional.of(image);
+    public void setProcessedImage(final Mat image){
+        if(this.useProcessedImage){
+            this.processedImage = Optional.of(image);
         }
     }
 
@@ -71,9 +73,11 @@ public class ImagePoints {
      * @return
      */
     public ImagePlus getImage(){
-        //TODO: refactor this
-        if(this.useAnotherImage && this.otherImage.isPresent()){
-            return this.otherImage.get();
+        if(this.useProcessedImage && this.processedImage.isPresent()){
+            final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.processedImage.get(), this.name);
+            if(img.isPresent()){
+                return img.get();
+            }
         }
 
         final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.image, this.name);
@@ -87,17 +91,18 @@ public class ImagePoints {
      *
      * @return
      */
-    public BufferedImage getBufferedImage(){
-        if(this.useAnotherImage && this.otherImage.isPresent()){
+    public BufferedImage getBufferedImage() {
+        final Mat img;
+        if (this.useProcessedImage && this.processedImage.isPresent()) {
+            img = this.processedImage.get();
             //TODO: refactor this
-            return this.otherImage.get().getBufferedImage();//new BufferedImage(this.otherImage.get().width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
-        }else{
-            final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
-            final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-            this.image.get(0, 0, data);
-            return image;
+        } else {
+            img = this.image;
         }
-        //final BufferedImage image = new BufferedImage(this.image.width(), this.image.height(), BufferedImage.TYPE_3BYTE_BGR);
+        final BufferedImage image = new BufferedImage(img.width(), img.height(), BufferedImage.TYPE_3BYTE_BGR);
+        final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        img.get(0, 0, data);
+        return image;
     }
 
     /**

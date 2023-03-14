@@ -2,6 +2,7 @@ package com.ds4h.view.cornerSelectorGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -113,8 +114,8 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         return this.image;
     }
     public void setImage(final ImagePlus imagePlus){
-        this.image.useAnotherImage();
-        this.image.setAnotherImage(imagePlus);
+        this.image.useProcessed();
+        this.image.setProcessedImage(ImagingConversion.getMatFromImagePlus(imagePlus));
         this.panel.setCurrentImage(this.image);
         this.repaintPanel();
     }
