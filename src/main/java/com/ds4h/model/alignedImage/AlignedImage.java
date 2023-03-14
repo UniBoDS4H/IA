@@ -15,7 +15,6 @@ import java.util.Optional;
 public class AlignedImage {
     private final Mat matrix;
     private final ImagePlus alignedImage;
-    private Optional<ImagePlus> deformedImage;
     private final Optional<Mat> registrationMatrix;
 
     /**
@@ -26,7 +25,6 @@ public class AlignedImage {
      */
     public AlignedImage(final Mat matrix, final Mat registrationMatrix,  final ImagePlus image){
         this.matrix = matrix;
-        this.deformedImage = Optional.empty();
         this.registrationMatrix = Optional.of(registrationMatrix);
         this.alignedImage = image;
     }
@@ -40,13 +38,6 @@ public class AlignedImage {
         this.matrix = matrix;
         this.registrationMatrix = Optional.empty();
         this.alignedImage = image;
-        this.deformedImage = Optional.empty();
-    }
-
-    public void setDeformedImage(final ImagePlus image){
-        if(Objects.nonNull(image)){
-            this.deformedImage = Optional.of(image);
-        }
     }
 
     /**
@@ -79,10 +70,6 @@ public class AlignedImage {
      */
     public ImagePlus getAlignedImage(){
         return this.alignedImage;
-    }
-
-    public Optional<ImagePlus> getDeformed(){
-        return this.deformedImage;
     }
 
 }

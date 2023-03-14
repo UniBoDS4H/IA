@@ -116,8 +116,11 @@ public class BunwarpjDeformation implements Runnable{
                         this.parImageWeigth,
                         this.parConsistencyWeigth,
                         this.parThreshold);
-                alignedImage.setDeformedImage(transformation.getDirectResults());
-                this.outputList.add(alignedImage);
+                final ImagePlus image = transformation.getDirectResults();
+                image.setTitle(alignedImage.getAlignedImage().getTitle());
+                this.outputList.add(alignedImage.getRegistrationMatrix().isPresent() ?
+                        new AlignedImage(alignedImage.getMat(), alignedImage.getRegistrationMatrix().get(), image) :
+                        new AlignedImage(alignedImage.getMat(), image));
             }
         }
         this.thread = new Thread(this);

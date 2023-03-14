@@ -2,6 +2,7 @@ package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.imageController.ImageController;
+import com.ds4h.controller.imageController.ImageEnum;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.standardGUI.StandardGUI;
 
