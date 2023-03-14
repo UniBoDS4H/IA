@@ -23,11 +23,14 @@ public class ImageController {
             case ALIGNED:
                 return this.alignmentControllerInterface.getAlignedImages();
             case ELASTIC:
-                System.out.println(this.bunwarpJController.getImages().size());
                 return this.bunwarpJController.getImages();
             default:
                 return Collections.emptyList();
         }
+    }
+
+    public ImageEnum type(){
+        return this.imageEnum;
     }
 
     public void align(){

@@ -1,6 +1,7 @@
 package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.changeColorController.ChangeColorController;
+import com.ds4h.controller.imageController.ImageEnum;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
@@ -105,7 +106,6 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
-            //TODO: understand what  to do with this images
             if(!this.controller.deformationIsAlive()) {
                 this.controller.elastic(this.controller.getAlignedImages());
                 final LoadingGUI loadingGUI = new LoadingGUI();
@@ -146,7 +146,10 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private void overlapImages(){
         int layer = 0;
         for(AlignedImage image : this.images){
-            final ImagePanel imagePanel = new ImagePanel(image.getAlignedImage());
+            ImagePanel imagePanel = new ImagePanel(image.getAlignedImage());
+            if(this.controller.type() == ImageEnum.ELASTIC && image.getDeformed().isPresent()){
+                imagePanel = new ImagePanel(image.getDeformed().get());
+            }
             this.imagePanels.add(imagePanel);
             imagePanel.setBounds(new Rectangle(image.getAlignedImage().getWidth(), image.getAlignedImage().getHeight()));
             imagePanel.setOpaque(false);

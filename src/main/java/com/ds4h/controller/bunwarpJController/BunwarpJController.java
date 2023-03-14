@@ -36,7 +36,6 @@ public class BunwarpJController {
      */
     public List<AlignedImage> getImages(){
         if(!this.bunwarpjDeformation.isAlive()){
-            System.out.println("AO " + this.bunwarpjDeformation.getOutputList().size());
             return this.bunwarpjDeformation.getOutputList();
         }
         return Collections.emptyList();

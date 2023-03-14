@@ -1,5 +1,6 @@
 package com.ds4h.view.carouselGUI;
 
+import com.ds4h.controller.imageController.ImageEnum;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
@@ -16,7 +17,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.swing.*;
 
@@ -47,7 +50,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.setLayout(new BorderLayout());
         this.pointController = pointController;
         this.labelPanel = new JPanel();
-        this.images = this.controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
+        this.images = fillImages();
         this.max_number = this.images.size();
         this.label = new JLabel("1/"+this.max_number);
         this.currentImage = 0;
@@ -66,6 +69,17 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         this.showDialog();
         this.pack();
 
+    }
+
+    public List<ImagePlus> fillImages(){
+        if(this.controller.type() == ImageEnum.ELASTIC) {
+            return this.controller.getAlignedImages().stream().map(AlignedImage::getDeformed)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }else{
+            return this.controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
+        }
     }
 
 
