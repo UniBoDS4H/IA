@@ -35,7 +35,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.indexTo = new JComboBox<>();
         this.selectedPointerColor = new ColorComboBox();
         this.textColor = new ColorComboBox();
-        this.contrastSlider = new JSlider(0, 20);
+        this.contrastSlider = new JSlider(0, 10);
 
         this.setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
@@ -103,7 +103,8 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
 
         this.applyButton.addActionListener(event -> {
             this.contrast  = this.contrastSlider.getValue()/10.0f;
-            this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getImage(), this.contrast));
+            System.out.println("contrast: " + this.contrast);
+            this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getOriginalImage(), this.contrast));
             this.container.repaint();
         });
 
@@ -122,7 +123,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerDimension.setMinorTickSpacing(1);
         this.pointerDimension.setPaintTicks(true);
         this.pointerDimension.setPaintLabels(true);
-        this.contrastSlider.setMaximum(20);
+        this.contrastSlider.setMaximum(10);
         this.contrastSlider.setMinimum(0);
         this.contrastSlider.setMajorTickSpacing(5);
         this.contrastSlider.setMinorTickSpacing(1);

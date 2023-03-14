@@ -1,6 +1,8 @@
 package com.ds4h.model.util;
 
 import ij.ImagePlus;
+import ij.plugin.ContrastEnhancer;
+import ij.process.ImageProcessor;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -29,12 +31,11 @@ public class ChangeImage {
         return new ImagePlus(inputImage.getTitle(), image);
     }
 
-    public static ImagePlus changeContrast(final ImagePlus inputImage, final float scaleFactor){
-        final BufferedImage bufferedImage = inputImage.getBufferedImage();
-        float offset = -(scaleFactor * 128f) + 128f;
-        final RescaleOp rescaleOp = new RescaleOp(scaleFactor, offset, null);
-        BufferedImage adjustedImage = rescaleOp.filter(bufferedImage, null);
-        return new ImagePlus(inputImage.getTitle(), adjustedImage);
+    public static ImagePlus changeContrast(final ImagePlus inputImage, final float contrast){
+        ImageProcessor ip = inputImage.getProcessor();
+        ContrastEnhancer ce = new ContrastEnhancer();
+        ce.stretchHistogram(ip, contrast);
+        return new ImagePlus(inputImage.getTitle(),ip);
     }
 
     public static ImagePlus invert(final ImagePlus imagePlus){

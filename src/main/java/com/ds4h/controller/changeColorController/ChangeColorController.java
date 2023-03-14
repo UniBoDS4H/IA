@@ -16,10 +16,7 @@ public class ChangeColorController {
     }
 
     public static ImagePlus changeContrast(final ImagePlus imagePlus, final float scaleFactor){
-        if(Float.compare(scaleFactor, 0.0f) >= 0 && Float.compare(scaleFactor, 2.0f) <= 0) {
-            return ChangeImage.changeContrast(imagePlus, scaleFactor);
-        }
-        return null;
+        return ChangeImage.changeContrast(imagePlus, scaleFactor);
     }
 
     public static ImagePlus invert(final ImagePlus imagePlus){

@@ -80,13 +80,13 @@ public class Alignment implements Runnable{
         final Map<ImagePoints,ImagePoints> images = new HashMap<>();
         final double factor = this.pointDetector.getFactor();
         this.imagesToAlign.forEach(img->{
-            final ImagePoints t = new ImagePoints(this.targetImage.getMatImage(), this.targetImage.getName());
-            final ImagePoints i = new ImagePoints(img.getMatImage(), img.getName());
+            final ImagePoints t = new ImagePoints(this.targetImage);
+            final ImagePoints i = new ImagePoints(img);
             this.pointDetector.detectPoint(t, i);
             images.put(i,t);
         });
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
-        this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
+        this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getOriginalImage()));
         images.entrySet().parallelStream().forEach(e->{
             this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
         });

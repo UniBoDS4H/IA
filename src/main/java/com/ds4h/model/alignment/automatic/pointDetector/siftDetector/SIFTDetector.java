@@ -15,7 +15,6 @@ public class SIFTDetector extends PointDetector {
     private static final double THRESHOLD = 300;
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
-
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();

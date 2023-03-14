@@ -51,6 +51,11 @@ public class ImagePoints {
         }
     }
 
+    public ImagePoints(final ImagePoints img){
+        this(img.getOriginalMatImage(), img.getName());
+        this.processedImage = img.processedImage;
+        this.useProcessedImage = img.useProcessedImage;
+    }
     public ImagePoints(final Mat image, final String name){
         this.name = name;
         this.image = image;
@@ -60,12 +65,12 @@ public class ImagePoints {
         this(Imgcodecs.imread(image.getPath()), image.getName());
     }
     public Mat getGrayScaleMat(){
-        if(this.image.channels() == 3){
+        if(this.getMatImage().channels() == 3){
             final Mat grayImage = new Mat();
-            Imgproc.cvtColor(this.image, grayImage, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
             return grayImage;
         }
-        return this.image;
+        return this.getMatImage();
     }
 
     /**
@@ -73,13 +78,13 @@ public class ImagePoints {
      * @return
      */
     public ImagePlus getImage(){
-        if(this.useProcessedImage && this.processedImage.isPresent()){
-            final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.processedImage.get(), this.name);
-            if(img.isPresent()){
-                return img.get();
-            }
+        final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.getMatImage(), this.name);
+        if(img.isPresent()){
+            return img.get();
         }
-
+        throw new IllegalArgumentException("The conversion of the Image produced an empty image, please retry.");
+    }
+    public ImagePlus getOriginalImage(){
         final Optional<ImagePlus> img = ImagingConversion.fromMatToImagePlus(this.image, this.name);
         if(img.isPresent()){
             return img.get();
@@ -87,18 +92,14 @@ public class ImagePoints {
         throw new IllegalArgumentException("The conversion of the Image produced an empty image, please retry.");
     }
 
+
     /**
      *
      * @return
      */
     public BufferedImage getBufferedImage() {
         final Mat img;
-        if (this.useProcessedImage && this.processedImage.isPresent()) {
-            img = this.processedImage.get();
-            //TODO: refactor this
-        } else {
-            img = this.image;
-        }
+        img = this.getMatImage();
         final BufferedImage image = new BufferedImage(img.width(), img.height(), BufferedImage.TYPE_3BYTE_BGR);
         final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
         img.get(0, 0, data);
@@ -189,6 +190,12 @@ public class ImagePoints {
      * @return
      */
     public Mat getMatImage(){
+        if(this.useProcessedImage && this.processedImage.isPresent()){
+            return this.processedImage.get();
+        }
+        return this.image;
+    }
+    public Mat getOriginalMatImage(){
         return this.image;
     }
 

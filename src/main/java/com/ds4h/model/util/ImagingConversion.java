@@ -127,14 +127,6 @@ public class ImagingConversion {
         Imgproc.cvtColor(matrix, rgb, COLOR_GRAY2RGB);
         return rgb;
     }
-    public static Mat getMatFromImagePlus(ImagePlus img){
-        BufferedImage bimg = img.getBufferedImage();
-        Mat mat = new Mat(bimg.getHeight(), bimg.getWidth(), CvType.CV_8UC3);
-        byte[] data = ((DataBufferByte) bimg.getRaster().getDataBuffer()).getData();
-        mat.put(0, 0, data);
-        Core.flip(mat, mat, 0);
-        return mat;
-    }
 
     public static Optional<Mat> fromImagePlus2Mat(final ImagePlus imagePlus){
         try{

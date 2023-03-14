@@ -45,8 +45,8 @@ public class TargetImagePreprocessing {
 
     //returns the mat of the new target and the shift of the points
     private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
-        final Mat imageToShiftMat = imagePoints.getMatImage();
-        final Mat targetMat = target.getMatImage();
+        final Mat imageToShiftMat = imagePoints.getOriginalMatImage();
+        final Mat targetMat = target.getOriginalMatImage();
         final Mat translationMatrix = algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(), target.getMatOfPoint());
 
         final int h1 = targetMat.rows();
