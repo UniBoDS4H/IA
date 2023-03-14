@@ -1,12 +1,16 @@
 package com.ds4h.view.alignmentConfigGUI;
 
+import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
 
 
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
@@ -31,7 +35,29 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.addComponents();
         this.addListeners();
         this.setSize(DisplayInfo.getDisplaySize(25));
+        this.updateCheckBoxes();
     }
+
+    private void updateCheckBoxes() {
+        if(this.getSelectedValue() == AlignmentAlgorithmEnum.TRANSLATIONAL){
+            TranslationalAlignment translational = (TranslationalAlignment) getAlgorithmFromEnum(AlignmentAlgorithmEnum.TRANSLATIONAL);
+            this.scalingCheckbox.setEnabled(true);
+            this.translationCheckbox.setEnabled(true);
+            this.rotationCheckbox.setEnabled(true);
+            this.scalingCheckbox.setSelected(translational.getScale());
+            this.translationCheckbox.setSelected(translational.getTranslate());
+            this.rotationCheckbox.setSelected(translational.getRotate());
+        }else{
+            this.scalingCheckbox.setSelected(true);
+            this.translationCheckbox.setSelected(true);
+            this.rotationCheckbox.setSelected(true);
+            this.scalingCheckbox.setEnabled(false);
+            this.translationCheckbox.setEnabled(false);
+            this.rotationCheckbox.setEnabled(false);
+        }
+
+    }
+
     @Override
     public void showDialog() {
         this.setVisible(true);
@@ -51,6 +77,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
             System.out.println(this.selectedValue.getDocumentation());
             this.text.setText(this.selectedValue.getDocumentation());
             this.container.checkPointsForAlignment();
+            this.updateCheckBoxes();
         });
         this.saveButton.addActionListener(event -> {
             this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
@@ -140,7 +167,6 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private void populateCombo(){
         this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIONAL;
         for(AlignmentAlgorithmEnum algorithm : AlignmentAlgorithmEnum.values()){
-            System.out.println(algorithm);
             this.algorithm.addItem(algorithm);
         }
     }

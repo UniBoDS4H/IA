@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
+
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment;
@@ -316,22 +318,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
         });
     }
-    private AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e){
-        switch (e){
-            case TRANSLATIONAL:
-                return new TranslationalAlignment();
-            case PROJECTIVE:
-                return new ProjectiveAlignment();
-            case AFFINE:
-                return new AffineAlignment();
-        }
-        throw new IllegalArgumentException("Algorithm not present");
-    }
 
     private void pollingManualAlignment(){
         if(!this.manualAlignmentController.isAlive()) {
             try {
-                AlignmentAlgorithm alg = this.getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue());
+                AlignmentAlgorithm alg = getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue());
                 if(alg instanceof  TranslationalAlignment){
                     ((TranslationalAlignment) alg).setTransformation(this.alignmentConfigGUI.getTranslation(),this.alignmentConfigGUI.getRotation(), this.alignmentConfigGUI.getScaling());
                 }
@@ -425,4 +416,5 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     public void reloadImages(){
         this.imagesPreview.showPreviewImages();
     }
+
 }

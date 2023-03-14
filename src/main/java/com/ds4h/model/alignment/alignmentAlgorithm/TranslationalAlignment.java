@@ -26,6 +26,15 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public TranslationalAlignment(){
         this.setTransformation(true, false,false);
     }
+    public boolean getTranslate(){
+        return this.translate;
+    }
+    public boolean getRotate(){
+        return this.rotate;
+    }
+    public boolean getScale(){
+        return this.scale;
+    }
     @Override
     public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException{
         try {
