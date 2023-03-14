@@ -2,6 +2,7 @@ package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.imageController.ImageController;
+import com.ds4h.controller.imageController.ImageEnum;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.standardGUI.StandardGUI;
 
@@ -26,7 +27,11 @@ public class PreviewListReuse extends JPanel implements StandardGUI {
         this.removeButton = new JButton("INCLUDE");
         this.textField = new JTextField(this.image.getAlignedImage().getTitle());
         this.removeLabel = new JLabel("INCLUDED IN THE REUSE");
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getAlignedImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        if(this.controller.type() == ImageEnum.ELASTIC && this.image.getDeformed().isPresent()) {
+            this.imageLabel = new JLabel(new ImageIcon(this.image.getDeformed().get().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        }else{
+            this.imageLabel = new JLabel(new ImageIcon(this.image.getAlignedImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        }
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();

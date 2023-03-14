@@ -37,11 +37,12 @@ public class ReuseImagesPanel extends JPanel {
 
     public List<AlignedImage> getImagesToReuse() {
         final List<AlignedImage> images = new LinkedList<>();
-        for (PreviewListReuse innerPanel : this.listPanels) {
+        for (final PreviewListReuse innerPanel : this.listPanels) {
             if (innerPanel.toReuse()) {
                 images.add(innerPanel.getImage());
             }
         }
+        System.out.println(images.size());
         return images;
     }
 }

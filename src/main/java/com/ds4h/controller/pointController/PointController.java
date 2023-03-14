@@ -45,6 +45,7 @@ public class PointController {
     }
 
     public void reuseSource(final List<AlignedImage> alignedImages) throws FileNotFoundException {
+        System.out.println(alignedImages.size());
         ReuseSources.reuseSources(this.pointManager, alignedImages);
     }
 
