@@ -27,11 +27,7 @@ public class PreviewListReuse extends JPanel implements StandardGUI {
         this.removeButton = new JButton("INCLUDE");
         this.textField = new JTextField(this.image.getAlignedImage().getTitle());
         this.removeLabel = new JLabel("INCLUDED IN THE REUSE");
-        if(this.controller.type() == ImageEnum.ELASTIC && this.image.getDeformed().isPresent()) {
-            this.imageLabel = new JLabel(new ImageIcon(this.image.getDeformed().get().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
-        }else{
-            this.imageLabel = new JLabel(new ImageIcon(this.image.getAlignedImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
-        }
+        this.imageLabel = new JLabel(new ImageIcon(this.image.getAlignedImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.setVisibilityTargetLabel();

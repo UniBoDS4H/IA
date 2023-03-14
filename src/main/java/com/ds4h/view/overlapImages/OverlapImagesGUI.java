@@ -146,10 +146,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
     private void overlapImages(){
         int layer = 0;
         for(AlignedImage image : this.images){
-            ImagePanel imagePanel = new ImagePanel(image.getAlignedImage());
-            if(this.controller.type() == ImageEnum.ELASTIC && image.getDeformed().isPresent()){
-                imagePanel = new ImagePanel(image.getDeformed().get());
-            }
+            final ImagePanel imagePanel = new ImagePanel(image.getAlignedImage());
             this.imagePanels.add(imagePanel);
             imagePanel.setBounds(new Rectangle(image.getAlignedImage().getWidth(), image.getAlignedImage().getHeight()));
             imagePanel.setOpaque(false);

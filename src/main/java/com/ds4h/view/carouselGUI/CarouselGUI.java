@@ -73,14 +73,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
     }
 
     public List<ImagePlus> fillImages(){
-        if(this.controller.type() == ImageEnum.ELASTIC) {
-            return this.controller.getAlignedImages().stream().map(AlignedImage::getDeformed)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-        }else{
-            return this.controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
-        }
+        return this.controller.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
     }
 
 
