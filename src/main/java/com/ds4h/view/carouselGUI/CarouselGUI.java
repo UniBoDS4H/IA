@@ -11,6 +11,7 @@ import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.IJ;
 import ij.ImagePlus;
 
 import java.awt.*;
@@ -151,7 +152,9 @@ public class CarouselGUI extends JFrame implements StandardGUI {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             // Draw the current image
-            g.drawImage(images.get(currentImage).getImage(), 0, 0, (int)this.getPreferredSize().getWidth(), (int)this.getPreferredSize().getHeight(), null);
+            if(images.size() > currentImage) {
+                g.drawImage(images.get(currentImage).getImage(), 0, 0, (int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight(), null);
+            }
         }
 
         @Override
