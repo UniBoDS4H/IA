@@ -7,7 +7,6 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
-import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
 import java.awt.*;
@@ -15,7 +14,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class CornerSelectorGUI extends Frame implements StandardGUI {
 
@@ -116,8 +114,8 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         return this.image;
     }
     public void setImage(final ImagePlus imagePlus){
-        this.image.useProcessed();
-        ImagingConversion.fromImagePlus2Mat(imagePlus).ifPresent(this.image::setProcessedImage);
+        //this.image.useProcessed();
+        //ImagingConversion.fromImagePlus2Mat(imagePlus).ifPresent(this.image::setProcessedImage);
         this.panel.setCurrentImage(this.image);
         this.repaintPanel();
     }
@@ -134,11 +132,11 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         this.mainMenu.checkPointsForAlignment();
     }
     private static class RenderImage{
-        private final ImagePoints imagePoints;
+        private final ImagePoints ImagePoints;
         private ImagePlus imagePlus;
 
-        public RenderImage(final ImagePoints imagePoints, final ImagePlus imagePlus){
-            this.imagePoints = imagePoints;
+        public RenderImage(final ImagePoints ImagePoints, final ImagePlus imagePlus){
+            this.ImagePoints = ImagePoints;
             this.imagePlus = imagePlus;
         }
 
@@ -147,7 +145,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         }
 
         public ImagePoints getImagePoints(){
-            return this.imagePoints;
+            return this.ImagePoints;
         }
     }
 }

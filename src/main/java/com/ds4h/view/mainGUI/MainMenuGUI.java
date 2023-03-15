@@ -383,13 +383,22 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      * Open a File dialog in order to choose all the images for our tool
      */
     private void pickImages(){
-        final FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
-        fd.setMultipleMode(true);
-        fd.setVisible(true);
-        final File[] files = fd.getFiles();//Get all the files
         try {
-            this.cornerControler.loadImages(Arrays.stream(files).map(File::getPath).collect(Collectors.toList()));
-            this.imagesPreview.showPreviewImages();
+            final Thread loadingThread = new Thread(() -> {
+                try {
+                    final FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
+                    fd.setMultipleMode(true);
+                    fd.setVisible(true);
+                    this.cornerControler.loadImages(Arrays.stream(fd.getFiles()).collect(Collectors.toList()));
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+                this.imagesPreview.showPreviewImages();
+            });
+            loadingThread.start();
         }catch (final Exception exception){
             JOptionPane.showMessageDialog(this,
                     exception.getMessage(),

@@ -70,25 +70,28 @@ public class Alignment implements Runnable{
 
     private void manual(){
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm);
-        this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImage()));
+        this.alignedImages.add(new AlignedImage(target.getMatImage(), target.getImagePlus()));
         this.imagesToAlign.parallelStream()
                 .forEach(img -> this.algorithm.align(target, img)
                         .ifPresent(this.alignedImages::add));
 
     }
     private void auto(){
-        final Map<ImagePoints,ImagePoints> images = new HashMap<>();
+        final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         final double factor = this.pointDetector.getFactor();
         this.imagesToAlign.forEach(img->{
-            final ImagePoints t = new ImagePoints(this.targetImage);
-            final ImagePoints i = new ImagePoints(img);
+            //final ImagePoints t = new ImagePoints(this.targetImage);
+            final ImagePoints t = new ImagePoints(this.targetImage.getFileInfo().getFilePath());
+            //final ImagePoints i = new ImagePoints(img);
+            final ImagePoints i = new ImagePoints(img.getFileInfo().getFilePath());
             this.pointDetector.detectPoint(t, i);
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 images.put(i,t);
             }
         });
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
-        this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getOriginalImage()));
+        //this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getOriginalImage()));
+        this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getImagePlus()));
         images.entrySet().parallelStream().forEach(e->{
             this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
         });

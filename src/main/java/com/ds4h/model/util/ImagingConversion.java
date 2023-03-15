@@ -2,6 +2,7 @@ package com.ds4h.model.util;
 
 
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
@@ -51,8 +52,8 @@ public class ImagingConversion {
         return Optional.empty();
     }
 
-    public static List<File> fromPath(final List<String> paths) throws IOException{
-        return paths.stream().map(File::new)
+    public static List<ImagePoints> fromPath(final List<File> paths) throws IOException{
+        return paths.stream()
                 .filter(File::isFile)
                 .filter(CheckImage::checkImage)
                 .flatMap(file -> {
@@ -62,6 +63,8 @@ public class ImagingConversion {
                         return Stream.empty();
                     }
                 })
+                .map(File::getPath)
+                .map(ImagePoints::new)
                 .collect(Collectors.toList());
     }
 
