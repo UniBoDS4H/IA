@@ -20,7 +20,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final GridBagConstraints constraints;
     private final CornerSelectorGUI container;
     private final JSlider pointerDimension, contrastSlider;
-    private final JButton changeButton, applyButton, invertButton;
+    private final JButton changeButton, invertButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
     private float contrast = 0.0f;
@@ -30,7 +30,6 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pointerColor = new ColorComboBox();
         this.changeButton = new JButton("Change");
         this.invertButton = new JButton("Invert");
-        this.applyButton = new JButton("Apply");
         this.indexFrom = new JComboBox<>();
         this.indexTo = new JComboBox<>();
         this.selectedPointerColor = new ColorComboBox();
@@ -101,9 +100,8 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
             this.container.repaint();
         });
 
-        this.applyButton.addActionListener(event -> {
+        this.contrastSlider.addChangeListener(event->{
             this.contrast  = this.contrastSlider.getValue()/10.0f;
-            System.out.println("contrast: " + this.contrast);
             this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getOriginalImage(), this.contrast));
             this.container.repaint();
         });
@@ -131,7 +129,6 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         this.contrastSlider.setPaintTicks(true);
         this.addElement(new JLabel("Corner dimension: "), new JPanel(), this.pointerDimension);
         this.addElement(new JLabel("Contrast: "), new JPanel(), this.contrastSlider);
-        this.addElement(new JLabel("Apply contrast"), new JPanel(), this.applyButton);
         JPanel changeIndex = new JPanel();
         changeIndex.add(new JLabel("From"));
         changeIndex.add(this.indexFrom);
