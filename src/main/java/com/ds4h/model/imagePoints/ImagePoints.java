@@ -13,6 +13,7 @@ public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
     private final String path;
     private final int rows, cols;
+    private int type;
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
@@ -100,7 +101,15 @@ public class ImagePoints extends ImagePlus{
         }
     }
 
+    public String getPath(){
+        return this.path;
+    }
     public String getName() {
         return super.getTitle();
+    }
+
+    @Override
+    public String toString() {
+        return this.getTitle();
     }
 }
