@@ -37,4 +37,9 @@ public class PhaseCorrelationAlgorithm implements AlignmentAlgorithm{
     public void transform(final Mat source, final Mat destination, Mat H, int nPoints) {
 
     }
+
+    @Override
+    public int getLowerBound() {
+        return 0;
+    }
 }

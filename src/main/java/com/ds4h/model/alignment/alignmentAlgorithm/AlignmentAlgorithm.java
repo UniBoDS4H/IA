@@ -14,4 +14,6 @@ public interface AlignmentAlgorithm {
     Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints);
 
     void transform(final Mat source, final Mat destination, Mat H, final int nPoints);
+
+    int getLowerBound();
 }

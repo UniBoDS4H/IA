@@ -38,4 +38,9 @@ public class AffineAlignment implements AlignmentAlgorithm{
     public void transform(Mat source, Mat destination, Mat H, int nPoints) {
         Core.transform(source,destination,H);
     }
+
+    @Override
+    public int getLowerBound() {
+        return LOWER_BOUND;
+    }
 }

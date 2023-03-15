@@ -83,7 +83,9 @@ public class Alignment implements Runnable{
             final ImagePoints t = new ImagePoints(this.targetImage);
             final ImagePoints i = new ImagePoints(img);
             this.pointDetector.detectPoint(t, i);
-            images.put(i,t);
+            if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
+                images.put(i,t);
+            }
         });
         final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
         this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getOriginalImage()));

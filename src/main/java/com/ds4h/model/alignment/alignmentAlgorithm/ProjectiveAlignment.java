@@ -37,4 +37,9 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
     public void transform(Mat source, Mat destination, Mat H, int nPoints) {
         Core.perspectiveTransform(source,destination,H);
     }
+
+    @Override
+    public int getLowerBound() {
+        return LOWER_BOUND;
+    }
 }

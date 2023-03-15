@@ -146,4 +146,9 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         }
     }
 
+    @Override
+    public int getLowerBound() {
+        return LOWER_BOUND;
+    }
+
 }
