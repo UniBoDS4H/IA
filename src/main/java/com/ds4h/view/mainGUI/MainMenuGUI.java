@@ -4,7 +4,6 @@ import com.ds4h.controller.alignmentController.AutomaticAlignmentController.Auto
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
-import com.ds4h.controller.changeColorController.ChangeColorController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
@@ -22,12 +21,6 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.gui.ImageRoi;
-import ij.gui.Overlay;
-import ij.gui.Roi;
-import ij.process.ImageProcessor;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -166,34 +159,40 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         int nPoints;
         if (!this.cornerControler.getCornerImagesImages().isEmpty()) {
             nPoints = this.cornerControler.getCornerImagesImages().get(0).getPoints().length;
+            int lowerBound = 0;
             switch (this.alignmentConfigGUI.getSelectedValue()) {
                 case TRANSLATIONAL:
-                    boolean ok = true;
-                    for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                        System.out.println(i.getPoints().length);
-                        if (i.getPoints().length < TranslationalAlignment.LOWER_BOUND) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if(ok){
-                        for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
-                            if (i.getPoints().length != nPoints) {
-                                ok = false;
-                                break;
-                            }
-                        }
-                        this.manualAlignment.setEnabled(ok);
-                        this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
-                    }else{
-                        this.manualAlignment.setEnabled(false);
-                        this.manualAlignment.setToolTipText("<html>"
-                                + "The number of points inside the images is not correct."
-                                + "<br>"
-                                + "In order to use the Translation alignment you must use at least " + TranslationalAlignment.LOWER_BOUND + " points in each image."
-                                + "</html>");
-                    }
+                        lowerBound = TranslationalAlignment.LOWER_BOUND;
                     break;
+                case AFFINE:
+                        lowerBound = AffineAlignment.LOWER_BOUND;
+                    break;
+                case PROJECTIVE:
+                    lowerBound = ProjectiveAlignment.LOWER_BOUND;
+            }
+            boolean ok = true;
+            for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
+                if (i.getPoints().length < lowerBound) {
+                    ok = false;
+                    break;
+                }
+            }
+            if(ok){
+                for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
+                    if (i.getPoints().length != nPoints) {
+                        ok = false;
+                        break;
+                    }
+                }
+                this.manualAlignment.setEnabled(ok);
+                this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
+            }else{
+                this.manualAlignment.setEnabled(false);
+                this.manualAlignment.setToolTipText("<html>"
+                        + "The number of points inside the images is not correct."
+                        + "<br>"
+                        + "In order to use the " + this.alignmentConfigGUI.getSelectedValue().getType() + " alignment you must use at least " + lowerBound + " points in each image."
+                        + "</html>");
             }
         }
     }

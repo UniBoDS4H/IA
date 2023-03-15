@@ -1,21 +1,15 @@
 package com.ds4h.view.alignmentConfigGUI;
-
-import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-
 import javax.swing.*;
 import java.awt.*;
 
 import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
-
-
 public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
-    private final JButton saveButton;
     private final JTextArea text;
     private final JCheckBox translationCheckbox;
     private final JCheckBox rotationCheckbox;
@@ -27,7 +21,6 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.container = container;
         this.getContentPane().setLayout(new GridBagLayout());
         this.algorithm = new JComboBox<>();
-        this.saveButton = new JButton("Save");
         this.text = new JTextArea();
         this.translationCheckbox = new JCheckBox("Translation");
         this.rotationCheckbox = new JCheckBox("Rotation");
@@ -74,19 +67,11 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         this.algorithm.addActionListener(event -> {
             this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
             assert this.selectedValue != null;
-            System.out.println(this.selectedValue.getDocumentation());
             this.text.setText(this.selectedValue.getDocumentation());
             this.container.checkPointsForAlignment();
             this.updateCheckBoxes();
-        });
-        this.saveButton.addActionListener(event -> {
             this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
-            this.dispose();
         });
-    }
-
-    public AlignmentAlgorithmEnum getSelectedAlgorithm(){
-        return this.selectedValue;
     }
 
     @Override
@@ -140,14 +125,6 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.weightx = 0.0;
         gbc.weighty = 0.0;
         add(rotationCheckbox, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
-        add(this.saveButton, gbc);
         this.pack();
     }
     public boolean getScaling(){

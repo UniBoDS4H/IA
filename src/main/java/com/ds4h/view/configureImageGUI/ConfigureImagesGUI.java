@@ -102,7 +102,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     }
 
     private void populateCombo(){
-        int index = 0;
+        int index = 1;
         for(AlignedImage image : this.controller.getAlignedImages()){
             this.comboBox.addItem(image.getAlignedImage().getTitle() + ":" + index);
             index++;
