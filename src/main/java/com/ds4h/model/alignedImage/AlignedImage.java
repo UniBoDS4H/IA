@@ -2,6 +2,7 @@ package com.ds4h.model.alignedImage;
 
 import ij.ImagePlus;
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.awt.*;
 import java.util.Objects;
@@ -13,29 +14,24 @@ import java.util.Optional;
  * is an Optional because for the target image we do not calculate the registration matrix.
  */
 public class AlignedImage {
-    private final Mat matrix;
     private final ImagePlus alignedImage;
     private final Optional<Mat> registrationMatrix;
 
     /**
      * Constructor of the AlignedImage. An AlignedImage is the result of the Alignment Algorithm.
-     * @param matrix : The matrix that represent the image
      * @param registrationMatrix : The registration matrix in order to have a value for the accuracy of the alignment
      * @param image : The aligned image
      */
-    public AlignedImage(final Mat matrix, final Mat registrationMatrix,  final ImagePlus image){
-        this.matrix = matrix;
+    public AlignedImage(final Mat registrationMatrix,  final ImagePlus image){
         this.registrationMatrix = Optional.of(registrationMatrix);
         this.alignedImage = image;
     }
     /**
      * Constructor of the AlignedImage. An AlignedImage is the result of the Alignment Algorithm.
      * This constructor is used for the target image because there is no registration matrix
-     * @param matrix : The matrix that represent the image
      * @param image : The aligned image
      */
-    public AlignedImage(final Mat matrix,  final ImagePlus image){
-        this.matrix = matrix;
+    public AlignedImage(final ImagePlus image){
         this.registrationMatrix = Optional.empty();
         this.alignedImage = image;
     }
@@ -61,7 +57,7 @@ public class AlignedImage {
      * @return the matrix of the image
      */
     public Mat getMat(){
-        return this.matrix;
+        return Imgcodecs.imread(this.alignedImage.getFileInfo().getFilePath());
     }
 
     /**

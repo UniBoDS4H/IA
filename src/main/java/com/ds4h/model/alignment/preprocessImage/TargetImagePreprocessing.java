@@ -45,14 +45,11 @@ public class TargetImagePreprocessing {
 
     //returns the mat of the new target and the shift of the points
     private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
-        final Mat imageToShiftMat = imagePoints.getOriginalMatImage();
-        final Mat targetMat = target.getOriginalMatImage();
         final Mat translationMatrix = algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(), target.getMatOfPoint());
-
-        final int h1 = targetMat.rows();
-        final int w1 = targetMat.cols();
-        final int h2 = imageToShiftMat.rows();
-        final int w2 = imageToShiftMat.cols();
+        final int h1 = target.getOriginalMatImage().rows();
+        final int w1 = target.getOriginalMatImage().cols();
+        final int h2 = imagePoints.getOriginalMatImage().rows();
+        final int w2 = imagePoints.getOriginalMatImage().cols();
 
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
         final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
@@ -72,8 +69,8 @@ public class TargetImagePreprocessing {
         final double[] t = {-xmin, -ymin};
 
         final Size s = new Size(xmax-xmin, ymax-ymin);
-        final Mat alignedImage = Mat.zeros(s,imageToShiftMat.type());
-        targetMat.copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
+        final Mat alignedImage = Mat.zeros(s,imagePoints.getOriginalMatImage().type());
+        target.getOriginalMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }
