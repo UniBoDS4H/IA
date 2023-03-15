@@ -1,5 +1,6 @@
 package com.ds4h.model.imagePoints;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -20,6 +21,19 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
+        detectType()
+    }
+
+    private void detectType(){
+        final ImageProcessor imp = this.getProcessor();
+        int bitDepth = imp.getBitDepth();
+        int numPixels = imp.getPixelCount();
+        if (bitDepth == 8 && numPixels == imp.getWidth() * imp.getHeight()) {
+            this.type = CvType.CV_8UC1;
+        } else if (bitDepth == 24 && numPixels == imp.getWidth() * imp.getHeight() * 3) {
+            this.type = CvType.CV_8UC3;
+        }
+        System.gc();
     }
 
     public Point[] getPoints(){
@@ -70,6 +84,10 @@ public class ImagePoints extends ImagePlus{
 
     public Mat getMatImage(){
         return Imgcodecs.imread(this.path);
+    }
+
+    public int getType(){
+        return this.type;
     }
 
 

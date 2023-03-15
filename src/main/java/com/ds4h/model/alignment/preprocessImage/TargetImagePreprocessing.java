@@ -74,7 +74,8 @@ public class TargetImagePreprocessing {
         final double[] t = {-xmin, -ymin};
 
         final Size s = new Size(xmax-xmin, ymax-ymin);
-        final Mat alignedImage = Mat.zeros(s, ImagePoints.getOriginalMatImage().type());
+        //final Mat alignedImage = Mat.zeros(s, ImagePoints.getOriginalMatImage().type());
+        final Mat alignedImage = Mat.zeros(s, ImagePoints.getType());
         target.getOriginalMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
         System.gc();
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
