@@ -33,7 +33,6 @@ public class Process_Pixels implements PlugIn {
 
 	public static void main(String[] args) throws Exception {
 		new Process_Pixels().run(null);
-		final ImagePlus b = new ImagePlus("");
 	}
 
 

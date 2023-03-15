@@ -386,10 +386,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         try {
             final Thread loadingThread = new Thread(() -> {
                 try {
-                    final FileDialog fd = new FileDialog(new Frame(), "Choose files", FileDialog.LOAD);
-                    fd.setMultipleMode(true);
-                    fd.setVisible(true);
-                    this.cornerControler.loadImages(Arrays.stream(fd.getFiles()).collect(Collectors.toList()));
+                    final JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    fileChooser.setMultiSelectionEnabled(true);
+                    final int result = fileChooser.showOpenDialog(this);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        this.cornerControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                    }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),

@@ -53,7 +53,7 @@ public class ImagingConversion {
     }
 
     public static List<ImagePoints> fromPath(final List<File> paths) throws IOException{
-        return paths.stream()
+        return paths.parallelStream()
                 .filter(File::isFile)
                 .filter(CheckImage::checkImage)
                 .flatMap(file -> {

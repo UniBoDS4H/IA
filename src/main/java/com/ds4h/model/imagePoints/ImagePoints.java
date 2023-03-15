@@ -11,9 +11,18 @@ import java.util.List;
  */
 public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
+    private final String path;
+    private int rows = 0, cols = 0;
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
+        this.path = path;
         this.pointList = new ArrayList<>(5);
+    }
+
+    public ImagePoints(final String path, final int rows, final int cols){
+        this(path);
+        this.rows = rows;
+        this.cols = cols;
     }
 
     public Point[] getPoints(){
@@ -63,12 +72,33 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getMatImage(){
-        /*
-        if(this.useProcessedImage && this.processedImage.isPresent()){
-            return this.processedImage.get();
+        final Mat m = Imgcodecs.imread(this.path);
+        this.rows = m.rows();
+        this.cols = m.cols();
+        return m;
+    }
+
+    private void readMat(){
+        final Mat m = Imgcodecs.imread(this.path);
+        this.rows = m.rows();
+        this.cols = m.cols();
+        System.gc();
+    }
+
+    public int getRows(){
+        if(this.rows > 0){
+            return this.rows;
         }
-         */
-        return Imgcodecs.imread(super.getFileInfo().getFilePath());
+        this.readMat();
+        return this.rows;
+    }
+
+    public int getCols(){
+        if(this.cols > 0){
+            return this.cols;
+        }
+        this.readMat();
+        return this.cols;
     }
 
     public Mat getOriginalMatImage(){
