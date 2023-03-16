@@ -70,7 +70,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
-        System.out.println(srcPoints.toList().size());
+        System.out.println(srcPoints.toList().size() + " " + dstPoints.toList().size());
         if(srcPoints.toArray().length <=2){
             final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
             final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);

@@ -117,8 +117,11 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
                             IJ.showMessage(e.getMessage());
                         }
                     }
-                    final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.controller.name(), this.bunwarpjGUI, this.controller, this.pointController, this.previewImagesPane);
-                    bunwarpOverlapped.showDialog();
+                    if(controller.getAlignedImages().size() > 0) {
+                        final OverlapImagesGUI bunwarpOverlapped = new OverlapImagesGUI(this.controller.name(), this.bunwarpjGUI, this.controller, this.pointController, this.previewImagesPane);
+                        bunwarpOverlapped.showDialog();
+                        this.dispose();
+                    }
                     loadingGUI.close();
                 });
 
