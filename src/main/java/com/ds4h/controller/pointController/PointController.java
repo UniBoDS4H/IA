@@ -8,7 +8,9 @@ import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.view.cornerSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,13 +19,11 @@ public class PointController {
     public PointController(){
         this.pointManager = new PointManager();
     }
-    public void loadImages(final List<String> paths) throws Exception {
-        final List<ImagePoints> imagePoints = ImagingConversion.fromPath(paths)
-                    .stream().map(ImagePoints::new)
-                    .collect(Collectors.toList());
-        System.out.println(imagePoints.size());
-        if(imagePoints.size() > 1 || (imagePoints.size() == 1 && this.pointManager.getCornerImages().size() > 0)) {
-            this.pointManager.addImages(imagePoints);
+    public void loadImages(final List<File> paths) throws Exception {
+        final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
+        System.gc();
+        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getCornerImages().size() > 0)) {
+            this.pointManager.addImages(imagePointsList);
         }else {
             throw new IllegalArgumentException("You can not upload one single photo or less.");
         }

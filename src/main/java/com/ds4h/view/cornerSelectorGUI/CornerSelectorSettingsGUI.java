@@ -107,7 +107,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         });
 
         this.invertButton.addActionListener(event -> {
-            this.container.setImage(ChangeColorController.invert(this.container.getImage().getImage()));
+            //this.container.setImage(ChangeColorController.invert(this.container.getImage().getImage()));
             this.container.repaint();
         });
     }

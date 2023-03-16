@@ -44,7 +44,7 @@ public class JSONSerializer extends JSONFile {
             for(Point point : imageCorners.getPoints()){
                 array.put(point.toString());
             }
-            obj.put(FILE_KEY, imageCorners.getImage().getTitle());
+            obj.put(FILE_KEY, imageCorners.getTitle());
             if(pointManager.getSourceImage().isPresent() && pointManager.getSourceImage().get().equals(imageCorners)){
                 obj.put(TARGET_KEY, true);
             }

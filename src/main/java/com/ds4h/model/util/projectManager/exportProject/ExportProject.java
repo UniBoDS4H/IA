@@ -29,11 +29,11 @@ public class ExportProject {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         if(!directory.isEmpty()){
-            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path+"/"+directory);
+            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImagePlus).collect(Collectors.toList()), path+"/"+directory);
             JSONSerializer.createJSON(pointManager, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.
-            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImage).collect(Collectors.toList()), path);
+            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImagePlus).collect(Collectors.toList()), path);
             JSONSerializer.createJSON(pointManager, path);
         }
     }

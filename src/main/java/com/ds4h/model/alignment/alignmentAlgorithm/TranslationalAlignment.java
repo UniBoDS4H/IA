@@ -50,7 +50,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     }
 
                     final Optional<ImagePlus> finalImage = ImagingConversion.fromMatToImagePlus(alignedImage, imageToShift.getName());
-                    return finalImage.map(imagePlus -> new AlignedImage(alignedImage, transformationMatrix, imagePlus));
+                    return finalImage.map(imagePlus -> new AlignedImage(transformationMatrix, imagePlus));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
                             "inside the target image.");

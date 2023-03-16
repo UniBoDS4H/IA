@@ -151,11 +151,13 @@ public class CornerSelectorPanelGUI {
         this.container.setSelectedPoints(this.container.getSelectedPoints().stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toList()));
     }
     private Point getMatIndexFromPoint(Point p){
-        return CoordinateConverter.getMatIndexFromPoint(p, currentImage.getMatImage().rows(), currentImage.getMatImage().cols(), getWidth(), getHeight());
+        //TODO: RESTORE
+        return CoordinateConverter.getMatIndexFromPoint(p, currentImage.getRows(), currentImage.getCols(), getWidth(), getHeight());
     }
 
     private Point getPointFromMatIndex(Point p){
-        return CoordinateConverter.getPointFromMatIndex(p,this.currentImage.getMatImage().rows(), this.currentImage.getMatImage().cols(), this.getWidth(), this.getHeight());
+        //TODO: RESTORE
+        return CoordinateConverter.getPointFromMatIndex(p, currentImage.getRows(), currentImage.getCols(), this.getWidth(), this.getHeight());
     }
 
     private boolean imageContains(Point point){

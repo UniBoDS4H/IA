@@ -48,18 +48,18 @@ public class ImportProject {
                 //If we have found the configuration json, we read it and we assing for each image its points.
                 JSONDeserializer.readImportProjectJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
                     if (file.getName().equals(key)) {
-                        final ImagePoints imagePoints = new ImagePoints(file);
-                        value.forEach(imagePoints::addPoint);
-                        images.add(imagePoints);
+                        final ImagePoints ImagePoints = new ImagePoints(file.getPath());
+                        value.forEach(ImagePoints::addPoint);
+                        images.add(ImagePoints);
                         if(JSONDeserializer.isTargetPresent() && JSONDeserializer.targetName().equals(file.getName())){
-                            TARGET_IMAGE = Optional.of(imagePoints);
+                            TARGET_IMAGE = Optional.of(ImagePoints);
                         }
                     }
                 }));
             }else{
                 tmpFiles.forEach(file -> {
-                    final ImagePoints imagePoints = new ImagePoints(file);
-                    images.add(imagePoints);
+                    final ImagePoints ImagePoints = new ImagePoints(file.getPath());
+                    images.add(ImagePoints);
                 });
             }
         }else {
