@@ -81,9 +81,9 @@ public class Alignment implements Runnable{
         final double factor = this.pointDetector.getFactor();
         this.imagesToAlign.forEach(img->{
             //final ImagePoints t = new ImagePoints(this.targetImage);
-            final ImagePoints t = new ImagePoints(this.targetImage.getFileInfo().getFilePath());
+            final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             //final ImagePoints i = new ImagePoints(img);
-            final ImagePoints i = new ImagePoints(img.getFileInfo().getFilePath());
+            final ImagePoints i = new ImagePoints(img.getPath());
             this.pointDetector.detectPoint(t, i);
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 images.put(i,t);

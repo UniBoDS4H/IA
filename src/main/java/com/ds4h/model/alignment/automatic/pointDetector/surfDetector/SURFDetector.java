@@ -18,11 +18,14 @@ public class SURFDetector extends PointDetector {
 
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
-
+        System.gc();
         // Detect the keypoints and compute the descriptors for both images:
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
-        this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
+        this.detector.detect(imagePoint.getGrayScaleMat(), keypoints1);
+        System.out.println("UIELA");
+        this.detector.compute(imagePoint.getGrayScaleMat(),keypoints1,descriptors1);
+        //this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
         final Mat descriptors2 = new Mat();
