@@ -59,10 +59,10 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     }
 
     private void setActualPointerStyles() {
-        this.pointerColor.setSelectedItem(this.container.getCornerPanel().getPointerColor());
-        this.selectedPointerColor.setSelectedItem(this.container.getCornerPanel().getSelectedPointerColor());
-        this.textColor.setSelectedItem(this.container.getCornerPanel().getTextColor());
-        this.pointerDimension.setValue(this.container.getCornerPanel().getPointerDimension());
+       // this.pointerColor.setSelectedItem(this.container.getCornerPanel().getPointerColor());
+        //this.selectedPointerColor.setSelectedItem(this.container.getCornerPanel().getSelectedPointerColor());
+        //this.textColor.setSelectedItem(this.container.getCornerPanel().getTextColor());
+        //this.pointerDimension.setValue(this.container.getCornerPanel().getPointerDimension());
     }
 
     @Override
@@ -90,7 +90,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
             container.setTextColor(selectedColor);
         });
         this.pointerDimension.addChangeListener(e->{
-            this.container.getCornerPanel().setPointerDimension(pointerDimension.getValue());
+           // this.container.getCornerPanel().setPointerDimension(pointerDimension.getValue());
         });
         this.changeButton.addActionListener(e -> {
             int from = (int)indexFrom.getSelectedItem();

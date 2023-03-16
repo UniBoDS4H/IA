@@ -7,6 +7,7 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
+import ij.gui.ImageWindow;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CornerSelectorGUI extends Frame implements StandardGUI {
+public class CornerSelectorGUI extends ImageWindow {
 
     private final PointController pointController;
-    private final CornerSelectorPanelGUI panel;
+    private final CornerSelectorPanelGUI panel = null;
     private final ImagePoints image;
     private List<Point> selectedPoints;
     private final CornerSelectorMenuGUI menu;
@@ -28,13 +29,14 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
 
 
     public CornerSelectorGUI(final ImagePoints image, final PointController controller, MainMenuGUI mainMenu){
-        super(controller.getMenuItem(image).toString());
+        super("JJ");
+        //super(image.getImage(), new CornerSelectorPanelGUI(null, image.getImage()));
         this.mainMenu = mainMenu;
         this.pointController = controller;
         this.image = image;
         //TODO: use the RENDERIMAGE in order to apply contrast and other options
-        this.panel = new CornerSelectorPanelGUI(this);
-        this.panel.setCurrentImage(image);
+        //this.panel = new CornerSelectorPanelGUI(this, image.getImage());
+        //this.panel.setCurrentImage(image);
         this.menu = new CornerSelectorMenuGUI(this.pointController, this.image, this);
         this.selectedPoints = new ArrayList<>();
         setLayout(new BorderLayout());
@@ -43,13 +45,10 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         this.addComponents();
     }
 
-    @Override
     public void showDialog() {
         setVisible(true);
-        this.panel.initZoom();
     }
 
-    @Override
     public void addListeners() {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -58,13 +57,11 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
         });
     }
 
-    @Override
     public void addComponents() {
-        this.add(this.panel, BorderLayout.CENTER);
         this.add(this.menu, BorderLayout.SOUTH);
     }
     public void repaintPanel(){
-        this.panel.repaint();
+
     }
 
     public List<Point> getSelectedPoints(){
@@ -72,13 +69,15 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     }
 
     private void setFrameSize(){
-        final Dimension newDimension = DisplayInfo.getScaledImageDimension(
+        /*final Dimension newDimension = DisplayInfo.getScaledImageDimension(
                 new Dimension(this.image.getBufferedImage().getWidth(this.panel),
                         this.image.getBufferedImage().getHeight(this.panel)),
                 DisplayInfo.getDisplaySize(80));
         newDimension.setSize(newDimension.getWidth()+this.menu.getWidth(), newDimension.getHeight()+this.menu.getHeight());
         setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
         setMinimumSize(newDimension);
+
+         */
     }
 
     public void setSelectedPoints(List<Point> points) {
@@ -98,15 +97,15 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     }
 
     public void setPointerColor(Color selectedColor) {
-        this.panel.setPointerColor(selectedColor);
+       // this.panel.setPointerColor(selectedColor);
     }
 
     public void setSelectedPointerColor(Color selectedColor) {
-        this.panel.setSelectedPointerColor(selectedColor);
+       // this.panel.setSelectedPointerColor(selectedColor);
     }
 
     public void setTextColor(Color selectedColor) {
-        this.panel.setTextColor(selectedColor);
+       // this.panel.setTextColor(selectedColor);
     }
 
     public CornerSelectorPanelGUI getCornerPanel() {
@@ -118,7 +117,7 @@ public class CornerSelectorGUI extends Frame implements StandardGUI {
     public void setImage(final ImagePlus imagePlus){
         this.image.useProcessed();
         ImagingConversion.fromImagePlus2Mat(imagePlus).ifPresent(this.image::setProcessedImage);
-        this.panel.setCurrentImage(this.image);
+        //this.panel.setCurrentImage(this.image);
         this.repaintPanel();
     }
 

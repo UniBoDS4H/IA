@@ -79,12 +79,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             return translationMatrix;
         }else{
             final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
-            for(int i = 0; i < 2; i++){
-                for (int j = 0; j < 3; j++){
-                    System.out.print(Arrays.toString(H.get(i, j)));
-                }
-                System.out.println();
-            }
             double a = H.get(0,0)[0];
             double b = H.get(1,0)[0];
             double scaling = Math.sqrt(a*a + b*b);

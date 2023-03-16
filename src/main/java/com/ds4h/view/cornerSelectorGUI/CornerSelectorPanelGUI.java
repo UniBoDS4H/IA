@@ -12,7 +12,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener {
+public class CornerSelectorPanelGUI {
+    /*
     private ImagePoints currentImage;
     private Point referencePoint;
     private final CornerSelectorGUI container;
@@ -162,11 +163,6 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
                 .anyMatch(p-> p.x < point.x+this.pointerDimension*3 && p.x > point.x-this.pointerDimension*3 && p.y < point.y+this.pointerDimension*3 && p.y > point.y-this.pointerDimension*3);
     }
 
-    /**
-     * Gets the right pressed corner considering some gap of selection
-     * @param selected : selected corner (matrix index)
-     * @return the corresponding actual point (matrix index)
-     */
     private Point getActualPoint(Point selected){
        Optional<Point> point = Arrays.stream(this.currentImage.getPoints()).filter(p -> p.x < selected.x + this.pointerDimension*3 && p.x > selected.x - this.pointerDimension*3 && p.y < selected.y + this.pointerDimension*3 && p.y > selected.y - this.pointerDimension*3).findFirst();
         if(point.isPresent()) {
@@ -241,10 +237,6 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         System.gc();
     }
 
-    /**
-     * Draws all the corners with their index in the right color and dimension
-     * @param g2d the drawer
-     */
     private void drawPoints(Graphics2D g2d) {
         for (Point p : this.currentImage.getPoints()) {
             //point.getValue() -> is the matrix index of the point.
@@ -265,10 +257,6 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
         }
     }
 
-    /**
-     * Listener for the mouse wheel in order to zoom in and out
-     * @param e Event listener
-     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if(e.isControlDown()){
@@ -324,4 +312,5 @@ public class CornerSelectorPanelGUI extends JPanel implements MouseWheelListener
     public int getPointerDimension(){
         return this.pointerDimension;
     }
+    */
 }
