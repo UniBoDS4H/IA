@@ -28,7 +28,7 @@ public class PreviewListItem extends JPanel {
         this.controller = controller;
         this.centerPanel = new JPanel();
         this.image = image;
-        this.pointSelector = new PointSelectorGUI(this.image.getImage());
+        this.pointSelector = new PointSelectorGUI(this.image, this.controller);
         //this.cornerSelector = new CornerSelectorGUI(this.image, this.controller, this.container.getMainMenu());
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));

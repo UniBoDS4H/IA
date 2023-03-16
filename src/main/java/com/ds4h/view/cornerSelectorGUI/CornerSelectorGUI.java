@@ -7,6 +7,7 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.ImagePlus;
+import ij.gui.ImageWindow;
 import org.opencv.core.Point;
 
 import java.awt.*;
@@ -34,7 +35,7 @@ public class CornerSelectorGUI extends ImageWindow {
         //TODO: use the RENDERIMAGE in order to apply contrast and other options
         //this.panel = new CornerSelectorPanelGUI(this, image.getImage());
         //this.panel.setCurrentImage(image);
-        this.menu = new CornerSelectorMenuGUI(this.pointController, this.image, this);
+        this.menu = null;//new CornerSelectorMenuGUI(this.pointController, this.image, this);
         this.selectedPoints = new ArrayList<>();
         setLayout(new BorderLayout());
         this.setFrameSize();
@@ -114,7 +115,7 @@ public class CornerSelectorGUI extends ImageWindow {
     public void setImage(final ImagePlus imagePlus){
         //this.image.useProcessed();
         //ImagingConversion.fromImagePlus2Mat(imagePlus).ifPresent(this.image::setProcessedImage);
-        this.panel.setCurrentImage(this.image);
+        //this.panel.setCurrentImage(this.image);
         this.repaintPanel();
     }
 
