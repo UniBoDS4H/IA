@@ -37,7 +37,6 @@ public class ImagePoints extends ImagePlus{
             this.type = CvType.CV_8UC3;
             this.RBG = true;
         }
-        System.out.println("CIAOO " + this.type);
         System.gc();
     }
 
