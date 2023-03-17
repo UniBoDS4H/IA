@@ -10,8 +10,11 @@ package com.ds4h.imagej;
 
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
+import ij.ImageJ;
 import ij.ImagePlus;
+import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
+import ij.plugin.tool.PlugInTool;
 
 import java.awt.*;
 
@@ -32,6 +35,7 @@ public class Process_Pixels implements PlugIn {
 
 
 	public static void main(String[] args) throws Exception {
+		new ImageJ();
 		new Process_Pixels().run(null);
 	}
 
