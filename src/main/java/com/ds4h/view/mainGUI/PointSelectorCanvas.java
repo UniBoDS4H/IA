@@ -1,28 +1,24 @@
 package com.ds4h.view.mainGUI;
 
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.CoordinateConverter;
-import ij.ImageJ;
 import ij.gui.*;
-import ij.plugin.tool.PlugInTool;
 import org.opencv.core.Point;
-
-import javax.tools.Tool;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     private final ImagePoints image;
     private Color textColor;
-    private int pointerDimension;
+    private int pointerDimension = (this.imageWidth + this.imageHeight)/100;
     private Color selectedPointerColor;
     private final Overlay overlay;
 
-    private final int POINT_DIAMETER = 6;
+    private Point referencePoint;
     int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
 
@@ -32,15 +28,25 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         this.setOverlay(overlay);
         this.overlay.selectable(false);
         this.image = image;
+        this.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if(referencePoint != null) {
+                    Point newPoint = new Point(getCursorLoc().x, getCursorLoc().y);
+                    moveAllSelected(referencePoint, newPoint);
+                    referencePoint = newPoint;
+                }
+                drawPoints();
+            }
+        });
         this.addMouseListener(new MouseListener() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (Toolbar.getToolId() != Toolbar.HAND) {
                     Point point = new Point(getCursorLoc().x, getCursorLoc().y);
-                    // Point point = getMatIndexFromPoint(getScaledPoint(e));
                     if (imageContains(point)) {//point already present in the image
                         Point actualPoint = getActualPoint(point); //getting the exact pressed point
-                        //referencePoint = actualPoint;
+                        referencePoint = actualPoint;
                         if (e.isControlDown()) {
                             if (selectedPoints.contains(actualPoint)) {//if the point is already selected
                                 selectedPoints.remove(actualPoint);
@@ -65,8 +71,6 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
                             selectedPoints.clear();
                             //if I single click a place where there is no point I clear the selection
                             //container.clearSelectedPoints();
-                            //released = false;
-                            // startPoint = MouseInfo.getPointerInfo().getLocation();
                         }
                     }
                     drawPoints();
@@ -74,42 +78,25 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                /*
-        referencePoint = null;
-        released = true;
-        if(dragger){
-            repaint();
-        }
-        super.mouseReleased(mouseEvent);
-
-         */
+                referencePoint = null;
             }
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
             @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+            public void mouseEntered(MouseEvent e) {}
             @Override
-            public void mouseClicked(MouseEvent e) {
-                //mouseClicked(e);
-        /*
-        Point point = getMatIndexFromPoint(getScaledPoint(e));
-        if(imageContains(point)){//point already present in the image
-            Point actualPoint = getActualPoint(point); //getting the exact pressed point
-            if(!e.isControlDown()){
-                container.clearSelectedPoints();
-                container.addSelectedPoint(actualPoint);
-            }
-            repaint();
-        }
-         */
-            }
+            public void mouseClicked(MouseEvent e) {}
         });
     }
 
 
 
+    private void moveAllSelected(Point oldPoint, Point newPoint){
+        int xGap = (int)(newPoint.x-oldPoint.x);
+        int yGap = (int)(newPoint.y-oldPoint.y);
+        this.selectedPoints.forEach(p-> this.image.movePoint(p, new Point(p.x+xGap,p.y+yGap)));
+        this.selectedPoints = this.selectedPoints.stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toList());
+    }
     private void drawPoints(){
         overlay.clear();
         this.image.getListPoints().forEach(this::drawPoint);
@@ -121,19 +108,21 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         }else{
             c = Color.RED;
         }
-        OvalRoi circle = new OvalRoi(p.x-20, p.y-20, 40,40);
-        circle.setStrokeWidth(4);
+        OvalRoi circle = new OvalRoi(p.x - this.pointerDimension * 3, p.y - this.pointerDimension * 3, this.pointerDimension * 6, this.pointerDimension * 6);
+        circle.setStrokeWidth(this.pointerDimension/10);
         PointRoi center = new PointRoi(p.x, p.y);
+        int textX = (int) p.x - this.pointerDimension * 3 - 5;
+        int textY = (int) p.y + this.pointerDimension * 3 + 5;
+        TextRoi index = new TextRoi(textX, textY, Integer.toString(this.image.getIndexOfPoint(p)));
+        Font f = new Font("Serif", Font.BOLD, this.pointerDimension);
+        index.setFont(f);
         center.setStrokeColor(c);
         circle.setStrokeColor(c);
         overlay.add(circle);
         overlay.add(center);
+        overlay.add(index);
         overlay.selectable(false);
         this.repaint();
-    }
-    private Point getScaledPoint(MouseEvent e){
-        return null;
-        //return new Point((-xOffset/zoomFactor)+(e.getX()/zoomFactor), (-yOffset/zoomFactor)+(e.getY()/zoomFactor));
     }
     private Point getActualPoint(Point point){
         for (int i = 0; i < overlay.size(); i++) {
@@ -158,6 +147,4 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         }
         return false;
     }
-
-
 }
