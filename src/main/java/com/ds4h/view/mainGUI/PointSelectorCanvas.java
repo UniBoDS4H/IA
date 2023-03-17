@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class PointSelectorCanvas extends ImageCanvas {
+public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     private final ImagePoints image;
     private Color textColor;
     private int pointerDimension;
@@ -29,21 +29,13 @@ public class PointSelectorCanvas extends ImageCanvas {
     public PointSelectorCanvas(ImagePoints image) {
         super(image);
         this.overlay = new Overlay();
-
-
+        this.setOverlay(overlay);
+        this.overlay.selectable(false);
         this.image = image;
-
-        this.addListener();
-
-    }
-
-    private void addListener() {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int toolId = Toolbar.getToolId();
-                if (toolId != Toolbar.HAND) {
-
+                if (Toolbar.getToolId() != Toolbar.HAND) {
                     Point point = new Point(getCursorLoc().x, getCursorLoc().y);
                     // Point point = getMatIndexFromPoint(getScaledPoint(e));
                     if (imageContains(point)) {//point already present in the image
@@ -58,28 +50,21 @@ public class PointSelectorCanvas extends ImageCanvas {
                                 //container.addSelectedPoint(actualPoint);
                             }
                         } else {
-
                             if (!selectedPoints.contains(actualPoint)) {
-
                                 selectedPoints.clear();
                                 selectedPoints.add(actualPoint);
                             }
                         }
                     } else {
-
-
                         //ADD new point
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                             //first i add the new point then i call the updatePointsForAlignment for checking if we can enable the manual alignment button
-
                             image.addPoint((point));
-
                             //container.updatePointsForAlignment();
-                            repaint();
                         } else {
+                            selectedPoints.clear();
                             //if I single click a place where there is no point I clear the selection
                             //container.clearSelectedPoints();
-                            repaint();
                             //released = false;
                             // startPoint = MouseInfo.getPointerInfo().getLocation();
                         }
@@ -89,7 +74,7 @@ public class PointSelectorCanvas extends ImageCanvas {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-        /*
+                /*
         referencePoint = null;
         released = true;
         if(dragger){
@@ -107,6 +92,7 @@ public class PointSelectorCanvas extends ImageCanvas {
             }
             @Override
             public void mouseClicked(MouseEvent e) {
+                //mouseClicked(e);
         /*
         Point point = getMatIndexFromPoint(getScaledPoint(e));
         if(imageContains(point)){//point already present in the image
@@ -117,11 +103,12 @@ public class PointSelectorCanvas extends ImageCanvas {
             }
             repaint();
         }
-
          */
             }
         });
     }
+
+
 
     private void drawPoints(){
         overlay.clear();
@@ -130,19 +117,18 @@ public class PointSelectorCanvas extends ImageCanvas {
     private void drawPoint(Point p) {
         Color c;
         if(this.selectedPoints.contains(p)){
-            c = Color.YELLOW;
+            c = Color.BLUE;
         }else{
             c = Color.RED;
         }
         OvalRoi circle = new OvalRoi(p.x-20, p.y-20, 40,40);
-
         circle.setStrokeWidth(4);
         PointRoi center = new PointRoi(p.x, p.y);
         center.setStrokeColor(c);
         circle.setStrokeColor(c);
         overlay.add(circle);
         overlay.add(center);
-        this.setOverlay(overlay);
+        overlay.selectable(false);
         this.repaint();
     }
     private Point getScaledPoint(MouseEvent e){
