@@ -6,10 +6,19 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.Pair;
+import com.ds4h.model.util.saveProject.SaveImages;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.measure.Calibration;
+import ij.process.ImageProcessor;
+import org.opencv.core.Mat;
 
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+
+import static java.lang.Math.sqrt;
 
 /**
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
@@ -76,25 +85,67 @@ public class Alignment implements Runnable{
                         .ifPresent(this.alignedImages::add));
 
     }
+
+    private ImagePoints scaleDown (final ImagePoints originalImage){
+        Calibration originalCalibration = originalImage.getCalibration();
+        Calibration downsampledCalibration = new Calibration();
+        downsampledCalibration.pixelWidth = originalCalibration.pixelWidth * Math.sqrt(4);
+        downsampledCalibration.pixelHeight = originalCalibration.pixelHeight * Math.sqrt(4);
+        downsampledCalibration.setUnit(originalCalibration.getUnit());
+        ImageProcessor downsampledProcessor = originalImage.getProcessor().resize(originalImage.getWidth() / 4, originalImage.getHeight() / 4);
+        ImagePlus downsampledImage = new ImagePlus(originalImage.getTitle(), downsampledProcessor);
+        downsampledImage.show();
+        final String path = SaveImages.saveTMPImage(downsampledImage) + "/" +  downsampledImage.getTitle();
+        return new ImagePoints(path);
+    }
+
+    private ImagePlus scaleUp(final ImagePlus originalImage, final ImagePlus downsampledImage){
+        Calibration originalCalibration = originalImage.getCalibration();
+
+        Calibration downsampledCalibration = downsampledImage.getCalibration();
+
+        Calibration restoredCalibration = new Calibration();
+
+        restoredCalibration.pixelWidth = originalCalibration.pixelWidth;
+        restoredCalibration.pixelHeight = originalCalibration.pixelHeight;
+        restoredCalibration.setUnit(originalCalibration.getUnit());
+
+        ImageProcessor restoredProcessor = downsampledImage.getProcessor().resize(originalImage.getWidth(), originalImage.getHeight());
+        ImagePlus restoredImage = new ImagePlus(originalImage.getTitle(), restoredProcessor);
+        restoredImage.show();
+        final String path = SaveImages.saveTMPImage(restoredImage) + "/" +  downsampledImage.getTitle();
+        return new ImagePoints(path);
+    }
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         final double factor = this.pointDetector.getFactor();
+        final List<Pair<String, ImagePoints>> origianlImages = new ArrayList<>(this.imagesToAlign.size());
+
+        final ImagePoints a = this.scaleDown(this.targetImage);
+        origianlImages.add(new Pair<>(this.targetImage.getPath(), a));
+        this.targetImage = a;
         this.imagesToAlign.forEach(img->{
-            //final ImagePoints t = new ImagePoints(this.targetImage);
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
-            //final ImagePoints i = new ImagePoints(img);
-            final ImagePoints i = new ImagePoints(img.getPath());
+            final ImagePoints i = this.scaleDown(img);
+            origianlImages.add(new Pair<>(img.getPath(), i));
+            System.out.println("UEILA");
             this.pointDetector.detectPoint(t, i);
+            System.out.println("AFTER UEILA");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 images.put(i,t);
             }
         });
-        final ImagePoints target =  TargetImagePreprocessing.automaticProcess(images, this.algorithm);
+
+        //final ImagePoints target =  this.scaleUp(new ImagePlus(origianlImages.get(0).getFirst()),
+         //       TargetImagePreprocessing.automaticProcess(images, this.algorithm).getOriginalImage());
         //this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getOriginalImage()));
-        this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getImagePlus()));
-        images.entrySet().parallelStream().forEach(e->{
-            this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+
+        origianlImages.forEach(p -> {
+            this.alignedImages.add(new AlignedImage(this.scaleUp(new ImagePoints(p.getFirst()), p.getSecond())));
         });
+        //this.alignedImages.add(new AlignedImage(this.scaleUp(target.getImagePlus()));
+        System.gc();
+        images.forEach((key, value) -> this.algorithm.align(value, key).ifPresent(this.alignedImages::add));
     }
 
     /**
@@ -118,6 +169,7 @@ public class Alignment implements Runnable{
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * With this method we return all the images aligned. If the thread is running an empty list is returned otherwise

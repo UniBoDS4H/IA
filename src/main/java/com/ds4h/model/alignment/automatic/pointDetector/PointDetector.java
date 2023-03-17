@@ -28,23 +28,22 @@ public abstract class PointDetector {
         return this.factor;
     }
 
-    protected Mat createPyramid(final ImagePoints image, final int levels){
+    protected ImagePoints createPyramid(final ImagePoints image, final int levels){
         //int levels = 4; // Number of levels in the pyramid
-        ImagePlus[] pyramid = new ImagePlus[levels]; // Array to store the pyramid
+        final String imageTitle  = image.getTitle();
+        final ImagePlus[] pyramid = new ImagePlus[levels]; // Array to store the pyramid
 
         pyramid[0] = image; // Store the original image as the first level
 
         for (int i = 1; i < levels; i++) {
             ImageProcessor ipDownsampled = pyramid[i - 1].getProcessor().resize(pyramid[i - 1].getWidth() / 2, pyramid[i - 1].getHeight() / 2); // Downsample the previous level by a factor of 2
-            pyramid[i] = new ImagePlus("Rescaled" + i, ipDownsampled); // Store the downsampled image as the current level
+            pyramid[i] = new ImagePlus(i+imageTitle, ipDownsampled); // Store the downsampled image as the current level
         }
         //TODO: RESTORE THE SAVING OF THE IMAGES, FARE IN MODO CHE MI TORNI IL PATH COMPLETO.
-        final String path = SaveImages.saveTMPImage(pyramid[levels-1]) + "/" + "Rescaled" + String.valueOf(levels-1) + ".tif";
+        final String path = SaveImages.saveTMPImage(pyramid[levels-1]) + "/" + String.valueOf(levels-1) + imageTitle;
         System.out.println(path);
         final ImagePoints scaledImage = new ImagePoints(path);
-        //Save the last images
-        //Read its matrix
         scaledImage.show();
-        return scaledImage.getMatImage();
+        return scaledImage;
     }
 }

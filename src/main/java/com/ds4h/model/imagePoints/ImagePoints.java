@@ -109,7 +109,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getOriginalMatImage(){
-        return Imgcodecs.imread(super.getFileInfo().getFilePath());
+        return Imgcodecs.imread(this.path);
     }
 
     public void movePoint(final Point point, final Point newPoint){

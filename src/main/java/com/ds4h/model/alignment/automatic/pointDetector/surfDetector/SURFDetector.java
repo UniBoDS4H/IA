@@ -19,22 +19,15 @@ public class SURFDetector extends PointDetector {
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
         System.gc();
-
-        final Mat imagePointScaled = this.createPyramid(imagePoint, 4);
-        final Mat targetImageScaled = this.createPyramid(targetImage, 4);
         // Detect the keypoints and compute the descriptors for both images:
-
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
-        this.detector.detect(imagePointScaled, keypoints1);
-        System.out.println("UIELA");
-        this.detector.compute(imagePointScaled,keypoints1,descriptors1);
-        //this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
+        this.detector.detectAndCompute(imagePoint.getMatImage(), new Mat(), keypoints1,descriptors1);
+        //this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
         final Mat descriptors2 = new Mat();
-        this.detector.detectAndCompute(targetImageScaled, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-
+        this.detector.detectAndCompute(targetImage.getMatImage(), new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
         // Detect key points for the second image
 
         final MatOfDMatch matches = new MatOfDMatch();
@@ -53,15 +46,10 @@ public class SURFDetector extends PointDetector {
         double threshold = (1.1+this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
-        final int factor = (int)Math.pow(2, 4);
         matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
-                    final Point queryPoint = keypoints1List.get(goodMatch.queryIdx).pt;
-                    final Point trainPoint = keypoints2List.get(goodMatch.trainIdx).pt;
-                    final Point queryScaled = new Point(queryPoint.x * factor, queryPoint.y * factor);
-                    final Point trainScaled = new Point(trainPoint.x * factor, trainPoint.y * factor);
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
+                    imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
+                    targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
                 });
 
     }

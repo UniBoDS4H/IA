@@ -42,8 +42,10 @@ public class ImagingConversion {
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
+                System.gc();
                 //final String imgFinalName = new NameBuilder().parseName(fileName).splitBy().getFinalName();
                 final ImagePlus imp = new ImagePlus(fileName, HighGui.toBufferedImage(matrix));
+                System.gc();
                 return Optional.of(imp);
             }
         }catch (Exception e){
