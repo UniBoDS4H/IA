@@ -87,65 +87,66 @@ public class Alignment implements Runnable{
     }
 
     private ImagePoints scaleDown (final ImagePoints originalImage){
-        Calibration originalCalibration = originalImage.getCalibration();
-        Calibration downsampledCalibration = new Calibration();
+        final Calibration originalCalibration = originalImage.getCalibration();
+        final Calibration downsampledCalibration = new Calibration();
+        IJ.log("Original Image " + originalImage.getTitle() + " "+ originalImage.getHeight() + " " + originalImage.getWidth());
         downsampledCalibration.pixelWidth = originalCalibration.pixelWidth * Math.sqrt(4);
         downsampledCalibration.pixelHeight = originalCalibration.pixelHeight * Math.sqrt(4);
         downsampledCalibration.setUnit(originalCalibration.getUnit());
-        ImageProcessor downsampledProcessor = originalImage.getProcessor().resize(originalImage.getWidth() / 4, originalImage.getHeight() / 4);
-        ImagePlus downsampledImage = new ImagePlus(originalImage.getTitle(), downsampledProcessor);
-        downsampledImage.show();
+        final ImageProcessor downsampledProcessor = originalImage.getProcessor().resize(originalImage.getWidth() / 8,
+                originalImage.getHeight() / 8);
+        final ImagePlus downsampledImage = new ImagePlus(originalImage.getTitle(), downsampledProcessor);
+        IJ.log("Downscaled Image " + downsampledImage.getTitle() + " "+ downsampledImage.getHeight() + " " + downsampledImage.getWidth());
         final String path = SaveImages.saveTMPImage(downsampledImage) + "/" +  downsampledImage.getTitle();
         return new ImagePoints(path);
     }
 
     private ImagePlus scaleUp(final ImagePlus originalImage, final ImagePlus downsampledImage){
-        Calibration originalCalibration = originalImage.getCalibration();
+        IJ.log("Original Image:" + originalImage.getWidth() + " " + originalImage.getHeight());
+        final ImageProcessor restoredProcessor = downsampledImage.getProcessor().resize(originalImage.getWidth(),
+                originalImage.getHeight());
+        restoredProcessor.setInterpolationMethod(ImageProcessor.BICUBIC);
 
-        Calibration downsampledCalibration = downsampledImage.getCalibration();
-
-        Calibration restoredCalibration = new Calibration();
-
-        restoredCalibration.pixelWidth = originalCalibration.pixelWidth;
-        restoredCalibration.pixelHeight = originalCalibration.pixelHeight;
-        restoredCalibration.setUnit(originalCalibration.getUnit());
-
-        ImageProcessor restoredProcessor = downsampledImage.getProcessor().resize(originalImage.getWidth(), originalImage.getHeight());
-        ImagePlus restoredImage = new ImagePlus(originalImage.getTitle(), restoredProcessor);
-        restoredImage.show();
+        final ImagePlus restoredImage = new ImagePlus(originalImage.getTitle(), restoredProcessor);
+        restoredImage.setCalibration(originalImage.getCalibration());
         final String path = SaveImages.saveTMPImage(restoredImage) + "/" +  downsampledImage.getTitle();
+        IJ.log("Finish Scaling Up");
         return new ImagePoints(path);
     }
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         final double factor = this.pointDetector.getFactor();
-        final List<Pair<String, ImagePoints>> origianlImages = new ArrayList<>(this.imagesToAlign.size());
-
-        final ImagePoints a = this.scaleDown(this.targetImage);
-        origianlImages.add(new Pair<>(this.targetImage.getPath(), a));
-        this.targetImage = a;
+        final List<Pair<ImagePlus, ImagePlus>> origianlImages = new ArrayList<>(this.imagesToAlign.size());
+        //ORIGINALE - SCALATA
+        final ImagePoints scaledTarget =  this.scaleDown(this.targetImage);
+        origianlImages.add(new Pair<>(new ImagePlus(this.targetImage.getPath()), scaledTarget));
+        this.targetImage = new ImagePoints(scaledTarget.getPath());
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             final ImagePoints i = this.scaleDown(img);
-            origianlImages.add(new Pair<>(img.getPath(), i));
-            System.out.println("UEILA");
+            origianlImages.add(new Pair<>(new ImagePlus(img.getPath()), i));
+            IJ.log("START DETECTION");
             this.pointDetector.detectPoint(t, i);
-            System.out.println("AFTER UEILA");
+            IJ.log("END OF THE DETECTION");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 images.put(i,t);
             }
         });
-
-        //final ImagePoints target =  this.scaleUp(new ImagePlus(origianlImages.get(0).getFirst()),
-         //       TargetImagePreprocessing.automaticProcess(images, this.algorithm).getOriginalImage());
-        //this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getOriginalImage()));
-
-        origianlImages.forEach(p -> {
-            this.alignedImages.add(new AlignedImage(this.scaleUp(new ImagePoints(p.getFirst()), p.getSecond())));
-        });
-        //this.alignedImages.add(new AlignedImage(this.scaleUp(target.getImagePlus()));
-        System.gc();
+        final ImagePoints target = TargetImagePreprocessing.automaticProcess(images, this.algorithm);
+        this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         images.forEach((key, value) -> this.algorithm.align(value, key).ifPresent(this.alignedImages::add));
+        for(final AlignedImage alignedImage : this.alignedImages){
+            for(final Pair<ImagePlus, ImagePlus> a : origianlImages){
+                if(alignedImage.getAlignedImage().getTitle().equals(a.getFirst().getTitle())){
+                    final ImagePlus finalImage = this.scaleUp(a.getFirst(), alignedImage.getAlignedImage());
+                    finalImage.show();
+                }
+            }
+        }
+
+        //this.alignedImages.stream().filter(Objects::nonNull).forEach(img -> img.getAlignedImage().show());
+        //this.alignedImages.clear();
+        //this.alignedImages.addAll(copy);
     }
 
     /**

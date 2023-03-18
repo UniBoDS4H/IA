@@ -3,6 +3,7 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
+import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
@@ -43,11 +44,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                     if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
-                       Imgproc.warpPerspective(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getGrayScaleMat().size());
+                        IJ.log("Starting the warpPerspective");
+                        Imgproc.warpPerspective(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
                      }else{
-                        System.out.println("AO REGA SONO QUI PORCO DIO" + " " + imageToShift.getPath());
+                        IJ.log("Starting the warpAffine");
                         System.gc();
-                        Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix,imageToShift.getMatImage().size());
+                        Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix,targetImage.getMatImage().size());
                     }
                     System.gc();
                     final Optional<ImagePlus> finalImage = ImagingConversion.fromMatToImagePlus(alignedImage, imageToShift.getName());

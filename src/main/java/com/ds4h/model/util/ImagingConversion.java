@@ -4,6 +4,7 @@ package com.ds4h.model.util;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.saveProject.SaveImages;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
@@ -43,7 +44,6 @@ public class ImagingConversion {
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
                 System.gc();
-                //final String imgFinalName = new NameBuilder().parseName(fileName).splitBy().getFinalName();
                 final ImagePlus imp = new ImagePlus(fileName, HighGui.toBufferedImage(matrix));
                 System.gc();
                 return Optional.of(imp);
