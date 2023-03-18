@@ -26,7 +26,7 @@ public class TargetImagePreprocessing {
             final MatOfPoint2f points = new MatOfPoint2f();
             points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
             //target = new ImagePoints(res.getFirst(),target.getName(),  points);
-            target = new ImagePoints(target.getPath());
+            target = new ImagePoints(target.getTitle(), res.getFirst().clone());
             target.addPoints(points.toList());
         }
         return target;
@@ -51,7 +51,7 @@ public class TargetImagePreprocessing {
                 IJ.log("New Matrix : " + res.getFirst().toString());
                 IJ.log("New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
-                target = new ImagePoints(target.getTitle(), res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
+                target = new ImagePoints(target.getTitle(), res.getFirst().clone());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
                 target.setTitle(title);
                 IJ.log("Target Matrix: " + target.getMatImage().toString());
                 IJ.log("Target Title: " + target.getTitle());
