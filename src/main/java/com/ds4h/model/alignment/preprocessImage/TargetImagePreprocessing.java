@@ -50,7 +50,8 @@ public class TargetImagePreprocessing {
                 //final String dir = SaveImages.saveTMPImage(newT.get()) + "/" + newT.get().getTitle();
                 IJ.log("New Matrix : " + res.getFirst().toString());
                 IJ.log("New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
-                target = new ImagePoints(target.getTitle(), res.getFirst().clone());
+                //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
+                target = new ImagePoints(target.getTitle(), res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
                 target.setTitle(title);
                 IJ.log("Target Matrix: " + target.getMatImage().toString());
                 IJ.log("Target Title: " + target.getTitle());

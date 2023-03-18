@@ -46,11 +46,11 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
                         IJ.log("Starting the warpPerspective");
                         System.gc();
-                        Imgproc.warpPerspective(imageToShift.getMatImage(),alignedImage,transformationMatrix, new Size(targetImage.getRows(), targetImage.getCols()));
+                        Imgproc.warpPerspective(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
                      }else{
                         IJ.log("Starting the warpAffine");
                         System.gc();
-                        Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix,new Size(targetImage.getRows(), targetImage.getCols()));
+                        Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
                     }
                     System.gc();
                     final Optional<ImagePlus> finalImage = ImagingConversion.fromMatToImagePlus(alignedImage, imageToShift.getName());

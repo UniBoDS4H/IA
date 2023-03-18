@@ -171,7 +171,6 @@ public class Alignment implements Runnable{
         final ImagePoints target = TargetImagePreprocessing.automaticProcess(images, this.algorithm);
         IJ.log("End preprocess");
         IJ.log("Target Matrix: "+ target.getMatImage());
-        target.show();
         this.alignedImages.add(new AlignedImage(target));
         IJ.log("Start aligning the images.");
         images.entrySet().parallelStream().forEach(e->{
