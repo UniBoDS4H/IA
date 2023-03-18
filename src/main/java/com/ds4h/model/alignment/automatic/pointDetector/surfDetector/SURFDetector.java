@@ -3,15 +3,17 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
+import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.ORB;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 import java.util.List;
 
 public class SURFDetector extends PointDetector {
 
-    private final SURF detector = SURF.create();
-    private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
+    private final ORB detector = ORB.create();
+    private final BFMatcher matcher = BFMatcher.create();
     public SURFDetector(){
         super();
     }

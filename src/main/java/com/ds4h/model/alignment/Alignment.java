@@ -1,11 +1,14 @@
 package com.ds4h.model.alignment;
 
+import bunwarpj.bUnwarpJ_;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
+import com.ds4h.model.deformation.BunwarpjDeformation;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
@@ -14,6 +17,7 @@ import ij.measure.Calibration;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -103,21 +107,26 @@ public class Alignment implements Runnable{
 
     private ImagePlus scaleUp(final ImagePlus originalImage, final ImagePlus downsampledImage){
         IJ.log("Original Image:" + originalImage.getWidth() + " " + originalImage.getHeight());
-        final ImageProcessor restoredProcessor = downsampledImage.getProcessor().resize(originalImage.getWidth(),
-                originalImage.getHeight());
-        restoredProcessor.setInterpolationMethod(ImageProcessor.BICUBIC);
+        final ImageProcessor restoredProcessor = downsampledImage.getProcessor();
+        final ImageProcessor originalProcessor = originalImage.getProcessor();
 
-        final ImagePlus restoredImage = new ImagePlus(originalImage.getTitle(), restoredProcessor);
-        restoredImage.setCalibration(originalImage.getCalibration());
-        final String path = SaveImages.saveTMPImage(restoredImage) + "/" +  downsampledImage.getTitle();
+        restoredProcessor.setInterpolationMethod(ImageProcessor.BICUBIC);
+        restoredProcessor.setMinAndMax(originalProcessor.getMin(), originalProcessor.getMax());
+        restoredProcessor.setRoi(new Rectangle(0, 0, originalImage.getWidth(), originalImage.getHeight()));
+        final ImageProcessor scaledProcessor= restoredProcessor.resize(originalImage.getWidth(), originalImage.getHeight());
+
+        final ImagePlus restoredImage = new ImagePlus(originalImage.getTitle(), scaledProcessor);
+        //restoredImage.setCalibration(originalImage.getCalibration());
+        //final String path = SaveImages.saveTMPImage(restoredImage) + "/" +  downsampledImage.getTitle();
         IJ.log("Finish Scaling Up");
-        return new ImagePoints(path);
+        return restoredImage;
     }
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         final double factor = this.pointDetector.getFactor();
         final List<Pair<ImagePlus, ImagePlus>> origianlImages = new ArrayList<>(this.imagesToAlign.size());
         //ORIGINALE - SCALATA
+        /*
         final ImagePoints scaledTarget =  this.scaleDown(this.targetImage);
         origianlImages.add(new Pair<>(new ImagePlus(this.targetImage.getPath()), scaledTarget));
         this.targetImage = new ImagePoints(scaledTarget.getPath());
@@ -125,14 +134,17 @@ public class Alignment implements Runnable{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             final ImagePoints i = this.scaleDown(img);
             origianlImages.add(new Pair<>(new ImagePlus(img.getPath()), i));
-            IJ.log("START DETECTION");
+            IJ.log("Start Detection");
             this.pointDetector.detectPoint(t, i);
-            IJ.log("END OF THE DETECTION");
+            IJ.log("End of the Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 images.put(i,t);
             }
         });
+
+        IJ.log("Start Preprocess");
         final ImagePoints target = TargetImagePreprocessing.automaticProcess(images, this.algorithm);
+        IJ.log("End of the Preprocess");
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         images.forEach((key, value) -> this.algorithm.align(value, key).ifPresent(this.alignedImages::add));
         for(final AlignedImage alignedImage : this.alignedImages){
@@ -143,7 +155,26 @@ public class Alignment implements Runnable{
                 }
             }
         }
-
+         */
+        this.imagesToAlign.forEach(img->{
+            final ImagePoints t = new ImagePoints(this.targetImage.getPath());
+            final ImagePoints i = new ImagePoints(img.getPath());
+            IJ.log("Start Detection");
+            this.pointDetector.detectPoint(t, i);
+            IJ.log("End of the Detection");
+            if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
+                images.put(i,t);
+            }
+        });
+        System.gc();
+        final ImagePoints target = TargetImagePreprocessing.automaticProcess(images, this.algorithm);
+        this.alignedImages.add(new AlignedImage(target.getOriginalMatImage(), target.getImagePlus()));
+        IJ.log("Start aligning the images.");
+        images.entrySet().parallelStream().forEach(e->{
+            this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+        });
+        IJ.log("The alignment is done.");
+        this.alignedImages.forEach(z -> z.getAlignedImage().show());
         //this.alignedImages.stream().filter(Objects::nonNull).forEach(img -> img.getAlignedImage().show());
         //this.alignedImages.clear();
         //this.alignedImages.addAll(copy);

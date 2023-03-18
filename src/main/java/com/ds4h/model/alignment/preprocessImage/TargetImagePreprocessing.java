@@ -35,7 +35,6 @@ public class TargetImagePreprocessing {
     static public ImagePoints automaticProcess(final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IntStream.range(0, s.size()).forEach(i -> {
-
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
                 ImagePoints target = s.get(j).getValue();
@@ -43,13 +42,14 @@ public class TargetImagePreprocessing {
                 final MatOfPoint2f points = new MatOfPoint2f();
                 points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
                 //target = new ImagePoints(res.getFirst(),target.getName(), points);
-                //******
                 //TODO: USE RES IN TARGET
+                IJ.log("Creation of the new target...");
                 final Optional<ImagePlus> newT = ImagingConversion.fromMatToImagePlus(res.getFirst(), target.getTitle());
+                IJ.log("The creation is done!");
                 //TODO: RETURN THE PATH
+                System.gc();
                 final String dir = SaveImages.saveTMPImage(newT.get()) + "/" + newT.get().getTitle();
                 target = new ImagePoints(dir);
-                target.show();
                 target.addPoints(points.toList());
                 //******
                 s.set(j, new AbstractMap.SimpleEntry<>(img,target));

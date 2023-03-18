@@ -14,6 +14,12 @@ import ij.ImagePlus;
 import ij.plugin.PlugIn;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * A template for processing each pixel of either
@@ -39,7 +45,12 @@ public class Process_Pixels implements PlugIn {
 	@Override
 	public void run(String s) {
 		OpencvController.loadLibrary();
-		EventQueue.invokeLater(MainMenuGUI::new);
+		try {
+			Runtime.getRuntime().exec("java -Xmx4g com.ds4h.imagej.Process_Pixels");
+			EventQueue.invokeLater(MainMenuGUI::new);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 }

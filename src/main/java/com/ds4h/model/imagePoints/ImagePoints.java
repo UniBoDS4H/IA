@@ -24,7 +24,8 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
-        this.detectType();
+        //this.detectType();
+        this.type = CvType.CV_8U;
     }
 
     private void detectType(){
@@ -109,7 +110,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getOriginalMatImage(){
-        return Imgcodecs.imread(this.path);
+        return Imgcodecs.imread(this.path, CvType.CV_8U);
     }
 
     public void movePoint(final Point point, final Point newPoint){

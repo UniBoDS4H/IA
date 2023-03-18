@@ -40,6 +40,15 @@ public class ImagingConversion {
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
     private ImagingConversion(){}
 
+    public static Mat fromImageProcessorToMat(final ImageProcessor ip){
+        int width = ip.getWidth();
+        int height = ip.getHeight();
+        byte[] pixels = (byte[]) ip.getPixels();
+        Mat mat = new Mat(height, width, CvType.CV_8UC1);
+        mat.put(0, 0, pixels);
+        return mat;
+    }
+
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
