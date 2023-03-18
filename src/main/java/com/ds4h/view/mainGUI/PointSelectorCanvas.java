@@ -108,11 +108,11 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         }else{
             c = Color.RED;
         }
-        OvalRoi circle = new OvalRoi(p.x - this.pointerDimension * 2, p.y - this.pointerDimension * 2, this.pointerDimension * 4, this.pointerDimension * 4);
+        OvalRoi circle = new OvalRoi(p.x - this.pointerDimension, p.y - this.pointerDimension, this.pointerDimension * 2, this.pointerDimension * 2);
         circle.setStrokeWidth(this.pointerDimension/5);
         PointRoi center = new PointRoi(p.x, p.y);
-        int textX = (int) p.x - this.pointerDimension * 3;
-        int textY = (int) p.y + this.pointerDimension * 3;
+        int textX = (int) p.x - this.pointerDimension;
+        int textY = (int) p.y + this.pointerDimension;
         TextRoi index = new TextRoi(textX, textY, Integer.toString(this.image.getIndexOfPoint(p)));
         Font f = new Font("Serif", Font.BOLD, this.pointerDimension);
         index.setFont(f);
@@ -147,4 +147,12 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         }
         return false;
     }
+
+    @Override
+    public void setMagnification(double magnification) {
+
+        System.out.println(magnification);
+        super.setMagnification(magnification);
+    }
+
 }
