@@ -8,25 +8,33 @@ import com.ds4h.model.util.saveProject.SaveImages;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
+import ij.process.*;
 import org.apache.commons.io.FilenameUtils;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.ShortPointer;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.HighGui;
+import org.opencv.highgui.ImageWindow;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,21 +48,35 @@ public class ImagingConversion {
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
     private ImagingConversion(){}
 
-    public static Mat fromImageProcessorToMat(final ImageProcessor ip){
-        int width = ip.getWidth();
-        int height = ip.getHeight();
-        byte[] pixels = (byte[]) ip.getPixels();
-        Mat mat = new Mat(height, width, CvType.CV_8UC1);
-        mat.put(0, 0, pixels);
-        return mat;
-    }
-
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
-                System.gc();
-                final ImagePlus imp = new ImagePlus(fileName, HighGui.toBufferedImage(matrix));
-                System.gc();
+                IJ.log("Saving the matrix: " + matrix.toString());
+
+                final int totalR = matrix.rows(), totalC = matrix.cols();
+
+                ByteProcessor ip = new ByteProcessor(totalC, totalR);
+                IJ.log(String.valueOf(Objects.isNull(ip)));
+                IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+
+                for(int col = 0; col < totalC; col++){
+                    for(int row = 0; row < totalR; row++){
+                        ip.putPixelValue(col, row, matrix.get(row, col)[0]);
+                    }
+                }
+                /*
+                byte[] buffer = new byte[matrix.cols()];
+                for (int row = 0; row < totalR; row++) {
+                    matrix.get(row, 0, buffer);
+                    ip.setPixels(buffer);
+                }
+
+                 */
+                IJ.log("Done");
+                final ImagePlus imp = new ImagePlus(fileName, ip);
+
+                imp.show();
+                IJ.log("Created the ImagePlus");
                 return Optional.of(imp);
             }
         }catch (Exception e){

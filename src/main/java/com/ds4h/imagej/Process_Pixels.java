@@ -12,6 +12,8 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
 
 import java.awt.*;
 import java.io.File;
@@ -45,6 +47,28 @@ public class Process_Pixels implements PlugIn {
 	@Override
 	public void run(String s) {
 		OpencvController.loadLibrary();
+		/*
+		final Mat m = Mat.zeros(10, 10, CvType.CV_8U);
+		m.put(0,0, 1);
+		m.put(9,9, 1);
+		m.put(1, 1, 3);
+		for (int i = 0;  i < 10; i++){
+			for (int j = 0; j < 10; j++){
+				System.out.print(Arrays.toString(m.get(i, j)));
+			}
+			System.out.println(" ");
+		}
+		System.gc();
+		System.out.println("-----");
+		final Mat z = new Mat(m.getNativeObjAddr());
+		for (int i = 0;  i < 10; i++){
+			for (int j = 0; j < 10; j++){
+				System.out.print(Arrays.toString(z.get(i, j)));
+			}
+			System.out.println(" ");
+
+		}
+		*/
 		try {
 			Runtime.getRuntime().exec("java -Xmx4g com.ds4h.imagej.Process_Pixels");
 			EventQueue.invokeLater(MainMenuGUI::new);
