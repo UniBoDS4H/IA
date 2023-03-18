@@ -54,7 +54,6 @@ public class ImagingConversion {
                 IJ.log("Saving the matrix: " + matrix.toString());
 
                 final int totalR = matrix.rows(), totalC = matrix.cols();
-                ImageProcessor ip;
                 if(matrix.type() == CvType.CV_8UC3){
                     IJ.log("Is a Color Processor");
                     ColorProcessor cp = new ColorProcessor(totalC, totalR);
@@ -71,12 +70,11 @@ public class ImagingConversion {
                     IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
                     IJ.log("Done");
                     final ImagePlus imp = new ImagePlus(fileName, cp);
-
                     imp.show();
                     IJ.log("Created the ImagePlus");
                     return Optional.of(imp);
                 }else{
-                    ip = new ByteProcessor(totalC, totalR);
+                    ByteProcessor ip = new ByteProcessor(totalC, totalR);
                     for(int col = 0; col < totalC; col++){
                         for(int row = 0; row < totalR; row++){
                             ip.putPixelValue(col, row, matrix.get(row, col)[0]);
