@@ -31,14 +31,9 @@ public class PointSelectorGUI extends ImageWindow {
         this.image = image;
         this.pointController = controller;
         this.menu = new CornerSelectorMenuGUI(this.pointController, this.image, this);
-        this.add(this.menu);
-
-        Dimension s = DisplayInfo.getScaledImageDimension(new Dimension(this.image.getWidth(), this.image.getHeight()), DisplayInfo.getDisplaySize(80));
-        this.setSize((int)s.getWidth(), (int)s.getHeight());
-
-        this.setMinimumSize(s);
-        this.setMaximumSize(s);
-        this.pack();
+        //this.add(this.menu, BorderLayout.PAGE_END);
+        this.getCanvas().fitToWindow();
+        //this.pack();
     }
 
 }
