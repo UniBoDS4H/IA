@@ -54,16 +54,46 @@ public class ImagingConversion {
                 IJ.log("Saving the matrix: " + matrix.toString());
 
                 final int totalR = matrix.rows(), totalC = matrix.cols();
+                ImageProcessor ip;
+                if(matrix.type() == CvType.CV_8UC3){
+                    IJ.log("Is a Color Processor");
+                    ColorProcessor cp = new ColorProcessor(totalC, totalR);
+                    for(int col = 0; col < totalC; col++){
+                        for(int row = 0; row < totalR; row++){
+                            double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
+                            int color = ((int) pixelValues[0] << 16) | ((int) pixelValues[1] << 8) | (int) pixelValues[2]; // convert pixel values to color value
+                            cp.set(col, row, color); // set color value in the ColorProcessor
 
-                ByteProcessor ip = new ByteProcessor(totalC, totalR);
-                IJ.log(String.valueOf(Objects.isNull(ip)));
-                IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
-
-                for(int col = 0; col < totalC; col++){
-                    for(int row = 0; row < totalR; row++){
-                        ip.putPixelValue(col, row, matrix.get(row, col)[0]);
+                        }
                     }
+                    //TODO: FIX THE RGB COLORS
+                    IJ.log(String.valueOf(Objects.isNull(cp)));
+                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+                    IJ.log("Done");
+                    final ImagePlus imp = new ImagePlus(fileName, cp);
+
+                    imp.show();
+                    IJ.log("Created the ImagePlus");
+                    return Optional.of(imp);
+                }else{
+                    ip = new ByteProcessor(totalC, totalR);
+                    for(int col = 0; col < totalC; col++){
+                        for(int row = 0; row < totalR; row++){
+                            ip.putPixelValue(col, row, matrix.get(row, col)[0]);
+                        }
+                    }
+                    IJ.log(String.valueOf(Objects.isNull(ip)));
+                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+                    IJ.log("Done");
+                    final ImagePlus imp = new ImagePlus(fileName, ip);
+
+                    imp.show();
+                    IJ.log("Created the ImagePlus");
+                    return Optional.of(imp);
                 }
+
+
+
                 /*
                 byte[] buffer = new byte[matrix.cols()];
                 for (int row = 0; row < totalR; row++) {
@@ -72,12 +102,7 @@ public class ImagingConversion {
                 }
 
                  */
-                IJ.log("Done");
-                final ImagePlus imp = new ImagePlus(fileName, ip);
 
-                imp.show();
-                IJ.log("Created the ImagePlus");
-                return Optional.of(imp);
             }
         }catch (Exception e){
             IJ.showMessage(e.getMessage());

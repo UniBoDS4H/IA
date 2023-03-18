@@ -110,7 +110,7 @@ public class ImagePoints extends ImagePlus{
 
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
-                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, CvType.CV_8U);
+                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path);
     }
 
     public int getType(){
@@ -127,7 +127,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getOriginalMatImage(){
-        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, CvType.CV_8U);
+        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path);
     }
 
     public void movePoint(final Point point, final Point newPoint){
