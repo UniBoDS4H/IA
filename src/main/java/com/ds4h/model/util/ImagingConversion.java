@@ -66,7 +66,6 @@ public class ImagingConversion {
                         }
                     }
                     //TODO: FIX THE RGB COLORS
-                    IJ.log(String.valueOf(Objects.isNull(cp)));
                     IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
                     IJ.log("Done");
                     final ImagePlus imp = new ImagePlus(fileName, cp);
@@ -80,7 +79,6 @@ public class ImagingConversion {
                             ip.putPixelValue(col, row, matrix.get(row, col)[0]);
                         }
                     }
-                    IJ.log(String.valueOf(Objects.isNull(ip)));
                     IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
                     IJ.log("Done");
                     final ImagePlus imp = new ImagePlus(fileName, ip);
