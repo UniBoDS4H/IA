@@ -4,28 +4,37 @@ package com.ds4h.model.util;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.saveProject.SaveImages;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
+import ij.process.*;
 import org.apache.commons.io.FilenameUtils;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.ShortPointer;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.HighGui;
+import org.opencv.highgui.ImageWindow;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,9 +51,56 @@ public class ImagingConversion {
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
-                //final String imgFinalName = new NameBuilder().parseName(fileName).splitBy().getFinalName();
-                final ImagePlus imp = new ImagePlus(fileName, HighGui.toBufferedImage(matrix));
-                return Optional.of(imp);
+                IJ.log("Saving the matrix: " + matrix.toString());
+
+                final int totalR = matrix.rows(), totalC = matrix.cols();
+                if(matrix.type() == CvType.CV_8UC3){
+                    IJ.log("Is a Color Processor");
+                    ColorProcessor cp = new ColorProcessor(totalC, totalR);
+                    for(int col = 0; col < totalC; col++){
+                        for(int row = 0; row < totalR; row++){
+                            double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
+                            int color = ((int) pixelValues[0] << 16) | ((int) pixelValues[1] << 8) | (int) pixelValues[2]; // convert pixel values to color value
+                            cp.set(col, row, color); // set color value in the ColorProcessor
+
+                        }
+                    }
+                    //TODO: FIX THE RGB COLORS
+                    IJ.log(String.valueOf(Objects.isNull(cp)));
+                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+                    IJ.log("Done");
+                    final ImagePlus imp = new ImagePlus(fileName, cp);
+                    imp.show();
+                    IJ.log("Created the ImagePlus");
+                    return Optional.of(imp);
+                }else{
+                    ByteProcessor ip = new ByteProcessor(totalC, totalR);
+                    for(int col = 0; col < totalC; col++){
+                        for(int row = 0; row < totalR; row++){
+                            ip.putPixelValue(col, row, matrix.get(row, col)[0]);
+                        }
+                    }
+                    IJ.log(String.valueOf(Objects.isNull(ip)));
+                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+                    IJ.log("Done");
+                    final ImagePlus imp = new ImagePlus(fileName, ip);
+
+                    imp.show();
+                    IJ.log("Created the ImagePlus");
+                    return Optional.of(imp);
+                }
+
+
+
+                /*
+                byte[] buffer = new byte[matrix.cols()];
+                for (int row = 0; row < totalR; row++) {
+                    matrix.get(row, 0, buffer);
+                    ip.setPixels(buffer);
+                }
+
+                 */
+
             }
         }catch (Exception e){
             IJ.showMessage(e.getMessage());

@@ -3,6 +3,7 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
+import ij.IJ;
 import ij.ImagePlus;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
@@ -39,16 +40,19 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
-                final Mat imageToShiftMat = imageToShift.getOriginalMatImage();
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                     if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
-                       Imgproc.warpPerspective(imageToShiftMat,alignedImage,transformationMatrix, targetImage.getGrayScaleMat().size());
+                        IJ.log("Starting the warpPerspective");
+                        System.gc();
+                        Imgproc.warpPerspective(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
                      }else{
-                        Imgproc.warpAffine(imageToShiftMat,alignedImage,transformationMatrix, targetImage.getOriginalMatImage().size());
+                        IJ.log("Starting the warpAffine");
+                        System.gc();
+                        Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
                     }
-
+                    System.gc();
                     final Optional<ImagePlus> finalImage = ImagingConversion.fromMatToImagePlus(alignedImage, imageToShift.getName());
                     return finalImage.map(imagePlus -> new AlignedImage(transformationMatrix, imagePlus));
                 }else{

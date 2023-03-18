@@ -16,4 +16,5 @@ public interface AlignmentAlgorithm {
     void transform(final Mat source, final Mat destination, Mat H, final int nPoints);
 
     int getLowerBound();
+
 }

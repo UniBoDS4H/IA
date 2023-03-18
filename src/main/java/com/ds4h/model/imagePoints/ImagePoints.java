@@ -1,4 +1,5 @@
 package com.ds4h.model.imagePoints;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
@@ -15,16 +16,32 @@ import java.util.List;
 public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
     private final String path;
-    private final int rows, cols;
+    private int rows, cols;
     private int type = 0;
     private boolean RBG = false;
+    private long address=-1;
+    private Mat matrix = null;
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
-        this.detectType();
+        //this.detectType();
+        this.type = CvType.CV_8U;
+    }
+
+    public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress){
+        this(path);
+        this.rows = rows;
+        this.cols = cols;
+        this.type = type;
+        this.address = matAddress;
+        IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: "+ this.cols + " Address: " + this.address);
+    }
+    public ImagePoints(final String path, final Mat mat){
+        this(path);
+        matrix = mat;
     }
 
     private void detectType(){
@@ -37,7 +54,6 @@ public class ImagePoints extends ImagePlus{
             this.type = CvType.CV_8UC3;
             this.RBG = true;
         }
-        System.out.println("CIAOO " + this.type);
         System.gc();
     }
 
@@ -93,7 +109,8 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getMatImage(){
-        return Imgcodecs.imread(this.path);
+        return Objects.nonNull(this.matrix) ? this.matrix :
+                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path);
     }
 
     public int getType(){
@@ -110,7 +127,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getOriginalMatImage(){
-        return Imgcodecs.imread(super.getFileInfo().getFilePath());
+        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path);
     }
 
     public void movePoint(final Point point, final Point newPoint){
