@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 public class TargetImagePreprocessing {
     static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
+        IJ.log("------ Starting manual process.");
         ImagePoints target = new ImagePoints(targetImage.getPath());
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
@@ -29,7 +30,9 @@ public class TargetImagePreprocessing {
             target = new ImagePoints(target.getTitle(), res.getFirst().clone());
             target.addPoints(points.toList());
         }
-        return target;
+        final String dir = SaveImages.saveTMPImage(ImagingConversion.fromMatToImagePlus(target.getMatImage().clone(),
+                target.getTitle()).get()) + "/" + target.getTitle();
+        return new ImagePoints(dir);
     }
 
     static public ImagePoints automaticProcess(final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
@@ -42,34 +45,31 @@ public class TargetImagePreprocessing {
                 final MatOfPoint2f points = new MatOfPoint2f();
                 points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
                 //target = new ImagePoints(res.getFirst(),target.getName(), points);
-                //TODO: USE RES IN TARGET
-                IJ.log("Creation of the new target...");
                 final String title = target.getTitle();
                 //final Optional<ImagePlus> newT = ImagingConversion.fromMatToImagePlus(res.getFirst(), target.getTitle());
-                //TODO: RETURN THE PATH
                 //final String dir = SaveImages.saveTMPImage(newT.get()) + "/" + newT.get().getTitle();
-                IJ.log("New Matrix : " + res.getFirst().toString());
-                IJ.log("New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
+                IJ.log("    New Matrix : " + res.getFirst().toString());
+                IJ.log("    New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
                 target = new ImagePoints(target.getTitle(), res.getFirst().clone());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
                 target.setTitle(title);
-                IJ.log("Target Matrix: " + target.getMatImage().toString());
-                IJ.log("Target Title: " + target.getTitle());
-                IJ.log("Target ADDR: " + target.getMatImage().getNativeObjAddr());
+                IJ.log("    Target Matrix: " + target.getMatImage().toString());
+                IJ.log("    Target Title: " + target.getTitle());
+                IJ.log("    Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points.toList());
-                IJ.log("The creation is done!");
-                //******
+                IJ.log("    The creation is done!");
+                System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(img,target));
             });
         });
-        IJ.log("The preprocess is done.");
+        System.gc();
         images.clear();
         s.parallelStream().forEach(e->images.put(e.getKey(),e.getValue()));
         final ImagePoints last = s.get(s.size()-1).getValue();
-        final Mat lastMatrix = last.getMatImage().clone();
-        final String dir = SaveImages.saveTMPImage(ImagingConversion.fromMatToImagePlus(lastMatrix,
-                last.getTitle()).get()) + "/" + last.getTitle();
-        return new ImagePoints(dir);
+        last.setProcessor(ImagingConversion.fromMatToImagePlus(last.getMatImage(), last.getTitle()).get().getProcessor());
+        //final String dir = SaveImages.saveTMPImage(ImagingConversion.fromMatToImagePlus(last.getMatImage().clone(),
+                //last.getTitle()).get()) + "/" + last.getTitle();
+        return last;
     }
 
     //returns the mat of the new target and the shift of the points
@@ -93,11 +93,10 @@ public class TargetImagePreprocessing {
         final int ymax = (int) Math.ceil(pts_max.y + 0.5);
         final double[] t = {-xmin, -ymin};
         final Size s = new Size(xmax-xmin, ymax-ymin);
-        //final Mat alignedImage = Mat.zeros(s, ImagePoints.getOriginalMatImage().type());
-        final Mat alignedImage = Mat.zeros(s, ImagePoints.getMatImage().type());
-        IJ.log("Before copy: " + target.getMatImage());
+        final Mat alignedImage = Mat.zeros(s, target.getMatImage().type());
+        IJ.log("--- Before copy:  " + target.getMatImage());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
-        IJ.log("After copy: " + alignedImage);
+        IJ.log("--- After copy: " + alignedImage);
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }
