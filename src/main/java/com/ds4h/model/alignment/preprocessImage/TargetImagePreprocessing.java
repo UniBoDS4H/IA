@@ -7,6 +7,7 @@ import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 
@@ -23,10 +24,8 @@ public class TargetImagePreprocessing {
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
-            System.out.println("TRASLATION: " + res.getSecond());
             final MatOfPoint2f points = new MatOfPoint2f();
             points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
-            //target = new ImagePoints(res.getFirst(),target.getName(),  points);
             target = new ImagePoints(target.getTitle(), res.getFirst().clone());
             target.addPoints(points.toList());
         }
@@ -35,7 +34,7 @@ public class TargetImagePreprocessing {
         return new ImagePoints(dir);
     }
 
-    static public ImagePoints automaticProcess(final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
+    static public ImagePoints automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IntStream.range(0, s.size()).forEach(i -> {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
@@ -44,10 +43,7 @@ public class TargetImagePreprocessing {
                 final ImagePoints img = s.get(j).getKey();
                 final MatOfPoint2f points = new MatOfPoint2f();
                 points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
-                //target = new ImagePoints(res.getFirst(),target.getName(), points);
                 final String title = target.getTitle();
-                //final Optional<ImagePlus> newT = ImagingConversion.fromMatToImagePlus(res.getFirst(), target.getTitle());
-                //final String dir = SaveImages.saveTMPImage(newT.get()) + "/" + newT.get().getTitle();
                 IJ.log("    New Matrix : " + res.getFirst().toString());
                 IJ.log("    New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
@@ -57,7 +53,6 @@ public class TargetImagePreprocessing {
                 IJ.log("    Target Title: " + target.getTitle());
                 IJ.log("    Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points.toList());
-                IJ.log("    The creation is done!");
                 System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(img,target));
             });
@@ -66,9 +61,9 @@ public class TargetImagePreprocessing {
         images.clear();
         s.parallelStream().forEach(e->images.put(e.getKey(),e.getValue()));
         final ImagePoints last = s.get(s.size()-1).getValue();
-        last.setProcessor(ImagingConversion.fromMatToImagePlus(last.getMatImage(), last.getTitle()).get().getProcessor());
-        //final String dir = SaveImages.saveTMPImage(ImagingConversion.fromMatToImagePlus(last.getMatImage().clone(),
-                //last.getTitle()).get()) + "/" + last.getTitle();
+        last.setProcessor(ImagingConversion.matToImagePlus(last.getMatImage(), last.getTitle(), ip)
+                .getProcessor());
+        last.show();
         return last;
     }
 

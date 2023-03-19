@@ -5,6 +5,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
@@ -37,7 +38,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         return this.scale;
     }
     @Override
-    public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift) throws IllegalArgumentException{
+    public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
@@ -53,7 +54,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
                     }
                     System.gc();
-                    final Optional<ImagePlus> finalImage = ImagingConversion.fromMatToImagePlus(alignedImage, imageToShift.getName());
+                    final Optional<ImagePlus> finalImage = Optional.of(ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip));
                     return finalImage.map(imagePlus -> new AlignedImage(transformationMatrix, imagePlus));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +

@@ -27,8 +27,6 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
-        //this.detectType();
-        this.type = CvType.CV_8U;
     }
 
     public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress){
@@ -42,19 +40,6 @@ public class ImagePoints extends ImagePlus{
     public ImagePoints(final String path, final Mat mat){
         this(path);
         matrix = mat;
-    }
-
-    private void detectType(){
-        final ImageProcessor imp = this.getProcessor();
-        int bitDepth = imp.getBitDepth();
-        int numPixels = imp.getPixelCount();
-        if (bitDepth == 8 && numPixels == imp.getWidth() * imp.getHeight()) {
-            this.type = CvType.CV_8UC1;
-        } else if (bitDepth == 24 && numPixels == imp.getWidth() * imp.getHeight() * 3) {
-            this.type = CvType.CV_8UC3;
-            this.RBG = true;
-        }
-        System.gc();
     }
 
     public Point[] getPoints(){
@@ -100,23 +85,15 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getGrayScaleMat(){
-        if(this.RBG){
-            final Mat grayImage = new Mat();
-            Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
-            return grayImage;
-        }
-        return this.getMatImage();
+        final Mat grayImage = new Mat();
+        Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
+        return grayImage;
     }
 
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
-                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path);
+                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
     }
-
-    public int getType(){
-        return this.type;
-    }
-
 
     public int getRows(){
         return rows;
@@ -127,7 +104,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getOriginalMatImage(){
-        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path);
+        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
     }
 
     public void movePoint(final Point point, final Point newPoint){
