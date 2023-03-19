@@ -21,11 +21,9 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     private Point referencePoint;
     int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
-    private double startingMagnification;
 
     public PointSelectorCanvas(ImagePoints image) {
         super(image);
-        this.startingMagnification = this.getMagnification();
         this.overlay = new Overlay();
         this.setOverlay(overlay);
         this.overlay.selectable(false);
@@ -148,11 +146,6 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
             }
         }
         return false;
-    }
-
-    @Override
-    public void setMagnification(double magnification) {
-            super.setMagnification(magnification);
     }
 
 }
