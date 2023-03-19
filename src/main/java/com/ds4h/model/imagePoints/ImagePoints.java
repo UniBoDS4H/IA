@@ -1,4 +1,5 @@
 package com.ds4h.model.imagePoints;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
@@ -15,18 +16,26 @@ import java.util.List;
 public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
     private final String path;
-    private final int rows, cols;
+    private int rows, cols;
     private int type = 0;
     private boolean RBG = false;
+    private long address=-1;
+    private Mat matrix = null;
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
-        this.detectType();
     }
 
+    public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress){
+        this(path);
+        this.rows = rows;
+        this.cols = cols;
+        this.type = type;
+        this.address = matAddress;
+        IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: "+ this.cols + " Address: " + this.address);
     private void detectType(){
         final ImageProcessor imp = this.getProcessor();
         int bitDepth = imp.getBitDepth();
@@ -38,6 +47,10 @@ public class ImagePoints extends ImagePlus{
             this.RBG = true;
         }
         System.gc();
+    }
+    public ImagePoints(final String path, final Mat mat){
+        this(path);
+        matrix = mat;
     }
 
     public Point[] getPoints(){
@@ -83,22 +96,15 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getGrayScaleMat(){
-        if(this.RBG){
-            final Mat grayImage = new Mat();
-            Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
-            return grayImage;
-        }
-        return this.getMatImage();
+        final Mat grayImage = new Mat();
+        Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
+        return grayImage;
     }
 
     public Mat getMatImage(){
-        return Imgcodecs.imread(this.path);
+        return Objects.nonNull(this.matrix) ? this.matrix :
+                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
     }
-
-    public int getType(){
-        return this.type;
-    }
-
 
     public int getRows(){
         return rows;
@@ -109,7 +115,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getOriginalMatImage(){
-        return Imgcodecs.imread(super.getFileInfo().getFilePath());
+        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
     }
 
     public void movePoint(final Point point, final Point newPoint){

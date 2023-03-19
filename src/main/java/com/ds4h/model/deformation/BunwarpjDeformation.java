@@ -126,6 +126,25 @@ public class BunwarpjDeformation implements Runnable{
         this.thread = new Thread(this);
     }
 
+    public ImagePlus[] align(final ImagePlus target, final ImagePlus source){
+        System.gc();
+        return bUnwarpJ_.alignImagesBatch(target,
+                source,
+                target.getProcessor(),
+                source.getProcessor(),
+                this.modeInput.getValue(),
+                this.sampleFactor,
+                this.minScale.getValue(),
+                this.maxScale.getValue(),
+                this.parDivWeigth,
+                this.parCurlWeigth,
+                this.parLandmarkWeigth,
+                this.parImageWeigth,
+                this.parConsistencyWeigth,
+                this.parThreshold);
+
+    }
+
 
     public void setModeInput(final BunwarpJMode modeInput) {
         if(Objects.nonNull(modeInput)) {

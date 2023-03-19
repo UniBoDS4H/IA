@@ -3,15 +3,17 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
+import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.ORB;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
-
 import java.util.List;
 
 public class SURFDetector extends PointDetector {
 
-    private final SURF detector = SURF.create();
-    private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
+    private final ORB detector = ORB.create();
+    private final BFMatcher matcher = BFMatcher.create();
     public SURFDetector(){
         super();
     }
@@ -22,15 +24,12 @@ public class SURFDetector extends PointDetector {
         // Detect the keypoints and compute the descriptors for both images:
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
-        this.detector.detect(imagePoint.getGrayScaleMat(), keypoints1);
-        System.out.println("UIELA");
-        this.detector.compute(imagePoint.getGrayScaleMat(),keypoints1,descriptors1);
-        //this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
 
+        this.detector.detectAndCompute(imagePoint.getMatImage(), new Mat(), keypoints1,descriptors1);
+        //this.detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1); // Detect and save the keypoints
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
         final Mat descriptors2 = new Mat();
-        this.detector.detectAndCompute(targetImage.getGrayScaleMat(), new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-
+        this.detector.detectAndCompute(targetImage.getMatImage(), new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
         // Detect key points for the second image
 
         final MatOfDMatch matches = new MatOfDMatch();
@@ -54,6 +53,7 @@ public class SURFDetector extends PointDetector {
                     imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
                     targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
                 });
+
     }
 
 }

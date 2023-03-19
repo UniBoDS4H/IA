@@ -4,29 +4,39 @@ package com.ds4h.model.util;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
+import com.ds4h.model.util.saveProject.SaveImages;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
+import ij.process.*;
 import org.apache.commons.io.FilenameUtils;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.ShortPointer;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.HighGui;
+import org.opencv.highgui.ImageWindow;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
@@ -39,12 +49,88 @@ public class ImagingConversion {
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
     private ImagingConversion(){}
 
+    private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final ColorModel color){
+        IJ.log("**** Creating the ColorProcessor **** ");
+        final ColorProcessor cp = new ColorProcessor(width, height);
+        IntStream.range(0, width).parallel().forEach(col -> {
+            IntStream.range(0, height).parallel().forEach(row -> {
+                double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
+                cp.set(col, row,
+                        new Color(color.getRed((int)pixelValues[2]),
+                        color.getGreen((int) pixelValues[1]),
+                        color.getBlue((int) (pixelValues[0])))
+                        .getRGB());
+            });
+        });
+        System.gc();
+        IJ.log("**** The creation is done **** ");
+        cp.setColorModel(ColorModel.getRGBdefault());
+        return cp;
+    }
+
+    private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
+        IJ.log("Creating ByteProcessor");
+        final ByteProcessor ip = new ByteProcessor(width, height);
+        //matrix.get(0,0, (int[])ip.getPixels());
+        IntStream.range(0, width).parallel().forEach(col -> {
+            IntStream.range(0, height).parallel().forEach(row -> {
+                ip.putPixelValue(col, row, matrix.get(row, col)[0]);
+
+            });
+        });
+        System.gc();
+        IJ.log("Finish creation ByteProcessor");
+        return ip;
+    }
+
+    public static ImagePlus matToImagePlus(final Mat matrix, final String fileName, final ImageProcessor ip){
+        if(!matrix.empty() && !fileName.isEmpty()){
+            final ImagePlus finalImage = new ImagePlus(fileName);
+            if(matrix.type() == CvType.CV_8UC3){
+                return new ImagePlus(fileName, ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getColorModel()));
+            }else if(matrix.type() == CvType.CV_8UC1){
+                finalImage.setProcessor(ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
+            }else{
+                throw new IllegalArgumentException("This program do not support your type of image.");
+            }
+            return finalImage;
+        }else{
+            throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
+        }
+    }
+
+
+    @Deprecated
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
-                //final String imgFinalName = new NameBuilder().parseName(fileName).splitBy().getFinalName();
-                final ImagePlus imp = new ImagePlus(fileName, HighGui.toBufferedImage(matrix));
-                return Optional.of(imp);
+                IJ.log("Saving the matrix: " + matrix);
+                final int totalR = matrix.rows(), totalC = matrix.cols();
+                if(matrix.type() == CvType.CV_8UC3){
+                    IJ.log("Is a ColorProcessor");
+                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+                    //TODO: FIX THIS
+                    final ImagePlus imp = new ImagePlus(fileName, makeColorProcessor(matrix, totalC, totalR, null));
+                    imp.show();
+                    IJ.log("Created the ImagePlus");
+                    return Optional.of(imp);
+                }else{
+                    ByteProcessor ip = new ByteProcessor(totalC, totalR);
+                    for(int col = 0; col < totalC; col++){
+                        for(int row = 0; row < totalR; row++){
+                            ip.putPixelValue(col, row, matrix.get(row, col)[0]);
+                        }
+                    }
+                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
+                    IJ.log("Done");
+                    final ImagePlus imp = new ImagePlus(fileName, ip);
+
+                    imp.show();
+                    IJ.log("Created the ImagePlus");
+                    return Optional.of(imp);
+                }
+
+
             }
         }catch (Exception e){
             IJ.showMessage(e.getMessage());

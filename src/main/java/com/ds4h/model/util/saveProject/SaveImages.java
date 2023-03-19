@@ -44,6 +44,17 @@ public class SaveImages {
         return TEMPORARY_PATH + "/" + dir;
     }
 
+    public static String saveTMPImage(final ImagePlus image){
+        final String dir = DirectoryCreator.createTemporaryDirectory(TMP_DIRECTORY);
+        if(!dir.isEmpty()){
+            SaveImages.saveOne(image, TEMPORARY_PATH+ "/" + dir);
+        }
+        return TEMPORARY_PATH + "/" + dir;
+    }
+
+    private static void saveOne(final ImagePlus image, final String path){
+        IJ.save(image, path+"/"+image.getTitle());
+    }
 
 
     public static void save(final List<ImagePlus> images, final String path){
