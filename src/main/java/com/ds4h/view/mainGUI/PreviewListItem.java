@@ -2,7 +2,7 @@ package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
+import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 
 import javax.swing.*;

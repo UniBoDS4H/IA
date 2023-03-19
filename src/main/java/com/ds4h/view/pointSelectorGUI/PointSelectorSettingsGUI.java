@@ -1,8 +1,6 @@
-package com.ds4h.view.cornerSelectorGUI;
+package com.ds4h.view.pointSelectorGUI;
 
-import com.ds4h.controller.changeColorController.ChangeColorController;
 import com.ds4h.view.displayInfo.DisplayInfo;
-import com.ds4h.view.mainGUI.PointSelectorGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ColorComboBox;
 
@@ -11,7 +9,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
+public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     private final ColorComboBox pointerColor;
     private final ColorComboBox selectedPointerColor;
     private final ColorComboBox textColor;
@@ -23,7 +21,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
     private float contrast = 0.0f;
-    public CornerSelectorSettingsGUI(final PointSelectorGUI container){
+    public PointSelectorSettingsGUI(final PointSelectorGUI container){
         super("Settings");
         this.container = container;
         this.pointerColor = new ColorComboBox();
