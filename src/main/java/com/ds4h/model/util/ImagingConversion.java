@@ -90,6 +90,8 @@ public class ImagingConversion {
                 return new ImagePlus(fileName, ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getColorModel()));
             }else if(matrix.type() == CvType.CV_8UC1){
                 finalImage.setProcessor(ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
+            }else{
+                throw new IllegalArgumentException("This program do not support your type of image.");
             }
             return finalImage;
         }else{
@@ -98,6 +100,7 @@ public class ImagingConversion {
     }
 
 
+    @Deprecated
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
