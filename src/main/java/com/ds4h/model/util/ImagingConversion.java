@@ -55,10 +55,11 @@ public class ImagingConversion {
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
                 double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                final int blue = (int) (pixelValues[0]); // convert pixel values to color value;
-                final int green = (( (int) pixelValues[1]));
-                final int red = (((int)pixelValues[2]));
-                cp.set(col, row, new Color(color.getRed(red), color.getGreen(green), color.getBlue(blue)).getRGB());
+                cp.set(col, row,
+                        new Color(color.getRed((int)pixelValues[2]),
+                        color.getGreen((int) pixelValues[1]),
+                        color.getBlue((int) (pixelValues[0])))
+                        .getRGB());
             });
         });
         System.gc();
@@ -89,6 +90,8 @@ public class ImagingConversion {
                 return new ImagePlus(fileName, ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getColorModel()));
             }else if(matrix.type() == CvType.CV_8UC1){
                 finalImage.setProcessor(ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
+            }else{
+                throw new IllegalArgumentException("This program do not support your type of image.");
             }
             return finalImage;
         }else{
@@ -97,6 +100,7 @@ public class ImagingConversion {
     }
 
 
+    @Deprecated
     public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
         try {
             if (!matrix.empty() && !fileName.isEmpty()) {
