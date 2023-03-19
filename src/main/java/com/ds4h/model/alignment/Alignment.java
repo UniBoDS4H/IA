@@ -14,6 +14,7 @@ import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.Calibration;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 
@@ -21,6 +22,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
 import static java.lang.Math.sqrt;
 
@@ -86,7 +88,7 @@ public class Alignment implements Runnable{
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         IJ.log("------ Start alignment.");
         this.imagesToAlign.parallelStream()
-                .forEach(img -> this.algorithm.align(target, img)
+                .forEach(img -> this.algorithm.align(target, img, null)
                         .ifPresent(this.alignedImages::add));
 
     }
@@ -96,6 +98,7 @@ public class Alignment implements Runnable{
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             final ImagePoints i = new ImagePoints(img.getPath());
+            i.setProcessor(img.getProcessor());
             IJ.log("------ Start Detection");
             this.pointDetector.detectPoint(t, i);
             IJ.log("------ End Detection");
@@ -105,16 +108,17 @@ public class Alignment implements Runnable{
         });
         System.gc();
         IJ.log("------ Starting preprocess");
-        final ImagePoints target = TargetImagePreprocessing.automaticProcess(images, this.algorithm);
+        final ImagePoints target = TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(), images, this.algorithm);
         IJ.log("------  End preprocess");
         IJ.log("Target Matrix: "+ target.getMatImage());
         System.gc();
         this.alignedImages.add(new AlignedImage(target));
         IJ.log("------  Start aligning the images.");
         images.entrySet().parallelStream().forEach(e->{
-            this.algorithm.align(e.getValue(),e.getKey()).ifPresent(this.alignedImages::add);
+            this.algorithm.align(e.getValue(),e.getKey(), e.getKey().getProcessor()).ifPresent(this.alignedImages::add);
         });
         System.gc();
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("The alignment is done.");
         this.alignedImages.clear();
     }

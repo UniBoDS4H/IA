@@ -27,8 +27,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
+import java.awt.image.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +36,7 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
@@ -49,38 +49,44 @@ public class ImagingConversion {
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
     private ImagingConversion(){}
 
-    private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height){
+    private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final ColorModel color){
         IJ.log("**** Creating the ColorProcessor **** ");
         final ColorProcessor cp = new ColorProcessor(width, height);
-        for(int col = 0; col < width; col++){
-            for(int row = 0; row < height; row++){
+        IntStream.range(0, width).parallel().forEach(col -> {
+            IntStream.range(0, height).parallel().forEach(row -> {
                 double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                final int red = ((int) pixelValues[2]) ;
-                final int green = ((int) pixelValues[1]);
-                final int blue = (int) pixelValues[0]; // convert pixel values to color value;
-                cp.set(col, row, new Color(red, green, blue).getRGB());
-            }
-        }
+                final int blue = (int) (pixelValues[0]); // convert pixel values to color value;
+                final int green = (( (int) pixelValues[1]));
+                final int red = (((int)pixelValues[2]));
+                cp.set(col, row, new Color(color.getRed(red), color.getGreen(green), color.getBlue(blue)).getRGB());
+            });
+        });
+        System.gc();
         IJ.log("**** The creation is done **** ");
+        cp.setColorModel(ColorModel.getRGBdefault());
         return cp;
     }
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
-        IJ.log("Creating the ByteProcessor");
+        IJ.log("Creating ByteProcessor");
         final ByteProcessor ip = new ByteProcessor(width, height);
-        for(int col = 0; col < width; col++){
-            for(int row = 0; row < height; row++){
+        //matrix.get(0,0, (int[])ip.getPixels());
+        IntStream.range(0, width).parallel().forEach(col -> {
+            IntStream.range(0, height).parallel().forEach(row -> {
                 ip.putPixelValue(col, row, matrix.get(row, col)[0]);
-            }
-        }
+
+            });
+        });
+        System.gc();
+        IJ.log("Finish creation ByteProcessor");
         return ip;
     }
 
-    public static ImagePlus matToImagePlus(final Mat matrix, final String fileName){
+    public static ImagePlus matToImagePlus(final Mat matrix, final String fileName, final ImageProcessor ip){
         if(!matrix.empty() && !fileName.isEmpty()){
             final ImagePlus finalImage = new ImagePlus(fileName);
             if(matrix.type() == CvType.CV_8UC3){
-                return new ImagePlus(fileName, ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows()));
+                return new ImagePlus(fileName, ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getColorModel()));
             }else if(matrix.type() == CvType.CV_8UC1){
                 finalImage.setProcessor(ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
             }
@@ -99,7 +105,8 @@ public class ImagingConversion {
                 if(matrix.type() == CvType.CV_8UC3){
                     IJ.log("Is a ColorProcessor");
                     IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
-                    final ImagePlus imp = new ImagePlus(fileName, makeColorProcessor(matrix, totalC, totalR));
+                    //TODO: FIX THIS
+                    final ImagePlus imp = new ImagePlus(fileName, makeColorProcessor(matrix, totalC, totalR, null));
                     imp.show();
                     IJ.log("Created the ImagePlus");
                     return Optional.of(imp);
