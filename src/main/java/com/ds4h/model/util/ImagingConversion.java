@@ -55,10 +55,11 @@ public class ImagingConversion {
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
                 double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                final int blue = (int) (pixelValues[0]); // convert pixel values to color value;
-                final int green = (( (int) pixelValues[1]));
-                final int red = (((int)pixelValues[2]));
-                cp.set(col, row, new Color(color.getRed(red), color.getGreen(green), color.getBlue(blue)).getRGB());
+                cp.set(col, row,
+                        new Color(color.getRed((int)pixelValues[2]),
+                        color.getGreen((int) pixelValues[1]),
+                        color.getBlue((int) (pixelValues[0])))
+                        .getRGB());
             });
         });
         System.gc();
