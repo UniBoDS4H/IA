@@ -45,7 +45,6 @@ public class AlignmentOutputGUI extends StackWindow {
     }
     public void addComponents() {
         this.removeAll();
-        this.add(this.panel, BorderLayout.CENTER);
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
         this.menuBar.add(this.reuse);
@@ -55,6 +54,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.panel.add(this.canvas, BorderLayout.CENTER);
         this.panel.add(this.menuBar, BorderLayout.NORTH);
         this.panel.add(sliceSelector, BorderLayout.PAGE_END);
+        this.add(this.panel, BorderLayout.CENTER);
         this.pack();
     }
     public void addListeners() {
