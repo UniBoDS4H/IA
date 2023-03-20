@@ -14,6 +14,7 @@ import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.VirtualStack;
 import ij.measure.Calibration;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -111,17 +112,23 @@ public class Alignment implements Runnable{
         });
         System.gc();
         IJ.log("[AUTOMATIC] Starting preprocess");
-        final ImagePoints target = TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(), images, this.algorithm);
+        final ImagePoints target = TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
+                images,
+                this.algorithm);
         IJ.log("[AUTOMATIC] End preprocess");
         IJ.log("[AUTOMATIC] Target Matrix: "+ target.getMatImage());
         System.gc();
         this.alignedImages.add(new AlignedImage(target));
         IJ.log("[AUTOMATIC] Start aligning the images.");
-        images.entrySet().parallelStream().forEach(e->{
-            this.algorithm.align(e.getValue(),e.getKey(), e.getKey().getProcessor()).ifPresent(this.alignedImages::add);
-        });
+        final VirtualStack stack = new VirtualStack(target.getWidth(), target.getHeight());
+        images.forEach((key, value) -> this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add));
         System.gc();
-        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        this.imagesToAlign.clear();
+        this.alignedImages.stream().map(i -> i.getAlignedImage().getProcessor())
+                .forEach(stack::addSlice);
+        ImagePlus s = new ImagePlus("My Virtual Stack", stack);
+        s.show();
+        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
         //this.alignedImages.clear();
     }
