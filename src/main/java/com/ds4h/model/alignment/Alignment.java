@@ -13,6 +13,7 @@ import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -84,13 +85,15 @@ public class Alignment implements Runnable{
     }
 
     private void manual(){
-        final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm);
+        final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
-        IJ.log("------ Start alignment.");
+        IJ.log("[MANUAL] Start alignment.");
         this.imagesToAlign.parallelStream()
-                .forEach(img -> this.algorithm.align(target, img, null)
+                .forEach(img -> this.algorithm.align(target, img, img.getProcessor())
                         .ifPresent(this.alignedImages::add));
-
+        IJ.log("[MANUAL] End alignment.");
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        this.alignedImages.clear();
     }
 
     private void auto(){
@@ -99,27 +102,28 @@ public class Alignment implements Runnable{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             final ImagePoints i = new ImagePoints(img.getPath());
             i.setProcessor(img.getProcessor());
-            IJ.log("------ Start Detection");
+            IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(t, i);
-            IJ.log("------ End Detection");
+            IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 images.put(i,t);
             }
         });
         System.gc();
-        IJ.log("------ Starting preprocess");
+        IJ.log("[AUTOMATIC] Starting preprocess");
         final ImagePoints target = TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(), images, this.algorithm);
-        IJ.log("------  End preprocess");
-        IJ.log("Target Matrix: "+ target.getMatImage());
+        IJ.log("[AUTOMATIC] End preprocess");
+        IJ.log("[AUTOMATIC] Target Matrix: "+ target.getMatImage());
         System.gc();
         this.alignedImages.add(new AlignedImage(target));
-        IJ.log("------  Start aligning the images.");
+        IJ.log("[AUTOMATIC] Start aligning the images.");
         images.entrySet().parallelStream().forEach(e->{
             this.algorithm.align(e.getValue(),e.getKey(), e.getKey().getProcessor()).ifPresent(this.alignedImages::add);
         });
         System.gc();
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        IJ.log("The alignment is done.");
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        IJ.log("[AUTOMATIC] The alignment is done.");
+        this.alignedImages.clear();
     }
 
     /**
