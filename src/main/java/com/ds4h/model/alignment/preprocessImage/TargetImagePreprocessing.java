@@ -17,10 +17,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TargetImagePreprocessing {
-    static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
+    static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm, final ImageProcessor ip) throws IllegalArgumentException{
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
-        IJ.log("------ Starting manual process.");
+        IJ.log("[MANUAL PREPROCESS] Starting manual process.");
         ImagePoints target = new ImagePoints(targetImage.getPath());
+        final String title = targetImage.getTitle();
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
@@ -29,13 +30,17 @@ public class TargetImagePreprocessing {
             target = new ImagePoints(target.getTitle(), res.getFirst().clone());
             target.addPoints(points.toList());
         }
-        final String dir = SaveImages.saveTMPImage(ImagingConversion.fromMatToImagePlus(target.getMatImage().clone(),
-                target.getTitle()).get()) + "/" + target.getTitle();
-        return new ImagePoints(dir);
+        IJ.log("[MANUAL PREPROCESS] Finish manual process.");
+        IJ.log("[MANUAL PREPROCESS] Target Title: " + target.getTitle());
+        target.setProcessor(ImagingConversion.matToImagePlus(target.getMatImage(), title, ip)
+                .getProcessor());
+        target.show();
+        return target;
     }
 
     static public ImagePoints automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
+        IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
         IntStream.range(0, s.size()).forEach(i -> {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
@@ -44,19 +49,20 @@ public class TargetImagePreprocessing {
                 final MatOfPoint2f points = new MatOfPoint2f();
                 points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
                 final String title = target.getTitle();
-                IJ.log("    New Matrix : " + res.getFirst().toString());
-                IJ.log("    New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
+                IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
+                IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
                 target = new ImagePoints(target.getTitle(), res.getFirst().clone());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
                 target.setTitle(title);
-                IJ.log("    Target Matrix: " + target.getMatImage().toString());
-                IJ.log("    Target Title: " + target.getTitle());
-                IJ.log("    Target ADDR: " + target.getMatImage().getNativeObjAddr());
+                IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
+                IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
+                IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points.toList());
                 System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(img,target));
             });
         });
+        IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");
         System.gc();
         images.clear();
         s.parallelStream().forEach(e->images.put(e.getKey(),e.getValue()));
@@ -89,9 +95,9 @@ public class TargetImagePreprocessing {
         final double[] t = {-xmin, -ymin};
         final Size s = new Size(xmax-xmin, ymax-ymin);
         final Mat alignedImage = Mat.zeros(s, target.getMatImage().type());
-        IJ.log("--- Before copy:  " + target.getMatImage());
+        IJ.log("[PREPROCESS] Before copy:  " + target.getMatImage());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
-        IJ.log("--- After copy: " + alignedImage);
+        IJ.log("[PREPROCESS] After copy: " + alignedImage);
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }

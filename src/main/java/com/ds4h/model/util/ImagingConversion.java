@@ -50,36 +50,33 @@ public class ImagingConversion {
     private ImagingConversion(){}
 
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final ColorModel color){
-        IJ.log("**** Creating the ColorProcessor **** ");
+        IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor");
+        System.gc();
         final ColorProcessor cp = new ColorProcessor(width, height);
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
                 double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                cp.set(col, row,
-                        new Color(color.getRed((int)pixelValues[2]),
+                cp.set(col, row, new Color(color.getRed((int)pixelValues[2]),
                         color.getGreen((int) pixelValues[1]),
                         color.getBlue((int) (pixelValues[0])))
                         .getRGB());
             });
         });
         System.gc();
-        IJ.log("**** The creation is done **** ");
-        cp.setColorModel(ColorModel.getRGBdefault());
+        IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
     }
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
-        IJ.log("Creating ByteProcessor");
+        IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
         final ByteProcessor ip = new ByteProcessor(width, height);
-        //matrix.get(0,0, (int[])ip.getPixels());
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
                 ip.putPixelValue(col, row, matrix.get(row, col)[0]);
-
             });
         });
         System.gc();
-        IJ.log("Finish creation ByteProcessor");
+        IJ.log("[MAKE BYTEPROCESSOR] Finish creation ByteProcessor");
         return ip;
     }
 
