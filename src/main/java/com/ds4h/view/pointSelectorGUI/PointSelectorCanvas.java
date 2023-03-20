@@ -12,15 +12,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
+    private final int DIMENSION_CONSTANT = (this.imageWidth + this.imageHeight)/500;
     private final ImagePoints image;
     private Color textColor;
-    private int pointerDimension = (this.imageWidth + this.imageHeight)/100;
+    private int pointerDimension = 5;
     private Color selectedPointerColor;
     private final Overlay overlay;
 
     private Point referencePoint;
     int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
+    private Color pointerColor;
 
     public PointSelectorCanvas(ImagePoints image) {
         super(image);
@@ -104,18 +106,19 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     private void drawPoint(Point p) {
         Color c;
         if(this.selectedPoints.contains(p)){
-            c = Color.BLUE;
+            c = this.selectedPointerColor;
         }else{
-            c = Color.RED;
+            c = this.pointerColor;
         }
-        OvalRoi circle = new OvalRoi(p.x - this.pointerDimension, p.y - this.pointerDimension, this.pointerDimension * 2, this.pointerDimension * 2);
-        circle.setStrokeWidth(this.pointerDimension/5);
+        OvalRoi circle = new OvalRoi(p.x - this.pointerDimension*this.DIMENSION_CONSTANT, p.y - this.pointerDimension*this.DIMENSION_CONSTANT, this.pointerDimension*this.DIMENSION_CONSTANT * 2, this.pointerDimension*this.DIMENSION_CONSTANT * 2);
+        circle.setStrokeWidth(this.DIMENSION_CONSTANT);
         PointRoi center = new PointRoi(p.x, p.y);
-        int textX = (int) p.x - this.pointerDimension;
-        int textY = (int) p.y + this.pointerDimension;
+        int textX = (int) p.x - this.pointerDimension*this.DIMENSION_CONSTANT;
+        int textY = (int) p.y + this.pointerDimension*this.DIMENSION_CONSTANT;
         TextRoi index = new TextRoi(textX, textY, Integer.toString(this.image.getIndexOfPoint(p)));
-        Font f = new Font("Serif", Font.BOLD, this.pointerDimension);
+        Font f = new Font("Serif", Font.BOLD, 5*this.DIMENSION_CONSTANT);
         index.setFont(f);
+        index.setStrokeColor(this.textColor);
         center.setStrokeColor(c);
         circle.setStrokeColor(c);
         overlay.add(circle);
@@ -149,6 +152,34 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     }
     public List<Point> getSelectedPoints(){
         return this.selectedPoints;
+    }
+    public void setPointerColor(Color selectedColor) {
+        this.pointerColor = selectedColor;
+        this.drawPoints();
+    }
+    public void setSelectedPointerColor(Color selectedColor) {
+        this.selectedPointerColor = selectedColor;
+        this.drawPoints();
+    }
+    public void setTextColor(Color selectedColor) {
+        this.textColor = selectedColor;
+        this.drawPoints();
+    }
+    public void setPointerDimension(int dimension){
+        this.pointerDimension = dimension;
+        this.drawPoints();
+    }
+    public Color getPointerColor() {
+        return this.pointerColor;
+    }
+    public Color getSelectedPointerColor() {
+        return this.selectedPointerColor;
+    }
+    public Color getTextColor() {
+        return this.textColor;
+    }
+    public int getPointerDimension(){
+        return this.pointerDimension;
     }
 
 }

@@ -49,20 +49,18 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     private void setCornerComboBox(){
         this.indexFrom.removeAllItems();
         this.indexTo.removeAllItems();
-        /*
+
         for(int i = 1; i <=this.container.getImage().getPoints().length; i++){
             this.indexFrom.addItem(i);
             this.indexTo.addItem(i);
         }
-
-         */
     }
 
     private void setActualPointerStyles() {
-       // this.pointerColor.setSelectedItem(this.container.getCornerPanel().getPointerColor());
-        //this.selectedPointerColor.setSelectedItem(this.container.getCornerPanel().getSelectedPointerColor());
-        //this.textColor.setSelectedItem(this.container.getCornerPanel().getTextColor());
-        //this.pointerDimension.setValue(this.container.getCornerPanel().getPointerDimension());
+        this.pointerColor.setSelectedItem(this.container.getCanvas().getPointerColor());
+        this.selectedPointerColor.setSelectedItem(this.container.getCanvas().getSelectedPointerColor());
+        this.textColor.setSelectedItem(this.container.getCanvas().getTextColor());
+        this.pointerDimension.setValue(this.container.getCanvas().getPointerDimension());
     }
 
     @Override
@@ -79,23 +77,23 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
         });
         this.pointerColor.addActionListener(e -> {
             Color selectedColor = pointerColor.getSelectedColor();
-            //container.setPointerColor(selectedColor);
+            this.container.getCanvas().setPointerColor(selectedColor);
         });
         this.selectedPointerColor.addActionListener(e -> {
             Color selectedColor = selectedPointerColor.getSelectedColor();
-            //container.setSelectedPointerColor(selectedColor);
+            this.container.getCanvas().setSelectedPointerColor(selectedColor);
         });
         this.textColor.addActionListener(e -> {
             Color selectedColor = textColor.getSelectedColor();
-            //container.setTextColor(selectedColor);
+            this.container.getCanvas().setTextColor(selectedColor);
         });
         this.pointerDimension.addChangeListener(e->{
-           // this.container.getCornerPanel().setPointerDimension(pointerDimension.getValue());
+            this.container.getCanvas().setPointerDimension(pointerDimension.getValue());
         });
         this.changeButton.addActionListener(e -> {
             int from = (int)indexFrom.getSelectedItem();
             int to = (int)indexTo.getSelectedItem();
-           // this.container.getImage().editPointIndex(from-1, to-1);
+            this.container.getImage().editPointIndex(from-1, to-1);
             //ChangeColorController.changeContrast(container.getImage().getImage(), this.contrast);
             this.container.repaint();
         });

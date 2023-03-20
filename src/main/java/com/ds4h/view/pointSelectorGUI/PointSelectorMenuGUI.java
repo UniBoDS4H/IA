@@ -82,11 +82,10 @@ public class PointSelectorMenuGUI extends JPanel {
         this.add(Box.createRigidArea(new Dimension(5, 0)));
     }
     public void updateView(){
-        /*this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+        this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
         this.copyToCombo.setEnabled(this.container.getSelectedPoints().size()!=0);
         this.deleteButton.setEnabled(this.container.getSelectedPoints().size()!=0);
 
-         */
     }
 
     public void updateSettings() {
