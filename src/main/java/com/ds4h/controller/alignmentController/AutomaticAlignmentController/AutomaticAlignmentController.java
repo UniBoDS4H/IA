@@ -16,6 +16,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.VirtualStack;
 import ij.io.FileSaver;
+import org.bytedeco.javacpp.annotation.Virtual;
 
 import java.awt.*;
 import java.awt.image.ColorModel;
@@ -79,10 +80,14 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
 
     public ImagePlus getAlignmedImagesAsStack() {
         if(!this.getAlignedImages().isEmpty()){
-            ImageStack stack = new ImageStack();
-
+            VirtualStack stack = new VirtualStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault(), IJ.getDir("temp"));
+            System.gc();
             for (AlignedImage a : this.getAlignedImages()) {
-                stack.addSlice(a.getAlignedImage().getProcessor());
+                String path = IJ.getDir("temp") + a.getAlignedImage().getProcessor().hashCode() + ".tiff";
+                new FileSaver(a.getAlignedImage()).saveAsTiff(path);
+                stack.addSlice(new File(path).getName());
+                System.gc();
+                //stack.addSlice(a.getAlignedImage().getProcessor());
             }
             ImagePlus im = new ImagePlus("AglignedStack", stack);
             im.show();

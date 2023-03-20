@@ -5,9 +5,11 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import ij.gui.ImageWindow;
 import ij.gui.Toolbar;
 import ij.plugin.tool.PlugInTool;
+import org.opencv.core.Point;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 public class PointSelectorGUI extends ImageWindow implements WindowListener {
     private final PointSelectorMenuGUI menu;
@@ -53,8 +55,17 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
 
         this.pack();
     }
+    public List<Point> getSelectedPoints() {
+        return this.canvas.getSelectedPoints();
+    }
 
+    public void clearSelectedPoints() {
+        this.canvas.getSelectedPoints().clear();
+    }
 
+    public void repaintPoints() {
+        this.canvas.drawPoints();
+    }
 }
 
 

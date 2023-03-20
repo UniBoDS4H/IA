@@ -86,6 +86,7 @@ public class Alignment implements Runnable{
     }
 
     private void manual(){
+        assert this.targetImage.getProcessor() != null;
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         IJ.log("[MANUAL] Start alignment.");
@@ -126,8 +127,8 @@ public class Alignment implements Runnable{
         this.imagesToAlign.clear();
         this.alignedImages.stream().map(i -> i.getAlignedImage().getProcessor())
                 .forEach(stack::addSlice);
-        ImagePlus s = new ImagePlus("My Virtual Stack", stack);
-        s.show();
+        //ImagePlus s = new ImagePlus("My Virtual Stack", stack);
+        //s.show();
         //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
         //this.alignedImages.clear();

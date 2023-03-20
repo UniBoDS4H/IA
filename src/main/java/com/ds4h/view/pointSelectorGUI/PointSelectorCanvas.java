@@ -97,7 +97,7 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         this.selectedPoints.forEach(p-> this.image.movePoint(p, new Point(p.x+xGap,p.y+yGap)));
         this.selectedPoints = this.selectedPoints.stream().map(p-> new Point(p.x+xGap,p.y+yGap)).collect(Collectors.toList());
     }
-    private void drawPoints(){
+    void drawPoints(){
         overlay.clear();
         this.image.getListPoints().forEach(this::drawPoint);
     }
@@ -146,6 +146,9 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
             }
         }
         return false;
+    }
+    public List<Point> getSelectedPoints(){
+        return this.selectedPoints;
     }
 
 }

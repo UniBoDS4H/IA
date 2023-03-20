@@ -48,24 +48,21 @@ public class PointSelectorMenuGUI extends JPanel {
     }
     public void addListeners() {
         this.deleteButton.addActionListener(e->{
-            /*container.getSelectedPoints().forEach(image::removePoint);
-            container.updatePointsForAlignment();
+            container.getSelectedPoints().forEach(image::removePoint);
+            //container.updatePointsForAlignment();
             container.clearSelectedPoints();
-            container.repaintPanel();
+            container.repaintPoints();
 
-             */
         });
         this.copyButton.addActionListener(e->{
             final MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
             assert item != null;
-            /*
-            if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
-                JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Some of the points are out of the selected image, they have not been copied");
-            }else{
-                JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
-            }
 
-             */
+            if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
+                JOptionPane.showMessageDialog(this, "Some of the points are out of the selected image, they have not been copied");
+            }else{
+                JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
+            }
         });
         this.cornerSetting.addActionListener(e->{
             this.settings.showDialog();
