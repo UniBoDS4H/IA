@@ -49,14 +49,14 @@ public class TargetImagePreprocessing {
                 final MatOfPoint2f points = new MatOfPoint2f();
                 points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
                 final String title = target.getTitle();
-                IJ.log("[PREPROCESS] New Matrix : " + res.getFirst().toString());
-                IJ.log("[PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
+                IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
+                IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
                 target = new ImagePoints(target.getTitle(), res.getFirst().clone());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
                 target.setTitle(title);
-                IJ.log("[PREPROCESS] Target Matrix: " + target.getMatImage().toString());
-                IJ.log("[PREPROCESS] Target Title: " + target.getTitle());
-                IJ.log("[PREPROCESS]Target ADDR: " + target.getMatImage().getNativeObjAddr());
+                IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
+                IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
+                IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points.toList());
                 System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(img,target));

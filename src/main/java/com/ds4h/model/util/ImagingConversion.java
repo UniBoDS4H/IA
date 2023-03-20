@@ -51,12 +51,12 @@ public class ImagingConversion {
 
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final ColorModel color){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor");
+        System.gc();
         final ColorProcessor cp = new ColorProcessor(width, height);
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
                 double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                cp.set(col, row,
-                        new Color(color.getRed((int)pixelValues[2]),
+                cp.set(col, row, new Color(color.getRed((int)pixelValues[2]),
                         color.getGreen((int) pixelValues[1]),
                         color.getBlue((int) (pixelValues[0])))
                         .getRGB());

@@ -13,6 +13,7 @@ import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -90,6 +91,7 @@ public class Alignment implements Runnable{
         this.imagesToAlign.parallelStream()
                 .forEach(img -> this.algorithm.align(target, img, img.getProcessor())
                         .ifPresent(this.alignedImages::add));
+        IJ.log("[MANUAL] End alignment.");
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
         this.alignedImages.clear();
     }
