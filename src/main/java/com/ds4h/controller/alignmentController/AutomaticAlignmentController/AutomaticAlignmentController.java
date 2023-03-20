@@ -79,14 +79,10 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
 
     public ImagePlus getAlignmedImagesAsStack() {
         if(!this.getAlignedImages().isEmpty()){
-            VirtualStack stack = new VirtualStack();
+            ImageStack stack = new ImageStack();
             for (AlignedImage a : this.getAlignedImages()) {
-                a.getAlignedImage().show();
-                ImagePlus im = new ImagePlus("aa",a.getAlignedImage().getProcessor());
-                stack.addSlice(im.getProcessor());
+                stack.addSlice(a.getAlignedImage().getProcessor());
             }
-
-            System.out.println("size-> " + stack.size());
             return new ImagePlus("AglignedStack", stack);
         }
         return new ImagePlus("EmptyStack", new ImageStack());

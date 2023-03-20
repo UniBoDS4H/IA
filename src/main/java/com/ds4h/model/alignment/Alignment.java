@@ -123,7 +123,7 @@ public class Alignment implements Runnable{
         System.gc();
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
-        this.alignedImages.clear();
+        //this.alignedImages.clear();
     }
 
     /**

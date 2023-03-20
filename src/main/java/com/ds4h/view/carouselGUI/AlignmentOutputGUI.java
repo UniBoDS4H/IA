@@ -44,6 +44,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.addListeners();
     }
     public void addComponents() {
+        this.removeAll();
         this.add(this.panel, BorderLayout.CENTER);
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
@@ -53,6 +54,8 @@ public class AlignmentOutputGUI extends StackWindow {
         this.reuse.add(this.reuseItem);
         this.panel.add(this.canvas, BorderLayout.CENTER);
         this.panel.add(this.menuBar, BorderLayout.NORTH);
+        this.panel.add(sliceSelector, BorderLayout.PAGE_END);
+        this.pack();
     }
     public void addListeners() {
         /*this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
