@@ -45,13 +45,13 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                     if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
-                        IJ.log("Starting the warpPerspective");
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
                         System.gc();
-                        Imgproc.warpPerspective(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
+                        Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
                      }else{
-                        IJ.log("Starting the warpAffine");
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
                         System.gc();
-                        Imgproc.warpAffine(imageToShift.getMatImage(),alignedImage,transformationMatrix, targetImage.getMatImage().size());
+                        Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
                     }
                     System.gc();
                     final Optional<ImagePlus> finalImage = Optional.of(ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip));
@@ -75,7 +75,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
-        System.out.println(srcPoints.toList().size() + " " + dstPoints.toList().size());
+        IJ.log("[TRANSLATIONAL ALIGNMENT] Source Points: " + srcPoints.toList().size() + ", Destination Points: " + dstPoints.toList().size());
         if(srcPoints.toArray().length <=2){
             final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
             final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
@@ -84,12 +84,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             return translationMatrix;
         }else{
             final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
-            for(int i = 0; i < 2; i++){
-                for (int j = 0; j < 3; j++){
-                    System.out.print(Arrays.toString(H.get(i, j)));
-                }
-                System.out.println();
-            }
             double a = H.get(0,0)[0];
             double b = H.get(1,0)[0];
             double scaling = Math.sqrt(a*a + b*b);
@@ -98,10 +92,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             double y = H.get(1,2)[0];
             Mat transformation = Mat.eye(2,3,H.type());
             if(this.translate){
+                IJ.log("[TRANSLATIONAL ALIGNMENT] Translate");
                 transformation.put(0,2, x);
                 transformation.put(1,2, y);
             }
             if(this.scale){
+                IJ.log("[TRANSLATIONAL ALIGNMENT] Scale");
                 transformation.put(0,0,scaling);
                 transformation.put(0,1,scaling);
                 transformation.put(1,0,scaling);
@@ -113,6 +109,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 transformation.put(1,1,1);
             }
             if(this.rotate){
+                IJ.log("[TRANSLATIONAL ALIGNMENT] Rotate");
                 transformation.put(0,0,transformation.get(0,0)[0]*Math.cos(theta));
                 transformation.put(0,1,transformation.get(0,1)[0]*(-Math.sin(theta)));
                 transformation.put(1,0,transformation.get(1,0)[0]*Math.sin(theta));
