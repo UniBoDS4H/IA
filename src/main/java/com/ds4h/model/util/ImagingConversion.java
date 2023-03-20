@@ -50,16 +50,34 @@ public class ImagingConversion {
     private ImagingConversion(){}
 
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final ColorModel color){
-        IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor");
+        IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the ColorModel");
         System.gc();
         final ColorProcessor cp = new ColorProcessor(width, height);
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
-                double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                cp.set(col, row, new Color(color.getRed((int)pixelValues[2]),
-                        color.getGreen((int) pixelValues[1]),
-                        color.getBlue((int) (pixelValues[0])))
-                        .getRGB());
+                final double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
+                cp.set(col, row,
+                        (color.getRed((int) pixelValues[2]) << 16 |
+                                color.getGreen((int) pixelValues[1]) << 8 |
+                                color.getBlue((int) pixelValues[0])) );
+            });
+        });
+        System.gc();
+        IJ.log("[MAKE COLORPROCESSOR] The creation is done");
+        return cp;
+    }
+
+    private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final LUT lut){
+        IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
+        System.gc();
+        final ColorProcessor cp = new ColorProcessor(width, height);
+        IntStream.range(0, width).parallel().forEach(col -> {
+            IntStream.range(0, height).parallel().forEach(row -> {
+                final double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
+                cp.set(col, row,
+                        (lut.getRed((int) pixelValues[2]) << 16 |
+                                lut.getGreen((int) pixelValues[1]) << 8 |
+                                lut.getBlue((int) pixelValues[0])) );
             });
         });
         System.gc();
@@ -84,7 +102,8 @@ public class ImagingConversion {
         if(!matrix.empty() && !fileName.isEmpty()){
             final ImagePlus finalImage = new ImagePlus(fileName);
             if(matrix.type() == CvType.CV_8UC3){
-                return new ImagePlus(fileName, ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getColorModel()));
+                return new ImagePlus(fileName,
+                        ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
             }else if(matrix.type() == CvType.CV_8UC1){
                 finalImage.setProcessor(ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
             }else{
