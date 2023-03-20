@@ -40,6 +40,8 @@ public class ImagePoints extends ImagePlus{
     public ImagePoints(final String path, final Mat mat){
         this(path);
         matrix = mat;
+        this.rows = mat.rows();
+        this.cols = mat.cols();
     }
 
     public Point[] getPoints(){

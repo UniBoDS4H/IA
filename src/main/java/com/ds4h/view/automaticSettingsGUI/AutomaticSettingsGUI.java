@@ -94,7 +94,7 @@ public class AutomaticSettingsGUI extends JFrame implements StandardGUI {
         this.setSize(DisplayInfo.getDisplaySize(30));
     }
     private void populateCombo(){
-        this.selectedValue = Detectors.SURF;
+        this.selectedValue = Detectors.ORB;
         for(final Detectors detector : Detectors.values()){
             this.detectors.addItem(detector);
         }

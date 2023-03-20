@@ -52,7 +52,7 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
-                target = new ImagePoints(target.getTitle(), res.getFirst().clone());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
+                target = new ImagePoints(target.getTitle(), res.getFirst());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
                 target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
@@ -69,7 +69,6 @@ public class TargetImagePreprocessing {
         final ImagePoints last = s.get(s.size()-1).getValue();
         last.setProcessor(ImagingConversion.matToImagePlus(last.getMatImage(), last.getTitle(), ip)
                 .getProcessor());
-        last.show();
         return last;
     }
 
@@ -79,6 +78,8 @@ public class TargetImagePreprocessing {
         final int w1 = target.getCols();
         final int h2 = ImagePoints.getRows();
         final int w2 = ImagePoints.getCols();
+        IJ.log("[PREPROCESS] Target Rows: " + h1 + " Target Cols: " + w1);
+        IJ.log("[PREPROCESS] ImageP Rows: " + h2 + " ImageP Cols: " + w2);
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
         final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
         final MatOfPoint2f pts2_ = new MatOfPoint2f();
@@ -94,7 +95,7 @@ public class TargetImagePreprocessing {
         final int ymax = (int) Math.ceil(pts_max.y + 0.5);
         final double[] t = {-xmin, -ymin};
         final Size s = new Size(xmax-xmin, ymax-ymin);
-        final Mat alignedImage = Mat.zeros(s, target.getMatImage().type());
+        final Mat alignedImage = Mat.zeros(s, ImagePoints.getMatImage().type());
         IJ.log("[PREPROCESS] Before copy:  " + target.getMatImage());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
         IJ.log("[PREPROCESS] After copy: " + alignedImage);
