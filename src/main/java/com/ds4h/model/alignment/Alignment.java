@@ -118,7 +118,7 @@ public class Alignment implements Runnable{
             this.algorithm.align(e.getValue(),e.getKey(), e.getKey().getProcessor()).ifPresent(this.alignedImages::add);
         });
         System.gc();
-        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("The alignment is done.");
     }
 

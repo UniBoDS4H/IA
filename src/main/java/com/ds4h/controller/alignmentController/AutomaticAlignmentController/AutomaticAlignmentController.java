@@ -11,10 +11,19 @@ import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.akazeDetector.AKAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.VirtualStack;
+import ij.io.FileSaver;
 
+import java.awt.*;
+import java.awt.image.ColorModel;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This class is used in order to call all the Model methods of the SURF Alignment inside the view, without
@@ -68,4 +77,18 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         return "AUTOMATIC";
     }
 
+    public ImagePlus getAlignmedImagesAsStack() {
+        if(!this.getAlignedImages().isEmpty()){
+            VirtualStack stack = new VirtualStack();
+            for (AlignedImage a : this.getAlignedImages()) {
+                a.getAlignedImage().show();
+                ImagePlus im = new ImagePlus("aa",a.getAlignedImage().getProcessor());
+                stack.addSlice(im.getProcessor());
+            }
+
+            System.out.println("size-> " + stack.size());
+            return new ImagePlus("AglignedStack", stack);
+        }
+        return new ImagePlus("EmptyStack", new ImageStack());
+    }
 }
