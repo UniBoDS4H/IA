@@ -10,7 +10,7 @@ package com.ds4h.imagej;
 
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
-import ij.ImageJ;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
@@ -43,7 +43,6 @@ public class Process_Pixels implements PlugIn {
 
 
 	public static void main(String[] args) throws Exception {
-		new ImageJ();
 		new Process_Pixels().run(null);
 	}
 
@@ -74,9 +73,10 @@ public class Process_Pixels implements PlugIn {
 		}
 		*/
 		try {
-			Runtime.getRuntime().exec("java -Xmx4g com.ds4h.imagej.Process_Pixels");
+			//java.lang.Runtime.getRuntime().exec("java -Xmx4g com.ds4h.imagej.Process_Pixels"); // set maximum heap size to 1GB
+			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());
 			EventQueue.invokeLater(MainMenuGUI::new);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 

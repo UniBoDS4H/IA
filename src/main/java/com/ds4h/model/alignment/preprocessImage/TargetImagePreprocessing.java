@@ -31,7 +31,7 @@ public class TargetImagePreprocessing {
             target.addPoints(points.toList());
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
-        IJ.log("[MANUAL PREPROCESS] Target Title: " + target.getTitle());
+        IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
         target.setProcessor(ImagingConversion.matToImagePlus(target.getMatImage(), title, ip)
                 .getProcessor());
         target.show();
@@ -51,8 +51,7 @@ public class TargetImagePreprocessing {
                 final String title = target.getTitle();
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
-                //TODO: THIS IN MY OPINION CAN BE DONE WITHOUT CLONING, TEST THIS THEORY
-                target = new ImagePoints(target.getTitle(), res.getFirst());//res.getFirst().rows(), res.getFirst().cols(), res.getFirst().type(), res.getFirst().getNativeObjAddr());
+                target = new ImagePoints(target.getTitle(), res.getFirst());
                 target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
@@ -65,11 +64,12 @@ public class TargetImagePreprocessing {
         IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");
         System.gc();
         images.clear();
-        s.parallelStream().forEach(e->images.put(e.getKey(),e.getValue()));
-        final ImagePoints last = s.get(s.size()-1).getValue();
-        last.setProcessor(ImagingConversion.matToImagePlus(last.getMatImage(), last.getTitle(), ip)
+        s.forEach(e->images.put(e.getKey(),e.getValue()));
+        s.get(s.size()-1).getValue().setProcessor(ImagingConversion.matToImagePlus(s.get(s.size()-1).getValue().getMatImage(),
+                        s.get(s.size()-1).getValue().getTitle(), ip)
                 .getProcessor());
-        return last;
+        IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatImage().size());
+        return s.get(s.size()-1).getValue();
     }
 
     //returns the mat of the new target and the shift of the points

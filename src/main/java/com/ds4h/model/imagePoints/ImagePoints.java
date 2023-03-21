@@ -37,18 +37,7 @@ public class ImagePoints extends ImagePlus{
         this.address = matAddress;
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
-    private void detectType(){
-        final ImageProcessor imp = this.getProcessor();
-        int bitDepth = imp.getBitDepth();
-        int numPixels = imp.getPixelCount();
-        if (bitDepth == 8 && numPixels == imp.getWidth() * imp.getHeight()) {
-            this.type = CvType.CV_8UC1;
-        } else if (bitDepth == 24 && numPixels == imp.getWidth() * imp.getHeight() * 3) {
-            this.type = CvType.CV_8UC3;
-            this.RBG = true;
-        }
-        System.gc();
-    }
+
     public ImagePoints(final String path, final Mat mat){
         this(path);
         matrix = mat;
