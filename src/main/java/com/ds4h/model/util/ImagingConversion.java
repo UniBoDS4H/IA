@@ -81,7 +81,6 @@ public class ImagingConversion {
         });
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
-        matrix.release();
         return cp;
     }
 
@@ -111,7 +110,6 @@ public class ImagingConversion {
                 throw new IllegalArgumentException("This program do not support your type of image.");
             }
             //TODO: FIX THIS
-            return null;
         }else{
             throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
         }

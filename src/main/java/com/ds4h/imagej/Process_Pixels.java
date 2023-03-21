@@ -43,7 +43,6 @@ public class Process_Pixels implements PlugIn {
 
 
 	public static void main(String[] args) throws Exception {
-		new ImageJ();
 		new Process_Pixels().run(null);
 	}
 

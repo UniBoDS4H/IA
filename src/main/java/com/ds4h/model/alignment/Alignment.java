@@ -90,8 +90,8 @@ public class Alignment implements Runnable{
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         IJ.log("[MANUAL] Start alignment.");
-        this.imagesToAlign.parallelStream()
-                .forEach(img -> this.algorithm.align(target, img, img.getProcessor())
+        this.imagesToAlign.forEach(img ->
+                this.algorithm.align(target, img, img.getProcessor())
                         .ifPresent(this.alignedImages::add));
         IJ.log("[MANUAL] End alignment.");
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
@@ -102,8 +102,6 @@ public class Alignment implements Runnable{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
-            //final ImagePoints i = new ImagePoints(img.getPath());
-            //i.setProcessor(img.getProcessor());
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(t, img);
             IJ.log("[AUTOMATIC] End Detection");
@@ -122,17 +120,17 @@ public class Alignment implements Runnable{
         this.targetImage = null;
         this.imagesToAlign.clear();
         images.forEach((key, value) -> {
+            IJ.log("[AUTOMATIC] Target Size: " + value.getMatImage().size());
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            images.remove(key, value);
+            key.getMatImage().release();
             key = null;
-            value = null;
-            //images.remove(key, value);
             System.gc();
         });
         images.clear();
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
-        //this.alignedImages.clear();
+        this.alignedImages.clear();
     }
 
     /**
