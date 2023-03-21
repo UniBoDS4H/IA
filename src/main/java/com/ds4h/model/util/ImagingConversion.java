@@ -81,6 +81,7 @@ public class ImagingConversion {
         });
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
+        matrix.release();
         return cp;
     }
 
@@ -99,59 +100,21 @@ public class ImagingConversion {
 
     public static ImagePlus matToImagePlus(final Mat matrix, final String fileName, final ImageProcessor ip){
         if(!matrix.empty() && !fileName.isEmpty()){
-            final ImagePlus finalImage = new ImagePlus(fileName);
+            //final ImagePlus finalImage = new ImagePlus(fileName);
             if(matrix.type() == CvType.CV_8UC3){
                 java.lang.Runtime.getRuntime().freeMemory();
                 return new ImagePlus(fileName,
                         ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
             }else if(matrix.type() == CvType.CV_8UC1){
-                finalImage.setProcessor(ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
+                return new ImagePlus(fileName, ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
             }else{
                 throw new IllegalArgumentException("This program do not support your type of image.");
             }
-            return finalImage;
+            //TODO: FIX THIS
+            return null;
         }else{
             throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
         }
-    }
-
-
-    @Deprecated
-    public static Optional<ImagePlus> fromMatToImagePlus(final Mat matrix, final String fileName){
-        try {
-            if (!matrix.empty() && !fileName.isEmpty()) {
-                IJ.log("Saving the matrix: " + matrix);
-                final int totalR = matrix.rows(), totalC = matrix.cols();
-                if(matrix.type() == CvType.CV_8UC3){
-                    IJ.log("Is a ColorProcessor");
-                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
-                    //TODO: FIX THIS
-                    final ImagePlus imp = new ImagePlus(fileName, makeColorProcessor(matrix, totalC, totalR, null));
-                    imp.show();
-                    IJ.log("Created the ImagePlus");
-                    return Optional.of(imp);
-                }else{
-                    ByteProcessor ip = new ByteProcessor(totalC, totalR);
-                    for(int col = 0; col < totalC; col++){
-                        for(int row = 0; row < totalR; row++){
-                            ip.putPixelValue(col, row, matrix.get(row, col)[0]);
-                        }
-                    }
-                    IJ.log("Created the processor" + "Rows: " + totalR + " Cols: " + totalC);
-                    IJ.log("Done");
-                    final ImagePlus imp = new ImagePlus(fileName, ip);
-
-                    imp.show();
-                    IJ.log("Created the ImagePlus");
-                    return Optional.of(imp);
-                }
-
-
-            }
-        }catch (Exception e){
-            IJ.showMessage(e.getMessage());
-        }
-        return Optional.empty();
     }
 
     public static List<ImagePoints> fromPath(final List<File> paths) throws IOException{

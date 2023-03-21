@@ -101,31 +101,33 @@ public class Alignment implements Runnable{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
-            final ImagePoints i = new ImagePoints(img.getPath());
-            i.setProcessor(img.getProcessor());
+            //final ImagePoints i = new ImagePoints(img.getPath());
+            //i.setProcessor(img.getProcessor());
             IJ.log("[AUTOMATIC] Start Detection");
-            this.pointDetector.detectPoint(t, i);
+            this.pointDetector.detectPoint(t, img);
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
-                images.put(i,t);
+                images.put(img, t);
             }
         });
         System.gc();
         IJ.log("[AUTOMATIC] Starting preprocess");
-        final ImagePoints target = TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
-                images,
-                this.algorithm);
         IJ.log("[AUTOMATIC] End preprocess");
-        IJ.log("[AUTOMATIC] Target Matrix: "+ target.getMatImage());
         System.gc();
-        this.alignedImages.add(new AlignedImage(target));
+        this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
+                images,
+                this.algorithm)));
         IJ.log("[AUTOMATIC] Start aligning the images.");
-        final VirtualStack stack = new VirtualStack(target.getWidth(), target.getHeight());
+        this.targetImage = null;
+        this.imagesToAlign.clear();
         images.forEach((key, value) -> {
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            key = null;
+            value = null;
+            //images.remove(key, value);
             System.gc();
         });
-        this.imagesToAlign.clear();
+        images.clear();
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
         //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");

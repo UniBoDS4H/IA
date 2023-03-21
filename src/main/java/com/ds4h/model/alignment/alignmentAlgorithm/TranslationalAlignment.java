@@ -54,8 +54,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
                     }
                     System.gc();
-                    final ImagePlus finalImage = ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip);
-                    return Optional.of(new AlignedImage(transformationMatrix, finalImage));
+                    return Optional.of(new AlignedImage(transformationMatrix, ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip)));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
                             "inside the target image.");
