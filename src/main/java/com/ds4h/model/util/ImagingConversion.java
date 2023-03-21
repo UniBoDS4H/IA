@@ -70,8 +70,8 @@ public class ImagingConversion {
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final LUT lut){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
         final ColorProcessor cp = new ColorProcessor(width, height);
-        IntStream.range(0, width).parallel().forEach(col -> {
-            IntStream.range(0, height).parallel().forEach(row -> {
+        IntStream.range(0, width).forEach(col -> {
+            IntStream.range(0, height).forEach(row -> {
                 final double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
                 cp.set(col, row,
                         (lut.getRed((int) pixelValues[2]) << 16 |
@@ -86,10 +86,9 @@ public class ImagingConversion {
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
-
         final ByteProcessor ip = new ByteProcessor(width, height);
-        IntStream.range(0, width).parallel().forEach(col -> {
-            IntStream.range(0, height).parallel().forEach(row -> {
+        IntStream.range(0, width).forEach(col -> {
+            IntStream.range(0, height).forEach(row -> {
                 ip.putPixelValue(col, row, matrix.get(row, col)[0]);
             });
         });

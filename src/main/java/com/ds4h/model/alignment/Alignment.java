@@ -123,7 +123,7 @@ public class Alignment implements Runnable{
         final VirtualStack stack = new VirtualStack(target.getWidth(), target.getHeight());
         images.forEach((key, value) -> {
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
-            java.lang.Runtime.getRuntime().freeMemory();
+            System.gc();
         });
         this.imagesToAlign.clear();
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
