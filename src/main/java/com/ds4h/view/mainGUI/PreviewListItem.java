@@ -2,6 +2,7 @@ package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.view.pointSelectorGUI.PointSelectorCanvas;
 import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 
@@ -20,14 +21,14 @@ public class PreviewListItem extends JPanel {
     private final PointController controller;
     private final ImagePoints image;
     private final PreviewImagesPane container;
-    //private final CornerSelectorGUI cornerSelector;
+    private final PointSelectorGUI pointSelector;
     private final JPanel centerPanel;
     PreviewListItem(final PointController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
         this.container = container;
         this.controller = controller;
         this.centerPanel = new JPanel();
         this.image = image;
-        //this.cornerSelector = new CornerSelectorGUI(this.image, this.controller, this.container.getMainMenu());
+        this.pointSelector = new PointSelectorGUI(image, controller);
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
@@ -84,7 +85,7 @@ public class PreviewListItem extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new PointSelectorGUI(image, controller);
+                pointSelector.show();
                 //cornerSelector.showDialog();
             }
         });
