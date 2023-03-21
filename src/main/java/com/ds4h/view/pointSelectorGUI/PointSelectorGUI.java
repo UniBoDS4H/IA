@@ -1,5 +1,7 @@
 package com.ds4h.view.pointSelectorGUI;
 
+import com.ds4h.controller.directoryManager.DirectoryManager;
+import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.gui.ImageCanvas;
@@ -74,6 +76,14 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     @Override
     public PointSelectorCanvas getCanvas() {
         return (PointSelectorCanvas) super.getCanvas();
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        this.setVisible(false);
+    }
+    public void showWindow(){
+        this.setVisible(true);
     }
 }
 
