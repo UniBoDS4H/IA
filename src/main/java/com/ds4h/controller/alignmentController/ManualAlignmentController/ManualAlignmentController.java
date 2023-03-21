@@ -30,12 +30,11 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         return new LinkedList<>(alignment.alignedImages());
     }
 
-    public ImagePlus getAlignmedImagesAsStack(){
-
+    public ImagePlus getAlignedImagesAsStack(){
         List<ImagePlus> alignedImages = this.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
         if(!alignedImages.isEmpty()) {
             ImageStack stack = new ImageStack(alignedImages.get(0).getWidth(), alignedImages.get(0).getHeight());
-            alignedImages.forEach(a->stack.addSlice(a.getTitle(),a));
+            alignedImages.forEach(a->stack.addSlice(a.getTitle(),a.getProcessor()));
             return new ImagePlus("AglignedStack", stack);
         }
         return new ImagePlus("EmptyStack", new ImageStack());

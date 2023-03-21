@@ -34,7 +34,7 @@ public class TargetImagePreprocessing {
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
         target.setProcessor(ImagingConversion.matToImagePlus(target.getMatImage(), title, ip)
                 .getProcessor());
-        target.show();
+        //target.show();
         return target;
     }
 

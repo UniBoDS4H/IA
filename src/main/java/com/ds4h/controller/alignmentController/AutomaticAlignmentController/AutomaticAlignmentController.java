@@ -90,7 +90,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                 //stack.addSlice(a.getAlignedImage().getProcessor());
             }
             ImagePlus im = new ImagePlus("AglignedStack", stack);
-            im.show();
+            //im.show();
             return im;
         }
         return new ImagePlus("EmptyStack", new ImageStack());

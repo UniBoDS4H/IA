@@ -17,15 +17,9 @@ import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.automaticSettingsGUI.AutomaticSettingsGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
-import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
-import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -358,7 +352,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
+                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
                     //new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
