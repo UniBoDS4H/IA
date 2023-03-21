@@ -69,7 +69,7 @@ public class PointController {
     }
 
     private boolean insideImage(final Point p, final ImagePoints img) {
-        return img.getMatImage().rows() >= p.y && img.getMatImage().cols() >= p.x;
+        return img.getRows() >= p.y && img.getCols() >= p.x;
     }
 
     public MenuItem getMenuItem(final ImagePoints image){
