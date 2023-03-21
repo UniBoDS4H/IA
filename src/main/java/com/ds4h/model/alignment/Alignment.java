@@ -96,8 +96,8 @@ public class Alignment implements Runnable{
         IJ.log("[MANUAL] End alignment.");
         this.imagesToAlign.clear();
         this.targetImage = null;
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        //this.alignedImages.clear();
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        this.alignedImages.clear();
     }
 
     private void auto(){
