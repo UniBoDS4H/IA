@@ -69,7 +69,6 @@ public class ImagingConversion {
 
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final LUT lut){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
-        System.gc();
         final ColorProcessor cp = new ColorProcessor(width, height);
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
@@ -87,6 +86,7 @@ public class ImagingConversion {
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
+
         final ByteProcessor ip = new ByteProcessor(width, height);
         IntStream.range(0, width).parallel().forEach(col -> {
             IntStream.range(0, height).parallel().forEach(row -> {
@@ -102,6 +102,7 @@ public class ImagingConversion {
         if(!matrix.empty() && !fileName.isEmpty()){
             final ImagePlus finalImage = new ImagePlus(fileName);
             if(matrix.type() == CvType.CV_8UC3){
+                java.lang.Runtime.getRuntime().freeMemory();
                 return new ImagePlus(fileName,
                         ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
             }else if(matrix.type() == CvType.CV_8UC1){

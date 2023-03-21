@@ -121,13 +121,12 @@ public class Alignment implements Runnable{
         this.alignedImages.add(new AlignedImage(target));
         IJ.log("[AUTOMATIC] Start aligning the images.");
         final VirtualStack stack = new VirtualStack(target.getWidth(), target.getHeight());
-        images.forEach((key, value) -> this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add));
-        System.gc();
+        images.forEach((key, value) -> {
+            this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            java.lang.Runtime.getRuntime().freeMemory();
+        });
         this.imagesToAlign.clear();
-        this.alignedImages.stream().map(i -> i.getAlignedImage().getProcessor())
-                .forEach(stack::addSlice);
-        ImagePlus s = new ImagePlus("My Virtual Stack", stack);
-        s.show();
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
         //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
         this.alignedImages.clear();
