@@ -21,14 +21,14 @@ public class PreviewListItem extends JPanel {
     private final PointController controller;
     private final ImagePoints image;
     private final PreviewImagesPane container;
-    private final PointSelectorGUI pointSelector;
+    private PointSelectorGUI pointSelector;
     private final JPanel centerPanel;
+    private boolean firstOpening = true;
     PreviewListItem(final PointController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
         this.container = container;
         this.controller = controller;
         this.centerPanel = new JPanel();
         this.image = image;
-        this.pointSelector = new PointSelectorGUI(image, controller);
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
@@ -85,8 +85,12 @@ public class PreviewListItem extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                pointSelector.show();
-                //cornerSelector.showDialog();
+                if(firstOpening){
+                    pointSelector = new PointSelectorGUI(image, controller);
+                    firstOpening = false;
+                }else{
+                    pointSelector.showWindow();
+                }
             }
         });
     }
