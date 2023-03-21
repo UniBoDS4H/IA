@@ -39,7 +39,7 @@ public class PreviewListItem extends JPanel {
         this.deleteButton.setContentAreaFilled(false);
         this.deleteButton.setOpaque(false);
         this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+        this.imageLabel = new JLabel(new ImageIcon(this.image.resize(40,40,"bilinear").getBufferedImage()));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
