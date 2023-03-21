@@ -12,9 +12,11 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.Toolbar;
 import ij.plugin.PlugIn;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import ij.plugin.tool.PlugInTool;
 
 import java.awt.*;
 import java.io.File;
@@ -41,6 +43,7 @@ public class Process_Pixels implements PlugIn {
 
 
 	public static void main(String[] args) throws Exception {
+		new ImageJ();
 		new Process_Pixels().run(null);
 	}
 

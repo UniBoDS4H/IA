@@ -1,7 +1,5 @@
-package com.ds4h.view.cornerSelectorGUI;
+package com.ds4h.view.pointSelectorGUI;
 
-import com.ds4h.controller.changeColorController.ChangeColorController;
-import com.ds4h.controller.imagingConversion.ImagingController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ColorComboBox;
@@ -10,21 +8,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Objects;
 
-public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
+public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     private final ColorComboBox pointerColor;
     private final ColorComboBox selectedPointerColor;
     private final ColorComboBox textColor;
 
     private final GridBagConstraints constraints;
-    private final CornerSelectorGUI container;
+    private final PointSelectorGUI container;
     private final JSlider pointerDimension, contrastSlider;
     private final JButton changeButton, invertButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
     private float contrast = 0.0f;
-    public CornerSelectorSettingsGUI(final CornerSelectorGUI container){
+    public PointSelectorSettingsGUI(final PointSelectorGUI container){
         super("Settings");
         this.container = container;
         this.pointerColor = new ColorComboBox();
@@ -52,6 +49,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     private void setCornerComboBox(){
         this.indexFrom.removeAllItems();
         this.indexTo.removeAllItems();
+
         for(int i = 1; i <=this.container.getImage().getPoints().length; i++){
             this.indexFrom.addItem(i);
             this.indexTo.addItem(i);
@@ -59,10 +57,10 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
     }
 
     private void setActualPointerStyles() {
-        this.pointerColor.setSelectedItem(this.container.getCornerPanel().getPointerColor());
-        this.selectedPointerColor.setSelectedItem(this.container.getCornerPanel().getSelectedPointerColor());
-        this.textColor.setSelectedItem(this.container.getCornerPanel().getTextColor());
-        this.pointerDimension.setValue(this.container.getCornerPanel().getPointerDimension());
+        this.pointerColor.setSelectedItem(this.container.getCanvas().getPointerColor());
+        this.selectedPointerColor.setSelectedItem(this.container.getCanvas().getSelectedPointerColor());
+        this.textColor.setSelectedItem(this.container.getCanvas().getTextColor());
+        this.pointerDimension.setValue(this.container.getCanvas().getPointerDimension());
     }
 
     @Override
@@ -79,18 +77,18 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
         });
         this.pointerColor.addActionListener(e -> {
             Color selectedColor = pointerColor.getSelectedColor();
-            container.setPointerColor(selectedColor);
+            this.container.getCanvas().setPointerColor(selectedColor);
         });
         this.selectedPointerColor.addActionListener(e -> {
             Color selectedColor = selectedPointerColor.getSelectedColor();
-            container.setSelectedPointerColor(selectedColor);
+            this.container.getCanvas().setSelectedPointerColor(selectedColor);
         });
         this.textColor.addActionListener(e -> {
             Color selectedColor = textColor.getSelectedColor();
-            container.setTextColor(selectedColor);
+            this.container.getCanvas().setTextColor(selectedColor);
         });
         this.pointerDimension.addChangeListener(e->{
-            this.container.getCornerPanel().setPointerDimension(pointerDimension.getValue());
+            this.container.getCanvas().setPointerDimension(pointerDimension.getValue());
         });
         this.changeButton.addActionListener(e -> {
             int from = (int)indexFrom.getSelectedItem();
@@ -102,7 +100,7 @@ public class CornerSelectorSettingsGUI extends Frame implements StandardGUI {
 
         this.contrastSlider.addChangeListener(event->{
             this.contrast  = this.contrastSlider.getValue()/10.0f;
-            this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getOriginalImage(), this.contrast));
+            //this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getOriginalImage(), this.contrast));
             this.container.repaint();
         });
 

@@ -86,6 +86,7 @@ public class Alignment implements Runnable{
     }
 
     private void manual(){
+        assert this.targetImage.getProcessor() != null;
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         IJ.log("[MANUAL] Start alignment.");
@@ -131,7 +132,7 @@ public class Alignment implements Runnable{
         this.alignedImages.forEach(i -> i.getAlignedImage().show());
         //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
-        this.alignedImages.clear();
+        //this.alignedImages.clear();
     }
 
     /**

@@ -29,13 +29,25 @@ public class ImagePoints extends ImagePlus{
         this.pointList = new ArrayList<>(5);
     }
 
-    public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress){
+    public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress) {
         this(path);
         this.rows = rows;
         this.cols = cols;
         this.type = type;
         this.address = matAddress;
-        IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: "+ this.cols + " Address: " + this.address);
+        IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
+    }
+    private void detectType(){
+        final ImageProcessor imp = this.getProcessor();
+        int bitDepth = imp.getBitDepth();
+        int numPixels = imp.getPixelCount();
+        if (bitDepth == 8 && numPixels == imp.getWidth() * imp.getHeight()) {
+            this.type = CvType.CV_8UC1;
+        } else if (bitDepth == 24 && numPixels == imp.getWidth() * imp.getHeight() * 3) {
+            this.type = CvType.CV_8UC3;
+            this.RBG = true;
+        }
+        System.gc();
     }
     public ImagePoints(final String path, final Mat mat){
         this(path);

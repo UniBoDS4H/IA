@@ -1,4 +1,4 @@
-package com.ds4h.view.cornerSelectorGUI;
+package com.ds4h.view.pointSelectorGUI;
 
 import com.ds4h.model.imagePoints.ImagePoints;
 
