@@ -58,10 +58,13 @@ public class SaveImages {
 
 
     public static void save(final List<ImagePlus> images, final String path){
+        images.stream().parallel().forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
+        /*
         for(final ImagePlus image : images){
             System.out.println(image.getTitle());
             IJ.save(image, path+"/"+image.getTitle());
         }
+         */
     }
 
     public static void save(final ImagePlus image, final String path){

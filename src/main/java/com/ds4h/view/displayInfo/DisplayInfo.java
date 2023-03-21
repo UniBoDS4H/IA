@@ -45,9 +45,7 @@ public final class DisplayInfo {
     }
 
     public static int getTextSize(int size){
-        int s = (int)(size*DisplayInfo.getDisplaySize().getWidth()/400);
-        System.out.println(s);
-        return s;
+        return (int)(size*DisplayInfo.getDisplaySize().getWidth()/400);
     }
 
 }

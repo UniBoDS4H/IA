@@ -5,14 +5,12 @@ import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.reuse.ReuseSources;
 import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.view.cornerSelectorGUI.MenuItem;
+import com.ds4h.view.pointSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PointController {
     private final PointManager pointManager;

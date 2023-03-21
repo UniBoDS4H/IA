@@ -1,11 +1,12 @@
-package com.ds4h.view.cornerSelectorGUI;
+package com.ds4h.view.pointSelectorGUI;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public class CornerSelectorMenuGUI extends JPanel {
+public class PointSelectorMenuGUI extends JPanel {
     private final PointController pointController;
     private final ImagePoints image;
     private final JButton deleteButton;
@@ -13,9 +14,9 @@ public class CornerSelectorMenuGUI extends JPanel {
     private final JButton copyButton;
     private final JButton cornerSetting;
     private final JComboBox<MenuItem> copyToCombo;
-    private final CornerSelectorGUI container;
-    private final CornerSelectorSettingsGUI settings;
-    public CornerSelectorMenuGUI(PointController controller, ImagePoints image, CornerSelectorGUI container){
+    private final PointSelectorGUI container;
+    private final PointSelectorSettingsGUI settings;
+    public PointSelectorMenuGUI(PointController controller, ImagePoints image, PointSelectorGUI container){
         this.container = container;
         this.image = image;
         this.pointController = controller;
@@ -40,7 +41,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.cornerSetting.setContentAreaFilled(false);
         this.cornerSetting.setOpaque(false);
         this.cornerSetting.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.settings = new CornerSelectorSettingsGUI(container);
+        this.settings = new PointSelectorSettingsGUI(container);
 
         this.addComponents();
         this.addListeners();
@@ -48,17 +49,19 @@ public class CornerSelectorMenuGUI extends JPanel {
     public void addListeners() {
         this.deleteButton.addActionListener(e->{
             container.getSelectedPoints().forEach(image::removePoint);
-            container.updatePointsForAlignment();
+            //container.updatePointsForAlignment();
             container.clearSelectedPoints();
-            container.repaintPanel();
+            container.repaintPoints();
+
         });
         this.copyButton.addActionListener(e->{
             final MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
             assert item != null;
+
             if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
-                JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Some of the points are out of the selected image, they have not been copied");
+                JOptionPane.showMessageDialog(this, "Some of the points are out of the selected image, they have not been copied");
             }else{
-                JOptionPane.showMessageDialog(CornerSelectorMenuGUI.this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
+                JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
             }
         });
         this.cornerSetting.addActionListener(e->{
@@ -82,6 +85,7 @@ public class CornerSelectorMenuGUI extends JPanel {
         this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
         this.copyToCombo.setEnabled(this.container.getSelectedPoints().size()!=0);
         this.deleteButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+
     }
 
     public void updateSettings() {

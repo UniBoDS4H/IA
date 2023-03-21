@@ -2,7 +2,8 @@ package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.view.cornerSelectorGUI.CornerSelectorGUI;
+import com.ds4h.view.pointSelectorGUI.PointSelectorCanvas;
+import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 
 import javax.swing.*;
@@ -20,14 +21,14 @@ public class PreviewListItem extends JPanel {
     private final PointController controller;
     private final ImagePoints image;
     private final PreviewImagesPane container;
-    private final CornerSelectorGUI cornerSelector;
+    private final PointSelectorGUI pointSelector;
     private final JPanel centerPanel;
     PreviewListItem(final PointController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
         this.container = container;
         this.controller = controller;
         this.centerPanel = new JPanel();
         this.image = image;
-        this.cornerSelector = new CornerSelectorGUI(this.image, this.controller, this.container.getMainMenu());
+        this.pointSelector = new PointSelectorGUI(image, controller);
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
@@ -39,7 +40,7 @@ public class PreviewListItem extends JPanel {
         this.deleteButton.setContentAreaFilled(false);
         this.deleteButton.setOpaque(false);
         this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getBufferedImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+        this.imageLabel = new JLabel(new ImageIcon(this.image.resize(40,40,"bilinear").getBufferedImage()));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
@@ -84,7 +85,8 @@ public class PreviewListItem extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                cornerSelector.showDialog();
+                pointSelector.show();
+                //cornerSelector.showDialog();
             }
         });
     }

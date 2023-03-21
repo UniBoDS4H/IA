@@ -46,16 +46,17 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                     if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatImage().size());
                         System.gc();
                         Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
                      }else{
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatImage().size());
                         System.gc();
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
                     }
                     System.gc();
-                    final ImagePlus finalImage = ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip);
-                    return Optional.of(new AlignedImage(transformationMatrix, finalImage));
+                    return Optional.of(new AlignedImage(transformationMatrix, ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip)));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
                             "inside the target image.");
