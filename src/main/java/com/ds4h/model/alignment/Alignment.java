@@ -122,11 +122,9 @@ public class Alignment implements Runnable{
         this.targetImage = null;
         this.imagesToAlign.clear();
         images.forEach((key, value) -> {
+            value.getMatImage().release();
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatImage().size());
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
-            images.remove(key, value);
-            key.getMatImage().release();
-            key = null;
             System.gc();
         });
         images.clear();
