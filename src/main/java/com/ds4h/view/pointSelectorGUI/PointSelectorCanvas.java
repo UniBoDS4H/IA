@@ -23,6 +23,9 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
     private Color pointerColor;
+    private boolean magnificated;
+    private double firstMagnification;
+    private Rectangle defaultRect;
 
     public PointSelectorCanvas(ImagePoints image) {
         super(image);
@@ -90,8 +93,6 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
             public void mouseClicked(MouseEvent e) {}
         });
     }
-
-
 
     private void moveAllSelected(Point oldPoint, Point newPoint){
         int xGap = (int)(newPoint.x-oldPoint.x);
@@ -182,4 +183,20 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         return this.pointerDimension;
     }
 
+    @Override
+    public void zoomOut(int sx, int sy) {
+        if(this.getMagnification() > this.firstMagnification){
+            super.zoomOut(sx, sy);
+        }
+    }
+
+    @Override
+    public void setMagnification(double magnification) {
+        if(!this.magnificated){
+            this.firstMagnification = magnification;
+            this.magnificated = true;
+        }
+        magnification = Math.max(magnification, this.firstMagnification);
+        super.setMagnification(magnification);
+    }
 }
