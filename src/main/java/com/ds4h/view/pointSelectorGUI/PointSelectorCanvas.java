@@ -15,7 +15,7 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     private final int DIMENSION_CONSTANT = (this.imageWidth + this.imageHeight)/500;
     private final ImagePoints image;
     private Color textColor;
-    private int pointerDimension = 5;
+    private int pointerDimension;
     private Color selectedPointerColor;
     private final Overlay overlay;
 
@@ -33,6 +33,10 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
         this.setOverlay(overlay);
         this.overlay.selectable(false);
         this.image = image;
+        this.setPointerColor(Color.RED);
+        this.setSelectedPointerColor(Color.YELLOW);
+        this.setTextColor(Color.YELLOW);
+        this.setPointerDimension(5);
         this.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
