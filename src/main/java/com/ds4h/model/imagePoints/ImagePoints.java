@@ -2,6 +2,7 @@ package com.ds4h.model.imagePoints;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
