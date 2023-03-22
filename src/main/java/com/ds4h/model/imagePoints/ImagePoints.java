@@ -131,6 +131,7 @@ public class ImagePoints extends ImagePlus{
         }
     }
 
+
     public String getPath(){
         return this.path;
     }

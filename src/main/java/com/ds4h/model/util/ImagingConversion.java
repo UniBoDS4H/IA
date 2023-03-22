@@ -14,10 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.ShortPointer;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.highgui.HighGui;
 import org.opencv.highgui.ImageWindow;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -99,10 +96,25 @@ public class ImagingConversion {
 
     private static ImageProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
-        IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix.type());
+
+        Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
+        matrix.convertTo(newMatrix, CvType.CV_16U);
+        Imgproc.cvtColor(newMatrix, newMatrix, Imgproc.COLOR_BGR2GRAY);
+        Core.multiply(newMatrix, new Scalar(256), newMatrix);
+        //newMatrix = newMatrix.t();
+
+        IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + newMatrix);
+        matrix.release();
+        //newMatrix.release();
+        short[] pixels = new short[width*height];
+        newMatrix.get(0,0, pixels);
+        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
+        shortProcessor.setPixels(pixels);
+
+        /*
+
         final int chunkWidth = 100; // define the width of each chunk
         final int chunkHeight = 100; // define the height of each chunk
-        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
         for (int y = 0; y < height; y += chunkHeight) {
             for (int x = 0; x < width; x += chunkWidth) {
                 final int chunkEndX = Math.min(x + chunkWidth, width);
@@ -118,7 +130,9 @@ public class ImagingConversion {
                 }
             }
         }
-        matrix.release();
+         */
+        newMatrix.release();
+        //matrix.release();
         shortProcessor.setMinAndMax(min, max);
         IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
         shortProcessor.setLut(lut);
