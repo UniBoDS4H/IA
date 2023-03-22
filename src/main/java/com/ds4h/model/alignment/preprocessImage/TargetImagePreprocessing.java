@@ -58,7 +58,7 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points.toList());
                 System.gc();
-                s.set(j, new AbstractMap.SimpleEntry<>(img,target));
+                s.set(j, new AbstractMap.SimpleEntry<>(img, target));
             });
         });
         IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");
@@ -68,7 +68,8 @@ public class TargetImagePreprocessing {
         s.get(s.size()-1).getValue().setProcessor(ImagingConversion.matToImagePlus(s.get(s.size()-1).getValue().getMatImage(),
                         s.get(s.size()-1).getValue().getTitle(), ip)
                 .getProcessor());
-        IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatImage().size());
+        IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
+        IJ.log("[AUTOMATIC PREPROCESS] BitDepth: " + s.get(s.size()-1).getValue().getProcessor().getBitDepth());
         return s.get(s.size()-1).getValue();
     }
 
@@ -99,6 +100,7 @@ public class TargetImagePreprocessing {
         IJ.log("[PREPROCESS] Before copy:  " + target.getMatImage());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
         IJ.log("[PREPROCESS] After copy: " + alignedImage);
+        target.getMatImage().release();
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }

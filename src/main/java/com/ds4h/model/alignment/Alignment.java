@@ -96,8 +96,8 @@ public class Alignment implements Runnable{
         IJ.log("[MANUAL] End alignment.");
         this.imagesToAlign.clear();
         this.targetImage = null;
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        //this.alignedImages.clear();
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        this.alignedImages.clear();
     }
 
     private void auto(){
@@ -122,11 +122,9 @@ public class Alignment implements Runnable{
         this.targetImage = null;
         this.imagesToAlign.clear();
         images.forEach((key, value) -> {
+            value.getMatImage().release();
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatImage().size());
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
-            images.remove(key, value);
-            key.getMatImage().release();
-            key = null;
             System.gc();
         });
         images.clear();

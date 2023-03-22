@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SURFDetector extends PointDetector {
 
-    private final SURF detector = SURF.create();
+    private final SURF detector = SURF.create(100);
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
     public SURFDetector(){
         super();

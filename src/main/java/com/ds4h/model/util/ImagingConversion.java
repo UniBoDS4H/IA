@@ -70,17 +70,54 @@ public class ImagingConversion {
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final LUT lut){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
         final ColorProcessor cp = new ColorProcessor(width, height);
-        IntStream.range(0, width).forEach(col -> {
-            IntStream.range(0, height).forEach(row -> {
-                final double[] pixelValues = matrix.get(row, col); // read pixel values from the Mat object
-                cp.set(col, row,
-                        (lut.getRed((int) pixelValues[2]) << 16 |
-                                lut.getGreen((int) pixelValues[1]) << 8 |
-                                lut.getBlue((int) pixelValues[0])) );
-            });
-        });
+        int chunkWidth = 100; // define the width of each chunk
+        int chunkHeight = 100; // define the height of each chunk
+
+        for (int y = 0; y < height; y += chunkHeight) {
+            for (int x = 0; x < width; x += chunkWidth) {
+                int chunkEndX = Math.min(x + chunkWidth, width);
+                int chunkEndY = Math.min(y + chunkHeight, height);
+
+                for (int row = y; row < chunkEndY; row++) {
+                    for (int col = x; col < chunkEndX; col++) {
+                        final double[] pixelValues = matrix.get(row, col);
+                        cp.set(col, row,
+                                (lut.getRed((int) pixelValues[2]) << 16 |
+                                        lut.getGreen((int) pixelValues[1]) << 8 |
+                                        lut.getBlue((int) pixelValues[0])) );
+                    }
+                }
+            }
+        }
+        matrix.release();
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
+        return cp;
+    }
+
+    private static ShortProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final ColorModel lut){
+        IJ.log("[MAKE COLORPROCESSOR] Creating the ShortProcessor using the LUT");
+        int chunkWidth = 100; // define the width of each chunk
+        int chunkHeight = 100; // define the height of each chunk
+        final ShortProcessor cp = new ShortProcessor(width, height);
+        for (int y = 0; y < height; y += chunkHeight) {
+            for (int x = 0; x < width; x += chunkWidth) {
+                int chunkEndX = Math.min(x + chunkWidth, width);
+                int chunkEndY = Math.min(y + chunkHeight, height);
+
+                for (int row = y; row < chunkEndY; row++) {
+                    for (int col = x; col < chunkEndX; col++) {
+                        final double[] pixelValues = matrix.get(row, col);
+                        cp.set(col, row,
+                                (lut.getRed((int) pixelValues[2]) << 16 |
+                                        lut.getGreen((int) pixelValues[1]) << 8 |
+                                        lut.getBlue((int) pixelValues[0])) );
+                    }
+                }
+            }
+        }
+        matrix.release();
+        IJ.log("[MAKE COLORPROCESSOR] End of creation ShortProcessor");
         return cp;
     }
 
@@ -100,16 +137,20 @@ public class ImagingConversion {
     public static ImagePlus matToImagePlus(final Mat matrix, final String fileName, final ImageProcessor ip){
         if(!matrix.empty() && !fileName.isEmpty()){
             //final ImagePlus finalImage = new ImagePlus(fileName);
-            if(matrix.type() == CvType.CV_8UC3){
-                java.lang.Runtime.getRuntime().freeMemory();
+            if(ip instanceof ColorProcessor){
                 return new ImagePlus(fileName,
                         ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
-            }else if(matrix.type() == CvType.CV_8UC1){
-                return new ImagePlus(fileName, ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
-            }else{
-                throw new IllegalArgumentException("This program do not support your type of image.");
+            }else if(ip instanceof ShortProcessor){
+                return new ImagePlus(fileName,
+                        ImagingConversion.makeShortProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
+            }else if(ip instanceof FloatProcessor){
+                return new ImagePlus(fileName,
+                        ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
+            }else if(ip instanceof ByteProcessor){
+                return new ImagePlus(fileName,
+                        ImagingConversion.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
             }
-            //TODO: FIX THIS
+            return null;
         }else{
             throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
         }

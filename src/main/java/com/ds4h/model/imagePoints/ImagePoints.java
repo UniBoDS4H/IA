@@ -17,9 +17,8 @@ public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
     private final String path;
     private int rows, cols;
-    private int type = 0;
-    private boolean RBG = false;
     private long address=-1;
+    private Size matSize = null;
     private Mat matrix = null;
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
@@ -33,7 +32,6 @@ public class ImagePoints extends ImagePlus{
         this(path);
         this.rows = rows;
         this.cols = cols;
-        this.type = type;
         this.address = matAddress;
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
@@ -43,6 +41,8 @@ public class ImagePoints extends ImagePlus{
         matrix = mat;
         this.rows = mat.rows();
         this.cols = mat.cols();
+        this.matSize = matrix.size();
+        IJ.log("[IMAGE POINTS] Image created");
     }
 
     public Point[] getPoints(){
@@ -104,6 +104,10 @@ public class ImagePoints extends ImagePlus{
 
     public int getCols(){
         return cols;
+    }
+
+    public Size getMatSize(){
+        return this.matSize;
     }
 
     public Mat getOriginalMatImage(){

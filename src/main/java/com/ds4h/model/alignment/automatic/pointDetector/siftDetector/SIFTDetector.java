@@ -10,7 +10,7 @@ import java.util.List;
 
 public class SIFTDetector extends PointDetector {
 
-    private final SIFT sift = SIFT.create();
+    private final SIFT sift = SIFT.create(100);
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
     private static final double THRESHOLD = 300;
     @Override
