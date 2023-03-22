@@ -97,21 +97,26 @@ public class ImagingConversion {
     private static ImageProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
 
-        Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
+        final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
+        final short[] pixels = new short[width*height];
+        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
+        //Convert the image in to 16 bit with one channel
         matrix.convertTo(newMatrix, CvType.CV_16U);
         Imgproc.cvtColor(newMatrix, newMatrix, Imgproc.COLOR_BGR2GRAY);
+        //Convert all the values from 8 bit to 16 bit
         Core.multiply(newMatrix, new Scalar(256), newMatrix);
-        //newMatrix = newMatrix.t();
-
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + newMatrix);
-        matrix.release();
-        //newMatrix.release();
-        short[] pixels = new short[width*height];
-        newMatrix.get(0,0, pixels);
-        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
-        shortProcessor.setPixels(pixels);
+        matrix.release(); // release the old matrix
+        newMatrix.get(0,0, pixels); // get all the values
+        shortProcessor.setPixels(pixels); // set the pixels
+        newMatrix.release();
+        shortProcessor.setMinAndMax(min, max);
+        IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
+        shortProcessor.setLut(lut);
+        return shortProcessor;
+    }
 
-        /*
+            /*
 
         final int chunkWidth = 100; // define the width of each chunk
         final int chunkHeight = 100; // define the height of each chunk
@@ -131,13 +136,6 @@ public class ImagingConversion {
             }
         }
          */
-        newMatrix.release();
-        //matrix.release();
-        shortProcessor.setMinAndMax(min, max);
-        IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
-        shortProcessor.setLut(lut);
-        return shortProcessor;
-    }
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
