@@ -8,15 +8,13 @@ import com.ds4h.model.util.saveProject.SaveImages;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.plugin.LutLoader;
 import ij.process.*;
 import org.apache.commons.io.FilenameUtils;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.ShortPointer;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.highgui.HighGui;
 import org.opencv.highgui.ImageWindow;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -72,7 +70,6 @@ public class ImagingConversion {
         final ColorProcessor cp = new ColorProcessor(width, height);
         int chunkWidth = 100; // define the width of each chunk
         int chunkHeight = 100; // define the height of each chunk
-
         for (int y = 0; y < height; y += chunkHeight) {
             for (int x = 0; x < width; x += chunkWidth) {
                 int chunkEndX = Math.min(x + chunkWidth, width);
@@ -85,41 +82,60 @@ public class ImagingConversion {
                                 (lut.getRed((int) pixelValues[2]) << 16 |
                                         lut.getGreen((int) pixelValues[1]) << 8 |
                                         lut.getBlue((int) pixelValues[0])) );
+
                     }
                 }
             }
         }
         matrix.release();
+        cp.setLut(lut);
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
     }
 
-    private static ShortProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final ColorModel lut){
-        IJ.log("[MAKE COLORPROCESSOR] Creating the ShortProcessor using the LUT");
-        int chunkWidth = 100; // define the width of each chunk
-        int chunkHeight = 100; // define the height of each chunk
-        final ShortProcessor cp = new ShortProcessor(width, height);
+    private static ImageProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
+        IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
+
+        final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
+        final short[] pixels = new short[width*height];
+        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
+        //Convert the image in to 16 bit with one channel
+        matrix.convertTo(newMatrix, CvType.CV_16U);
+        Imgproc.cvtColor(newMatrix, newMatrix, Imgproc.COLOR_BGR2GRAY);
+        //Convert all the values from 8 bit to 16 bit
+        Core.multiply(newMatrix, new Scalar(256), newMatrix);
+        IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + newMatrix);
+        matrix.release(); // release the old matrix
+        newMatrix.get(0,0, pixels); // get all the values
+        shortProcessor.setPixels(pixels); // set the pixels
+        newMatrix.release();
+        shortProcessor.setMinAndMax(min, max);
+        IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
+        shortProcessor.setLut(lut);
+        return shortProcessor;
+    }
+
+            /*
+
+        final int chunkWidth = 100; // define the width of each chunk
+        final int chunkHeight = 100; // define the height of each chunk
         for (int y = 0; y < height; y += chunkHeight) {
             for (int x = 0; x < width; x += chunkWidth) {
-                int chunkEndX = Math.min(x + chunkWidth, width);
-                int chunkEndY = Math.min(y + chunkHeight, height);
-
+                final int chunkEndX = Math.min(x + chunkWidth, width);
+                final int chunkEndY = Math.min(y + chunkHeight, height);
                 for (int row = y; row < chunkEndY; row++) {
                     for (int col = x; col < chunkEndX; col++) {
                         final double[] pixelValues = matrix.get(row, col);
-                        cp.set(col, row,
-                                (lut.getRed((int) pixelValues[2]) << 16 |
+                        shortProcessor.set(col, row,
+                                (lut.getRed((int) pixelValues[2]) << 8) |
                                         lut.getGreen((int) pixelValues[1]) << 8 |
-                                        lut.getBlue((int) pixelValues[0])) );
+                                        lut.getBlue((int) pixelValues[0]) << 8);
                     }
                 }
             }
         }
-        matrix.release();
-        IJ.log("[MAKE COLORPROCESSOR] End of creation ShortProcessor");
-        return cp;
-    }
+         */
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
@@ -136,13 +152,17 @@ public class ImagingConversion {
 
     public static ImagePlus matToImagePlus(final Mat matrix, final String fileName, final ImageProcessor ip){
         if(!matrix.empty() && !fileName.isEmpty()){
-            //final ImagePlus finalImage = new ImagePlus(fileName);
             if(ip instanceof ColorProcessor){
                 return new ImagePlus(fileName,
                         ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
             }else if(ip instanceof ShortProcessor){
-                return new ImagePlus(fileName,
-                        ImagingConversion.makeShortProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
+                final ImagePlus i = new ImagePlus(fileName,
+                        ImagingConversion.makeShortProcessor(matrix, matrix.cols(), matrix.rows(),
+                                ip.getLut(),
+                                ip.getMin(),
+                                ip.getMax()));
+                i.setLut(ip.getLut());
+                return i;
             }else if(ip instanceof FloatProcessor){
                 return new ImagePlus(fileName,
                         ImagingConversion.makeColorProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut()));
