@@ -67,5 +67,23 @@ public class AlignedImage {
     public ImagePlus getAlignedImage(){
         return this.alignedImage;
     }
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AlignedImage that = (AlignedImage) o;
+        return Objects.equals(alignedImage, that.alignedImage) && Objects.equals(registrationMatrix, that.registrationMatrix);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(alignedImage, registrationMatrix);
+    }
+
 
 }

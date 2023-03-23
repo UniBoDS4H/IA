@@ -50,7 +50,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.pointController = pointController;
         this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
-        this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
+        this.configureImagesGUI = null;//new ConfigureImagesGUI(this.controller);
         this.panel = new JLayeredPane();
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");

@@ -10,6 +10,7 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
@@ -20,6 +21,10 @@ import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.ImagePlus;
+import ij.plugin.ImageCalculator;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -30,6 +35,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
@@ -356,7 +362,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     //new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
-                    new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
+                    //new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
+                    ImageCalculator ic = new ImageCalculator();
+                    List<AlignedImage> im = ((AutomaticAlignmentController) alignmentControllerInterface).getAlignedImages();
+                    // Sovrappone le due immagini e crea una nuova immagine
+                    ImagePlus overlayImage = ic.run("add", im.get(0).getAlignedImage(), im.get(1).getAlignedImage());
+                    new AlignmentOutputGUI(overlayImage, alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
                     //final OverlapImagesGUI overlapImagesGUI = new OverlapImagesGUI(alignmentControllerInterface.name(),this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
                     //overlapImagesGUI.showDialog();
                 }
