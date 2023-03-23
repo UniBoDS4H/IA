@@ -2,16 +2,14 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -56,7 +54,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
                     System.gc();
-                    return Optional.of(new AlignedImage(transformationMatrix, ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip)));
+                    return Optional.of(new AlignedImage(transformationMatrix, MatImagePlusConverter.convert(alignedImage, imageToShift.getName(), ip)));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
                             "inside the target image.");

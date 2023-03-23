@@ -3,6 +3,7 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.calib3d.Calib3d;
@@ -22,7 +23,8 @@ public class AffineAlignment implements AlignmentAlgorithm{
                 final Mat alignedImage = new Mat();
                 final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                 Imgproc.warpAffine(imageToShiftMat, alignedImage, transformationMatrix, targetImage.getMatImage().size());
-                final Optional<ImagePlus> finalImage = Optional.of(ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip));
+                final Optional<ImagePlus> finalImage = Optional.of(MatImagePlusConverter.convert(alignedImage,
+                        imageToShift.getName(), ip));
                 return finalImage.map(imagePlus -> new AlignedImage(transformationMatrix, imagePlus));
         }else {
             throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
