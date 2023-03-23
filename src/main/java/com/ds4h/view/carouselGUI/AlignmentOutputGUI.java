@@ -2,62 +2,90 @@ package com.ds4h.view.carouselGUI;
 
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
+import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
+import com.ds4h.view.standardGUI.StandardCanvas;
+import com.sun.xml.internal.bind.api.impl.NameConverter;
 import ij.ImagePlus;
 import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class AlignmentOutputGUI extends StackWindow {
     private final String algorithm;
     private final BunwarpjGUI bunwarpjGUI;
-    private final JMenuBar menuBar;
-    private final JMenu settings;
-    private final JMenu reuse;
-    private final JMenu save;
-    private final JMenuItem reuseItem;
-    private final JMenuItem overlappedItem;
-    private final JMenuItem saveItem;
+    private final MenuBar menuBar;
+    private final Menu settings;
+    private final Menu reuse;
+    private final Menu save;
+    private final MenuItem reuseItem;
+    private final MenuItem overlappedItem;
+    private final MenuItem saveItem;
+    private final MenuItem settingsImages;
     private final JPanel panel;
-    private final ImageCanvas canvas;
+    private final StandardCanvas canvas;
     private final SaveImagesGUI saveGui;
     private final ImageController controller;
+    private final ConfigureImagesGUI configureImagesGUI;
 
     public AlignmentOutputGUI(final ImagePlus imp, final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller) {
-        super(imp);
-        this.canvas = this.getCanvas();
+        super(imp, new StandardCanvas(imp));
+        this.canvas = (StandardCanvas)this.getCanvas();
+        this.removeAll();
+        this.setLayout(new BorderLayout());
+        this.controller = controller;
+        this.configureImagesGUI = new ConfigureImagesGUI(controller.getAlignedImages(), this);
         this.algorithm = algorithm;
         this.bunwarpjGUI = bunwarpjGUI;
-        this.controller = controller;
         this.saveGui = new SaveImagesGUI(this.controller);
         this.panel = new JPanel();
         this.panel.setLayout(new BorderLayout());
-        this.menuBar = new JMenuBar();
-        this.settings = new JMenu("Settings");
-        this.reuse = new JMenu("Reuse");
-        this.save = new JMenu("Save");
-        this.reuseItem = new JMenuItem("Reuse as resource");
-        this.overlappedItem = new JMenuItem("View Overlapped");
-        this.saveItem = new JMenuItem("Save Project");
+        this.menuBar = new MenuBar();
+        this.settingsImages = new MenuItem("Configure images");
+        this.settings = new Menu("Settings");
+        this.reuse = new Menu("Reuse");
+        this.save = new Menu("Save");
+        this.reuseItem = new MenuItem("Reuse as resource");
+        this.overlappedItem = new MenuItem("View Overlapped");
+        this.saveItem = new MenuItem("Save Project");
         this.addComponents();
         this.addListeners();
     }
     public void addComponents() {
-        this.removeAll();
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
         this.menuBar.add(this.reuse);
+        this.settings.add(this.settingsImages);
         this.settings.add(this.overlappedItem);
         this.save.add(this.saveItem);
         this.reuse.add(this.reuseItem);
         this.panel.add(this.canvas, BorderLayout.CENTER);
-        this.panel.add(this.menuBar, BorderLayout.NORTH);
-        this.panel.add(sliceSelector, BorderLayout.PAGE_END);
+        this.setMenuBar(this.menuBar);
+        //this.panel.add(sliceSelector, BorderLayout.PAGE_END);
         this.add(this.panel, BorderLayout.CENTER);
         this.pack();
     }
     public void addListeners() {
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                checkWindowSize();
+            }
+
+            private void checkWindowSize() {
+                setPreferredSize(getSize());
+            }
+        });
+
+        this.settingsImages.addActionListener(event -> {
+            this.configureImagesGUI.showDialog();
+
+        });
+
+        this.pack();
         /*this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.overlappedItem.addActionListener(event -> {
             new OverlapImagesGUI(this.controller.name() ,this.bunwarpjGUI, this.controller, this.pointController, this.previewImagesPane).showDialog();

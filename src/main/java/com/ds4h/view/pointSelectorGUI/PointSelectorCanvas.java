@@ -1,6 +1,7 @@
 package com.ds4h.view.pointSelectorGUI;
 
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.view.standardGUI.StandardCanvas;
 import ij.gui.*;
 import org.opencv.core.Point;
 import java.awt.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
+public class PointSelectorCanvas extends StandardCanvas implements MouseListener {
     private final int DIMENSION_CONSTANT = (this.imageWidth + this.imageHeight)/500;
     private final ImagePoints image;
     private Color textColor;
@@ -23,9 +24,6 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
     private Color pointerColor;
-    private boolean magnificated;
-    private double firstMagnification;
-    private Rectangle defaultRect;
 
     public PointSelectorCanvas(ImagePoints image) {
         super(image);
@@ -185,22 +183,5 @@ public class PointSelectorCanvas extends ImageCanvas implements MouseListener {
     }
     public int getPointerDimension(){
         return this.pointerDimension;
-    }
-
-    @Override
-    public void zoomOut(int sx, int sy) {
-        if(this.getMagnification() > this.firstMagnification){
-            super.zoomOut(sx, sy);
-        }
-    }
-
-    @Override
-    public void setMagnification(double magnification) {
-        if(!this.magnificated){
-            this.firstMagnification = magnification;
-            this.magnificated = true;
-        }
-        magnification = Math.max(magnification, this.firstMagnification);
-        super.setMagnification(magnification);
     }
 }

@@ -13,6 +13,7 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Toolbar;
+import ij.plugin.ImageCalculator;
 import ij.plugin.PlugIn;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
