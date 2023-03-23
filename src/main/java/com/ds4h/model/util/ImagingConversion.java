@@ -67,28 +67,11 @@ public class ImagingConversion {
 
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height, final LUT lut){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
+        final byte[] pixels = new byte[width*height*3];
         final ColorProcessor cp = new ColorProcessor(width, height);
-        int chunkWidth = 100; // define the width of each chunk
-        int chunkHeight = 100; // define the height of each chunk
-        for (int y = 0; y < height; y += chunkHeight) {
-            for (int x = 0; x < width; x += chunkWidth) {
-                int chunkEndX = Math.min(x + chunkWidth, width);
-                int chunkEndY = Math.min(y + chunkHeight, height);
-
-                for (int row = y; row < chunkEndY; row++) {
-                    for (int col = x; col < chunkEndX; col++) {
-                        final double[] pixelValues = matrix.get(row, col);
-                        cp.set(col, row,
-                                (lut.getRed((int) pixelValues[2]) << 16 |
-                                        lut.getGreen((int) pixelValues[1]) << 8 |
-                                        lut.getBlue((int) pixelValues[0])) );
-
-                    }
-                }
-            }
-        }
+        matrix.get(0,0, pixels);
         matrix.release();
-        cp.setLut(lut);
+        cp.setPixels(pixels);
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
@@ -96,23 +79,23 @@ public class ImagingConversion {
 
     private static ImageProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
-
-        final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
+        // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
         final short[] pixels = new short[width*height];
         final ImageProcessor shortProcessor = new ShortProcessor(width, height);
         //Convert the image in to 16 bit with one channel
-        matrix.convertTo(newMatrix, CvType.CV_16U);
-        Imgproc.cvtColor(newMatrix, newMatrix, Imgproc.COLOR_BGR2GRAY);
+        matrix.convertTo(matrix, CvType.CV_16U);
+        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         //Convert all the values from 8 bit to 16 bit
-        Core.multiply(newMatrix, new Scalar(256), newMatrix);
-        IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + newMatrix);
-        matrix.release(); // release the old matrix
-        newMatrix.get(0,0, pixels); // get all the values
+        Core.multiply(matrix, new Scalar(256), matrix);
+        IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
+        //matrix.release(); // release the old matrix
+        matrix.get(0,0, pixels); // get all the values
         shortProcessor.setPixels(pixels); // set the pixels
-        newMatrix.release();
+        matrix.release();
         shortProcessor.setMinAndMax(min, max);
         IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
         shortProcessor.setLut(lut);
+        System.gc();
         return shortProcessor;
     }
 
@@ -139,12 +122,19 @@ public class ImagingConversion {
 
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
+        final byte[] pixels = new byte[width*height];
         final ByteProcessor ip = new ByteProcessor(width, height);
+        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+        IJ.log("[MAKE BYTEPROCESSOR] Matrix: " + matrix);
+        matrix.get(0,0, pixels);
+        ip.setPixels(pixels);
+        /*
         IntStream.range(0, width).forEach(col -> {
             IntStream.range(0, height).forEach(row -> {
                 ip.putPixelValue(col, row, matrix.get(row, col)[0]);
             });
         });
+         */
         System.gc();
         IJ.log("[MAKE BYTEPROCESSOR] Finish creation ByteProcessor");
         return ip;

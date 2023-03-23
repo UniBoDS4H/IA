@@ -129,6 +129,8 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
             IJ.log("[AUTOMATIC] LUT: " + key.getProcessor().getLut().getMapSize());
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            key = null;
+            value = null;
             System.gc();
         });
         images.clear();
