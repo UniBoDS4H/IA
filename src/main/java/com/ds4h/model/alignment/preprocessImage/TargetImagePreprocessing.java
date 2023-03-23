@@ -4,6 +4,7 @@ import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.Pair;
+import com.ds4h.model.util.converter.MatImagePlusConverter;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
@@ -32,9 +33,8 @@ public class TargetImagePreprocessing {
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
-        target.setProcessor(ImagingConversion.matToImagePlus(target.getMatImage(), title, ip)
+        target.setProcessor(MatImagePlusConverter.convert(target.getMatImage(), title, ip)
                 .getProcessor());
-        //target.show();
         return target;
     }
 
@@ -65,7 +65,7 @@ public class TargetImagePreprocessing {
         System.gc();
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));
-        s.get(s.size()-1).getValue().setProcessor(ImagingConversion.matToImagePlus(s.get(s.size()-1).getValue().getMatImage(),
+        s.get(s.size()-1).getValue().setProcessor(MatImagePlusConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
                         s.get(s.size()-1).getValue().getTitle(), ip)
                 .getProcessor());
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
