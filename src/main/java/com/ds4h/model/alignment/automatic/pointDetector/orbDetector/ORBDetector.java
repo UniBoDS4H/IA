@@ -14,7 +14,7 @@ public class ORBDetector extends PointDetector {
     private final BFMatcher matcher = BFMatcher.create();
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();

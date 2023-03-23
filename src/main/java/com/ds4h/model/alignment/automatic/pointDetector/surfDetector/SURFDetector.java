@@ -3,10 +3,7 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
-import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.ORB;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.xfeatures2d.SURF;
 import java.util.List;
 
@@ -19,7 +16,7 @@ public class SURFDetector extends PointDetector {
     }
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         System.gc();
         // Detect the keypoints and compute the descriptors for both images:
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points

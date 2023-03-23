@@ -13,7 +13,7 @@ public class KAZEDetector extends PointDetector {
 
     }
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
 
 
         // Detect keypoints and compute descriptors for both images
