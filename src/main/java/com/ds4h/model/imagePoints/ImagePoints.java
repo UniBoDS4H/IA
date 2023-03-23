@@ -2,6 +2,7 @@ package com.ds4h.model.imagePoints;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -17,9 +18,8 @@ public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
     private final String path;
     private int rows, cols;
-    private int type = 0;
-    private boolean RBG = false;
     private long address=-1;
+    private Size matSize = null;
     private Mat matrix = null;
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
@@ -33,7 +33,6 @@ public class ImagePoints extends ImagePlus{
         this(path);
         this.rows = rows;
         this.cols = cols;
-        this.type = type;
         this.address = matAddress;
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
@@ -43,6 +42,8 @@ public class ImagePoints extends ImagePlus{
         matrix = mat;
         this.rows = mat.rows();
         this.cols = mat.cols();
+        this.matSize = matrix.size();
+        IJ.log("[IMAGE POINTS] Image created");
     }
 
     public Point[] getPoints(){
@@ -106,6 +107,10 @@ public class ImagePoints extends ImagePlus{
         return cols;
     }
 
+    public Size getMatSize(){
+        return this.matSize;
+    }
+
     public Mat getOriginalMatImage(){
         return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
     }
@@ -125,6 +130,7 @@ public class ImagePoints extends ImagePlus{
             this.pointList.add(newIndex, pointToMove);
         }
     }
+
 
     public String getPath(){
         return this.path;

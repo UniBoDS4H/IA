@@ -18,6 +18,7 @@ import ij.VirtualStack;
 import ij.measure.Calibration;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import org.opencv.core.Mat;
 
 import java.awt.*;
@@ -87,6 +88,7 @@ public class Alignment implements Runnable{
 
     private void manual(){
         assert this.targetImage.getProcessor() != null;
+
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         IJ.log("[MANUAL] Start alignment.");
@@ -96,12 +98,13 @@ public class Alignment implements Runnable{
         IJ.log("[MANUAL] End alignment.");
         this.imagesToAlign.clear();
         this.targetImage = null;
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        //this.alignedImages.clear();
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        this.alignedImages.clear();
     }
 
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
+        IJ.log("[AUTOMATIC] Target LUT: " + this.targetImage.getProcessor().getLut());
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
@@ -122,11 +125,10 @@ public class Alignment implements Runnable{
         this.targetImage = null;
         this.imagesToAlign.clear();
         images.forEach((key, value) -> {
-            IJ.log("[AUTOMATIC] Target Size: " + value.getMatImage().size());
+            value.getMatImage().release();
+            IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
+            IJ.log("[AUTOMATIC] LUT: " + key.getProcessor().getLut().getMapSize());
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
-            images.remove(key, value);
-            key.getMatImage().release();
-            key = null;
             System.gc();
         });
         images.clear();

@@ -46,14 +46,14 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                     if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
-                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatImage().size());
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                         System.gc();
-                        Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
+                        Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                      }else{
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
-                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatImage().size());
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                         System.gc();
-                        Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatImage().size());
+                        Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
                     System.gc();
                     return Optional.of(new AlignedImage(transformationMatrix, ImagingConversion.matToImagePlus(alignedImage, imageToShift.getName(), ip)));
