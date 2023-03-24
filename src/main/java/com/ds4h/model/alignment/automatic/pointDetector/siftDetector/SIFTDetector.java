@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SIFTDetector extends PointDetector {
-    private final SIFT sift = SIFT.create(200);
+    private final SIFT sift = SIFT.create();
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
 
 
