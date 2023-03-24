@@ -91,7 +91,7 @@ public class Alignment implements Runnable{
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
-            this.pointDetector.detectPoint(t, img,0 );
+            this.pointDetector.detectPoint(t, img,4 );
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
