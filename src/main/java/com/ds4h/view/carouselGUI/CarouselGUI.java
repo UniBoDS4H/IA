@@ -122,7 +122,7 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             public void keyReleased(KeyEvent e) {}
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.pointController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
             reuseGUI.showDialog();
         });
     }

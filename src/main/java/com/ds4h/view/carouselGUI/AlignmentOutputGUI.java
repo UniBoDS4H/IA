@@ -1,13 +1,14 @@
 package com.ds4h.view.carouselGUI;
 
 import com.ds4h.controller.imageController.ImageController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
+import com.ds4h.view.mainGUI.PreviewImagesPane;
+import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
-import com.sun.xml.internal.bind.api.impl.NameConverter;
 import ij.ImagePlus;
-import ij.gui.ImageCanvas;
 import ij.gui.StackWindow;
 import javax.swing.*;
 import java.awt.*;
@@ -30,12 +31,14 @@ public class AlignmentOutputGUI extends StackWindow {
     private final SaveImagesGUI saveGui;
     private final ImageController controller;
     private final ConfigureImagesGUI configureImagesGUI;
+    private final PointController pointController;
 
-    public AlignmentOutputGUI(final ImagePlus imp, final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller) {
+    public AlignmentOutputGUI(final ImagePlus imp, final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final PointController pointController) {
         super(imp, new StandardCanvas(imp));
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
         this.setLayout(new BorderLayout());
+        this.pointController = pointController;
         this.controller = controller;
         this.configureImagesGUI = new ConfigureImagesGUI(controller.getAlignedImages(), this);
         this.algorithm = algorithm;
@@ -48,7 +51,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.settings = new Menu("Settings");
         this.reuse = new Menu("Reuse");
         this.save = new Menu("Save");
-        this.reuseItem = new MenuItem("Reuse as resource");
+        this.reuseItem = new MenuItem("Reuse as source");
         this.overlappedItem = new MenuItem("View Overlapped");
         this.saveItem = new MenuItem("Save Project");
         this.addComponents();
@@ -64,7 +67,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.reuse.add(this.reuseItem);
         this.panel.add(this.canvas, BorderLayout.CENTER);
         this.setMenuBar(this.menuBar);
-        //this.panel.add(sliceSelector, BorderLayout.PAGE_END);
+        this.panel.add(sliceSelector, BorderLayout.PAGE_END);
         this.add(this.panel, BorderLayout.CENTER);
         this.pack();
     }
@@ -96,12 +99,9 @@ public class AlignmentOutputGUI extends StackWindow {
         this.saveItem.addActionListener(event -> {
             this.saveGui.showDialog();
         });
-        /*
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.pointController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
             reuseGUI.showDialog();
         });
-
-         */
     }
 }

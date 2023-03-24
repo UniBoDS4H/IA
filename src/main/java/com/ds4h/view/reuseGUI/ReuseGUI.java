@@ -19,10 +19,10 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     private final ImageController controller;
     private final PointController pointController;
     private final PreviewImagesPane previewImagesPane;
-    public ReuseGUI(final PreviewImagesPane previewImagesPane, final PointController pointController, final ImageController controller){
+    public ReuseGUI(final PointController pointController, final ImageController controller){
         this.setSize();
-        this.previewImagesPane = previewImagesPane;
         this.pointController = pointController;
+        this.previewImagesPane = new PreviewImagesPane(this.pointController);
         this.controller = controller;
         this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());

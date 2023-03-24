@@ -102,7 +102,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.pointController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
