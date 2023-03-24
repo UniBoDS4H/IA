@@ -48,10 +48,13 @@ public class MatImagePlusConverter {
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
         final short[] pixels = new short[width*height];
+        IJ.log("[MAKE SHORTPROCESSOR] From: " + matrix);
         final ImageProcessor shortProcessor = new ShortProcessor(width, height);
         //Convert the image in to 16 bit with one channel
         matrix.convertTo(matrix, CvType.CV_16U);
-        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+        if(matrix.channels() > 1) {
+            Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+        }
         //Convert all the values from 8 bit to 16 bit
         Core.multiply(matrix, new Scalar(256), matrix);
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
@@ -77,7 +80,9 @@ public class MatImagePlusConverter {
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
         final byte[] pixels = new byte[width*height];
         final ByteProcessor ip = new ByteProcessor(width, height);
-        Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+        if(matrix.channels() > 1) {
+            Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+        }
         IJ.log("[MAKE BYTEPROCESSOR] Matrix: " + matrix);
         matrix.get(0,0, pixels);
         ip.setPixels(pixels);

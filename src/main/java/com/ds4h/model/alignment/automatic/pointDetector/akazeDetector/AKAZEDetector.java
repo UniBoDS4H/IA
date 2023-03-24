@@ -14,7 +14,7 @@ public class AKAZEDetector extends PointDetector {
     private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE_HAMMING);
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();

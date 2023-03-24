@@ -1,22 +1,24 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.saveProject.SaveImages;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.List;
 
 public abstract class PointDetector {
 
     private double factor = 0;
+    protected final Size sizeLimit = new Size(3000, 1000);
 
     public PointDetector(){
 
     }
-    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
+    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor);
+
 
     public void setFactor(final double factor){
         if(factor >= 0){
@@ -28,22 +30,33 @@ public abstract class PointDetector {
         return this.factor;
     }
 
-    protected ImagePoints createPyramid(final ImagePoints image, final int levels){
+    protected Mat createP(final Mat mat, final int levels){
+        Mat pyramidMatrix = mat;
+        Size lastSize = mat.size();
+        for(int i = 1; i < levels; i++){
+            Imgproc.resize(pyramidMatrix, pyramidMatrix, new Size(lastSize.width / 2, lastSize.height /2));
+            lastSize = pyramidMatrix.size();
+        }
+        pyramidMatrix.convertTo(pyramidMatrix, CvType.CV_8U);
+        return pyramidMatrix;
+    }
+
+    protected ImagePlus createPyramid(final ImagePoints image, final int levels){
         //int levels = 4; // Number of levels in the pyramid
         final String imageTitle  = image.getTitle();
-        final ImagePlus[] pyramid = new ImagePlus[levels]; // Array to store the pyramid
+        ImagePlus[] pyramid = new ImagePlus[levels]; // Array to store the pyramid
 
         pyramid[0] = image; // Store the original image as the first level
 
         for (int i = 1; i < levels; i++) {
-            ImageProcessor ipDownsampled = pyramid[i - 1].getProcessor().resize(pyramid[i - 1].getWidth() / 2, pyramid[i - 1].getHeight() / 2); // Downsample the previous level by a factor of 2
+            ImageProcessor ipDownsampled = pyramid[i - 1].getProcessor().resize(
+                    pyramid[i - 1].getWidth() / 2,
+                    pyramid[i - 1].getHeight() / 2); // Downsample the previous level by a factor of 2
             pyramid[i] = new ImagePlus(i+imageTitle, ipDownsampled); // Store the downsampled image as the current level
         }
-        //TODO: RESTORE THE SAVING OF THE IMAGES, FARE IN MODO CHE MI TORNI IL PATH COMPLETO.
-        final String path = SaveImages.saveTMPImage(pyramid[levels-1]) + "/" + String.valueOf(levels-1) + imageTitle;
-        System.out.println(path);
-        final ImagePoints scaledImage = new ImagePoints(path);
-        scaledImage.show();
+        final ImagePlus scaledImage = new ImagePlus(imageTitle, pyramid[levels-1].getProcessor());
+        System.gc();
+        pyramid = null;
         return scaledImage;
     }
 }

@@ -62,6 +62,7 @@ public class TargetImagePreprocessing {
             });
         });
         IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");
+        IJ.log("[AUTOMATIC PREPROCESS] Size: " + s.size());
         System.gc();
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));

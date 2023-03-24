@@ -19,7 +19,7 @@ public class BRISKDetector extends PointDetector {
         super();
     }
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();

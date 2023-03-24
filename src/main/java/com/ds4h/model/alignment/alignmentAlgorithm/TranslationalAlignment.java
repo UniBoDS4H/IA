@@ -10,6 +10,7 @@ import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -82,7 +83,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             translationMatrix.put(1, 2, translation.y);
             return translationMatrix;
         }else{
-            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints);
+            final Mat H = Objects.requireNonNull(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints));
             double a = H.get(0,0)[0];
             double b = H.get(1,0)[0];
             double scaling = Math.sqrt(a*a + b*b);
