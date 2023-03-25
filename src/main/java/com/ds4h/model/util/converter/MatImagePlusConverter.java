@@ -1,5 +1,6 @@
 package com.ds4h.model.util.converter;
 
+import com.ds4h.model.util.MemoryController;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.*;
@@ -24,11 +25,11 @@ public class MatImagePlusConverter {
      */
     private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
-        final byte[] pixels = new byte[width*height*3];
+        //final byte[] pixels = new byte[width*height*3];
         final ColorProcessor cp = new ColorProcessor(width, height);
-        matrix.get(0,0, pixels);
+        matrix.get(0,0, (byte[]) cp.getPixels());
         matrix.release();
-        cp.setPixels(pixels);
+        //cp.setPixels(pixels);
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
@@ -47,20 +48,22 @@ public class MatImagePlusConverter {
     private static ImageProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
-        final short[] pixels = new short[width*height];
         IJ.log("[MAKE SHORTPROCESSOR] From: " + matrix);
-        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
-        //Convert the image in to 16 bit with one channel
+        MemoryController.controllMemory();
         matrix.convertTo(matrix, CvType.CV_16U);
         if(matrix.channels() > 1) {
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
+        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
+
+        //Convert the image in to 16 bit with one channel
+
         //Convert all the values from 8 bit to 16 bit
         Core.multiply(matrix, new Scalar(256), matrix);
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
         //matrix.release(); // release the old matrix
-        matrix.get(0,0, pixels); // get all the values
-        shortProcessor.setPixels(pixels); // set the pixels
+        matrix.get(0,0, (short[]) shortProcessor.getPixels()); // get all the values
+        //shortProcessor.setPixels(pixels); // set the pixels
         matrix.release();
         shortProcessor.setMinAndMax(min, max);
         IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
@@ -78,14 +81,14 @@ public class MatImagePlusConverter {
      */
     private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
-        final byte[] pixels = new byte[width*height];
+        //final byte[] pixels = new byte[width*height];
         final ByteProcessor ip = new ByteProcessor(width, height);
         if(matrix.channels() > 1) {
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
         IJ.log("[MAKE BYTEPROCESSOR] Matrix: " + matrix);
-        matrix.get(0,0, pixels);
-        ip.setPixels(pixels);
+        matrix.get(0,0, (byte[])ip.getPixels());
+        //ip.setPixels(pixels);
         matrix.release();
         System.gc();
         IJ.log("[MAKE BYTEPROCESSOR] Finish creation ByteProcessor");
@@ -101,12 +104,12 @@ public class MatImagePlusConverter {
      */
     private static FloatProcessor makeFloatProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE FLOATPROCESSOR] Creating FloatProcessor");
-        final float[] pixels = new float[width*height];
+        //final float[] pixels = new float[width*height];
         final FloatProcessor floatProcessor = new FloatProcessor(width, height);
         matrix.convertTo(matrix, CvType.CV_32FC1);
-        matrix.get(0,0, pixels);
+        matrix.get(0,0, (float[])floatProcessor.getPixels());
         matrix.release();
-        floatProcessor.setPixels(pixels);
+        //floatProcessor.setPixels(pixels);
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return floatProcessor;
     }

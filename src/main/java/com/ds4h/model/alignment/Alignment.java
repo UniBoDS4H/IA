@@ -99,8 +99,8 @@ public class Alignment implements Runnable{
         this.alignedImages.add(new AlignedImage(target.getImagePlus()));
         IJ.log("[MANUAL] Start alignment.");
         this.imagesToAlign.forEach(img ->
-                this.algorithm.align(target, img, img.getProcessor())
-                        .ifPresent(this.alignedImages::add));
+                this.alignedImages.add(this.algorithm.align(target, img, img.getProcessor()))
+        );
         IJ.log("[MANUAL] End alignment.");
         this.imagesToAlign.clear();
         this.targetImage = null;
@@ -125,6 +125,7 @@ public class Alignment implements Runnable{
         IJ.log("[AUTOMATIC] Starting preprocess");
         IJ.log("[AUTOMATIC] End preprocess");
         System.gc();
+        this.imagesToAlign.clear();
         if(images.size() == 0){
             throw new IllegalArgumentException("The detection has failed, please consider to expand the memory and increase the SCALING FACTOR.");
         }
@@ -133,12 +134,11 @@ public class Alignment implements Runnable{
                 this.algorithm)));
         IJ.log("[AUTOMATIC] Start aligning the images.");
         this.targetImage = null;
-        this.imagesToAlign.clear();
         images.forEach((key, value) -> {
             value.getMatImage().release();
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
-            IJ.log("[AUTOMATIC] LUT: " + key.getProcessor().getLut().getMapSize());
-            this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            MemoryController.controllMemory();
+            this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
             value.clearPoints();
             key.clearPoints();
             key = null;

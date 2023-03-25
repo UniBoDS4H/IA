@@ -61,6 +61,7 @@ public class TargetImagePreprocessing {
                 final String title = target.getTitle();
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
+                target.getMatImage().release();
                 target = new ImagePoints(target.getTitle(), res.getFirst());
                 target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());

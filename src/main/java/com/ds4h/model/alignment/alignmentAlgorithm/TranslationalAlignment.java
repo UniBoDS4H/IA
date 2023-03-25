@@ -37,7 +37,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         return this.scale;
     }
     @Override
-    public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException{
+    public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
@@ -55,7 +55,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
                     System.gc();
-                    return Optional.of(new AlignedImage(transformationMatrix, MatImagePlusConverter.convert(alignedImage, imageToShift.getName(), ip)));
+                    return new AlignedImage(transformationMatrix,
+                            MatImagePlusConverter.convert(alignedImage, imageToShift.getName(), ip));
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
                             "inside the target image.");
