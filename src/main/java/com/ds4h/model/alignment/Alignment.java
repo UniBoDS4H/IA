@@ -6,6 +6,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.MemoryController;
 import ij.IJ;
 
 import java.util.*;
@@ -110,6 +111,7 @@ public class Alignment implements Runnable{
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
+            MemoryController.controllMemory();
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(t, img,4);
@@ -155,7 +157,7 @@ public class Alignment implements Runnable{
      * In order to perform the alignment It is necessary that the targetImage is present.
      */
     @Override
-    public void run(){
+    public void run() {
         try {
             if(Objects.nonNull(this.targetImage)) {
                 if(type == AlignmentEnum.MANUAL){
@@ -167,7 +169,7 @@ public class Alignment implements Runnable{
             this.thread = new Thread(this);
         } catch (final Exception e) {
             this.thread = new Thread(this);
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

@@ -3,6 +3,7 @@ package com.ds4h.model.alignment.preprocessImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.converter.MatImagePlusConverter;
 import com.ds4h.model.util.saveProject.SaveImages;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TargetImagePreprocessing {
+
 
     private TargetImagePreprocessing(){}
 
@@ -46,6 +48,7 @@ public class TargetImagePreprocessing {
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
         IntStream.range(0, s.size()).forEach(i -> {
+            MemoryController.controllMemory();
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
                 ImagePoints target = s.get(j).getValue();
