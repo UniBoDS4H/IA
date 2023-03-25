@@ -4,7 +4,7 @@ import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
-import com.ds4h.view.mainGUI.PreviewImagesPane;
+import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
@@ -32,12 +32,14 @@ public class AlignmentOutputGUI extends StackWindow {
     private final ImageController controller;
     private final ConfigureImagesGUI configureImagesGUI;
     private final PointController pointController;
+    private final MainMenuGUI mainGUI;
 
-    public AlignmentOutputGUI(final ImagePlus imp, final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final PointController pointController) {
+    public AlignmentOutputGUI(final ImagePlus imp, final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final PointController pointController, MainMenuGUI mainMenuGUI) {
         super(imp, new StandardCanvas(imp));
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
         this.setLayout(new BorderLayout());
+        this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
         this.controller = controller;
         this.configureImagesGUI = new ConfigureImagesGUI(controller.getAlignedImages(), this);
@@ -100,7 +102,7 @@ public class AlignmentOutputGUI extends StackWindow {
             this.saveGui.showDialog();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI);
             reuseGUI.showDialog();
         });
     }

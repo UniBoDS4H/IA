@@ -352,11 +352,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler);
+                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler, this);
                     //new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
-                    new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler);
+                    new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler, this);
                     /*
                     ImageCalculator ic = new ImageCalculator();
                     List<AlignedImage> im = ((AutomaticAlignmentController) alignmentControllerInterface).getAlignedImages();
