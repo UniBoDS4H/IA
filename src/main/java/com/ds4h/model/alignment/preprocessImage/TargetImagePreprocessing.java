@@ -47,18 +47,16 @@ public class TargetImagePreprocessing {
     static public ImagePoints automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
+        final String title = s.get(0).getValue().getTitle();
         IntStream.range(0, s.size()).forEach(i -> {
             MemoryController.controllMemory();
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
                 ImagePoints target = s.get(j).getValue();
-                final ImagePoints img = s.get(j).getKey();
-                final MatOfPoint2f points = new MatOfPoint2f();
-                points.fromList(target.getListPoints()
+                List<Point> points = (target.getListPoints()
                         .stream()
                         .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
                         .collect(Collectors.toList()));
-                final String title = target.getTitle();
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 target.getMatImage().release();
@@ -67,10 +65,13 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
-                target.addPoints(points.toList());
-                points.release();
+                target.addPoints(points);
+                points.clear();
+                points = null;
+                //points.release();
+                //points = null;
                 System.gc();
-                s.set(j, new AbstractMap.SimpleEntry<>(img, target));
+                s.set(j, new AbstractMap.SimpleEntry<>(s.get(j).getKey(), target));
             });
         });
         IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");

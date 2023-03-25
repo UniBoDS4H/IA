@@ -23,13 +23,13 @@ public class MatImagePlusConverter {
      * @param height
      * @return
      */
-    private static ColorProcessor makeColorProcessor(final Mat matrix, final int width, final int height){
+    private static ColorProcessor makeColorProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
         //final byte[] pixels = new byte[width*height*3];
         final ColorProcessor cp = new ColorProcessor(width, height);
         matrix.get(0,0, (byte[]) cp.getPixels());
         matrix.release();
-        //cp.setPixels(pixels);
+        matrix = null;
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
@@ -45,7 +45,7 @@ public class MatImagePlusConverter {
      * @param max
      * @return
      */
-    private static ImageProcessor makeShortProcessor(final Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
+    private static ImageProcessor makeShortProcessor(Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
         IJ.log("[MAKE SHORTPROCESSOR] From: " + matrix);
@@ -65,6 +65,7 @@ public class MatImagePlusConverter {
         matrix.get(0,0, (short[]) shortProcessor.getPixels()); // get all the values
         //shortProcessor.setPixels(pixels); // set the pixels
         matrix.release();
+        matrix = null;
         shortProcessor.setMinAndMax(min, max);
         IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
         shortProcessor.setLut(lut);
@@ -79,17 +80,16 @@ public class MatImagePlusConverter {
      * @param height
      * @return
      */
-    private static ByteProcessor makeByteProcessor(final Mat matrix, final int width, final int height){
+    private static ByteProcessor makeByteProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
-        //final byte[] pixels = new byte[width*height];
         final ByteProcessor ip = new ByteProcessor(width, height);
         if(matrix.channels() > 1) {
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
         IJ.log("[MAKE BYTEPROCESSOR] Matrix: " + matrix);
         matrix.get(0,0, (byte[])ip.getPixels());
-        //ip.setPixels(pixels);
         matrix.release();
+        matrix = null;
         System.gc();
         IJ.log("[MAKE BYTEPROCESSOR] Finish creation ByteProcessor");
         return ip;
@@ -102,14 +102,17 @@ public class MatImagePlusConverter {
      * @param height
      * @return
      */
-    private static FloatProcessor makeFloatProcessor(final Mat matrix, final int width, final int height){
+    private static FloatProcessor makeFloatProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE FLOATPROCESSOR] Creating FloatProcessor");
         //final float[] pixels = new float[width*height];
         final FloatProcessor floatProcessor = new FloatProcessor(width, height);
+        if(matrix.channels() > 1) {
+            Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
+        }
         matrix.convertTo(matrix, CvType.CV_32FC1);
         matrix.get(0,0, (float[])floatProcessor.getPixels());
         matrix.release();
-        //floatProcessor.setPixels(pixels);
+        matrix = null;
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return floatProcessor;
     }
