@@ -28,14 +28,13 @@ public class SIFTDetector extends PointDetector {
         this.sift.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
         IJ.log("[SIFT DETECTOR] Detected points for the first image.");
         grayImg.release();
+        System.gc();
         this.sift.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
         grayTarget.release();
-
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
         System.gc();
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
-        IJ.log("[SIFT DETECTOR] Points: " + matches);
         descriptors1.release();
         descriptors2.release();
         double max_dist = 0;

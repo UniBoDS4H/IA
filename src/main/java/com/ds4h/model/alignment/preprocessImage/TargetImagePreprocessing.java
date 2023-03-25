@@ -51,7 +51,10 @@ public class TargetImagePreprocessing {
                 ImagePoints target = s.get(j).getValue();
                 final ImagePoints img = s.get(j).getKey();
                 final MatOfPoint2f points = new MatOfPoint2f();
-                points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
+                points.fromList(target.getListPoints()
+                        .stream()
+                        .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
+                        .collect(Collectors.toList()));
                 final String title = target.getTitle();
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
@@ -61,6 +64,7 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points.toList());
+                points.release();
                 System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(img, target));
             });

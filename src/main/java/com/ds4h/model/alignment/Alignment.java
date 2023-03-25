@@ -112,7 +112,7 @@ public class Alignment implements Runnable{
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
-            this.pointDetector.detectPoint(t, img,4 );
+            this.pointDetector.detectPoint(t, img,4);
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
@@ -123,6 +123,9 @@ public class Alignment implements Runnable{
         IJ.log("[AUTOMATIC] Starting preprocess");
         IJ.log("[AUTOMATIC] End preprocess");
         System.gc();
+        if(images.size() == 0){
+            throw new IllegalArgumentException("The detection has failed, please consider to expand the memory and increase the SCALING FACTOR.");
+        }
         this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                 images,
                 this.algorithm)));
