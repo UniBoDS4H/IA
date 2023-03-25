@@ -2,18 +2,11 @@ package com.ds4h.model.alignment.automatic.pointDetector.siftDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.ImagePlusMatConverter;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.IJ;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.Features2d;
 import org.opencv.features2d.SIFT;
-import org.opencv.highgui.HighGui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SIFTDetector extends PointDetector {
@@ -25,9 +18,9 @@ public class SIFTDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
-        //TODO: if the size is above a certain scale we MUST downscale the image
-        final Mat grayImg = this.createP(imagePoint.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(imagePoint, scalingFactor).getProcessor());
-        final Mat grayTarget = this.createP(targetImage.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(targetImage, scalingFactor).getProcessor());
+
+        final Mat grayImg = this.createPyramid(imagePoint.getMatImage(), scalingFactor);
+        final Mat grayTarget = this.createPyramid(targetImage.getMatImage(), scalingFactor);
 
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
@@ -72,8 +65,6 @@ public class SIFTDetector extends PointDetector {
                     imagePoint.addPoint(queryScaled);
                     targetImage.addPoint(trainScaled);
                 });
-        //keypoints1List.clear();
-        //keypoints2List.clear();
         IJ.log("[SIFT DETECTOR] End Detection.");
         matches.release();
     }

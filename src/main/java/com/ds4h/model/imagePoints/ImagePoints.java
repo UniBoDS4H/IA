@@ -91,7 +91,14 @@ public class ImagePoints extends ImagePlus{
     public Mat getGrayScaleMat(){
         final Mat grayImage = new Mat();
         Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
+        if(grayImage.channels() > 1){
+            grayImage.convertTo(grayImage, CvType.CV_8U);
+        }
         return grayImage;
+    }
+
+    public void clearPoints(){
+        this.pointList.clear();
     }
 
     public Mat getMatImage(){

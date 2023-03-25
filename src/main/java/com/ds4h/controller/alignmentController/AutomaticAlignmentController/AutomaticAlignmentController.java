@@ -51,15 +51,16 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(alignment.alignedImages());
     }
-    public void align(final Detectors detector, final PointController pointManager){
+    public void align(final Detectors detector, final PointController pointManager, final int scalingFactor){
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getCornerManager())) {
-            if(pointManager.getCornerManager().getCornerImages().size() > 1) {
+            if(pointManager.getCornerManager().getCornerImages().size() > 1 && scalingFactor >= 1) {
                 this.alignment.alignImages(pointManager.getCornerManager(), this.traslational,
                         AlignmentEnum.AUTOMATIC,
                         Objects.requireNonNull(detector.pointDetector()),
-                        detector.getFactor());
+                        detector.getFactor(),
+                        scalingFactor);
             }else{
-                throw new IllegalArgumentException("For the alignment are needed at least TWO images.");
+                throw new IllegalArgumentException("For the alignment are needed at least TWO images and the SCALING FACTOR must be at least 1.");
             }
         }
     }

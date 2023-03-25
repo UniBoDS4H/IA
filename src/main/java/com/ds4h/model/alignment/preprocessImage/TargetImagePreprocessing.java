@@ -8,6 +8,7 @@ import com.ds4h.model.util.converter.MatImagePlusConverter;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TargetImagePreprocessing {
+
+    private TargetImagePreprocessing(){}
+
     static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm, final ImageProcessor ip) throws IllegalArgumentException{
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         IJ.log("[MANUAL PREPROCESS] Starting manual process.");

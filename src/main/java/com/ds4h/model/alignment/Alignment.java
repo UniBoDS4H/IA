@@ -60,13 +60,35 @@ public class Alignment implements Runnable{
         }
     }
 
+    /**
+     * Align images with the automatic algorithm
+     * @param pointManager
+     * @param algorithm
+     * @param type
+     * @param pointDetector
+     * @param factor
+     * @param scalingFactor
+     * @throws IllegalArgumentException
+     */
     public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
                             final AlignmentEnum type,
                             final PointDetector pointDetector,
-                            final double factor) throws IllegalArgumentException{
-        this.pointDetector = (pointDetector);
-        this.pointDetector.setFactor(factor);
-        this.alignImages(pointManager, algorithm, type);
+                            final double factor,
+                            final int scalingFactor) throws IllegalArgumentException{
+        if(Objects.nonNull(pointManager) &&
+                Objects.nonNull(algorithm) &&
+                Objects.nonNull(type) &&
+                Objects.nonNull(pointDetector) &&
+                factor >= 0 &&
+                scalingFactor >= 1) {
+            this.pointDetector = (pointDetector);
+            this.pointDetector.setFactor(factor);
+            this.alignImages(pointManager, algorithm, type);
+        }else{
+            throw new IllegalArgumentException("One of the argument for the alignment are not correct. Please," +
+                    "take a look to: Alignment Algorithm, the factor must be greater than 0 and the scaling factor " +
+                    "must be at least 1.");
+        }
     }
 
     private void manual(){
@@ -87,7 +109,6 @@ public class Alignment implements Runnable{
 
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
-        IJ.log("[AUTOMATIC] Target LUT: " + this.targetImage.getProcessor().getLut());
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
@@ -113,6 +134,8 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
             IJ.log("[AUTOMATIC] LUT: " + key.getProcessor().getLut().getMapSize());
             this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            value.clearPoints();
+            key.clearPoints();
             key = null;
             value = null;
             System.gc();
