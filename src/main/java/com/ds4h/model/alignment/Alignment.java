@@ -1,33 +1,16 @@
 package com.ds4h.model.alignment;
 
-import bunwarpj.bUnwarpJ_;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
-import com.ds4h.model.deformation.BunwarpjDeformation;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.ImagingConversion;
-import com.ds4h.model.util.Pair;
-import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.VirtualStack;
-import ij.measure.Calibration;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
-import org.opencv.core.Mat;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.IntStream;
-
-import static java.lang.Math.sqrt;
 
 /**
  * This class is used for the alignment algorithms. Inside this class we can found all the methods to perform the alignment.
@@ -108,9 +91,10 @@ public class Alignment implements Runnable{
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
-            this.pointDetector.detectPoint(t, img);
+            this.pointDetector.detectPoint(t, img,4 );
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
+                IJ.log("[AUTOMATIC] Inside ");
                 images.put(img, t);
             }
         });
