@@ -2,18 +2,11 @@ package com.ds4h.model.alignment.automatic.pointDetector.siftDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.ImagePlusMatConverter;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.IJ;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.Features2d;
 import org.opencv.features2d.SIFT;
-import org.opencv.highgui.HighGui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SIFTDetector extends PointDetector {
@@ -25,24 +18,25 @@ public class SIFTDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
-        //TODO: if the size is above a certain scale we MUST downscale the image
-        final Mat grayImg = this.createP(imagePoint.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(imagePoint, scalingFactor).getProcessor());
-        final Mat grayTarget = this.createP(targetImage.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(targetImage, scalingFactor).getProcessor());
+
+        final Mat grayImg = this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor);
+        final Mat grayTarget = this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor);
 
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
         //
-        this.sift.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
+        this.sift.detect(grayImg, keypoints1);
+        this.sift.compute(grayImg, keypoints1, descriptors1);
         IJ.log("[SIFT DETECTOR] Detected points for the first image.");
         grayImg.release();
-        this.sift.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+        System.gc();
+        this.sift.detect(grayTarget, keypoints2);
+        this.sift.compute(grayTarget, keypoints2, descriptors2);
         grayTarget.release();
-
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
         System.gc();
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
-        IJ.log("[SIFT DETECTOR] Points: " + matches);
         descriptors1.release();
         descriptors2.release();
         double max_dist = 0;
@@ -72,8 +66,6 @@ public class SIFTDetector extends PointDetector {
                     imagePoint.addPoint(queryScaled);
                     targetImage.addPoint(trainScaled);
                 });
-        //keypoints1List.clear();
-        //keypoints2List.clear();
         IJ.log("[SIFT DETECTOR] End Detection.");
         matches.release();
     }

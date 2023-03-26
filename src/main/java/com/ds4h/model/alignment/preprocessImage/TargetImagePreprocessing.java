@@ -3,11 +3,13 @@ package com.ds4h.model.alignment.preprocessImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.converter.MatImagePlusConverter;
 import com.ds4h.model.util.saveProject.SaveImages;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
@@ -18,6 +20,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TargetImagePreprocessing {
+
+
+    private TargetImagePreprocessing(){}
+
     static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm, final ImageProcessor ip) throws IllegalArgumentException{
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         IJ.log("[MANUAL PREPROCESS] Starting manual process.");
@@ -41,24 +47,31 @@ public class TargetImagePreprocessing {
     static public ImagePoints automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
+        final String title = s.get(0).getValue().getTitle();
         IntStream.range(0, s.size()).forEach(i -> {
+            MemoryController.controllMemory();
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
                 ImagePoints target = s.get(j).getValue();
-                final ImagePoints img = s.get(j).getKey();
-                final MatOfPoint2f points = new MatOfPoint2f();
-                points.fromList(target.getListPoints().parallelStream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
-                final String title = target.getTitle();
+                List<Point> points = (target.getListPoints()
+                        .stream()
+                        .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
+                        .collect(Collectors.toList()));
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
+                target.getMatImage().release();
                 target = new ImagePoints(target.getTitle(), res.getFirst());
                 target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
-                target.addPoints(points.toList());
+                target.addPoints(points);
+                points.clear();
+                points = null;
+                //points.release();
+                //points = null;
                 System.gc();
-                s.set(j, new AbstractMap.SimpleEntry<>(img, target));
+                s.set(j, new AbstractMap.SimpleEntry<>(s.get(j).getKey(), target));
             });
         });
         IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");

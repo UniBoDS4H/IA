@@ -1,9 +1,10 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -30,15 +31,13 @@ public abstract class PointDetector {
         return this.factor;
     }
 
-    protected Mat createP(final Mat mat, final int levels){
-        Mat pyramidMatrix = mat;
-        Size lastSize = mat.size();
+    protected Mat createPyramid(final Mat matrix, final int levels){
+        Size lastSize = matrix.size();
         for(int i = 1; i < levels; i++){
-            Imgproc.resize(pyramidMatrix, pyramidMatrix, new Size(lastSize.width / 2, lastSize.height /2));
-            lastSize = pyramidMatrix.size();
+            Imgproc.resize(matrix, matrix, new Size(lastSize.width / 2, lastSize.height /2), Imgproc.INTER_LINEAR);
+            lastSize = matrix.size();
         }
-        pyramidMatrix.convertTo(pyramidMatrix, CvType.CV_8U);
-        return pyramidMatrix;
+        return matrix;
     }
 
     protected ImagePlus createPyramid(final ImagePoints image, final int levels){
