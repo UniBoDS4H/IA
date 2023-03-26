@@ -5,7 +5,7 @@ import org.opencv.core.Size;
 
 public class MemoryController {
 
-    private final static long  MEMORY_LIMIT = 150_000_000; //(150MB);
+    private final static long  MEMORY_LIMIT = 150_000; //(150MB);
     private final static Runtime runtime = Runtime.getRuntime();
 
     private MemoryController(){

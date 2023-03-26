@@ -145,8 +145,8 @@ public class Alignment implements Runnable{
             MemoryController.controllMemory();
             this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
             key.getMatImage().release();
-            value.clearPoints();
-            key.clearPoints();
+            //value.clearPoints();
+            //key.clearPoints();
             key = null;
             value = null;
             System.gc();
