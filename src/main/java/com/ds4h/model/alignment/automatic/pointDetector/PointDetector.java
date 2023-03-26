@@ -1,7 +1,9 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -32,7 +34,7 @@ public abstract class PointDetector {
     protected Mat createPyramid(final Mat matrix, final int levels){
         Size lastSize = matrix.size();
         for(int i = 1; i < levels; i++){
-            Imgproc.resize(matrix, matrix, new Size(lastSize.width / 2, lastSize.height /2));
+            Imgproc.resize(matrix, matrix, new Size(lastSize.width / 2, lastSize.height /2), Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
         return matrix;

@@ -8,6 +8,7 @@ import com.ds4h.model.util.saveProject.SaveImages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,18 +28,26 @@ public class ReuseSources {
      * @param pointManager : Inside the corner manager we will be going to store the now images
      * @param images : The list of images that we want to use
      */
-    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) {
+    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) throws FileNotFoundException {
         if(!images.isEmpty()) {
-            final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
-            if (!path.isEmpty()) {
-                final List<ImagePoints> backUpList = pointManager.getCornerImages();
-                try {
-                    pointManager.clearList();
-                    pointManager.addImages(ImportProject.importProject(new File(path)));
-                }catch(final FileNotFoundException ex){
-                    pointManager.addImages(backUpList);
-                }
+            //final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
+            final List<ImagePoints> backUpList = pointManager.getCornerImages();
+            try {
+                pointManager.clearList();
+                pointManager.addImages(ReuseSources.convertImages(images));
+            }catch(final Exception ex){
+                throw ex;
             }
         }
+    }
+
+    private static List<ImagePoints> convertImages(final List<AlignedImage> images){
+        final List<ImagePoints> imagePoints = new ArrayList<>(images.size());
+        images.stream()
+                .map(AlignedImage::getAlignedImage)
+                .map(imagePlus -> new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor()))
+                .forEach(imagePoints::add);
+        return imagePoints;
+
     }
 }

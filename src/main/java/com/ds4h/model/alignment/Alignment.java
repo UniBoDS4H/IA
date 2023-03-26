@@ -7,7 +7,11 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.MemoryController;
+import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.IJ;
+import ij.process.ColorProcessor;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -110,6 +114,7 @@ public class Alignment implements Runnable{
 
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
+
         this.imagesToAlign.forEach(img->{
             MemoryController.controllMemory();
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
@@ -123,8 +128,6 @@ public class Alignment implements Runnable{
         });
         System.gc();
         IJ.log("[AUTOMATIC] Starting preprocess");
-        IJ.log("[AUTOMATIC] End preprocess");
-        System.gc();
         this.imagesToAlign.clear();
         if(images.size() == 0){
             throw new IllegalArgumentException("The detection has failed, please consider to expand the memory and increase the SCALING FACTOR.");
@@ -132,6 +135,8 @@ public class Alignment implements Runnable{
         this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                 images,
                 this.algorithm)));
+        IJ.log("[AUTOMATIC] End preprocess");
+
         IJ.log("[AUTOMATIC] Start aligning the images.");
         this.targetImage = null;
         images.forEach((key, value) -> {

@@ -1,4 +1,5 @@
 package com.ds4h.model.imagePoints;
+import com.ds4h.model.util.converter.ImagePlusMatConverter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
@@ -46,6 +47,15 @@ public class ImagePoints extends ImagePlus{
         IJ.log("[IMAGE POINTS] Image created");
     }
 
+    public ImagePoints(final String path, final ImageProcessor ip){
+        super(Objects.requireNonNull(path));
+        this.path = path;
+        this.setProcessor(ip);
+        this.rows = this.getHeight();
+        this.cols = this.getWidth();
+        this.pointList = new ArrayList<>(5);
+    }
+
     public Point[] getPoints(){
         return this.pointList.toArray(new Point[0]);
     }
@@ -89,12 +99,7 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getGrayScaleMat(){
-        final Mat grayImage = new Mat();
-        Imgproc.cvtColor(this.getMatImage(), grayImage, Imgproc.COLOR_BGR2GRAY);
-        if(grayImage.channels() > 1){
-            grayImage.convertTo(grayImage, CvType.CV_8U);
-        }
-        return grayImage;
+        return ImagePlusMatConverter.convertGray(this.getProcessor());
     }
 
     public void clearPoints(){
@@ -103,7 +108,8 @@ public class ImagePoints extends ImagePlus{
 
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
-                this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
+                this.address > 0 ? new Mat(this.address) :
+                        ImagePlusMatConverter.convert(this.getProcessor());
     }
 
     public int getRows(){

@@ -25,11 +25,24 @@ public class MatImagePlusConverter {
      */
     private static ColorProcessor makeColorProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
-        //final byte[] pixels = new byte[width*height*3];
         final ColorProcessor cp = new ColorProcessor(width, height);
-        matrix.get(0,0, (byte[]) cp.getPixels());
+        byte[] pixels = new byte[width * height * matrix.channels()];
+        matrix.get(0,0, pixels);
         matrix.release();
         matrix = null;
+        int[] iData = (int[]) cp.getPixels();
+        /*
+        if(matrix.channels() != 3){
+            matrix.convertTo(matrix, CvType.CV_8UC3);
+        }
+         */
+        for (int i = 0; i < width * height; i++) {
+            int red = pixels[i * 3 + 0] & 0xff;
+            int grn = pixels[i * 3 + 1] & 0xff;
+            int blu = pixels[i * 3 + 2] & 0xff;
+            iData[i] = (red << 16) | (grn << 8) | blu;
+        }
+
         System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
@@ -49,17 +62,23 @@ public class MatImagePlusConverter {
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
         IJ.log("[MAKE SHORTPROCESSOR] From: " + matrix);
+        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
         MemoryController.controllMemory();
-        matrix.convertTo(matrix, CvType.CV_16U);
+
         if(matrix.channels() > 1) {
+            //We use the LUT table for the colors
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
-        final ImageProcessor shortProcessor = new ShortProcessor(width, height);
 
-        //Convert the image in to 16 bit with one channel
+        /*
+        This is useless because when I read the matrix it is already 16 bit with one channel. Need to be tested
+        if(matrix.type() != CvType.CV_16U) {
+            //Convert all the values from 8 bit to 16 bit
+            matrix.convertTo(matrix, CvType.CV_16U);
+            Core.multiply(matrix, new Scalar(256), matrix);
+        }
+        */
 
-        //Convert all the values from 8 bit to 16 bit
-        Core.multiply(matrix, new Scalar(256), matrix);
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
         //matrix.release(); // release the old matrix
         matrix.get(0,0, (short[]) shortProcessor.getPixels()); // get all the values
