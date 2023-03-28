@@ -1,7 +1,6 @@
 package com.ds4h.view.overlapImages;
 
 import com.ds4h.controller.changeColorController.ChangeColorController;
-import com.ds4h.controller.imageController.ImageEnum;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
@@ -16,13 +15,9 @@ import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -102,8 +97,8 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
-            reuseGUI.showDialog();
+            //final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI);
+            //reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {
             if(!this.controller.deformationIsAlive()) {

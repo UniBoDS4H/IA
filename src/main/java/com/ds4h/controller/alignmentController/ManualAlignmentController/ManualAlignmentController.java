@@ -6,6 +6,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 
@@ -30,14 +31,14 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         return new LinkedList<>(alignment.alignedImages());
     }
 
-    public ImagePlus getAlignedImagesAsStack(){
+    public CompositeImage getAlignedImagesAsStack(){
         List<ImagePlus> alignedImages = this.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
         if(!alignedImages.isEmpty()) {
             ImageStack stack = new ImageStack(alignedImages.get(0).getWidth(), alignedImages.get(0).getHeight());
             alignedImages.forEach(a->stack.addSlice(a.getTitle(),a.getProcessor()));
-            return new ImagePlus("AglignedStack", stack);
+            return null;//new ImagePlus("AglignedStack", stack);
         }
-        return new ImagePlus("EmptyStack", new ImageStack());
+        return null;// new ImagePlus("EmptyStack", new ImageStack());
     }
     /**
      *
