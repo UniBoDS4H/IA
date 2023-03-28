@@ -1,4 +1,4 @@
-package com.ds4h.view.carouselGUI;
+package com.ds4h.view.outputGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;

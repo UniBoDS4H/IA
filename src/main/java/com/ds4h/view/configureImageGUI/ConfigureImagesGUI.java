@@ -1,26 +1,12 @@
 package com.ds4h.view.configureImageGUI;
 
-import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
-import com.ds4h.view.overlapImages.OverlapImagesGUI;
+import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ColorComboBox;
 import ij.CompositeImage;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
 import ij.process.LUT;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.ColorModel;
-import java.awt.image.IndexColorModel;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JButton reset;
@@ -30,10 +16,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JLabel labelCombo, labelSlider;
     private final GridBagConstraints constraints;
 
-    private final static int WIDTH = 700, HEIGHT = 400, DEFAULT = (int)(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY * 10);
-    private final static float DIV = 10f;
-    private final List<OverlapImagesGUI.ImagePanel> imagePanels;
-    private final List<Color> colorList = new LinkedList<>();
+    private final static int WIDTH = 700, HEIGHT = 400;
     private final AlignmentOutputGUI outputGUI;
 
     public ConfigureImagesGUI(AlignmentOutputGUI alignmentOutputGUI){
@@ -43,7 +26,6 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.constraints.insets = new Insets(0, 0, 5, 5);
         this.constraints.anchor = GridBagConstraints.WEST;
         this.setLayout(new GridBagLayout());
-        this.imagePanels = new LinkedList<>();
         this.colorComboBox = new ColorComboBox();
         this.reset = new JButton("Reset");
         this.labelCombo = new JLabel("Choose the Image");
@@ -89,11 +71,6 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             this.outputGUI.getImagePlus().setSlice(1);
         });
 
-    }
-
-    public void setElements(final List<OverlapImagesGUI.ImagePanel> imagePanels){
-        this.imagePanels.clear();
-        this.imagePanels.addAll(imagePanels);
     }
 
     @Override

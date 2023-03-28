@@ -18,7 +18,7 @@ import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.automaticSettingsGUI.AutomaticSettingsGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
-import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
+import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
