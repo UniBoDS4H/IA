@@ -175,6 +175,10 @@ public class Alignment implements Runnable{
         }
     }
 
+    public void clearList(){
+        this.alignedImages.clear();
+    }
+
 
     /**
      * With this method we return all the images aligned. If the thread is running an empty list is returned otherwise
