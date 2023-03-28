@@ -2,7 +2,7 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.calib3d.Calib3d;
@@ -11,7 +11,6 @@ import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -55,7 +54,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
                     final AlignedImage finalImg = new AlignedImage(transformationMatrix,
-                            MatImagePlusConverter.convert(alignedImage, imageToShift.getName(), ip));
+                            MatImageProcessorConverter.convert(alignedImage, imageToShift.getName(), ip),
+                            imageToShift.getName());
                     ip = null;
                     System.gc();
                     return finalImg;

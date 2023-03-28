@@ -119,8 +119,8 @@ public class BunwarpjDeformation implements Runnable{
                 final ImagePlus image = transformation.getDirectResults();
                 image.setTitle(alignedImage.getAlignedImage().getTitle());
                 this.outputList.add(alignedImage.getRegistrationMatrix().isPresent() ?
-                        new AlignedImage(alignedImage.getRegistrationMatrix().get(), image) :
-                        new AlignedImage(image));
+                        new AlignedImage(alignedImage.getRegistrationMatrix().get(), image.getProcessor(), alignedImage.getName()) :
+                        new AlignedImage(image.getProcessor(), alignedImage.getName()));
             }
         }
         this.thread = new Thread(this);

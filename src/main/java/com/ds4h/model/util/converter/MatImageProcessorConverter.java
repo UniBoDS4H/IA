@@ -4,15 +4,13 @@ import com.ds4h.model.util.MemoryController;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.*;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class MatImagePlusConverter {
+public class MatImageProcessorConverter {
 
-    private MatImagePlusConverter(){
+    private MatImageProcessorConverter(){
 
     }
 
@@ -145,7 +143,7 @@ public class MatImagePlusConverter {
      */
     private static BinaryProcessor makeBinaryProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BINARYPROCESSOR] Creating BinaryProcessor");
-        final BinaryProcessor binaryProcessor = new BinaryProcessor(MatImagePlusConverter.makeByteProcessor(matrix, width, height));
+        final BinaryProcessor binaryProcessor = new BinaryProcessor(MatImageProcessorConverter.makeByteProcessor(matrix, width, height));
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return binaryProcessor;
     }
@@ -157,26 +155,21 @@ public class MatImagePlusConverter {
      * @param ip
      * @return
      */
-    public static ImagePlus convert(final Mat matrix, final String fileName, final ImageProcessor ip){
+    public static ImageProcessor convert(final Mat matrix, final String fileName, final ImageProcessor ip){
         if(!matrix.empty() && !fileName.isEmpty()){
             if(ip instanceof ColorProcessor){
-                return new ImagePlus(fileName,
-                        MatImagePlusConverter.makeColorProcessor(matrix, matrix.cols(), matrix.rows()));
+                return MatImageProcessorConverter.makeColorProcessor(matrix, matrix.cols(), matrix.rows());
             }else if(ip instanceof ShortProcessor){
-                return new ImagePlus(fileName,
-                        MatImagePlusConverter.makeShortProcessor(matrix, matrix.cols(), matrix.rows(),
+                return MatImageProcessorConverter.makeShortProcessor(matrix, matrix.cols(), matrix.rows(),
                                 ip.getLut(),
                                 ip.getMin(),
-                                ip.getMax()));
+                                ip.getMax());
             }else if(ip instanceof FloatProcessor){
-                return new ImagePlus(fileName,
-                        MatImagePlusConverter.makeFloatProcessor(matrix, matrix.cols(), matrix.rows()));
+                return MatImageProcessorConverter.makeFloatProcessor(matrix, matrix.cols(), matrix.rows());
             }else if(ip instanceof ByteProcessor){
-                return new ImagePlus(fileName,
-                        MatImagePlusConverter.makeByteProcessor(matrix, matrix.cols(), matrix.rows()));
+                return MatImageProcessorConverter.makeByteProcessor(matrix, matrix.cols(), matrix.rows());
             }else{
-                return new ImagePlus(fileName,
-                        MatImagePlusConverter.makeBinaryProcessor(matrix, matrix.cols(), matrix.rows()));
+                return MatImageProcessorConverter.makeBinaryProcessor(matrix, matrix.cols(), matrix.rows());
             }
         }else{
             throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
