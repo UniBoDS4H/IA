@@ -8,23 +8,20 @@ import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
-import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.alignment.automatic.pointDetector.akazeDetector.AKAZEDetector;
-import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
+import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.VirtualStack;
-import ij.io.FileSaver;
-import org.bytedeco.javacpp.annotation.Virtual;
+import ij.gui.ImageWindow;
+import ij.plugin.ImageCalculator;
+import ij.process.ImageProcessor;
+import ij.process.LUT;
 
 import java.awt.*;
 import java.awt.image.ColorModel;
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This class is used in order to call all the Model methods of the SURF Alignment inside the view, without
@@ -79,21 +76,23 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         return "AUTOMATIC";
     }
 
-    public ImagePlus getAlignmedImagesAsStack() {
+    @Override
+    public CompositeImage getAlignedImagesAsStack() {
         if(!this.getAlignedImages().isEmpty()){
-            VirtualStack stack = new VirtualStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault(), IJ.getDir("temp"));
+            ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
-            for (AlignedImage a : this.getAlignedImages()) {
-                String path = IJ.getDir("temp") + a.getAlignedImage().getProcessor().hashCode() + ".tiff";
-                new FileSaver(a.getAlignedImage()).saveAsTiff(path);
-                stack.addSlice(new File(path).getName());
-                System.gc();
-                //stack.addSlice(a.getAlignedImage().getProcessor());
+            List<AlignedImage> images = this.getAlignedImages();
+            LUT[] luts = new LUT[images.size()];
+            int index = 0;
+            for (AlignedImage image : images) {
+                luts[index] = image.getAlignedImage().getProcessor().getLut();
+                stack.addSlice(image.getAlignedImage().getProcessor());
+                index++;
             }
-            ImagePlus im = new ImagePlus("AglignedStack", stack);
-            //im.show();
-            return im;
+            CompositeImage composite = new CompositeImage(new ImagePlus("AglignedStack", stack));
+            composite.setLuts(luts);
+            return composite;
         }
-        return new ImagePlus("EmptyStack", new ImageStack());
+        throw new RuntimeException("stack is empty");
     }
 }

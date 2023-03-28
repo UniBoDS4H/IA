@@ -1,6 +1,5 @@
 package com.ds4h.view.carouselGUI;
 
-import com.ds4h.controller.imageController.ImageEnum;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
@@ -11,16 +10,12 @@ import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
 import ij.ImagePlus;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.swing.*;
 
@@ -122,8 +117,8 @@ public class CarouselGUI extends JFrame implements StandardGUI {
             public void keyReleased(KeyEvent e) {}
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
-            reuseGUI.showDialog();
+            //final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
+            //reuseGUI.showDialog();
         });
     }
 

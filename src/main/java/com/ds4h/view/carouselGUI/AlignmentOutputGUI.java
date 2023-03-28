@@ -1,13 +1,16 @@
 package com.ds4h.view.carouselGUI;
 
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
-import com.ds4h.view.mainGUI.PreviewImagesPane;
+import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
+import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
 import javax.swing.*;
@@ -16,6 +19,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class AlignmentOutputGUI extends StackWindow {
+    private static ImagePlus image;
     private final String algorithm;
     private final BunwarpjGUI bunwarpjGUI;
     private final MenuBar menuBar;
@@ -26,23 +30,26 @@ public class AlignmentOutputGUI extends StackWindow {
     private final MenuItem overlappedItem;
     private final MenuItem saveItem;
     private final MenuItem settingsImages;
+    private final MenuItem carouselItem;
     private final JPanel panel;
     private final StandardCanvas canvas;
     private final SaveImagesGUI saveGui;
     private final ImageController controller;
     private final ConfigureImagesGUI configureImagesGUI;
     private final PointController pointController;
+    private final MainMenuGUI mainGUI;
 
-    public AlignmentOutputGUI(final ImagePlus imp, final String algorithm, final BunwarpjGUI bunwarpjGUI, final ImageController controller, final PointController pointController) {
-        super(imp, new StandardCanvas(imp));
+    public AlignmentOutputGUI(AlignmentControllerInterface alignmentController, BunwarpjGUI settingsBunwarpj, BunwarpJController bunwarpJController, PointController pointController, MainMenuGUI mainMenuGUI) {
+        super(image = alignmentController.getAlignedImagesAsStack(), new StandardCanvas(image));
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
         this.setLayout(new BorderLayout());
+        this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
-        this.controller = controller;
-        this.configureImagesGUI = new ConfigureImagesGUI(controller.getAlignedImages(), this);
-        this.algorithm = algorithm;
-        this.bunwarpjGUI = bunwarpjGUI;
+        this.controller = new ImageController(alignmentController, bunwarpJController);
+        this.configureImagesGUI = new ConfigureImagesGUI(alignmentController, this);
+        this.algorithm = alignmentController.name();
+        this.bunwarpjGUI = settingsBunwarpj;
         this.saveGui = new SaveImagesGUI(this.controller);
         this.panel = new JPanel();
         this.panel.setLayout(new BorderLayout());
@@ -53,10 +60,12 @@ public class AlignmentOutputGUI extends StackWindow {
         this.save = new Menu("Save");
         this.reuseItem = new MenuItem("Reuse as source");
         this.overlappedItem = new MenuItem("View Overlapped");
+        this.carouselItem = new MenuItem("View Carousel");
         this.saveItem = new MenuItem("Save Project");
         this.addComponents();
         this.addListeners();
     }
+
     public void addComponents() {
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
@@ -90,17 +99,23 @@ public class AlignmentOutputGUI extends StackWindow {
 
         this.pack();
         /*this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        */
         this.overlappedItem.addActionListener(event -> {
-            new OverlapImagesGUI(this.controller.name() ,this.bunwarpjGUI, this.controller, this.pointController, this.previewImagesPane).showDialog();
-            this.dispose();
+            System.out.println(this.getImagePlus().getDisplayMode());
+            this.getImagePlus().setDisplayMode(CompositeImage.COMPOSITE);
+            this.settings.remove(this.overlappedItem);
+            this.settings.add(this.carouselItem);
         });
-        
-         */
+        this.carouselItem.addActionListener(event -> {
+            this.getImagePlus().setDisplayMode(2);
+            this.settings.remove(this.carouselItem);
+            this.settings.add(this.overlappedItem);
+        });
         this.saveItem.addActionListener(event -> {
             this.saveGui.showDialog();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI, this);
             reuseGUI.showDialog();
         });
     }
