@@ -364,7 +364,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(), this.pointControler);
+                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(),
+                        this.pointControler,
+                        1);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,
@@ -387,7 +389,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     fileChooser.setMultiSelectionEnabled(true);
                     final int result = fileChooser.showOpenDialog(this);
                     if (result == JFileChooser.APPROVE_OPTION) {
-                        this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                        try {
+                            this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                        }catch (OutOfMemoryError ex){
+                            JOptionPane.showMessageDialog(this,
+                                    ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,

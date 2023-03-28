@@ -2,7 +2,6 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.ImagePlusMatConverter;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
@@ -20,8 +19,11 @@ public class SURFDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         System.gc();
         // Detect the keypoints and compute the descriptors for both images:
-        final Mat grayImg = this.createP(imagePoint.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(imagePoint, scalingFactor).getProcessor());
-        final Mat grayTarget = this.createP(targetImage.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(targetImage, scalingFactor).getProcessor());
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
+                imagePoint.getGrayScaleMat();
+        final Mat grayTarget = scalingFactor > 1 ?
+                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
+                targetImage.getGrayScaleMat();
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
@@ -47,6 +49,7 @@ public class SURFDetector extends PointDetector {
             if (dist < min_dist) min_dist = dist;
             if (dist > max_dist) max_dist = dist;
         }
+
         final double threshold = (1.1+this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();

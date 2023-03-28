@@ -2,7 +2,7 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.calib3d.Calib3d;
@@ -11,7 +11,6 @@ import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -37,7 +36,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         return this.scale;
     }
     @Override
-    public Optional<AlignedImage> align(final ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException{
+    public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
         try {
             if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
@@ -54,8 +53,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         System.gc();
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
+                    final AlignedImage finalImg = new AlignedImage(transformationMatrix,
+                            MatImageProcessorConverter.convert(alignedImage, imageToShift.getName(), ip),
+                            imageToShift.getName());
+                    ip = null;
                     System.gc();
-                    return Optional.of(new AlignedImage(transformationMatrix, MatImagePlusConverter.convert(alignedImage, imageToShift.getName(), ip)));
+                    return finalImg;
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
                             "inside the target image.");

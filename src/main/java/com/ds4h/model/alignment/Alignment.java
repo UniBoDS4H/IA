@@ -6,6 +6,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.MemoryController;
 import ij.IJ;
 
 import java.util.*;
@@ -60,24 +61,47 @@ public class Alignment implements Runnable{
         }
     }
 
+    /**
+     * Align images with the automatic algorithm
+     * @param pointManager
+     * @param algorithm
+     * @param type
+     * @param pointDetector
+     * @param factor
+     * @param scalingFactor
+     * @throws IllegalArgumentException
+     */
     public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
                             final AlignmentEnum type,
                             final PointDetector pointDetector,
-                            final double factor) throws IllegalArgumentException{
-        this.pointDetector = (pointDetector);
-        this.pointDetector.setFactor(factor);
-        this.alignImages(pointManager, algorithm, type);
+                            final double factor,
+                            final int scalingFactor) throws IllegalArgumentException{
+        if(Objects.nonNull(pointManager) &&
+                Objects.nonNull(algorithm) &&
+                Objects.nonNull(type) &&
+                Objects.nonNull(pointDetector) &&
+                factor >= 0 &&
+                scalingFactor >= 1) {
+            this.pointDetector = (pointDetector);
+            this.pointDetector.setFactor(factor);
+            this.alignImages(pointManager, algorithm, type);
+        }else{
+            throw new IllegalArgumentException("One of the argument for the alignment are not correct. Please," +
+                    "take a look to: Alignment Algorithm, the factor must be greater than 0 and the scaling factor " +
+                    "must be at least 1.");
+        }
     }
+
 
     private void manual(){
         assert this.targetImage.getProcessor() != null;
 
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
-        this.alignedImages.add(new AlignedImage(target.getImagePlus()));
+        this.alignedImages.add(new AlignedImage(target.getImagePlus().getProcessor(), target.getName()));
         IJ.log("[MANUAL] Start alignment.");
         this.imagesToAlign.forEach(img ->
-                this.algorithm.align(target, img, img.getProcessor())
-                        .ifPresent(this.alignedImages::add));
+                this.alignedImages.add(this.algorithm.align(target, img, img.getProcessor()))
+        );
         IJ.log("[MANUAL] End alignment.");
         this.imagesToAlign.clear();
         this.targetImage = null;
@@ -87,11 +111,11 @@ public class Alignment implements Runnable{
 
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
-        IJ.log("[AUTOMATIC] Target LUT: " + this.targetImage.getProcessor().getLut());
+
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
-            this.pointDetector.detectPoint(t, img,4 );
+            this.pointDetector.detectPoint(t, img,4);
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
@@ -100,19 +124,24 @@ public class Alignment implements Runnable{
         });
         System.gc();
         IJ.log("[AUTOMATIC] Starting preprocess");
-        IJ.log("[AUTOMATIC] End preprocess");
-        System.gc();
+        this.imagesToAlign.clear();
+        if(images.size() == 0){
+            throw new IllegalArgumentException("The detection has failed, please consider to expand the memory and increase the SCALING FACTOR.");
+        }
         this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                 images,
-                this.algorithm)));
+                this.algorithm), this.targetImage.getName()));
+        IJ.log("[AUTOMATIC] End preprocess");
+
         IJ.log("[AUTOMATIC] Start aligning the images.");
         this.targetImage = null;
-        this.imagesToAlign.clear();
         images.forEach((key, value) -> {
             value.getMatImage().release();
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
-            IJ.log("[AUTOMATIC] LUT: " + key.getProcessor().getLut().getMapSize());
-            this.algorithm.align(value, key, key.getProcessor()).ifPresent(this.alignedImages::add);
+            this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
+            key.getMatImage().release();
+            //value.clearPoints();
+            //key.clearPoints();
             key = null;
             value = null;
             System.gc();
@@ -129,7 +158,7 @@ public class Alignment implements Runnable{
      * In order to perform the alignment It is necessary that the targetImage is present.
      */
     @Override
-    public void run(){
+    public void run() {
         try {
             if(Objects.nonNull(this.targetImage)) {
                 if(type == AlignmentEnum.MANUAL){
@@ -141,8 +170,12 @@ public class Alignment implements Runnable{
             this.thread = new Thread(this);
         } catch (final Exception e) {
             this.thread = new Thread(this);
-            throw new RuntimeException(e);
+            throw e;
         }
+    }
+
+    public void clearList(){
+        this.alignedImages.clear();
     }
 
 
@@ -155,6 +188,10 @@ public class Alignment implements Runnable{
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isAlive(){
         return this.thread.isAlive();
     }
