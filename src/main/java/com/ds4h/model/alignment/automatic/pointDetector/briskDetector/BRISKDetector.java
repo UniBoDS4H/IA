@@ -2,10 +2,7 @@ package com.ds4h.model.alignment.automatic.pointDetector.briskDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
-import org.opencv.core.KeyPoint;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.BRISK;
 
@@ -23,14 +20,21 @@ public class BRISKDetector extends PointDetector {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
+                imagePoint.getGrayScaleMat();
+        final Mat grayTarget = scalingFactor > 1 ?
+                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
-        brisk.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1);
-        brisk.detectAndCompute(targetImage.getGrayScaleMat(), new Mat(), keypoints2, descriptors2);
+        brisk.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
+        brisk.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
 
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
-
+        descriptors1.release();
+        descriptors2.release();
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
 
@@ -42,10 +46,19 @@ public class BRISKDetector extends PointDetector {
         double threshold = (1.8 + this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();
+        keypoints1.release();
+        keypoints2.release();
+        final double scale = Math.pow(2, scalingFactor-1);
         matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
-                    imagePoint.addPoint(keypoints1List.get(goodMatch.queryIdx).pt);
-                    targetImage.addPoint(keypoints2List.get(goodMatch.trainIdx).pt);
+                    final Point queryScaled = new Point(
+                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
+                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
+                    final Point trainScaled = new Point(
+                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
+                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
+                    imagePoint.addPoint(queryScaled);
+                    targetImage.addPoint(trainScaled);
                 });
 
     }

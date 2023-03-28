@@ -19,8 +19,11 @@ public class SURFDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         System.gc();
         // Detect the keypoints and compute the descriptors for both images:
-        final Mat grayImg = this.createPyramid(imagePoint.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(imagePoint, scalingFactor).getProcessor());
-        final Mat grayTarget = this.createPyramid(targetImage.getMatImage(), scalingFactor);//ImagePlusMatConverter.convertGray(this.createPyramid(targetImage, scalingFactor).getProcessor());
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
+                imagePoint.getGrayScaleMat();
+        final Mat grayTarget = scalingFactor > 1 ?
+                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
+                targetImage.getGrayScaleMat();
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
@@ -46,6 +49,7 @@ public class SURFDetector extends PointDetector {
             if (dist < min_dist) min_dist = dist;
             if (dist > max_dist) max_dist = dist;
         }
+
         final double threshold = (1.1+this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = keypoints2.toList();

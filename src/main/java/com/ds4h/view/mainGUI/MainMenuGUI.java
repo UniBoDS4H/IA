@@ -400,7 +400,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     fileChooser.setMultiSelectionEnabled(true);
                     final int result = fileChooser.showOpenDialog(this);
                     if (result == JFileChooser.APPROVE_OPTION) {
-                        this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                        try {
+                            this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                        }catch (OutOfMemoryError ex){
+                            JOptionPane.showMessageDialog(this,
+                                    ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,

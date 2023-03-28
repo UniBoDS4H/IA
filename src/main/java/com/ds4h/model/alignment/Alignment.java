@@ -92,6 +92,7 @@ public class Alignment implements Runnable{
         }
     }
 
+
     private void manual(){
         assert this.targetImage.getProcessor() != null;
 
@@ -187,6 +188,10 @@ public class Alignment implements Runnable{
         return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isAlive(){
         return this.thread.isAlive();
     }
