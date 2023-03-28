@@ -8,24 +8,20 @@ import java.util.List;
 
 public class MemoryController {
 
-    private final static long  MEMORY_LIMIT = 150_000; //(150MB);
-    private final static Runtime runtime = Runtime.getRuntime();
+    private final static long  MEMORY_LIMIT = 150_000;
+    private final static double MEMORY_PERCENTAGE_LIMIT = 0.35;
+    private final static String errorMSG = "The remaining memory is not enough. Please consider\n " +
+            "to expand your memory in order to perform this operation without having problems.\n " +
+            "You can expand the memory by going to the Fiji/ImageJ menu and click on:\n" +
+            "Edit > Options > Memory & Thread, put inside the \"Maximum Memory\" a value higher than 4000.\n" +
+            "After that you will have to re-start Fiji/ImageJ, so export your project if you need it.";
 
     private MemoryController(){
 
     }
 
-    public static void controllMemory(final Size size){
-        if(runtime.totalMemory() - runtime.freeMemory() <= (size.width*size.height * 8)){
-            throw new OutOfMemoryError("The remaining memory is not enough. Please consider " +
-                    "to expand your memory in order to perform this operation without having problems. " +
-                    "You can expand the memory by going to the Fiji/ImageJ menu and click on:" +
-                    "Edit > Options > Memory & Thread, put inside the \"Maximum Memory\" a value higher than 4000." +
-                    "After that you will have to re-start Fiji/ImageJ, so export your project if you need it.");
-        }
-    }
 
-    public static void controllMemory(final List<ImagePoints> inputImaes){
+    public static void controllMemory(final List<ImagePoints> inputImaes) throws OutOfMemoryError{
         long memorySize = 0;
         final long totalMemory = (IJ.maxMemory()/(1024*1024));
         for(final ImagePoints img : inputImaes){
@@ -39,23 +35,8 @@ public class MemoryController {
         IJ.log("[MEMORY SIZE IMAGE] Total Memory: " + totalMemory);
         IJ.log("[MEMORY SIZE IMAGE] Percentage: " + (memorySize/(double)totalMemory));
 
-        if(memorySize/(double)totalMemory >= 0.35){
-            throw new OutOfMemoryError("The remaining memory is not enough. Please consider " +
-                    "to expand your memory in order to perform this operation without having problems. " +
-                    "You can expand the memory by going to the Fiji/ImageJ menu and click on:" +
-                    "Edit > Options > Memory & Thread, put inside the \"Maximum Memory\" a value higher than 4000." +
-                    "After that you will have to re-start Fiji/ImageJ, so export your project if you need it.");
-        }
-    }
-
-    public static void controllMemory(){
-        IJ.log("[FREE MEMORY] Total Free Memory: " + (runtime.totalMemory() - runtime.freeMemory()));
-        if(runtime.totalMemory() - runtime.freeMemory() <= MEMORY_LIMIT){
-            throw new OutOfMemoryError("The remaining memory is not enough. Please consider " +
-                    "to expand your memory in order to perform this operation without having problems. " +
-                    "You can expand the memory by going to the Fiji/ImageJ menu and click on:" +
-                    "Edit > Options > Memory & Thread, put inside the \"Maximum Memory\" a value higher than 4000." +
-                    "After that you will have to re-start Fiji/ImageJ, so export your project if you need it.");
+        if(memorySize/(double)totalMemory >= MEMORY_PERCENTAGE_LIMIT){
+            throw new OutOfMemoryError(MemoryController.errorMSG);
         }
     }
 }

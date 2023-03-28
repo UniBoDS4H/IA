@@ -61,8 +61,6 @@ public class MatImageProcessorConverter {
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
         IJ.log("[MAKE SHORTPROCESSOR] From: " + matrix);
         final ImageProcessor shortProcessor = new ShortProcessor(width, height);
-        MemoryController.controllMemory();
-
         if(matrix.channels() > 1) {
             //We use the LUT table for the colors
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
