@@ -2,7 +2,6 @@ package com.ds4h.view.mainGUI;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
-import com.ds4h.controller.alignmentController.semiAutomaticController.SemiAutomaticController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
@@ -50,7 +49,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final BunwarpJController bunwarpJController;
     private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
     private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
-    private final SemiAutomaticController semiAutomaticController = new SemiAutomaticController();
     private final AutomaticSettingsGUI automaticSettingsGUI;
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
@@ -352,11 +350,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler, this);
+                    new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
                     //new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
-                    new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler, this);
+                    new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
                     /*
                     ImageCalculator ic = new ImageCalculator();
                     List<AlignedImage> im = ((AutomaticAlignmentController) alignmentControllerInterface).getAlignedImages();

@@ -1,15 +1,23 @@
 package com.ds4h.view.configureImageGUI;
 
+import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
 import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ColorComboBox;
+import ij.CompositeImage;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,10 +35,12 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final List<Color> colorList = new LinkedList<>();
     private final List<AlignedImage> images;
     private final AlignmentOutputGUI outputGUI;
+    private final AlignmentControllerInterface imageController;
 
-    public ConfigureImagesGUI(final List<AlignedImage> images, AlignmentOutputGUI alignmentOutputGUI){
+    public ConfigureImagesGUI(AlignmentControllerInterface imageController, AlignmentOutputGUI alignmentOutputGUI){
         this.outputGUI = alignmentOutputGUI;
-        this.images = images;
+        this.imageController = imageController;
+        this.images = this.imageController.getAlignedImages();
         this.setSize(new Dimension(WIDTH, HEIGHT));
         this.constraints = new GridBagConstraints();
         this.constraints.insets = new Insets(0, 0, 5, 5);
@@ -60,29 +70,35 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             final int index = this.colorComboBox.getSelectedIndex();
             final AlignedImage image = (AlignedImage) this.comboBox.getSelectedItem();
             final Color color = this.colorComboBox.getItemAt(index);
-
-
-            ImageProcessor ip = image.getAlignedImage().getProcessor();
+            //((CompositeImage)this.outputGUI.getImagePlus()).setChannelLut(LUT.createLutFromColor(color),index);
+           /* ImageProcessor ip = image.getAlignedImage().getProcessor();
             LUT lut = LUT.createLutFromColor(color);
             ip.setLut(lut);
+            outputGUI.setImage(this.imageController.getAlignedImagesAsStack());
             outputGUI.repaint();
+
+            */
         });
 
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
-            this.opacitySlider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
+            //his.opacitySlider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
         });
         this.opacitySlider.addChangeListener(event -> {
-            final float value = (this.opacitySlider.getValue() / DIV);
+           /* final float value = (this.opacitySlider.getValue() / DIV);
             final int index = this.comboBox.getSelectedIndex();
             this.imagePanels.get(index).setOpacity(value);
+
+            */
         });
         this.reset.addActionListener(evenet -> {
-            this.imagePanels.forEach(imageP -> {
+           /* this.imagePanels.forEach(imageP -> {
                 imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY);
                 imageP.resetImage();
             });
             this.opacitySlider.setValue(DEFAULT);
+
+            */
 
         });
 
@@ -111,6 +127,7 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
 
     private void populateCombo(){
         this.images.stream().forEach(this.comboBox::addItem);
+
     }
     private void addElement(final JLabel label, final JPanel panel, final JComponent component){
         panel.add(label);

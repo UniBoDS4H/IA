@@ -2,9 +2,9 @@ package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
+import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
-import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.standardGUI.StandardGUI;
 
 import javax.swing.*;
@@ -17,12 +17,14 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     private final ReuseImagesPanel imagesPane;
     private final JScrollPane scrollPane;
     private final MainMenuGUI mainGUI;
-    private boolean done = false;
     private final ImageController controller;
     private final PointController pointController;
-    public ReuseGUI(final PointController pointController, final ImageController controller, MainMenuGUI mainGUI){
+    private final AlignmentOutputGUI outputGUI;
+
+    public ReuseGUI(final PointController pointController, final ImageController controller, MainMenuGUI mainGUI, AlignmentOutputGUI alignmentOutputGUI){
         this.setSize();
         this.mainGUI = mainGUI;
+        this.outputGUI = alignmentOutputGUI;
         this.pointController = pointController;
         this.controller = controller;
         this.fileChooser = new JFileChooser();
@@ -46,16 +48,12 @@ public class ReuseGUI extends JFrame implements StandardGUI {
             try {
                 this.pointController.reuseSource(this.imagesPane.getImagesToReuse());
                 this.mainGUI.reloadImages();
+                this.outputGUI.dispose();
                 this.dispose();
-                this.done = true;
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
         });
-    }
-
-    public boolean isDone(){
-        return this.done;
     }
 
     @Override
