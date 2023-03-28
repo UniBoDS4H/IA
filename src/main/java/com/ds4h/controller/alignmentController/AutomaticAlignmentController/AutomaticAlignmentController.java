@@ -9,15 +9,9 @@ import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import ij.CompositeImage;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.gui.ImageWindow;
-import ij.plugin.ImageCalculator;
-import ij.process.ImageProcessor;
 import ij.process.LUT;
-
-import java.awt.*;
 import java.awt.image.ColorModel;
 import java.util.LinkedList;
 import java.util.List;

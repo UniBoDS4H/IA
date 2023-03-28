@@ -65,7 +65,6 @@ public class PreviewListItem extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {
-                //TODO: Launch a message dialog in order to confirm the deletion
                 final int result = JOptionPane.showConfirmDialog(this,
                         "Are you sure to delete the selected image ?",
                         "Confirm operation",

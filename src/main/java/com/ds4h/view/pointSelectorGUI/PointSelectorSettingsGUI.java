@@ -66,6 +66,7 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     @Override
     public void showDialog() {
         this.setVisible(true);
+        this.setCornerComboBox();
     }
 
     @Override
@@ -94,8 +95,7 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
             int from = (int)indexFrom.getSelectedItem();
             int to = (int)indexTo.getSelectedItem();
             this.container.getImage().editPointIndex(from-1, to-1);
-            //ChangeColorController.changeContrast(container.getImage().getImage(), this.contrast);
-            this.container.repaint();
+            this.container.updatePoints();
         });
 
         this.contrastSlider.addChangeListener(event->{

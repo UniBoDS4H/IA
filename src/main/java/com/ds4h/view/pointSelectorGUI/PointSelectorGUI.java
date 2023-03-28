@@ -85,6 +85,10 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     public void showWindow(){
         this.setVisible(true);
     }
+
+    public void updatePoints() {
+        this.canvas.drawPoints();
+    }
 }
 
 
