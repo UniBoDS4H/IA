@@ -13,6 +13,8 @@ import com.ds4h.view.standardGUI.StandardCanvas;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
+import ij.process.LUT;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -38,12 +40,14 @@ public class AlignmentOutputGUI extends StackWindow {
     private final ConfigureImagesGUI configureImagesGUI;
     private final PointController pointController;
     private final MainMenuGUI mainGUI;
+    private final LUT[] originalLuts;
 
     public AlignmentOutputGUI(AlignmentControllerInterface alignmentController, BunwarpjGUI settingsBunwarpj, BunwarpJController bunwarpJController, PointController pointController, MainMenuGUI mainMenuGUI) {
         super(image = alignmentController.getAlignedImagesAsStack(), new StandardCanvas(image));
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
         this.setLayout(new BorderLayout());
+        this.originalLuts = this.getImagePlus().getLuts();
         this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
         this.controller = new ImageController(alignmentController, bunwarpJController);
@@ -118,5 +122,9 @@ public class AlignmentOutputGUI extends StackWindow {
             final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI, this);
             reuseGUI.showDialog();
         });
+    }
+
+    public LUT[] getOriginalLuts() {
+        return this.originalLuts;
     }
 }

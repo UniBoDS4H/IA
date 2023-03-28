@@ -72,19 +72,10 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             ((CompositeImage)this.outputGUI.getImagePlus()).setLuts(luts);
             this.outputGUI.repaint();
             this.outputGUI.getImagePlus().setSlice(index+1);
-            //((CompositeImage)this.outputGUI.getImagePlus()).setChannelLut(LUT.createLutFromColor(color),index);
-           /* ImageProcessor ip = image.getAlignedImage().getProcessor();
-            LUT lut = LUT.createLutFromColor(color);
-            ip.setLut(lut);
-            outputGUI.setImage(this.imageController.getAlignedImagesAsStack());
-            outputGUI.repaint();
-
-            */
         });
 
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
-            //his.opacitySlider.setValue(Math.round(this.imagePanels.get(index).getOpacity()*DIV));
         });
         this.opacitySlider.addChangeListener(event -> {
            /* final float value = (this.opacitySlider.getValue() / DIV);
@@ -94,14 +85,8 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             */
         });
         this.reset.addActionListener(evenet -> {
-           /* this.imagePanels.forEach(imageP -> {
-                imageP.setOpacity(OverlapImagesGUI.ImagePanel.DEFAULT_OPACITY);
-                imageP.resetImage();
-            });
-            this.opacitySlider.setValue(DEFAULT);
-
-            */
-
+            ((CompositeImage)this.outputGUI.getImagePlus()).setLuts(this.outputGUI.getOriginalLuts());
+            this.outputGUI.getImagePlus().setSlice(1);
         });
 
     }

@@ -35,6 +35,7 @@ public class PreviewImagesPane extends JPanel {
         scrollPane.setViewportView(innerPanel);
         this.add(scrollPane);
         this.revalidate();
+        this.repaint();
     }
 
     public void clearPanels(){

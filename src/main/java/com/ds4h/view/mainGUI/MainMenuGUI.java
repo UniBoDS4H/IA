@@ -433,6 +433,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
     public void reloadImages(){
         this.imagesPreview.showPreviewImages();
+        this.repaint();
     }
 
 }
