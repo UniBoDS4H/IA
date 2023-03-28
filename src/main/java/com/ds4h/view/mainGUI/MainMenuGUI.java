@@ -377,7 +377,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(), this.pointControler);
+                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(),
+                        this.pointControler,
+                        1);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,
