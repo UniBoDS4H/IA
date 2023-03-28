@@ -18,12 +18,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JButton reset;
-    private final JComboBox<AlignedImage> comboBox;
+    private final JComboBox<String> comboBox;
     private final JSlider opacitySlider;
     private final ColorComboBox colorComboBox;
     private final JLabel labelCombo, labelSlider;
@@ -33,14 +34,10 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final static float DIV = 10f;
     private final List<OverlapImagesGUI.ImagePanel> imagePanels;
     private final List<Color> colorList = new LinkedList<>();
-    private final List<AlignedImage> images;
     private final AlignmentOutputGUI outputGUI;
-    private final AlignmentControllerInterface imageController;
 
-    public ConfigureImagesGUI(AlignmentControllerInterface imageController, AlignmentOutputGUI alignmentOutputGUI){
+    public ConfigureImagesGUI(AlignmentOutputGUI alignmentOutputGUI){
         this.outputGUI = alignmentOutputGUI;
-        this.imageController = imageController;
-        this.images = this.imageController.getAlignedImages();
         this.setSize(new Dimension(WIDTH, HEIGHT));
         this.constraints = new GridBagConstraints();
         this.constraints.insets = new Insets(0, 0, 5, 5);
@@ -67,9 +64,14 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         this.colorComboBox.addActionListener(event -> {
-            final int index = this.colorComboBox.getSelectedIndex();
-            final AlignedImage image = (AlignedImage) this.comboBox.getSelectedItem();
-            final Color color = this.colorComboBox.getItemAt(index);
+            final int index = this.comboBox.getSelectedIndex();
+            final Color color = this.colorComboBox.getSelectedColor();
+            LUT[]luts = this.outputGUI.getImagePlus().getLuts();
+            luts[index] = LUT.createLutFromColor(color);
+
+            ((CompositeImage)this.outputGUI.getImagePlus()).setLuts(luts);
+            this.outputGUI.repaint();
+            this.outputGUI.getImagePlus().setSlice(index+1);
             //((CompositeImage)this.outputGUI.getImagePlus()).setChannelLut(LUT.createLutFromColor(color),index);
            /* ImageProcessor ip = image.getAlignedImage().getProcessor();
             LUT lut = LUT.createLutFromColor(color);
@@ -126,7 +128,9 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     }
 
     private void populateCombo(){
-        this.images.stream().forEach(this.comboBox::addItem);
+        for(int i = 0; i < this.outputGUI.getImagePlus().getStack().getSize(); i++){
+            this.comboBox.addItem(this.outputGUI.getImagePlus().getStack().getSliceLabels()[i]);
+        }
 
     }
     private void addElement(final JLabel label, final JPanel panel, final JComponent component){

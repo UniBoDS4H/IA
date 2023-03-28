@@ -47,7 +47,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
         this.controller = new ImageController(alignmentController, bunwarpJController);
-        this.configureImagesGUI = new ConfigureImagesGUI(alignmentController, this);
+        this.configureImagesGUI = new ConfigureImagesGUI(this);
         this.algorithm = alignmentController.name();
         this.bunwarpjGUI = settingsBunwarpj;
         this.saveGui = new SaveImagesGUI(this.controller);

@@ -85,7 +85,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
             int index = 0;
             for (AlignedImage image : images) {
                 luts[index] = image.getAlignedImage().getProcessor().getLut();
-                stack.addSlice(image.getAlignedImage().getProcessor());
+                stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
                 index++;
             }
             CompositeImage composite = new CompositeImage(new ImagePlus("AglignedStack", stack));
