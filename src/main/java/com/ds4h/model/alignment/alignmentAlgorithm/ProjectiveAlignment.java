@@ -2,15 +2,12 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
-import ij.ImagePlus;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.process.ImageProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.Optional;
 
 public class ProjectiveAlignment implements AlignmentAlgorithm{
     public static int LOWER_BOUND = 4;
@@ -21,8 +18,8 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
             final Mat alignedImage = new Mat();
             final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
             Imgproc.warpPerspective(imageToShiftMat, alignedImage, transformationMatrix, targetImage.getMatImage().size());
-            return new AlignedImage(transformationMatrix, MatImagePlusConverter.convert(alignedImage,
-                    imageToShift.getName(), ip));
+            return new AlignedImage(transformationMatrix, MatImageProcessorConverter.convert(alignedImage,
+                    imageToShift.getName(), ip), imageToShift.getName());
         }else{
             throw new IllegalArgumentException("For the Projective alignment the points must be at least: 4");
         }

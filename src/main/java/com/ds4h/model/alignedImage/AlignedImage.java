@@ -1,6 +1,7 @@
 package com.ds4h.model.alignedImage;
 
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
@@ -14,7 +15,8 @@ import java.util.Optional;
  * is an Optional because for the target image we do not calculate the registration matrix.
  */
 public class AlignedImage {
-    private final ImagePlus alignedImage;
+    private final ImageProcessor alignedImage;
+    private final String name;
     private final Optional<Mat> registrationMatrix;
 
     /**
@@ -22,18 +24,20 @@ public class AlignedImage {
      * @param registrationMatrix : The registration matrix in order to have a value for the accuracy of the alignment
      * @param image : The aligned image
      */
-    public AlignedImage(final Mat registrationMatrix,  final ImagePlus image){
-        this.registrationMatrix = Optional.of(registrationMatrix);
+    public AlignedImage(final Mat registrationMatrix,  final ImageProcessor image, final String name){
         this.alignedImage = image;
+        this.name = name;
+        this.registrationMatrix = Optional.of(registrationMatrix);
     }
     /**
      * Constructor of the AlignedImage. An AlignedImage is the result of the Alignment Algorithm.
      * This constructor is used for the target image because there is no registration matrix
      * @param image : The aligned image
      */
-    public AlignedImage(final ImagePlus image){
+    public AlignedImage(final ImageProcessor image, final String name){
         this.registrationMatrix = Optional.empty();
         this.alignedImage = image;
+        this.name = name;
     }
 
     /**
@@ -41,7 +45,7 @@ public class AlignedImage {
      * @return the name of the image
      */
     public String getName(){
-        return this.alignedImage.getTitle();
+        return this.name;
     }
 
     /**
@@ -51,21 +55,14 @@ public class AlignedImage {
     public Optional<Mat> getRegistrationMatrix(){
         return this.registrationMatrix;
     }
-
-    /**
-     * This method return the matrix of the aligned image
-     * @return the matrix of the image
-     */
-    public Mat getMat(){
-        return Imgcodecs.imread(this.alignedImage.getFileInfo().getFilePath());
-    }
+    
 
     /**
      * This method return the result image.
      * @return get the aligned image
      */
     public ImagePlus getAlignedImage(){
-        return this.alignedImage;
+        return new ImagePlus(this.name,  this.alignedImage);
     }
     @Override
     public String toString() {

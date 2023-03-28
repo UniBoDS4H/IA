@@ -1,11 +1,8 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.ImagePlus;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;

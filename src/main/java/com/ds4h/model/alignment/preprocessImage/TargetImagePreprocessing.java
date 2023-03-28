@@ -2,14 +2,10 @@ package com.ds4h.model.alignment.preprocessImage;
 
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.Pair;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
-import com.ds4h.model.util.saveProject.SaveImages;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
@@ -39,8 +35,7 @@ public class TargetImagePreprocessing {
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
-        target.setProcessor(MatImagePlusConverter.convert(target.getMatImage(), title, ip)
-                .getProcessor());
+        target.setProcessor(MatImageProcessorConverter.convert(target.getMatImage(), title, ip));
         return target;
     }
 
@@ -79,9 +74,8 @@ public class TargetImagePreprocessing {
         System.gc();
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));
-        s.get(s.size()-1).getValue().setProcessor(MatImagePlusConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
-                        s.get(s.size()-1).getValue().getTitle(), ip)
-                .getProcessor());
+        s.get(s.size()-1).getValue().setProcessor(MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
+                        s.get(s.size()-1).getValue().getTitle(), ip));
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
         IJ.log("[AUTOMATIC PREPROCESS] BitDepth: " + s.get(s.size()-1).getValue().getProcessor().getBitDepth());
         return s.get(s.size()-1).getValue();

@@ -7,11 +7,7 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.MemoryController;
-import com.ds4h.model.util.converter.MatImagePlusConverter;
 import ij.IJ;
-import ij.process.ColorProcessor;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -100,7 +96,7 @@ public class Alignment implements Runnable{
         assert this.targetImage.getProcessor() != null;
 
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
-        this.alignedImages.add(new AlignedImage(target.getImagePlus()));
+        this.alignedImages.add(new AlignedImage(target.getImagePlus().getProcessor(), target.getName()));
         IJ.log("[MANUAL] Start alignment.");
         this.imagesToAlign.forEach(img ->
                 this.alignedImages.add(this.algorithm.align(target, img, img.getProcessor()))
@@ -134,7 +130,7 @@ public class Alignment implements Runnable{
         }
         this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                 images,
-                this.algorithm)));
+                this.algorithm).getProcessor(), this.targetImage.getName()));
         IJ.log("[AUTOMATIC] End preprocess");
 
         IJ.log("[AUTOMATIC] Start aligning the images.");
