@@ -27,15 +27,19 @@ public class MemoryController {
 
     public static void controllMemory(final List<ImagePoints> inputImaes){
         long memorySize = 0;
-        final long freeMemory = runtime.totalMemory() - runtime.freeMemory();
+        final long totalMemory = (IJ.maxMemory()/(1024*1024));
         for(final ImagePoints img : inputImaes){
             final int width = img.getWidth();
             final int height = img.getHeight();
-            final int nslices = img.getNSlices();
             final int bitdepth = img.getBitDepth();
-            memorySize += ((long) width *height*nslices*bitdepth);
+            memorySize += (((long) width *height*bitdepth)/8);
         }
-        if(memorySize/(double)freeMemory > 0.3){
+        memorySize = memorySize/(1024*1024);
+        IJ.log("[MEMORY SIZE IMAGE] TotalSize: " + memorySize);
+        IJ.log("[MEMORY SIZE IMAGE] Total Memory: " + totalMemory);
+        IJ.log("[MEMORY SIZE IMAGE] Percentage: " + (memorySize/(double)totalMemory));
+
+        if(memorySize/(double)totalMemory >= 0.35){
             throw new OutOfMemoryError("The remaining memory is not enough. Please consider " +
                     "to expand your memory in order to perform this operation without having problems. " +
                     "You can expand the memory by going to the Fiji/ImageJ menu and click on:" +
