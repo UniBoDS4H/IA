@@ -130,7 +130,7 @@ public class Alignment implements Runnable{
         }
         this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                 images,
-                this.algorithm).getProcessor(), this.targetImage.getName()));
+                this.algorithm), this.targetImage.getName()));
         IJ.log("[AUTOMATIC] End preprocess");
 
         IJ.log("[AUTOMATIC] Start aligning the images.");

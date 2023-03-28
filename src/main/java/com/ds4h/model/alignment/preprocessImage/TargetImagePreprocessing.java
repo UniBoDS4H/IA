@@ -39,7 +39,7 @@ public class TargetImagePreprocessing {
         return target;
     }
 
-    static public ImagePoints automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
+    static public ImageProcessor automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
         final String title = s.get(0).getValue().getTitle();
@@ -74,11 +74,9 @@ public class TargetImagePreprocessing {
         System.gc();
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));
-        s.get(s.size()-1).getValue().setProcessor(MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
-                        s.get(s.size()-1).getValue().getTitle(), ip));
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
-        IJ.log("[AUTOMATIC PREPROCESS] BitDepth: " + s.get(s.size()-1).getValue().getProcessor().getBitDepth());
-        return s.get(s.size()-1).getValue();
+        return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
+                s.get(s.size()-1).getValue().getTitle(), ip);
     }
 
     //returns the mat of the new target and the shift of the points
