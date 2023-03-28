@@ -5,9 +5,16 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
 
+import java.util.List;
+
 public class KAZEDetector extends PointDetector {
     private final KAZE detector = KAZE.create();
     private final BFMatcher matcher = BFMatcher.create();
+    final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
+    final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
+
+    final Mat descriptors1 = new Mat();
+    final Mat descriptors2 = new Mat();
     public KAZEDetector(){
         super();
 
@@ -16,22 +23,51 @@ public class KAZEDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
 
 
-        // Detect keypoints and compute descriptors for both images
-        final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
-        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
-        final Mat descriptors1 = new Mat();
-        final Mat descriptors2 = new Mat();
-        detector.detectAndCompute(imagePoint.getGrayScaleMat(), new Mat(), keypoints1, descriptors1);
-        detector.detectAndCompute(targetImage.getGrayScaleMat(), new Mat(), keypoints2, descriptors2);
+
+
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
+                imagePoint.getGrayScaleMat();
+
+        final Mat grayTarget = scalingFactor > 1 ?
+                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
+        this.detector.detectAndCompute(grayImg, new Mat(), this.keypoints1, this.descriptors1);
+        this.detector.detectAndCompute(grayTarget, new Mat(), this.keypoints2, this.descriptors2);
 
         // Match keypoints between the two images using a BFMatcher
         final MatOfDMatch matches = new MatOfDMatch();
-        matcher.match(descriptors1, descriptors2, matches);
-        final double threshold = (0.7 * 0.2)+this.getFactor();
+        this.matcher.match(this.descriptors1, this.descriptors2, matches);
+
+        double max_dist = 0;
+        double min_dist = Double.MAX_VALUE;
+
+        this.descriptors1.release();
+        this.descriptors2.release();
+        for(final DMatch match : matches.toList()){
+            final double dist = match.distance;
+            if (dist < min_dist) min_dist = dist;
+            if (dist > max_dist) max_dist = dist;
+        }
+
+
+        final double threshold = (1.4)+this.getFactor();
+        final List<KeyPoint> keypoints1List = this.keypoints1.toList();//originalKeyPoints.toList();
+        final List<KeyPoint> keypoints2List = this.keypoints2.toList();//targetKeyPoints.toList();
+        this.keypoints1.release();
+        this.keypoints2.release();
+        final double scale = scalingFactor > 1 ?  Math.pow(2, scalingFactor-1) : 1;
+
         matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
-                    imagePoint.addPoint(keypoints1.toList().get(goodMatch.queryIdx).pt);
-                    targetImage.addPoint(keypoints2.toList().get(goodMatch.trainIdx).pt);
+                    final Point queryScaled = new Point(
+                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
+                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
+                    final Point trainScaled = new Point(
+                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
+                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
+                    imagePoint.addPoint(queryScaled);
+                    targetImage.addPoint(trainScaled);
                 });
     }
 

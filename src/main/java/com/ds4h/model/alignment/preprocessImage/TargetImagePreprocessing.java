@@ -44,7 +44,6 @@ public class TargetImagePreprocessing {
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
         final String title = s.get(0).getValue().getTitle();
         IntStream.range(0, s.size()).forEach(i -> {
-            MemoryController.controllMemory();
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
                 ImagePoints target = s.get(j).getValue();

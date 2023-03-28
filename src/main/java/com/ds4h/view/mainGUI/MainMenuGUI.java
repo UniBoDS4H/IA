@@ -404,7 +404,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     if (result == JFileChooser.APPROVE_OPTION) {
                         try {
                             this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
-                        }catch (Exception ex){
+                        }catch (OutOfMemoryError ex){
                             JOptionPane.showMessageDialog(this,
                                     ex.getMessage(),
                                     "Error",
