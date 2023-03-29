@@ -140,8 +140,8 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
             this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
             key.getMatImage().release();
-            //value.clearPoints();
-            //key.clearPoints();
+            value.clearPoints();
+            key.clearPoints();
             key = null;
             value = null;
             System.gc();

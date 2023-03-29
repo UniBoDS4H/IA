@@ -45,6 +45,7 @@ public class PointSelectorMenuGUI extends JPanel {
 
         this.addComponents();
         this.addListeners();
+        this.updateView();
     }
     public void addListeners() {
         this.deleteButton.addActionListener(e->{

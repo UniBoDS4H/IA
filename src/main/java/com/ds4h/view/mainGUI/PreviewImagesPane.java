@@ -25,16 +25,17 @@ public class PreviewImagesPane extends JPanel {
         this.innerPanel.removeAll();
 
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-        for (final ImagePoints image : this.controller.getCornerImagesImages()) {
+        this.controller.getCornerImagesImages().forEach(image->{
             final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image)+1);
             panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
             panel.setPreferredSize(new Dimension(0,this.getHeight()/6)); // Imposta la dimensione preferita del pannello di anteprima
             innerPanel.add(panel);
-        }
+        });
         scrollPane.setViewportView(innerPanel);
         this.add(scrollPane);
         this.revalidate();
+        this.repaint();
     }
 
     public void clearPanels(){

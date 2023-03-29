@@ -10,6 +10,7 @@ public class ColorComboBox extends JComboBox<Color> {
     private final List<Color> colorList = new LinkedList<>();
 
     public ColorComboBox() {
+        colorList.add(Color.WHITE);
         colorList.add(Color.RED);
         colorList.add(Color.GREEN);
         colorList.add(Color.BLUE);
@@ -18,7 +19,6 @@ public class ColorComboBox extends JComboBox<Color> {
         colorList.add(Color.CYAN);
         colorList.add(Color.ORANGE);
         colorList.add(Color.DARK_GRAY);
-        colorList.add(Color.WHITE);
         colorList.add(Color.BLACK);
         final DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<Color>();
         for(Color color : colorList){

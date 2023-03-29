@@ -9,7 +9,9 @@ import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.LUT;
 
+import java.awt.image.ColorModel;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,13 +34,22 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     public CompositeImage getAlignedImagesAsStack(){
-        List<ImagePlus> alignedImages = this.getAlignedImages().stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList());
-        if(!alignedImages.isEmpty()) {
-            ImageStack stack = new ImageStack(alignedImages.get(0).getWidth(), alignedImages.get(0).getHeight());
-            alignedImages.forEach(a->stack.addSlice(a.getTitle(),a.getProcessor()));
-            return null;//new ImagePlus("AglignedStack", stack);
+        if(!this.getAlignedImages().isEmpty()){
+            ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
+            System.gc();
+            List<AlignedImage> images = this.getAlignedImages();
+            LUT[] luts = new LUT[images.size()];
+            int index = 0;
+            for (AlignedImage image : images) {
+                luts[index] = image.getAlignedImage().getProcessor().getLut();
+                stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
+                index++;
+            }
+            CompositeImage composite = new CompositeImage(new ImagePlus("AglignedStack", stack));
+            composite.setLuts(luts);
+            return composite;
         }
-        return null;// new ImagePlus("EmptyStack", new ImageStack());
+        throw new RuntimeException("stack is empty");
     }
     /**
      *

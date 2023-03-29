@@ -2,7 +2,7 @@ package com.ds4h.view.reuseGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
+import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
