@@ -24,6 +24,7 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
     int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
     private Color pointerColor;
+    private PointSelectorGUI container;
 
     public PointSelectorCanvas(ImagePoints image) {
         super(image);
@@ -57,10 +58,8 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
                         if (e.isControlDown()) {
                             if (selectedPoints.contains(actualPoint)) {//if the point is already selected
                                 selectedPoints.remove(actualPoint);
-                                //container.removeSelectedPoint(actualPoint);
                             } else {
                                 selectedPoints.add(actualPoint);
-                                //container.addSelectedPoint(actualPoint);
                             }
                         } else {
                             if (!selectedPoints.contains(actualPoint)) {
@@ -73,11 +72,8 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                             //first i add the new point then i call the updatePointsForAlignment for checking if we can enable the manual alignment button
                             image.addPoint((point));
-                            //container.updatePointsForAlignment();
                         } else {
                             selectedPoints.clear();
-                            //if I single click a place where there is no point I clear the selection
-                            //container.clearSelectedPoints();
                         }
                     }
                     drawPoints();
@@ -105,6 +101,10 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
     void drawPoints(){
         overlay.clear();
         this.image.getListPoints().forEach(this::drawPoint);
+        if(this.container != null){
+            this.container.updateMenu();
+            this.container.updateSettings();
+        }
     }
     private void drawPoint(Point p) {
         Color c;
@@ -183,5 +183,9 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
     }
     public int getPointerDimension(){
         return this.pointerDimension;
+    }
+
+    public void setContainer(PointSelectorGUI pointSelectorGUI) {
+        this.container = pointSelectorGUI;
     }
 }

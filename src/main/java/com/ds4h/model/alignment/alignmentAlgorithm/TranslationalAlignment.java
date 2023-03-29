@@ -24,7 +24,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     private boolean translate;
 
     public TranslationalAlignment(){
-        this.setTransformation(true, false,false);
+        this.setTransformation(true, false,true);
     }
     public boolean getTranslate(){
         return this.translate;

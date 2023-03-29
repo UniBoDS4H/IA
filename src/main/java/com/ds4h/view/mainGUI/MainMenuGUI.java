@@ -1,25 +1,27 @@
 package com.ds4h.view.mainGUI;
+
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
-import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
-import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
-import com.ds4h.model.alignment.alignmentAlgorithm.*;
+import com.ds4h.controller.pointController.PointController;
+import com.ds4h.model.alignment.alignmentAlgorithm.AffineAlignment;
+import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import com.ds4h.model.alignment.alignmentAlgorithm.ProjectiveAlignment;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.automaticSettingsGUI.AutomaticSettingsGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
-import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
+import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -213,7 +215,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("ciao");
                 aboutGUI.showDialog();
             }
 
@@ -351,20 +352,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
                     new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
-                    //new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
-
                 }else{
                     new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
-                    /*
-                    ImageCalculator ic = new ImageCalculator();
-                    List<AlignedImage> im = ((AutomaticAlignmentController) alignmentControllerInterface).getAlignedImages();
-                    // Sovrappone le due immagini e crea una nuova immagine
-                    ImagePlus overlayImage = ic.run("add", im.get(0).getAlignedImage(), im.get(1).getAlignedImage());
-                    new AlignmentOutputGUI(overlayImage, alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
-
-                    //final OverlapImagesGUI overlapImagesGUI = new OverlapImagesGUI(alignmentControllerInterface.name(),this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
-                     */
-                    //overlapImagesGUI.showDialog();
                 }
                 loadingGUI.close();
             }
@@ -435,13 +424,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         final int min_width = (int) (screenSize.width/5);
         final int min_height =(int) (screenSize.height);
         // Set the size of the frame to be half of the screen width and height
-        // Set the size of the frame to be half of the screen width and height
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
     }
 
     public void reloadImages(){
         this.imagesPreview.showPreviewImages();
+        this.repaint();
     }
 
 }

@@ -5,6 +5,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.pointSelectorGUI.PointSelectorCanvas;
 import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.util.ImageCache;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -40,7 +41,7 @@ public class PreviewListItem extends JPanel {
         this.deleteButton.setContentAreaFilled(false);
         this.deleteButton.setOpaque(false);
         this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.imageLabel = new JLabel(new ImageIcon(this.image.resize(40,40,"bilinear").getBufferedImage()));
+        this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
@@ -65,7 +66,6 @@ public class PreviewListItem extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {
-                //TODO: Launch a message dialog in order to confirm the deletion
                 final int result = JOptionPane.showConfirmDialog(this,
                         "Are you sure to delete the selected image ?",
                         "Confirm operation",
