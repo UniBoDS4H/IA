@@ -27,6 +27,7 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
         this.setLayout(new BorderLayout());
         this.panel.setLayout(new BorderLayout());
         this.canvas = (PointSelectorCanvas) this.getCanvas();
+        this.canvas.setContainer(this);
         this.removeAll();
         Toolbar.addPlugInTool(new PlugInTool() {
             @Override
@@ -88,6 +89,10 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
 
     public void updatePoints() {
         this.canvas.drawPoints();
+    }
+
+    public void updateMenu() {
+        this.menu.updateView();
     }
 }
 

@@ -1,9 +1,7 @@
 package com.ds4h.view.pointSelectorGUI;
 
-import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ColorComboBox;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -20,7 +18,6 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     private final JButton changeButton, invertButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
-    private float contrast = 0.0f;
     public PointSelectorSettingsGUI(final PointSelectorGUI container){
         super("Settings");
         this.container = container;
@@ -47,13 +44,8 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
         this.pack();
     }
     private void updateChangeButton(){
-        if(indexFrom.getSelectedItem() != null && indexTo.getSelectedItem() != null
-                && (int)indexTo.getSelectedItem() != (int)indexFrom.getSelectedItem()){
-            this.changeButton.setEnabled(true);
-        }else{
-            this.changeButton.setEnabled(false);
-        }
-
+        this.changeButton.setEnabled(indexFrom.getSelectedItem() != null && indexTo.getSelectedItem() != null
+                && (int) indexTo.getSelectedItem() != (int) indexFrom.getSelectedItem());
     }
     private void setCornerComboBox(){
         this.indexFrom.removeAllItems();
@@ -108,7 +100,7 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
         });
 
         this.contrastSlider.addChangeListener(event->{
-            this.contrast  = this.contrastSlider.getValue()/10.0f;
+            //this.contrast  = this.contrastSlider.getValue()/10.0f;
             //this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getOriginalImage(), this.contrast));
             this.container.repaint();
         });
