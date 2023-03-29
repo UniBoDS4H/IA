@@ -17,15 +17,9 @@ import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
 import com.ds4h.view.automaticSettingsGUI.AutomaticSettingsGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.carouselGUI.AlignmentOutputGUI;
-import com.ds4h.view.carouselGUI.CarouselGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
-import com.ds4h.view.overlapImages.OverlapImagesGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -50,7 +44,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
-    private final PointController cornerControler;
+    private final PointController pointControler;
     private final PreviewImagesPane imagesPreview;
     private final AlignmentConfigGUI alignmentConfigGUI;
     private final BunwarpJController bunwarpJController;
@@ -69,7 +63,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.setFrameSize();
         this.bunwarpJController = new BunwarpJController();
         this.fileChooser = new JFileChooser();
-        this.cornerControler = new PointController();
+        this.pointControler = new PointController();
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
@@ -79,7 +73,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.panel.setLayout(new GridBagLayout());
 
         //Init of the previewList
-        this.imagesPreview = new PreviewImagesPane(this.cornerControler, this);
+        this.imagesPreview = new PreviewImagesPane(this.pointControler);
 
         GridBagConstraints gbcPanel = new GridBagConstraints();
         gbcPanel.gridx = 0;
@@ -162,8 +156,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     public void checkPointsForAlignment() {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         int nPoints;
-        if (!this.cornerControler.getCornerImagesImages().isEmpty()) {
-            nPoints = this.cornerControler.getCornerImagesImages().get(0).getPoints().length;
+        if (!this.pointControler.getCornerImagesImages().isEmpty()) {
+            nPoints = this.pointControler.getCornerImagesImages().get(0).getPoints().length;
             int lowerBound = 0;
             switch (this.alignmentConfigGUI.getSelectedValue()) {
                 case TRANSLATIONAL:
@@ -176,14 +170,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     lowerBound = ProjectiveAlignment.LOWER_BOUND;
             }
             boolean ok = true;
-            for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
+            for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
                 if (i.getPoints().length < lowerBound) {
                     ok = false;
                     break;
                 }
             }
             if(ok){
-                for (ImagePoints i : this.cornerControler.getCornerImagesImages()) {
+                for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
                     if (i.getPoints().length != nPoints) {
                         ok = false;
                         break;
@@ -257,7 +251,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     "Confirm operation",
                     JOptionPane.YES_NO_OPTION);
             if(result == JOptionPane.YES_OPTION) {
-                this.cornerControler.clearProject();
+                this.pointControler.clearProject();
                 this.imagesPreview.clearPanels();
                 this.imagesPreview.showPreviewImages();
             }
@@ -289,7 +283,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
                 try {
-                    ExportController.exportProject(this.cornerControler.getCornerManager(), file.getPath());
+                    ExportController.exportProject(this.pointControler.getCornerManager(), file.getPath());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -302,7 +296,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
                 try {
-                    ImportController.importProject(file, this.cornerControler.getCornerManager());
+                    ImportController.importProject(file, this.pointControler.getCornerManager());
                     this.imagesPreview.showPreviewImages();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -330,7 +324,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 if(alg instanceof  TranslationalAlignment){
                     ((TranslationalAlignment) alg).setTransformation(this.alignmentConfigGUI.getTranslation(),this.alignmentConfigGUI.getRotation(), this.alignmentConfigGUI.getScaling());
                 }
-                this.manualAlignmentController.align(alg, this.cornerControler);
+                this.manualAlignmentController.align(alg, this.pointControler);
                 this.startPollingThread(this.manualAlignmentController);
             }catch(final Exception e){
                 JOptionPane.showMessageDialog(this,
@@ -358,12 +352,20 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             if (alignmentControllerInterface.getAlignedImages().size() > 0) {
                 if(alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
+                    new AlignmentOutputGUI(((ManualAlignmentController) alignmentControllerInterface).getAlignedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler);
                     //new CarouselGUI(alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
 
                 }else{
-                    new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
+                    new AlignmentOutputGUI(((AutomaticAlignmentController) alignmentControllerInterface).getAlignmedImagesAsStack(), alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.pointControler);
+                    /*
+                    ImageCalculator ic = new ImageCalculator();
+                    List<AlignedImage> im = ((AutomaticAlignmentController) alignmentControllerInterface).getAlignedImages();
+                    // Sovrappone le due immagini e crea una nuova immagine
+                    ImagePlus overlayImage = ic.run("add", im.get(0).getAlignedImage(), im.get(1).getAlignedImage());
+                    new AlignmentOutputGUI(overlayImage, alignmentControllerInterface.name(), this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController));
+
                     //final OverlapImagesGUI overlapImagesGUI = new OverlapImagesGUI(alignmentControllerInterface.name(),this.settingsBunwarpj, new ImageController(alignmentControllerInterface, bunwarpJController), this.cornerControler, this.imagesPreview);
+                     */
                     //overlapImagesGUI.showDialog();
                 }
                 loadingGUI.close();
@@ -375,7 +377,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(), this.cornerControler);
+                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(),
+                        this.pointControler,
+                        1);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,
@@ -398,7 +402,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     fileChooser.setMultiSelectionEnabled(true);
                     final int result = fileChooser.showOpenDialog(this);
                     if (result == JFileChooser.APPROVE_OPTION) {
-                        this.cornerControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                        try {
+                            this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                        }catch (OutOfMemoryError ex){
+                            JOptionPane.showMessageDialog(this,
+                                    ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,

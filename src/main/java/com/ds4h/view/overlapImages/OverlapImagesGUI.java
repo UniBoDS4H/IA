@@ -50,7 +50,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
         this.pointController = pointController;
         this.images = controller.getAlignedImages();
         this.imagePanels = new LinkedList<>();
-        this.configureImagesGUI = new ConfigureImagesGUI(this.controller);
+        this.configureImagesGUI = null;//new ConfigureImagesGUI(this.controller);
         this.panel = new JLayeredPane();
         this.menu = new JMenuBar();
         this.settingsMenu = new JMenu("Settings");
@@ -102,7 +102,7 @@ public class OverlapImagesGUI extends JFrame implements StandardGUI {
             this.dispose();
         });
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.previewImagesPane, this.pointController, this.controller);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller);
             reuseGUI.showDialog();
         });
         this.elasticItem.addActionListener(event -> {

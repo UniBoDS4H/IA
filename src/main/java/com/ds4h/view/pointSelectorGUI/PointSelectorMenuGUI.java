@@ -57,7 +57,6 @@ public class PointSelectorMenuGUI extends JPanel {
         this.copyButton.addActionListener(e->{
             final MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
             assert item != null;
-
             if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
                 JOptionPane.showMessageDialog(this, "Some of the points are out of the selected image, they have not been copied");
             }else{

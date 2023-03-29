@@ -5,6 +5,7 @@ import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.reuse.ReuseSources;
 import com.ds4h.model.util.ImagingConversion;
+import com.ds4h.model.util.MemoryController;
 import com.ds4h.view.pointSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 
@@ -22,6 +23,7 @@ public class PointController {
         System.gc();
         if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getCornerImages().size() > 0)) {
             this.pointManager.addImages(imagePointsList);
+            MemoryController.controllMemory(this.pointManager.getCornerImages());
         }else {
             throw new IllegalArgumentException("You can not upload one single photo or less.");
         }
@@ -69,7 +71,7 @@ public class PointController {
     }
 
     private boolean insideImage(final Point p, final ImagePoints img) {
-        return img.getMatImage().rows() >= p.y && img.getMatImage().cols() >= p.x;
+        return img.getRows() >= p.y && img.getCols() >= p.x;
     }
 
     public MenuItem getMenuItem(final ImagePoints image){
