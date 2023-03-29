@@ -103,6 +103,7 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
         this.image.getListPoints().forEach(this::drawPoint);
         if(this.container != null){
             this.container.updateMenu();
+            this.container.updateSettings();
         }
     }
     private void drawPoint(Point p) {

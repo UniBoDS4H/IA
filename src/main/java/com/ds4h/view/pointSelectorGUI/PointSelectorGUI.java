@@ -94,6 +94,10 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     public void updateMenu() {
         this.menu.updateView();
     }
+    public void updateSettings(){
+        this.menu.updateSettings();
+    }
+
 }
 
 
