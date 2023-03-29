@@ -2,7 +2,10 @@ package com.ds4h.model.alignment.automatic.pointDetector.orbDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.ORB;
@@ -20,22 +23,19 @@ public class ORBDetector extends PointDetector {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
 
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
         final Mat grayTarget = scalingFactor > 1 ?
-                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
                 targetImage.getGrayScaleMat();
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
 
         // Start detection
-        this.detector.detect(grayImg, keypoints1);
-        this.detector.compute(grayImg, keypoints1, descriptors1);
+        this.detector.detectAndCompute(grayImg, new Mat(),  keypoints1, descriptors1);
+        this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
         IJ.log("[SIFT DETECTOR] Detected points for the first image.");
         grayImg.release();
-        System.gc();
-        this.detector.detect(grayTarget, keypoints2);
-        this.detector.compute(grayTarget, keypoints2, descriptors2);
         grayTarget.release();
         System.gc();
         // End detection
