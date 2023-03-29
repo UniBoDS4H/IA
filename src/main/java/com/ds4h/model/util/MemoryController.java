@@ -10,11 +10,13 @@ public class MemoryController {
 
     private final static long  MEMORY_LIMIT = 150_000;
     private final static double MEMORY_PERCENTAGE_LIMIT = 0.35;
-    private final static String errorMSG = "The remaining memory is not enough. Please consider\n " +
-            "to expand your memory in order to perform this operation without having problems.\n " +
-            "You can expand the memory by going to the Fiji/ImageJ menu and click on:\n" +
-            "Edit > Options > Memory & Thread, put inside the \"Maximum Memory\" a value higher than 4000.\n" +
-            "After that you will have to re-start Fiji/ImageJ, so export your project if you need it.";
+    //TODO: fix the size
+    private final static String errorMSG = "The memory is not enough.\n"+
+            "Please, expand your memory to use this Plugin.\n " +
+            "You can expand the memory from the Fiji/ImageJ menu:\n" +
+            "\"Edit\" > \"Options\" > \"Memory & Thread\".\n" +
+            "Write inside \"Maximum Memory\" a value higher than 4000.\n" +
+            "After, re-start Fiji/ImageJ.";
 
     private MemoryController(){
 
