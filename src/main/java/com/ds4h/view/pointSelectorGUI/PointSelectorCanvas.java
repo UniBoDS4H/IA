@@ -105,6 +105,7 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
     void drawPoints(){
         overlay.clear();
         this.image.getListPoints().forEach(this::drawPoint);
+
     }
     private void drawPoint(Point p) {
         Color c;

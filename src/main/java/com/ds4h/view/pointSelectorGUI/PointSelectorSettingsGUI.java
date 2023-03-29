@@ -41,10 +41,19 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
 
         this.setActualPointerStyles();
         this.setCornerComboBox();
-
         this.addListeners();
         this.addComponents();
-        this.setFrameSize();
+        this.updateChangeButton();
+        this.pack();
+    }
+    private void updateChangeButton(){
+        if(indexFrom.getSelectedItem() != null && indexTo.getSelectedItem() != null
+                && (int)indexTo.getSelectedItem() != (int)indexFrom.getSelectedItem()){
+            this.changeButton.setEnabled(true);
+        }else{
+            this.changeButton.setEnabled(false);
+        }
+
     }
     private void setCornerComboBox(){
         this.indexFrom.removeAllItems();
@@ -108,6 +117,12 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
             //this.container.setImage(ChangeColorController.invert(this.container.getImage().getImage()));
             this.container.repaint();
         });
+        this.indexFrom.addActionListener(e->{
+            this.updateChangeButton();
+        });
+        this.indexTo.addActionListener(e->{
+            this.updateChangeButton();
+        });
     }
 
     @Override
@@ -136,11 +151,6 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
         this.addElement(new JLabel("Change corner index: "), new JPanel(), changeIndex);
         this.addElement(new JLabel("Change contrast: "), new JPanel(), this.invertButton);
         this.constraints.gridy++;
-    }
-    private void setFrameSize(){
-        final Dimension newDimension = DisplayInfo.getDisplaySize(40);
-        setSize((int)newDimension.getWidth(), (int)newDimension.getHeight());
-        setMinimumSize(newDimension);
     }
     private void addElement(final JLabel label, final JPanel panel, final JComponent component){
         panel.add(label);
