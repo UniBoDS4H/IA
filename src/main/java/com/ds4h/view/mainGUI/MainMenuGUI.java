@@ -405,8 +405,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }catch (OutOfMemoryError ex){
                             JOptionPane.showMessageDialog(this,
                                     ex.getMessage(),
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE);
+                                    "Warning",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
                     }
                 } catch (Exception e) {
