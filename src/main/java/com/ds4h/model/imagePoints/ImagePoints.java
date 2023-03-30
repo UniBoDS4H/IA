@@ -5,6 +5,8 @@ import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -162,6 +164,14 @@ public class ImagePoints extends ImagePlus{
             System.gc();
         }
         this.processed = false;
+    }
+
+    private Mat invert(){
+        this.processed = false;
+        final Mat matrix = ImageProcessorMatConverter.convert(this.getProcessor());
+        Core.bitwise_not(matrix, matrix);
+        return matrix;
+
     }
 
     /**
