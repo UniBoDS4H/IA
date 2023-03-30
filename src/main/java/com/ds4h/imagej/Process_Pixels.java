@@ -11,10 +11,6 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
 import ij.plugin.PlugIn;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.lang.management.*;
 
 /**
  * A template for processing each pixel of either
@@ -57,6 +53,7 @@ public class Process_Pixels implements PlugIn {
 		}
 		*/
 		try {
+
 			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());
 			EventQueue.invokeLater(MainMenuGUI::new);
 		} catch (Exception e) {
