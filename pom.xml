@@ -190,6 +190,14 @@
 			<version>2.1</version>
 		</dependency>
 
+		<!--
+		TODO: This lib does not work
+		<dependency>
+			<groupId>org.fusesource</groupId>
+			<artifactId>sigar</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		-->
 
 	</dependencies>
 <!--
