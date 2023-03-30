@@ -19,11 +19,11 @@ public class SIFTDetector extends PointDetector {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
 
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
         final Mat grayTarget = scalingFactor > 1 ?
-                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
                 targetImage.getGrayScaleMat();
 
         final Mat descriptors1 = new Mat();
