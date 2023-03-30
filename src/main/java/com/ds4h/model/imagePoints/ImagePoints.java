@@ -79,46 +79,71 @@ public class ImagePoints extends ImagePlus{
         this.pointList = new ArrayList<>(5);
     }
 
+    /**
+     *
+     * @return
+     */
     public Point[] getPoints(){
         return this.pointList.toArray(new Point[0]);
     }
 
+    /**
+     *
+     * @param point
+     * @return
+     */
     public int getIndexOfPoint(final Point point){
         return this.pointList.indexOf(point) + 1;
     }
 
+    /**
+     *
+     * @param point
+     */
     public void addPoint(final Point point){
         this.pointList.add(point);
     }
 
+    /**
+     *
+     * @param point
+     */
     public void removePoint(final Point point){
         this.pointList.removeIf(p -> p.equals(point));
     }
 
+    /**
+     *
+     * @return
+     */
     public MatOfPoint2f getMatOfPoint(){
         final MatOfPoint2f mat = new MatOfPoint2f();
         mat.fromList(this.pointList);
         return mat;
     }
 
+    /**
+     *
+     * @param points
+     */
     public void addPoints(final List<Point> points){
         this.pointList.addAll(points);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Point> getListPoints(){
         return this.pointList;
     }
 
+    /**
+     *
+     * @return
+     */
     public ImagePlus getImagePlus(){
         return this;
-    }
-
-    public ImagePlus getOriginalImage(){
-        return null;
-    }
-
-    public boolean isProcessed(){
-        return false;
     }
 
     public void useProcessed(final ImageProcessor ip){
@@ -128,7 +153,10 @@ public class ImagePoints extends ImagePlus{
         }
     }
 
-    public void useStock(){
+    /**
+     *
+     */
+    private void useStock(){
         if(Objects.nonNull(imageProcessed)){
             this.imageProcessed = null;
             System.gc();
@@ -136,6 +164,10 @@ public class ImagePoints extends ImagePlus{
         this.processed = false;
     }
 
+    /**
+     *
+     * @return
+     */
     public Mat getGrayScaleMat(){
         if(this.processed){
             final Mat grayImg = ImagePlusMatConverter.convertGray(this.imageProcessed);
@@ -145,10 +177,17 @@ public class ImagePoints extends ImagePlus{
         return ImagePlusMatConverter.convertGray(this.getProcessor());
     }
 
+    /**
+     *
+     */
     public void clearPoints(){
         this.pointList.clear();
     }
 
+    /**
+     *
+     * @return
+     */
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
                 this.address > 0 ? new Mat(this.address) :
