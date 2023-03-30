@@ -15,8 +15,8 @@ import com.ds4h.model.alignment.alignmentAlgorithm.ProjectiveAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
-import com.ds4h.view.alignmentConfigGUI.AlignmentConfigGUI;
-import com.ds4h.view.automaticSettingsGUI.AutomaticSettingsGUI;
+import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
+import com.ds4h.view.automaticAlignmentConfigGUI.AutomaticAlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
@@ -47,11 +47,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final BunwarpjGUI settingsBunwarpj;
     private final PointController pointControler;
     private final PreviewImagesPane imagesPreview;
-    private final AlignmentConfigGUI alignmentConfigGUI;
+    private final ManualAlignmentConfigGUI manualConfigGUI;
     private final BunwarpJController bunwarpJController;
     private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
     private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
-    private final AutomaticSettingsGUI automaticSettingsGUI;
+    private final AutomaticAlignmentConfigGUI automaticConfigGUI;
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
@@ -110,8 +110,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.aboutGUI = new AboutGUI();
         this.settingsBunwarpj = new BunwarpjGUI(this.bunwarpJController);
-        this.alignmentConfigGUI = new AlignmentConfigGUI(this);
-        this.automaticSettingsGUI = new AutomaticSettingsGUI(this);
+        this.manualConfigGUI = new ManualAlignmentConfigGUI(this);
+        this.automaticConfigGUI = new AutomaticAlignmentConfigGUI(this);
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("File");
@@ -159,7 +159,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         if (!this.pointControler.getCornerImagesImages().isEmpty()) {
             nPoints = this.pointControler.getCornerImagesImages().get(0).getPoints().length;
             int lowerBound = 0;
-            switch (this.alignmentConfigGUI.getSelectedValue()) {
+            switch (this.manualConfigGUI.getSelectedValue()) {
                 case TRANSLATIONAL:
                         lowerBound = TranslationalAlignment.LOWER_BOUND;
                     break;
@@ -190,7 +190,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 this.manualAlignment.setToolTipText("<html>"
                         + "The number of points inside the images is not correct."
                         + "<br>"
-                        + "In order to use the " + this.alignmentConfigGUI.getSelectedValue().getType() + " alignment you must use at least " + lowerBound + " points in each image."
+                        + "In order to use the " + this.manualConfigGUI.getSelectedValue().getType() + " alignment you must use at least " + lowerBound + " points in each image."
                         + "</html>");
             }
         }
@@ -269,11 +269,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.alignmentItem.addActionListener(event -> {
-            this.alignmentConfigGUI.showDialog();
+            this.manualConfigGUI.showDialog();
         });
 
         this.automaticItem.addActionListener(event -> {
-            this.automaticSettingsGUI.showDialog();
+            this.automaticConfigGUI.showDialog();
         });
 
         this.exportItem.addActionListener(event -> {
@@ -319,9 +319,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingManualAlignment(){
         if(!this.manualAlignmentController.isAlive()) {
             try {
-                AlignmentAlgorithm alg = getAlgorithmFromEnum(this.alignmentConfigGUI.getSelectedValue());
+                AlignmentAlgorithm alg = getAlgorithmFromEnum(this.manualConfigGUI.getSelectedValue());
                 if(alg instanceof  TranslationalAlignment){
-                    ((TranslationalAlignment) alg).setTransformation(this.alignmentConfigGUI.getTranslation(),this.alignmentConfigGUI.getRotation(), this.alignmentConfigGUI.getScaling());
+                    ((TranslationalAlignment) alg).setTransformation(this.manualConfigGUI.getTranslation(),this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
                 }
                 this.manualAlignmentController.align(alg, this.pointControler);
                 this.startPollingThread(this.manualAlignmentController);
@@ -364,7 +364,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                this.automaticAlignmentController.align(this.automaticSettingsGUI.getSelectedDetector(),
+                AlignmentAlgorithm alg = getAlgorithmFromEnum(this.automaticConfigGUI.getSelectedAlgorithm());
+                if(alg instanceof  TranslationalAlignment){
+                    ((TranslationalAlignment) alg).setTransformation(this.manualConfigGUI.getTranslation(),this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
+                }
+                this.automaticAlignmentController.align(alg, this.automaticConfigGUI.getSelectedDetector(),
                         this.pointControler,
                         1);
                 this.startPollingThread(this.automaticAlignmentController);

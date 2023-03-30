@@ -23,7 +23,6 @@ import java.util.Objects;
  */
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
     private final Alignment alignment;
-    private final AlignmentAlgorithm traslational = new TranslationalAlignment();
 
     /**
      * Constructor of the Controller
@@ -42,10 +41,10 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(alignment.alignedImages());
     }
-    public void align(final Detectors detector, final PointController pointManager, final int scalingFactor){
+    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager, final int scalingFactor){
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getCornerManager())) {
             if(pointManager.getCornerManager().getCornerImages().size() > 1 && scalingFactor >= 1) {
-                this.alignment.alignImages(pointManager.getCornerManager(), this.traslational,
+                this.alignment.alignImages(pointManager.getCornerManager(), algorithm,
                         AlignmentEnum.AUTOMATIC,
                         Objects.requireNonNull(detector.pointDetector()),
                         detector.getFactor(),

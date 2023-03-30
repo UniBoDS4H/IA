@@ -1,14 +1,14 @@
-package com.ds4h.view.alignmentConfigGUI;
+package com.ds4h.view.manualAlignmentConfigGUI;
+
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
-import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import javax.swing.*;
 import java.awt.*;
 
 import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
-public class AlignmentConfigGUI extends JFrame implements StandardGUI {
+public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
     private final JTextArea text;
     private final JCheckBox translationCheckbox;
@@ -16,18 +16,18 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JCheckBox scalingCheckbox;
     private AlignmentAlgorithmEnum selectedValue;
     private final MainMenuGUI container;
-    public AlignmentConfigGUI(MainMenuGUI container){
+    public ManualAlignmentConfigGUI(MainMenuGUI container){
         this.setTitle("Manual alignment algorithm");
         this.container = container;
         this.getContentPane().setLayout(new GridBagLayout());
-        this.algorithm = new JComboBox<>();
+        this.algorithm = new JComboBox<>(AlignmentAlgorithmEnum.values());
+        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIONAL;
         this.text = new JTextArea();
         this.translationCheckbox = new JCheckBox("Translation");
         this.rotationCheckbox = new JCheckBox("Rotation");
         this.scalingCheckbox = new JCheckBox("Scaling");
         this.addComponents();
         this.addListeners();
-        this.setSize(DisplayInfo.getDisplaySize(25));
         this.updateCheckBoxes();
     }
 
@@ -76,14 +76,11 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        this.populateCombo();
-        this.setSize();
         JLabel algLbl = new JLabel("Algorithm: ");
         JLabel infoLbl = new JLabel("Info: ");
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Aggiunta dei componenti al layout
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(algLbl, gbc);
@@ -126,6 +123,7 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.weighty = 0.0;
         add(rotationCheckbox, gbc);
         this.pack();
+        this.setResizable(false);
     }
     public boolean getScaling(){
         return this.scalingCheckbox.isSelected();
@@ -135,16 +133,5 @@ public class AlignmentConfigGUI extends JFrame implements StandardGUI {
     }
     public boolean getTranslation(){
         return this.translationCheckbox.isSelected();
-    }
-
-    private void setSize(){
-        this.setSize(DisplayInfo.getDisplaySize(30));
-    }
-
-    private void populateCombo(){
-        this.selectedValue = AlignmentAlgorithmEnum.TRANSLATIONAL;
-        for(AlignmentAlgorithmEnum algorithm : AlignmentAlgorithmEnum.values()){
-            this.algorithm.addItem(algorithm);
-        }
     }
 }

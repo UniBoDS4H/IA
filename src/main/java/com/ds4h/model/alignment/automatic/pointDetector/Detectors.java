@@ -25,12 +25,6 @@ public enum Detectors {
         this.pointDetector = pointDetector;
         this.factor = factor;
     }
-
-    public void setFactor(final int factor){
-        if(factor >= 0){
-            this.factor = (double)(factor/10.0);
-        }
-    }
     public void setFactor(final double factor){
         if(factor >= 0){
             this.factor = (factor/10);
