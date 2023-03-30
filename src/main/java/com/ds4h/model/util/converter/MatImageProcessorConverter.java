@@ -66,19 +66,8 @@ public class MatImageProcessorConverter {
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
 
-        /*
-        This is useless because when I read the matrix it is already 16 bit with one channel. Need to be tested
-        if(matrix.type() != CvType.CV_16U) {
-            //Convert all the values from 8 bit to 16 bit
-            matrix.convertTo(matrix, CvType.CV_16U);
-            Core.multiply(matrix, new Scalar(256), matrix);
-        }
-        */
-
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
-        //matrix.release(); // release the old matrix
-        matrix.get(0,0, (short[]) shortProcessor.getPixels()); // get all the values
-        //shortProcessor.setPixels(pixels); // set the pixels
+        matrix.get(0,0, (short[]) shortProcessor.getPixels());
         matrix.release();
         matrix = null;
         shortProcessor.setMinAndMax(min, max);

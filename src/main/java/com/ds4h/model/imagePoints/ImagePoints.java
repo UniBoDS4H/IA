@@ -3,11 +3,8 @@ import com.ds4h.model.util.converter.ImagePlusMatConverter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -22,6 +19,14 @@ public class ImagePoints extends ImagePlus{
     private long address=-1;
     private Size matSize = null;
     private Mat matrix = null;
+
+    private ImageProcessor imageProcessed = null;
+    private boolean processed = false;
+
+    /**
+     *
+     * @param path
+     */
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
@@ -30,6 +35,14 @@ public class ImagePoints extends ImagePlus{
         this.pointList = new ArrayList<>(5);
     }
 
+    /**
+     *
+     * @param path
+     * @param rows
+     * @param cols
+     * @param type
+     * @param matAddress
+     */
     public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress) {
         this(path);
         this.rows = rows;
@@ -38,6 +51,11 @@ public class ImagePoints extends ImagePlus{
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
 
+    /**
+     *
+     * @param path
+     * @param mat
+     */
     public ImagePoints(final String path, final Mat mat){
         this(path);
         matrix = mat;
@@ -47,10 +65,15 @@ public class ImagePoints extends ImagePlus{
         IJ.log("[IMAGE POINTS] Image created");
     }
 
+    /**
+     *
+     * @param path
+     * @param ip
+     */
     public ImagePoints(final String path, final ImageProcessor ip){
         super(Objects.requireNonNull(path));
-        this.path = path;
         this.setProcessor(ip);
+        this.path = path;
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
@@ -98,8 +121,23 @@ public class ImagePoints extends ImagePlus{
         return false;
     }
 
+    public void useProcessed(final ImageProcessor ip){
+        if(Objects.nonNull(ip)) {
+            this.processed = true;
+            this.imageProcessed = ip;
+        }
+    }
+
+    public void useStock(){
+        if(Objects.nonNull(imageProcessed)){
+            this.imageProcessed = null;
+            System.gc();
+        }
+        this.processed = false;
+    }
+
     public Mat getGrayScaleMat(){
-        return ImagePlusMatConverter.convertGray(this.getProcessor());
+        return ImagePlusMatConverter.convertGray(this.processed ? this.imageProcessed : this.getProcessor());
     }
 
     public void clearPoints(){
@@ -112,30 +150,52 @@ public class ImagePoints extends ImagePlus{
                         ImagePlusMatConverter.convert(this.getProcessor());
     }
 
+    /**
+     *
+     * @return
+     */
     public int getRows(){
         return rows;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCols(){
         return cols;
     }
 
+    /**
+     *
+     * @return
+     */
     public Size getMatSize(){
         return this.matSize;
     }
 
-    public Mat getOriginalMatImage(){
-        return this.address > 0 ? new Mat(this.address) : Imgcodecs.imread(this.path, Imgcodecs.IMREAD_COLOR);
-    }
-
+    /**
+     *
+     * @param point
+     * @param newPoint
+     */
     public void movePoint(final Point point, final Point newPoint){
         this.pointList.set(this.pointList.indexOf(point), newPoint);
     }
 
+    /**
+     *
+     * @return
+     */
     public int numberOfPoints(){
         return this.pointList.size();
     }
 
+    /**
+     *
+     * @param indexToEdit
+     * @param newIndex
+     */
     public void editPointIndex(final int indexToEdit, final int newIndex) {
         final Point pointToMove = this.pointList.get(indexToEdit);
         if(this.pointList.contains(pointToMove)){
@@ -144,14 +204,26 @@ public class ImagePoints extends ImagePlus{
         }
     }
 
-
+    /**
+     *
+     * @return
+     */
     public String getPath(){
         return this.path;
     }
+
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return super.getTitle();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return this.getTitle();

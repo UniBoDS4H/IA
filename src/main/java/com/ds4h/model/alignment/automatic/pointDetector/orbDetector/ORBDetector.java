@@ -2,7 +2,10 @@ package com.ds4h.model.alignment.automatic.pointDetector.orbDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.ORB;
@@ -19,23 +22,21 @@ public class ORBDetector extends PointDetector {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
-
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getMatImage(), scalingFactor) :
-                imagePoint.getGrayScaleMat();
-        final Mat grayTarget = scalingFactor > 1 ?
-                this.createPyramid(targetImage.getMatImage(), scalingFactor) :
-                targetImage.getGrayScaleMat();
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
 
+        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
+                imagePoint.getGrayScaleMat();
+
+        final Mat grayTarget = scalingFactor > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
         // Start detection
-        this.detector.detect(grayImg, keypoints1);
-        this.detector.compute(grayImg, keypoints1, descriptors1);
+        this.detector.detectAndCompute(grayImg, new Mat(),  keypoints1, descriptors1);
         IJ.log("[SIFT DETECTOR] Detected points for the first image.");
+        this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
         grayImg.release();
-        System.gc();
-        this.detector.detect(grayTarget, keypoints2);
-        this.detector.compute(grayTarget, keypoints2, descriptors2);
         grayTarget.release();
         System.gc();
         // End detection
@@ -44,6 +45,10 @@ public class ORBDetector extends PointDetector {
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
         //matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
+        descriptors1.release();
+        descriptors2.release();
+        System.gc();
+
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
@@ -54,11 +59,12 @@ public class ORBDetector extends PointDetector {
         }
 
         final double threshold = (2.0 + this.getFactor()) * min_dist;
-        final List<KeyPoint> keypoints1List = keypoints1.toList();//originalKeyPoints.toList();
-        final List<KeyPoint> keypoints2List = keypoints2.toList();//targetKeyPoints.toList();
+        final List<KeyPoint> keypoints1List = keypoints1.toList();
+        final List<KeyPoint> keypoints2List = keypoints2.toList();
         keypoints1.release();
         keypoints2.release();
-        final double scale = Math.pow(2, scalingFactor-1);
+
+        final double scale = scalingFactor >= 1 ? Math.pow(2, scalingFactor-1) : 1;
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {

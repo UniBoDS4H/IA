@@ -5,27 +5,16 @@
  * See the CC0 1.0 Universal license for details:
  *     http://creativecommons.org/publicdomain/zero/1.0/
  */
-
 package com.ds4h.imagej;
-
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
-import ij.ImagePlus;
-import ij.gui.Toolbar;
-import ij.plugin.ImageCalculator;
 import ij.plugin.PlugIn;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import ij.plugin.tool.PlugInTool;
-
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import java.io.InputStreamReader;
+import java.lang.management.*;
 
 /**
  * A template for processing each pixel of either
@@ -35,14 +24,7 @@ import java.util.List;
  * @author Iorio Matteo
  * @author Vincenzi Fabio
  */
-/*
-	FUNCTIONALITIES :
-		TODO: Add the possibility to change colors, contrast ecc ecc for each image
-		TODO: Add the possibility to see the alignments points of the AutomaticAlignment for the Semi-Automatic
- */
 public class Process_Pixels implements PlugIn {
-
-
 	public static void main(String[] args) throws Exception {
 		new Process_Pixels().run(null);
 	}
@@ -50,6 +32,7 @@ public class Process_Pixels implements PlugIn {
 
 	@Override
 	public void run(String s) {
+
 		OpencvController.loadLibrary();
 		/*
 		final Mat m = Mat.zeros(10, 10, CvType.CV_8U);
@@ -74,12 +57,10 @@ public class Process_Pixels implements PlugIn {
 		}
 		*/
 		try {
-			//java.lang.Runtime.getRuntime().exec("java -Xmx4g com.ds4h.imagej.Process_Pixels"); // set maximum heap size to 1GB
 			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());
 			EventQueue.invokeLater(MainMenuGUI::new);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 }
