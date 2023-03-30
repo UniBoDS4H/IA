@@ -22,6 +22,8 @@ import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.ImagePlus;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;

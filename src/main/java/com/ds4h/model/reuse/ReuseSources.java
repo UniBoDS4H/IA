@@ -45,7 +45,11 @@ public class ReuseSources {
         final List<ImagePoints> imagePoints = new ArrayList<>(images.size());
         images.stream()
                 .map(AlignedImage::getAlignedImage)
-                .map(imagePlus -> new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor()))
+                .map(imagePlus -> {
+                    final ImagePoints image = new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor());
+                    image.setTitle(imagePlus.getTitle());
+                    return image;
+                })
                 .forEach(imagePoints::add);
         return imagePoints;
 
