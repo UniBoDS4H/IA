@@ -1,5 +1,6 @@
 package com.ds4h.view.manualAlignmentConfigGUI;
 
+import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.view.mainGUI.MainMenuGUI;
@@ -14,10 +15,12 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JCheckBox translationCheckbox;
     private final JCheckBox rotationCheckbox;
     private final JCheckBox scalingCheckbox;
+    private final ManualAlignmentController controller;
     private AlignmentAlgorithmEnum selectedValue;
     private final MainMenuGUI container;
-    public ManualAlignmentConfigGUI(MainMenuGUI container){
+    public ManualAlignmentConfigGUI(MainMenuGUI container, ManualAlignmentController manualAlignmentController){
         this.setTitle("Manual alignment algorithm");
+        this.controller = manualAlignmentController;
         this.container = container;
         this.getContentPane().setLayout(new GridBagLayout());
         this.algorithm = new JComboBox<>(AlignmentAlgorithmEnum.values());
@@ -70,7 +73,25 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
             this.text.setText(this.selectedValue.getDocumentation());
             this.container.checkPointsForAlignment();
             this.updateCheckBoxes();
-            this.selectedValue = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
+            this.controller.setAlgorithm(getAlgorithmFromEnum(this.selectedValue));
+        });
+        this.rotationCheckbox.addActionListener(e->{
+            if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+                TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
+                alg.setTransformation(alg.getTranslate(),this.rotationCheckbox.isSelected(),alg.getScale());
+            }
+        });
+        this.scalingCheckbox.addActionListener(e->{
+            if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+                TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
+                alg.setTransformation(alg.getTranslate(),alg.getRotate(),this.scalingCheckbox.isSelected());
+            }
+        });
+        this.translationCheckbox.addActionListener(e->{
+            if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+                TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
+                alg.setTransformation(this.translationCheckbox.isSelected(),alg.getRotate(),alg.getScale());
+            }
         });
     }
 

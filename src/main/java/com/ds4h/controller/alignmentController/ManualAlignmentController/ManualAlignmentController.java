@@ -6,6 +6,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
  */
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final Alignment alignment;
+    private AlignmentAlgorithm algorithm = new TranslationalAlignment();
+
     public ManualAlignmentController(){
         this.alignment = new Alignment();
     }
@@ -82,5 +85,12 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images.");
             }
         }
+    }
+
+    public AlignmentAlgorithm getAlgorithm() {
+        return this.algorithm;
+    }
+    public void setAlgorithm(AlignmentAlgorithm algorithm){
+        this.algorithm = algorithm;
     }
 }
