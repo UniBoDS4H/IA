@@ -137,7 +137,12 @@ public class ImagePoints extends ImagePlus{
     }
 
     public Mat getGrayScaleMat(){
-        return ImagePlusMatConverter.convertGray(this.processed ? this.imageProcessed : this.getProcessor());
+        if(this.processed){
+            final Mat grayImg = ImagePlusMatConverter.convertGray(this.imageProcessed);
+            this.useStock();
+            return grayImg;
+        }
+        return ImagePlusMatConverter.convertGray(this.getProcessor());
     }
 
     public void clearPoints(){
