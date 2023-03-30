@@ -45,7 +45,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
                 index++;
             }
-            CompositeImage composite = new CompositeImage(new ImagePlus("AglignedStack", stack));
+            CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
             composite.setLuts(luts);
             return composite;
         }
