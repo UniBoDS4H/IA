@@ -9,6 +9,7 @@ import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import ij.CompositeImage;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.LUT;
@@ -73,17 +74,19 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     @Override
     public CompositeImage getAlignedImagesAsStack() {
         if(!this.getAlignedImages().isEmpty()){
-            ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
+            ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
+                    this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
             List<AlignedImage> images = this.getAlignedImages();
             LUT[] luts = new LUT[images.size()];
             int index = 0;
             for (AlignedImage image : images) {
                 luts[index] = image.getAlignedImage().getProcessor().getLut();
-                stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
+                IJ.log("[NAME] " + image.getName());
+                stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
                 index++;
             }
-            CompositeImage composite = new CompositeImage(new ImagePlus("AglignedStack", stack));
+            CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
             composite.setLuts(luts);
             return composite;
         }
