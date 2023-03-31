@@ -12,28 +12,22 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     private final ColorComboBox selectedPointerColor;
     private final ColorComboBox textColor;
 
-    private final GridBagConstraints constraints;
     private final PointSelectorGUI container;
-    private final JSlider pointerDimension, contrastSlider;
-    private final JButton changeButton, invertButton;
+    private final JSlider pointerDimension;
+    private final JButton changeButton;
     private final JComboBox<Integer> indexFrom;
     private final JComboBox<Integer> indexTo;
     public PointSelectorSettingsGUI(final PointSelectorGUI container){
         super("Settings");
         this.container = container;
         this.pointerColor = new ColorComboBox();
-        this.changeButton = new JButton("Change");
-        this.invertButton = new JButton("Invert");
+        this.changeButton = new JButton("Apply");
         this.indexFrom = new JComboBox<>();
         this.indexTo = new JComboBox<>();
         this.selectedPointerColor = new ColorComboBox();
         this.textColor = new ColorComboBox();
-        this.contrastSlider = new JSlider(0, 10);
 
         this.setLayout(new GridBagLayout());
-        this.constraints = new GridBagConstraints();
-        this.constraints.insets = new Insets(0, 0, 5, 5);
-        this.constraints.anchor = GridBagConstraints.WEST;
         this.pointerDimension = new JSlider(1,10);
 
         this.setActualPointerStyles();
@@ -41,7 +35,6 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
         this.addListeners();
         this.addComponents();
         this.updateChangeButton();
-        this.pack();
     }
     private void updateChangeButton(){
         this.changeButton.setEnabled(indexFrom.getSelectedItem() != null && indexTo.getSelectedItem() != null
@@ -98,17 +91,6 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
             this.container.getImage().editPointIndex(from-1, to-1);
             this.container.updatePoints();
         });
-
-        this.contrastSlider.addChangeListener(event->{
-            //this.contrast  = this.contrastSlider.getValue()/10.0f;
-            //this.container.setImage(ChangeColorController.changeContrast(this.container.getImage().getOriginalImage(), this.contrast));
-            this.container.repaint();
-        });
-
-        this.invertButton.addActionListener(event -> {
-            //this.container.setImage(ChangeColorController.invert(this.container.getImage().getImage()));
-            this.container.repaint();
-        });
         this.indexFrom.addActionListener(e->{
             this.updateChangeButton();
         });
@@ -119,39 +101,75 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        this.addElement(new JLabel("Corner color: "), new JPanel(), this.pointerColor);
-        this.addElement(new JLabel("Selected corner color: "), new JPanel(), this.selectedPointerColor);
-        this.addElement(new JLabel("Corner index color: "), new JPanel(), this.textColor);
-        this.pointerDimension.setMajorTickSpacing(9);
-        this.pointerDimension.setMinorTickSpacing(1);
-        this.pointerDimension.setPaintTicks(true);
-        this.pointerDimension.setPaintLabels(true);
-        this.contrastSlider.setMaximum(10);
-        this.contrastSlider.setMinimum(0);
-        this.contrastSlider.setMajorTickSpacing(5);
-        this.contrastSlider.setMinorTickSpacing(1);
-        this.contrastSlider.setPaintLabels(true);
-        this.contrastSlider.setPaintTicks(true);
-        this.addElement(new JLabel("Corner dimension: "), new JPanel(), this.pointerDimension);
-        this.addElement(new JLabel("Contrast: "), new JPanel(), this.contrastSlider);
-        JPanel changeIndex = new JPanel();
-        changeIndex.add(new JLabel("From"));
-        changeIndex.add(this.indexFrom);
-        changeIndex.add(new JLabel("To"));
-        changeIndex.add(this.indexTo);
-        changeIndex.add(changeButton);
-        this.addElement(new JLabel("Change corner index: "), new JPanel(), changeIndex);
-        this.addElement(new JLabel("Change contrast: "), new JPanel(), this.invertButton);
-        this.constraints.gridy++;
-    }
-    private void addElement(final JLabel label, final JPanel panel, final JComponent component){
-        panel.add(label);
-        panel.add(component);
-        component.setBackground(this.getBackground());
-        panel.setBackground(this.getBackground());
-        this.constraints.gridx = 0;
-        this.constraints.gridy++;
-        add(panel, this.constraints);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(new JLabel("Corner color:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        pointerColor.setPreferredSize(new Dimension(150, 30));
+        add(pointerColor, gbc);
+        gbc.weightx = 0;
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel("Selected corner color:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        selectedPointerColor.setPreferredSize(new Dimension(150, 30));
+        add(selectedPointerColor, gbc);
+        gbc.weightx = 0;
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(new JLabel("Corner index color:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        textColor.setPreferredSize(new Dimension(150, 30));
+        add(textColor, gbc);
+        gbc.weightx = 0;
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        add(new JLabel("Corner dimension:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        pointerDimension.setPreferredSize(new Dimension(200, 50));
+        add(pointerDimension, gbc);
+        gbc.weightx = 0;
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        add(new JLabel("Change corner index:"), gbc);
+        gbc.gridx = 1;
+        indexFrom.setPreferredSize(new Dimension(50, 30));
+        add(indexFrom, gbc);
+        gbc.gridx = 2;
+        add(new JLabel("to"), gbc);
+        gbc.gridx = 3;
+        indexTo.setPreferredSize(new Dimension(50, 30));
+        add(indexTo, gbc);
+        gbc.gridx = 4;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        changeButton.setPreferredSize(new Dimension(80, 30));
+        add(changeButton, gbc);
+        gbc.weightx = 0;
+        gbc.gridwidth = 1;
+        this.pack();
+        this.setResizable(false);
     }
 
     public void updateView() {

@@ -199,6 +199,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.add(this.rotationCheckbox, gbc);
 
         this.pack();
+        this.setResizable(false);
     }
     public boolean getScaling(){
         return this.scalingCheckbox.isSelected();
