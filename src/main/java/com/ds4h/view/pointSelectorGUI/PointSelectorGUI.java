@@ -82,6 +82,7 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     @Override
     public void windowClosing(WindowEvent e) {
         this.setVisible(false);
+        this.menu.disposeSettings();
     }
     public void showWindow(){
         this.setVisible(true);

@@ -19,4 +19,8 @@ public class ImageCache {
         }
         return scaledImage;
     }
+
+    public static void clear() {
+        cache.clear();
+    }
 }

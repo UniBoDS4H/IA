@@ -45,6 +45,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.text = new JTextArea();
         this.addComponents();
         this.addListeners();
+        this.updateCheckBoxes();
     }
     @Override
     public void showDialog() {

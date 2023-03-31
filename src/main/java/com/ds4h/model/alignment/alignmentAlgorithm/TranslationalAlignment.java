@@ -72,6 +72,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         }
     }
     public void setTransformation(boolean translate,boolean rotate, boolean scale){
+        System.out.println(translate + " " + rotate + " " +scale);
         this.translate = translate;
         this.rotate = rotate;
         this.scale = scale;
@@ -79,14 +80,15 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
         IJ.log("[TRANSLATIONAL ALIGNMENT] Source Points: " + srcPoints.toList().size() + ", Destination Points: " + dstPoints.toList().size());
-        if(srcPoints.toArray().length <=2){
+        if(srcPoints.toArray().length <2){
             final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
             final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
             translationMatrix.put(0, 2, translation.x);
             translationMatrix.put(1, 2, translation.y);
             return translationMatrix;
         }else{
-            final Mat H = Objects.requireNonNull(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints));
+            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99);
+
             double a = H.get(0,0)[0];
             double b = H.get(1,0)[0];
             double scaling = Math.sqrt(a*a + b*b);

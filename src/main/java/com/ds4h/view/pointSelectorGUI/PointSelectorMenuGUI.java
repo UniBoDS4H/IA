@@ -91,4 +91,7 @@ public class PointSelectorMenuGUI extends JPanel {
     public void updateSettings() {
         this.settings.updateView();
     }
+    public void disposeSettings(){
+        this.settings.dispose();
+    }
 }

@@ -24,15 +24,15 @@ import java.util.Objects;
 public class AutomaticAlignmentController implements AlignmentControllerInterface {
     private final Alignment alignment;
     private AlignmentAlgorithm algorithm;
-    private AlignmentAlgorithm translative = new TranslationalAlignment();
-    private AlignmentAlgorithm projective = new ProjectiveAlignment();
-    private AlignmentAlgorithm affine = new AffineAlignment();
+    private final AlignmentAlgorithm translational = new TranslationalAlignment();
+    private final AlignmentAlgorithm projective = new ProjectiveAlignment();
+    private final AlignmentAlgorithm affine = new AffineAlignment();
 
     /**
      * Constructor of the Controller
      */
     public AutomaticAlignmentController(){
-        this.algorithm = this.translative;
+        this.algorithm = this.translational;
         this.alignment = new Alignment();
     }
 
@@ -105,7 +105,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e){
         switch (e){
             case TRANSLATIONAL:
-                return this.translative;
+                return this.translational;
             case PROJECTIVE:
                 return this.projective;
             case AFFINE:
