@@ -1,5 +1,6 @@
 package com.ds4h.view.automaticAlignmentConfigGUI;
 
+import com.ds4h.controller.alignmentController.AutomaticAlignmentController.AutomaticAlignmentController;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
@@ -7,7 +8,7 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import javax.swing.*;
 import java.awt.*;
-import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
+import static com.ds4h.model.util.AlignmentUtil.getEnumFromAlgorithm;
 
 public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<Detectors> detectors;
@@ -18,12 +19,13 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JCheckBox scalingCheckbox;
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
     private final JTextArea text;
+    private final AutomaticAlignmentController controller;
     private Detectors selectedDetector;
     private final MainMenuGUI container;
-    private AlignmentAlgorithmEnum selectedAlgorithm;
 
-    public AutomaticAlignmentConfigGUI(MainMenuGUI container){
+    public AutomaticAlignmentConfigGUI(MainMenuGUI container, AutomaticAlignmentController automaticAlignmentController){
         this.setTitle("Automatic alignment algorithm");
+        this.controller = automaticAlignmentController;
         this.container = container;
         this.layout = new GridBagLayout();
         this.getContentPane().setLayout(this.layout);
@@ -40,7 +42,6 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.rotationCheckbox = new JCheckBox("Rotation");
         this.scalingCheckbox = new JCheckBox("Scaling");
         this.algorithm = new JComboBox<>(AlignmentAlgorithmEnum.values());
-        this.selectedAlgorithm = AlignmentAlgorithmEnum.TRANSLATIONAL;
         this.text = new JTextArea();
         this.addComponents();
         this.addListeners();
@@ -49,41 +50,51 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
     public void showDialog() {
         this.setVisible(true);
         this.detectors.setSelectedItem(this.selectedDetector);
-        this.algorithm.setSelectedItem(this.selectedAlgorithm);
+        this.algorithm.setSelectedItem(getEnumFromAlgorithm(this.controller.getAlgorithm()));
         this.slider.setValue((int)(this.selectedDetector.getFactor()*10));
     }
     @Override
     public void addListeners() {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.algorithm.addActionListener(event -> {
-            this.selectedAlgorithm = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
-            assert this.selectedAlgorithm != null;
-            this.text.setText(this.selectedAlgorithm.getDocumentation());
+            AlignmentAlgorithmEnum selected = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
+            assert selected != null;
+            this.text.setText(selected.getDocumentation());
+            this.controller.setAlgorithm(this.controller.getAlgorithmFromEnum(selected));
             this.container.checkPointsForAlignment();
             this.updateCheckBoxes();
-
-            System.out.println(this.selectedDetector.name());
-            System.out.println(this.selectedDetector.getFactor());
         });
         this.detectors.addActionListener(event -> {
             this.selectedDetector = (Detectors) this.detectors.getSelectedItem();
             assert this.selectedDetector != null;
             this.slider.setValue((int)(this.selectedDetector.getFactor()*10));
-
-            System.out.println(this.selectedDetector.name());
-            System.out.println(this.selectedDetector.getFactor());
         });
         this.slider.addChangeListener(event -> {
             this.selectedDetector.setFactor(this.slider.getValue());
-
-            System.out.println(this.selectedDetector.name());
-            System.out.println(this.selectedDetector.getFactor());
+        });
+        this.rotationCheckbox.addActionListener(e->{
+            if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+                TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
+                alg.setTransformation(alg.getTranslate(),this.rotationCheckbox.isSelected(),alg.getScale());
+            }
+        });
+        this.scalingCheckbox.addActionListener(e->{
+            if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+                TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
+                alg.setTransformation(alg.getTranslate(),alg.getRotate(),this.scalingCheckbox.isSelected());
+            }
+        });
+        this.translationCheckbox.addActionListener(e->{
+            if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+                TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
+                alg.setTransformation(this.translationCheckbox.isSelected(),alg.getRotate(),alg.getScale());
+            }
         });
     }
 
     private void updateCheckBoxes() {
-        if(this.getSelectedAlgorithm() == AlignmentAlgorithmEnum.TRANSLATIONAL){
-            TranslationalAlignment translational = (TranslationalAlignment) getAlgorithmFromEnum(AlignmentAlgorithmEnum.TRANSLATIONAL);
+        if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
+            TranslationalAlignment translational = (TranslationalAlignment) this.controller.getAlgorithm();
             this.scalingCheckbox.setEnabled(true);
             this.translationCheckbox.setEnabled(true);
             this.rotationCheckbox.setEnabled(true);
@@ -101,9 +112,6 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
 
     }
 
-    public AlignmentAlgorithmEnum getSelectedAlgorithm() {
-        return this.selectedAlgorithm;
-    }
 
     public Detectors getSelectedDetector(){
         return this.selectedDetector;

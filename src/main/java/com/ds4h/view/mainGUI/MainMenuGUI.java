@@ -9,17 +9,18 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.alignment.alignmentAlgorithm.*;
+import com.ds4h.model.alignment.alignmentAlgorithm.AffineAlignment;
+import com.ds4h.model.alignment.alignmentAlgorithm.ProjectiveAlignment;
+import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
-import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.automaticAlignmentConfigGUI.AutomaticAlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
-import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
+import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
+import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.ImagePlus;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -31,8 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import static com.ds4h.model.util.AlignmentUtil.getAlgorithmFromEnum;
+import static com.ds4h.model.util.AlignmentUtil.getEnumFromAlgorithm;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
@@ -53,7 +53,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AutomaticAlignmentConfigGUI automaticConfigGUI;
 
     private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
-    private AlignmentAlgorithm manualAlgorithm = new TranslationalAlignment();
 
     /**
      * Constructor of the MainMenu GUI
@@ -111,7 +110,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.aboutGUI = new AboutGUI();
         this.settingsBunwarpj = new BunwarpjGUI(this.bunwarpJController);
         this.manualConfigGUI = new ManualAlignmentConfigGUI(this, this.manualAlignmentController);
-        this.automaticConfigGUI = new AutomaticAlignmentConfigGUI(this);
+        this.automaticConfigGUI = new AutomaticAlignmentConfigGUI(this, this.automaticAlignmentController);
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("File");
@@ -159,15 +158,12 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         if (!this.pointControler.getCornerImagesImages().isEmpty()) {
             nPoints = this.pointControler.getCornerImagesImages().get(0).getPoints().length;
             int lowerBound = 0;
-            switch (this.manualConfigGUI.getSelectedValue()) {
-                case TRANSLATIONAL:
-                        lowerBound = TranslationalAlignment.LOWER_BOUND;
-                    break;
-                case AFFINE:
-                        lowerBound = AffineAlignment.LOWER_BOUND;
-                    break;
-                case PROJECTIVE:
-                    lowerBound = ProjectiveAlignment.LOWER_BOUND;
+            if(this.manualAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
+                lowerBound = TranslationalAlignment.LOWER_BOUND;
+            }else if(this.manualAlignmentController.getAlgorithm() instanceof AffineAlignment) {
+                lowerBound = AffineAlignment.LOWER_BOUND;
+            }else if(this.manualAlignmentController.getAlgorithm() instanceof ProjectiveAlignment) {
+                lowerBound = ProjectiveAlignment.LOWER_BOUND;
             }
             boolean ok = true;
             for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
@@ -190,7 +186,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 this.manualAlignment.setToolTipText("<html>"
                         + "The number of points inside the images is not correct."
                         + "<br>"
-                        + "In order to use the " + this.manualConfigGUI.getSelectedValue().getType() + " alignment you must use at least " + lowerBound + " points in each image."
+                        + "In order to use the " + getEnumFromAlgorithm(this.manualAlignmentController.getAlgorithm()).getType() + " alignment you must use at least " + lowerBound + " points in each image."
                         + "</html>");
             }
         }
@@ -319,10 +315,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingManualAlignment(){
         if(!this.manualAlignmentController.isAlive()) {
             try {
-                if(this.manualAlgorithm instanceof  TranslationalAlignment){
+                if(this.manualAlignmentController.getAlgorithm() instanceof  TranslationalAlignment){
                     ((TranslationalAlignment) this.manualAlignmentController.getAlgorithm()).setTransformation(this.manualConfigGUI.getTranslation(),this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
                 }
-                this.manualAlignmentController.align(this.manualAlgorithm, this.pointControler);
+                this.manualAlignmentController.align(this.manualAlignmentController.getAlgorithm(), this.pointControler);
                 this.startPollingThread(this.manualAlignmentController);
             }catch(final Exception e){
                 JOptionPane.showMessageDialog(this,
@@ -363,11 +359,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void pollingAutomaticAlignment(){
         if(!this.automaticAlignmentController.isAlive()) {
             try {
-                AlignmentAlgorithm alg = getAlgorithmFromEnum(this.automaticConfigGUI.getSelectedAlgorithm());
-                if(alg instanceof  TranslationalAlignment){
-                    ((TranslationalAlignment) alg).setTransformation(this.manualConfigGUI.getTranslation(),this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
+                if(this.automaticAlignmentController.getAlgorithm() instanceof  TranslationalAlignment){
+                    TranslationalAlignment alg = (TranslationalAlignment) this.automaticAlignmentController.getAlgorithm();
+                    alg.setTransformation(this.automaticConfigGUI.getTranslation(),this.automaticConfigGUI.getRotation(), this.automaticConfigGUI.getScaling());
                 }
-                this.automaticAlignmentController.align(alg, this.automaticConfigGUI.getSelectedDetector(),
+                this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),
                         this.pointControler,
                         1);
                 this.startPollingThread(this.automaticAlignmentController);
