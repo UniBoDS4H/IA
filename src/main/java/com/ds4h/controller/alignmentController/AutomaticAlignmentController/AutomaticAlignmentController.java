@@ -85,6 +85,8 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                 stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
                 index++;
             }
+            //TODO: Understand how to increase the performace without loosing the images
+            //this.alignment.clearList();
             CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
             composite.setLuts(luts);
             return composite;

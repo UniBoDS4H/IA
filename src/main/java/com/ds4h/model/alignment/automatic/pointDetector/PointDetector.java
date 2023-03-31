@@ -5,13 +5,19 @@ import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
+import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
+import java.awt.*;
+
+/**
+ *
+ */
 public abstract class PointDetector {
     private double factor = 0;
+
     public PointDetector(){
 
     }
@@ -34,6 +40,10 @@ public abstract class PointDetector {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public double getFactor(){
         return this.factor;
     }
@@ -46,6 +56,7 @@ public abstract class PointDetector {
      */
     protected Mat createPyramid(final Mat matrix, final int levels){
         Size lastSize = matrix.size();
+
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times");
         for(int i = 1; i < levels; i++){
             Imgproc.resize(matrix, matrix,
@@ -53,6 +64,20 @@ public abstract class PointDetector {
                     Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
+
+        Mat sobelX = new Mat();
+        Mat sobelY = new Mat();
+
+        Imgproc.Sobel(matrix, sobelX, CvType.CV_32F, 1, 0);
+        Imgproc.Sobel(matrix, sobelY, CvType.CV_32F, 0, 1);
+
+        Core.magnitude(sobelX, sobelY, matrix);
+        matrix.convertTo(matrix, CvType.CV_8U);
+
+        /*
+        new ImagePlus("ciao",
+                MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0,0))).show();
+         */
         return matrix;
     }
 
