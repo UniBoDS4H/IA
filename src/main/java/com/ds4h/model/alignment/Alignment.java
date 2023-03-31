@@ -105,8 +105,6 @@ public class Alignment implements Runnable{
         IJ.log("[MANUAL] End alignment.");
         this.imagesToAlign.clear();
         this.targetImage = null;
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        //this.alignedImages.clear();
     }
 
     private void auto(){
@@ -126,7 +124,8 @@ public class Alignment implements Runnable{
         IJ.log("[AUTOMATIC] Starting preprocess");
         this.imagesToAlign.clear();
         if(images.size() == 0){
-            throw new IllegalArgumentException("The detection has failed, please consider to expand the memory and increase the SCALING FACTOR.");
+            throw new IllegalArgumentException("The detection has failed,\n" +
+                    " please consider to expand the memory (by going to Edit > Options > Memory & Threads) and also increase the Threshold Factor.");
         }
         this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                 images,

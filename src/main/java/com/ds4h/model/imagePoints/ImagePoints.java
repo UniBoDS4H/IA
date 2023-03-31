@@ -1,10 +1,12 @@
 package com.ds4h.model.imagePoints;
-import com.ds4h.model.util.converter.ImagePlusMatConverter;
+import com.ds4h.model.util.converter.ImageProcessorMatConverter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -164,17 +166,25 @@ public class ImagePoints extends ImagePlus{
         this.processed = false;
     }
 
+    private Mat invert(){
+        this.processed = false;
+        final Mat matrix = ImageProcessorMatConverter.convert(this.getProcessor());
+        Core.bitwise_not(matrix, matrix);
+        return matrix;
+
+    }
+
     /**
      *
      * @return
      */
     public Mat getGrayScaleMat(){
         if(this.processed){
-            final Mat grayImg = ImagePlusMatConverter.convertGray(this.imageProcessed);
+            final Mat grayImg = ImageProcessorMatConverter.convertGray(this.imageProcessed);
             this.useStock();
             return grayImg;
         }
-        return ImagePlusMatConverter.convertGray(this.getProcessor());
+        return ImageProcessorMatConverter.convertGray(this.getProcessor());
     }
 
     /**
@@ -191,7 +201,7 @@ public class ImagePoints extends ImagePlus{
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
                 this.address > 0 ? new Mat(this.address) :
-                        ImagePlusMatConverter.convert(this.getProcessor());
+                        ImageProcessorMatConverter.convert(this.getProcessor());
     }
 
     /**

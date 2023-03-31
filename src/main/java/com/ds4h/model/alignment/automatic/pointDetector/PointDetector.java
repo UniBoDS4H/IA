@@ -1,7 +1,10 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -45,8 +48,8 @@ public abstract class PointDetector {
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times");
         for(int i = 1; i < levels; i++){
-            Imgproc.resize(matrix, matrix, new Size(lastSize.width / 2,
-                    lastSize.height /2),
+            Imgproc.resize(matrix, matrix,
+                    new Size(lastSize.width / 2, lastSize.height /2),
                     Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
@@ -69,7 +72,6 @@ public abstract class PointDetector {
                     pyramid[i - 1].getHeight() / 2);
             pyramid[i] = ipDownsampled;
         }
-
         return pyramid[levels-1];
     }
 }

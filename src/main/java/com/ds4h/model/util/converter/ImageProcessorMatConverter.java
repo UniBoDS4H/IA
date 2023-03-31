@@ -7,14 +7,12 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-public class ImagePlusMatConverter {
+public class ImageProcessorMatConverter {
 
-    private ImagePlusMatConverter(){
+    private ImageProcessorMatConverter(){
 
     }
 
@@ -91,13 +89,13 @@ public class ImagePlusMatConverter {
     public static Mat convert(final ImageProcessor ip){
         if(!Objects.isNull(ip)){
             if(ip instanceof ColorProcessor){
-                return ImagePlusMatConverter.toMat((ColorProcessor) ip);
+                return ImageProcessorMatConverter.toMat((ColorProcessor) ip);
             }else if(ip instanceof ShortProcessor){
-                return ImagePlusMatConverter.toMat((ShortProcessor) ip);
+                return ImageProcessorMatConverter.toMat((ShortProcessor) ip);
             }else if(ip instanceof FloatProcessor){
-                return ImagePlusMatConverter.toMat((FloatProcessor) ip);
+                return ImageProcessorMatConverter.toMat((FloatProcessor) ip);
             }else if(ip instanceof ByteProcessor){
-                return ImagePlusMatConverter.toMat((ByteProcessor) ip);
+                return ImageProcessorMatConverter.toMat((ByteProcessor) ip);
             }
         }
         throw new IllegalArgumentException("This ImageProcessor is not handled by this Software. Please contact Us, in order to " +
@@ -110,11 +108,14 @@ public class ImagePlusMatConverter {
      * @return
      */
     public static Mat convertGray(final ImageProcessor ip){
-        final Mat matrix = ImagePlusMatConverter.convert(ip);
-        if (!(ip instanceof ByteProcessor)) {
+        final Mat matrix = ImageProcessorMatConverter.convert(ip);
+
+        if (ip instanceof ShortProcessor) {
             IJ.log("[CONVERT GRAY] IS NOT A BYTEPROCESSOR");
             //0.00390625
             Core.multiply(matrix, new Scalar(1 / (double) 256), matrix);
+        }else if(ip instanceof FloatProcessor){
+            Core.multiply(matrix, new Scalar(1 / (double) Integer.MAX_VALUE), matrix);
         }
         matrix.convertTo(matrix, CvType.CV_8UC1);
         IJ.log("[TO MAT] Converted: " + matrix);
