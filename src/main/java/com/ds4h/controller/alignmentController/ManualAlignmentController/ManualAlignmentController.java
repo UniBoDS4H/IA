@@ -5,7 +5,7 @@ import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
-import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -20,7 +20,13 @@ import java.util.stream.Collectors;
  */
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final Alignment alignment;
+    private AlignmentAlgorithm algorithm;
+    private AlignmentAlgorithm translative = new TranslationalAlignment();
+    private AlignmentAlgorithm projective = new ProjectiveAlignment();
+    private AlignmentAlgorithm affine = new AffineAlignment();
+
     public ManualAlignmentController(){
+        this.algorithm = this.translative;
         this.alignment = new Alignment();
     }
 
@@ -82,5 +88,24 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images.");
             }
         }
+    }
+
+    public AlignmentAlgorithm getAlgorithm() {
+        return this.algorithm;
+    }
+    public void setAlgorithm(AlignmentAlgorithm algorithm){
+        this.algorithm = algorithm;
+    }
+
+    public AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e) {
+        switch (e){
+            case TRANSLATIONAL:
+                return this.translative;
+            case PROJECTIVE:
+                return this.projective;
+            case AFFINE:
+                return this.affine;
+        }
+        throw new IllegalArgumentException("Algorithm not present");
     }
 }
