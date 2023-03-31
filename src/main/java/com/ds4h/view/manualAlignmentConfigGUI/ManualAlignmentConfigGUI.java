@@ -94,7 +94,6 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     @Override
     public void addComponents() {
         JLabel algLbl = new JLabel("Algorithm: ");
-        JLabel infoLbl = new JLabel("Info: ");
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
@@ -104,14 +103,23 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.gridx = 1;
         add(this.algorithm, gbc);
 
+        final JLabel infoLbl = new JLabel("Info: ");
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(infoLbl, gbc);
+        this.add(infoLbl, gbc);
+
+        this.text.setLineWrap(true);
+        this.text.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(this.text);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(250, 80));
         gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        add(this.text, gbc);
+        this.add(scrollPane, gbc);
 
         // Add translation checkbox
         gbc.gridx = 0;

@@ -10,10 +10,10 @@ import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.LUT;
-
 import java.awt.image.ColorModel;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 public class ManualAlignmentController implements AlignmentControllerInterface {
     private final Alignment alignment;
     private AlignmentAlgorithm algorithm;
-    private AlignmentAlgorithm translative = new TranslationalAlignment();
-    private AlignmentAlgorithm projective = new ProjectiveAlignment();
-    private AlignmentAlgorithm affine = new AffineAlignment();
+    private final AlignmentAlgorithm translational = new TranslationalAlignment();
+    private final AlignmentAlgorithm projective = new ProjectiveAlignment();
+    private final AlignmentAlgorithm affine = new AffineAlignment();
 
     public ManualAlignmentController(){
-        this.algorithm = this.translative;
+        this.algorithm = this.translational;
         this.alignment = new Alignment();
     }
 
@@ -100,7 +100,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     public AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e) {
         switch (e){
             case TRANSLATIONAL:
-                return this.translative;
+                return this.translational;
             case PROJECTIVE:
                 return this.projective;
             case AFFINE:
