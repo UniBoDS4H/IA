@@ -7,6 +7,7 @@ import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
@@ -54,33 +55,74 @@ public abstract class PointDetector {
      * @param levels
      * @return
      */
-    protected Mat createPyramid(final Mat matrix, final int levels){
+    protected Mat createPyramid(Mat matrix, final int levels){
         Size lastSize = matrix.size();
-
-        IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times");
+        IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
         for(int i = 1; i < levels; i++){
             Imgproc.resize(matrix, matrix,
                     new Size(lastSize.width / 2, lastSize.height /2),
                     Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
-
-        Mat sobelX = new Mat();
-        Mat sobelY = new Mat();
-
-        Imgproc.Sobel(matrix, sobelX, CvType.CV_32F, 1, 0);
-        Imgproc.Sobel(matrix, sobelY, CvType.CV_32F, 0, 1);
-
-        Core.magnitude(sobelX, sobelY, matrix);
-        matrix.convertTo(matrix, CvType.CV_8U);
-
-        /*
-        new ImagePlus("ciao",
-                MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0,0))).show();
-         */
-        return matrix;
+        IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
+        IJ.log("[POINT DETECTOR] Resize done.");
+        return this.improveMatrix(matrix);
     }
 
+    private Mat improveMatrix(final Mat matrix){
+        final double val = Core.mean(matrix).val[0];
+        final double percentage = (val/255.0 * 100.0);
+        IJ.log("[MEAN] Percentage: " + percentage);
+        if(percentage >= 60.0){
+            Imgproc.threshold(matrix, matrix, -1, 255, Imgproc.THRESH_OTSU);
+            Imgproc.GaussianBlur(matrix, matrix, new Size(5, 5), 2.0, 2.0);
+            Core.bitwise_not(matrix, matrix);
+            // Sharpening
+            Mat gaussianKernel = Imgproc.getGaussianKernel(5, 2);
+            Mat F_b = new Mat();
+            Core.multiply(gaussianKernel.reshape(1, gaussianKernel.rows() * gaussianKernel.cols()), gaussianKernel, F_b);
+            Mat F_id = Mat.zeros(gaussianKernel.size(), CvType.CV_32F);
+            F_id.put(F_id.rows() / 2, F_id.cols() / 2, 1);
+            Core.divide(F_b, Core.sumElems(F_b), F_b);
+            final Mat d = new Mat();
+            Imgproc.filter2D(matrix, d, -1, F_b);
+
+        }
+        //Edge Detection
+        final Mat sobelx = new Mat();
+        final Mat sobely = new Mat();
+        Imgproc.Sobel(matrix, sobelx, CvType.CV_32F, 1, 0, 3, 1, 0, Core.BORDER_DEFAULT);
+        Imgproc.Sobel(matrix, sobely, CvType.CV_32F, 0, 1, 3, 1, 0, Core.BORDER_DEFAULT);
+        Core.magnitude(sobelx, sobely, matrix);
+        Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+
+        return matrix;
+    }
+        /*
+
+
+
+        final Mat sharx = new Mat();
+        final Mat shary = new Mat();
+        Imgproc.Scharr(matrix, sharx, CvType.CV_64F, 1,0);
+        Imgproc.Scharr(matrix, shary, CvType.CV_64F, 0, 1);
+        Core.magnitude(sharx, shary, matrix);
+        Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+
+
+
+        Mat kerner = Imgproc.getGaussianKernel(5, 2);
+        Mat F_b = new Mat();
+        Core.multiply(kerner.reshape(1, kerner.rows() * kerner.cols()), kerner, F_b);
+        Mat F_id = Mat.zeros(kerner.size(), CvType.CV_32F);
+        F_id.put(F_id.rows()/2, F_id.cols()/2, 1);
+        Core.divide(F_b, Core.sumElems(F_b), F_b);
+        final Mat d = new Mat();
+        Imgproc.filter2D(matrix, d, -1, F_b);
+        Core.add(matrix, d, matrix);
+        new ImagePlus("ciao", MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0,0)))
+                .show();
+         */
     /**
      *
      * @param image

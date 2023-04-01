@@ -21,10 +21,6 @@ public class ImagePoints extends ImagePlus{
     private long address=-1;
     private Size matSize = null;
     private Mat matrix = null;
-
-    private ImageProcessor imageProcessed = null;
-    private boolean processed = false;
-
     /**
      *
      * @param path
@@ -148,42 +144,13 @@ public class ImagePoints extends ImagePlus{
         return this;
     }
 
-    public void useProcessed(final ImageProcessor ip){
-        if(Objects.nonNull(ip)) {
-            this.processed = true;
-            this.imageProcessed = ip;
-        }
-    }
 
-    /**
-     *
-     */
-    private void useStock(){
-        if(Objects.nonNull(imageProcessed)){
-            this.imageProcessed = null;
-            System.gc();
-        }
-        this.processed = false;
-    }
-
-    private Mat invert(){
-        this.processed = false;
-        final Mat matrix = ImageProcessorMatConverter.convert(this.getProcessor());
-        Core.bitwise_not(matrix, matrix);
-        return matrix;
-
-    }
 
     /**
      *
      * @return
      */
     public Mat getGrayScaleMat(){
-        if(this.processed){
-            final Mat grayImg = ImageProcessorMatConverter.convertGray(this.imageProcessed);
-            this.useStock();
-            return grayImg;
-        }
         return ImageProcessorMatConverter.convertGray(this.getProcessor());
     }
 

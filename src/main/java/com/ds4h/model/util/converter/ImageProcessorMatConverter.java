@@ -109,15 +109,7 @@ public class ImageProcessorMatConverter {
      */
     public static Mat convertGray(final ImageProcessor ip){
         final Mat matrix = ImageProcessorMatConverter.convert(ip);
-
-        if (ip instanceof ShortProcessor) {
-            IJ.log("[CONVERT GRAY] IS NOT A BYTEPROCESSOR");
-            //0.00390625
-            Core.multiply(matrix, new Scalar(1 / (double) 256), matrix);
-        }else if(ip instanceof FloatProcessor){
-            Core.multiply(matrix, new Scalar(1 / (double) Integer.MAX_VALUE), matrix);
-        }
-        matrix.convertTo(matrix, CvType.CV_8UC1);
+        Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
         IJ.log("[TO MAT] Converted: " + matrix);
         return matrix;
     }
