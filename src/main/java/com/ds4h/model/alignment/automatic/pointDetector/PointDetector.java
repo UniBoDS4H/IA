@@ -70,36 +70,40 @@ public abstract class PointDetector {
     }
 
     private Mat improveMatrix(final Mat matrix){
-        final double val = Core.mean(matrix).val[0];
-        final double percentage = (val/255.0 * 100.0);
+        final double mean = Core.mean(matrix).val[0];
+        final double percentage = (mean/255.0 * 100.0);
         IJ.log("[MEAN] Percentage: " + percentage);
         if(percentage >= 60.0){
-            Imgproc.threshold(matrix, matrix, -1, 255, Imgproc.THRESH_OTSU);
-            Imgproc.GaussianBlur(matrix, matrix, new Size(5, 5), 2.0, 2.0);
-            Core.bitwise_not(matrix, matrix);
-            // Sharpening
-            Mat gaussianKernel = Imgproc.getGaussianKernel(5, 2);
-            Mat F_b = new Mat();
-            Core.multiply(gaussianKernel.reshape(1, gaussianKernel.rows() * gaussianKernel.cols()), gaussianKernel, F_b);
-            Mat F_id = Mat.zeros(gaussianKernel.size(), CvType.CV_32F);
-            F_id.put(F_id.rows() / 2, F_id.cols() / 2, 1);
-            Core.divide(F_b, Core.sumElems(F_b), F_b);
-            final Mat d = new Mat();
-            Imgproc.filter2D(matrix, d, -1, F_b);
+            final int ksize = 3;
+            //final Mat inverted = new Mat();
+            //Core.bitwise_not(matrix, inverted);
+            //Core.bitwise_and(matrix, inverted, matrix);
+
+            //Reduce the Noise
+            final Mat filteredM = new Mat();
+            Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
+            IJ.log("[POINT DETECTOR > IMPROVE MATRIX] Done filtering.");
+            final Mat destination = new Mat();
+            Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
+            Core.convertScaleAbs(destination, destination);
+            Core.bitwise_and(matrix, destination, matrix);
+
+            //new ImagePlus("ciao", MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0, 0))).show();
+
+            return matrix;
 
         }
-        //Edge Detection
-        final Mat sobelx = new Mat();
-        final Mat sobely = new Mat();
-        Imgproc.Sobel(matrix, sobelx, CvType.CV_32F, 1, 0, 3, 1, 0, Core.BORDER_DEFAULT);
-        Imgproc.Sobel(matrix, sobely, CvType.CV_32F, 0, 1, 3, 1, 0, Core.BORDER_DEFAULT);
-        Core.magnitude(sobelx, sobely, matrix);
-        Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
-
         return matrix;
     }
         /*
 
+
+            final Mat sobelx = new Mat();
+            final Mat sobely = new Mat();
+            Imgproc.Sobel(matrix, sobelx, CvType.CV_32F, 1, 0, 3, 1, 0, Core.BORDER_DEFAULT);
+            Imgproc.Sobel(matrix, sobely, CvType.CV_32F, 0, 1, 3, 1, 0, Core.BORDER_DEFAULT);
+            Core.magnitude(sobelx, sobely, matrix);
+            Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
 
 
         final Mat sharx = new Mat();
@@ -119,7 +123,6 @@ public abstract class PointDetector {
         Core.divide(F_b, Core.sumElems(F_b), F_b);
         final Mat d = new Mat();
         Imgproc.filter2D(matrix, d, -1, F_b);
-        Core.add(matrix, d, matrix);
         new ImagePlus("ciao", MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0,0)))
                 .show();
          */
