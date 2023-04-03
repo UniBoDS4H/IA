@@ -19,16 +19,18 @@ public class AKAZEDetector extends PointDetector {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
-                imagePoint.getGrayScaleMat();//ImagePlusMatConverter.convertGray(this.createPyramid(imagePoint, scalingFactor).getProcessor());
-        final Mat grayTarget = scalingFactor > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                targetImage.getGrayScaleMat();//ImagePlusMatConverter.convertGray(this.createPyramid(targetImage, scalingFactor).getProcessor());
+                imagePoint.getGrayScaleMat();
 
+        final Mat grayTarget = super.getMatCache().isSet() ?
+                super.getMatCache().getTargetMatrix() :
+                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
+                        this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                        targetImage.getGrayScaleMat());
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
         detector.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
         detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
-
+        grayImg.release();
         final MatOfDMatch matches = new MatOfDMatch();
         matcher.match(descriptors1, descriptors2, matches);
         descriptors1.release();
