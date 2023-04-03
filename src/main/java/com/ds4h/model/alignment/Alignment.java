@@ -2,11 +2,11 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import com.ds4h.model.alignment.automatic.pointDetector.MatCache;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.MemoryController;
 import ij.IJ;
 
 import java.util.*;
@@ -109,7 +109,6 @@ public class Alignment implements Runnable{
 
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
-
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath());
             IJ.log("[AUTOMATIC] Start Detection");
@@ -120,6 +119,7 @@ public class Alignment implements Runnable{
                 images.put(img, t);
             }
         });
+        this.pointDetector.clearCache();
         System.gc();
         IJ.log("[AUTOMATIC] Starting preprocess");
         this.imagesToAlign.clear();
@@ -139,8 +139,8 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
             this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
             key.getMatImage().release();
-            value.clearPoints();
-            key.clearPoints();
+            //value.clearPoints();
+            //key.clearPoints();
             key = null;
             value = null;
             System.gc();

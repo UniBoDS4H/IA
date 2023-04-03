@@ -61,9 +61,6 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points);
                 points.clear();
-                points = null;
-                //points.release();
-                //points = null;
                 System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(s.get(j).getKey(), target));
             });

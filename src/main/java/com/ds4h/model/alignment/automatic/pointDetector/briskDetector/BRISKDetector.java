@@ -22,15 +22,18 @@ public class BRISKDetector extends PointDetector {
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
-        final Mat grayTarget = scalingFactor > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                targetImage.getGrayScaleMat();
+
+        final Mat grayTarget = super.getMatCache().isSet() ?
+                super.getMatCache().getTargetMatrix() :
+                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
+                        this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                        targetImage.getGrayScaleMat());
 
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
         brisk.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
         brisk.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
-
+        grayImg.release();
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
         descriptors1.release();
