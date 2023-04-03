@@ -21,10 +21,7 @@ public class ImagePoints extends ImagePlus{
     private long address=-1;
     private Size matSize = null;
     private Mat matrix = null;
-
-    private ImageProcessor imageProcessed = null;
-    private boolean processed = false;
-
+    private boolean improveMatrix = false;
     /**
      *
      * @param path
@@ -42,14 +39,14 @@ public class ImagePoints extends ImagePlus{
      * @param path
      * @param rows
      * @param cols
-     * @param type
      * @param matAddress
      */
-    public ImagePoints(final String path, final int rows, final int cols, final int type, final long matAddress) {
+    public ImagePoints(final String path, final int rows, final int cols, final long matAddress) {
         this(path);
         this.rows = rows;
         this.cols = cols;
         this.address = matAddress;
+        this.matSize = new Size(cols, rows);
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
 
@@ -79,6 +76,18 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
+    }
+
+    public void improve(){
+        this.improveMatrix = true;
+    }
+
+    public void useStock(){
+        this.improveMatrix = false;
+    }
+
+    public boolean toImprove(){
+        return this.improveMatrix;
     }
 
     /**
@@ -148,42 +157,13 @@ public class ImagePoints extends ImagePlus{
         return this;
     }
 
-    public void useProcessed(final ImageProcessor ip){
-        if(Objects.nonNull(ip)) {
-            this.processed = true;
-            this.imageProcessed = ip;
-        }
-    }
 
-    /**
-     *
-     */
-    private void useStock(){
-        if(Objects.nonNull(imageProcessed)){
-            this.imageProcessed = null;
-            System.gc();
-        }
-        this.processed = false;
-    }
-
-    private Mat invert(){
-        this.processed = false;
-        final Mat matrix = ImageProcessorMatConverter.convert(this.getProcessor());
-        Core.bitwise_not(matrix, matrix);
-        return matrix;
-
-    }
 
     /**
      *
      * @return
      */
     public Mat getGrayScaleMat(){
-        if(this.processed){
-            final Mat grayImg = ImageProcessorMatConverter.convertGray(this.imageProcessed);
-            this.useStock();
-            return grayImg;
-        }
         return ImageProcessorMatConverter.convertGray(this.getProcessor());
     }
 

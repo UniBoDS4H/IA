@@ -22,9 +22,11 @@ public class SIFTDetector extends PointDetector {
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
-        final Mat grayTarget = scalingFactor > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                targetImage.getGrayScaleMat();
+        final Mat grayTarget = super.getMatCache().isSet() ?
+                super.getMatCache().getTargetMatrix() :
+                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
+                        this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                        targetImage.getGrayScaleMat());
 
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
@@ -36,7 +38,6 @@ public class SIFTDetector extends PointDetector {
         System.gc();
         this.sift.detect(grayTarget, keypoints2);
         this.sift.compute(grayTarget, keypoints2, descriptors2);
-        grayTarget.release();
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
         System.gc();
         final MatOfDMatch matches = new MatOfDMatch();
