@@ -1,35 +1,36 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ByteProcessor;
-import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-
-import java.awt.*;
 
 /**
  *
  */
 public abstract class PointDetector {
     private double factor = 0;
+    final MatCache matCache;
 
     public PointDetector(){
+        this.matCache = new MatCache();
+    }
 
+    public MatCache getMatCache(){
+        return this.matCache;
+    }
+
+    public void clearCache(){
+        this.matCache.releaseMatrix();
     }
 
     /**
-     *
      * @param targetImage
      * @param imagePoint
      * @param scalingFactor
      */
-    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor);
+    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, final int scalingFactor);
 
     /**
      *
@@ -66,7 +67,7 @@ public abstract class PointDetector {
         }
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
         IJ.log("[POINT DETECTOR] Resize done.");
-        return this.improveMatrix(matrix);
+        return matrix;//this.improveMatrix(matrix);
     }
 
     private Mat improveMatrix(final Mat matrix){

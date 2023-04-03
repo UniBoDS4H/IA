@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
+import ij.IJ;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -12,8 +13,15 @@ public class MatCache {
         this.targetMatrix = null;
     }
 
-    public void setTargetMatrix(final Mat matrix){
+    public Mat setTargetMatrix(final Mat matrix){
         this.targetMatrix = Objects.requireNonNull(matrix);
+        IJ.log("[MAT CACHE] Cached: " + targetMatrix);
+        return this.targetMatrix;
+    }
+
+    public Mat getTargetMatrix(){
+        IJ.log("[MAT CACHE] Get Cached: " + this.targetMatrix);
+        return this.targetMatrix;
     }
 
     public boolean isSet(){

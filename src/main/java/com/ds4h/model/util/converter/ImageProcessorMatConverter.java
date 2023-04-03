@@ -74,7 +74,7 @@ public class ImageProcessorMatConverter {
      */
     private static Mat toMat(final ByteProcessor bp){
         IJ.log("[TO MAT - BYTEPROCESSOR] From ByteProcessor");
-        final Mat matrix = new Mat(bp.getHeight(), bp.getWidth(), CvType.CV_8UC1);
+        final Mat matrix = new Mat(bp.getHeight(), bp.getWidth(), CvType.CV_8U);
         IJ.log("[TO MAT - BYTEPROCESSOR] Matrix: " + matrix);
         matrix.put(0,0, (byte[]) bp.getPixels());
         IJ.log("[TO MAT - BYTEPROCESSOR] Matrix created");
