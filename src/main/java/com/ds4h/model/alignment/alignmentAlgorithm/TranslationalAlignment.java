@@ -49,7 +49,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     @Override
     public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
         try {
-            if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
+            if(targetImage.numberOfPoints() >= this.getLowerBound() && imageToShift.numberOfPoints() >= this.getLowerBound()) {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
@@ -78,7 +78,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 }
             }else{
                 throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Translation alignment you must at least: " + TranslationalAlignment.LOWER_BOUND + " points.");
+                        "In order to use the Translation alignment" + (this.scale?" with scaling ":"") + (this.rotate?" with rotation ":"") +" you must at least: " + this.getLowerBound() + " points.");
             }
         }catch (Exception ex){
             throw ex;
@@ -182,7 +182,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
 
     @Override
     public int getLowerBound() {
-        return LOWER_BOUND;
+        return LOWER_BOUND + (this.scale || this.rotate? 2 : 0);
     }
 
 }

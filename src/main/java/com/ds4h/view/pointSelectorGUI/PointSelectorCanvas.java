@@ -104,6 +104,7 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
         if(this.container != null){
             this.container.updateMenu();
             this.container.updateSettings();
+            this.container.checkPointsForAlignment();
         }
     }
     private void drawPoint(Point p) {

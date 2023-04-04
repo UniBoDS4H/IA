@@ -4,6 +4,7 @@ import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
 import ij.gui.Toolbar;
@@ -20,6 +21,7 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     private final PointController pointController;
     private final PointSelectorCanvas canvas;
     private final Panel panel;
+    private MainMenuGUI mainGUI;
 
     public PointSelectorGUI(ImagePoints image, final PointController controller) {
         super(image, new PointSelectorCanvas(image));
@@ -98,7 +100,11 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     public void updateSettings(){
         this.menu.updateSettings();
     }
-
+    public void checkPointsForAlignment(){
+        assert this.mainGUI != null;
+        this.mainGUI.checkPointsForAlignment();
+    }
+    public void setMainGUI(MainMenuGUI mainGUI){this.mainGUI = mainGUI;}
 }
 
 
