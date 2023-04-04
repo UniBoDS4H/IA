@@ -9,8 +9,10 @@ import java.awt.*;
 public class PreviewImagesPane extends JPanel {
     private final PointController controller;
     private final JScrollPane scrollPane;
+    private final MainMenuGUI mainGUI;
     JPanel innerPanel;
-    public PreviewImagesPane(final PointController controller){
+    public PreviewImagesPane(final PointController controller, MainMenuGUI mainGUI){
+        this.mainGUI = mainGUI;
         this.controller = controller;
         this.scrollPane = new JScrollPane();
         this.innerPanel = new JPanel();
@@ -46,5 +48,9 @@ public class PreviewImagesPane extends JPanel {
     public void updateList(){
         this.showPreviewImages();
         this.repaint();
+    }
+
+    public MainMenuGUI getMainGUI() {
+        return this.mainGUI;
     }
 }

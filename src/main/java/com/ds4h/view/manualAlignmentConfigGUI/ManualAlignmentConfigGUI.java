@@ -81,18 +81,21 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
                 TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
                 alg.setTransformation(alg.getTranslate(),this.rotationCheckbox.isSelected(),alg.getScale());
             }
+            this.container.checkPointsForAlignment();
         });
         this.scalingCheckbox.addActionListener(e->{
             if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
                 TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
                 alg.setTransformation(alg.getTranslate(),alg.getRotate(),this.scalingCheckbox.isSelected());
             }
+            this.container.checkPointsForAlignment();
         });
         this.translationCheckbox.addActionListener(e->{
             if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
                 TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
                 alg.setTransformation(this.translationCheckbox.isSelected(),alg.getRotate(),alg.getScale());
             }
+            this.container.checkPointsForAlignment();
         });
         this.pointOverloadComboBox.addActionListener(e->{
             PointOverloadEnum selected = (PointOverloadEnum) this.pointOverloadComboBox.getSelectedItem();
@@ -109,6 +112,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
         add(algLbl, gbc);
         gbc.gridx = 1;
         gbc.gridwidth = 2;
@@ -136,7 +140,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
 
         // Add point overload label and combobox
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
@@ -145,7 +149,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.add(pointLbl, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
@@ -154,7 +158,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
 
         // Add translation checkbox
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
@@ -163,7 +167,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
 
         // Add scaling checkbox
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
@@ -172,7 +176,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
 
         // Add rotation checkbox
         gbc.gridx = 2;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;

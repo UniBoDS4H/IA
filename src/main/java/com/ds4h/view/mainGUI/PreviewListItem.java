@@ -87,6 +87,7 @@ public class PreviewListItem extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if(firstOpening){
                     pointSelector = new PointSelectorGUI(image, controller);
+                    pointSelector.setMainGUI(container.getMainGUI());
                     firstOpening = false;
                 }else{
                     pointSelector.showWindow();

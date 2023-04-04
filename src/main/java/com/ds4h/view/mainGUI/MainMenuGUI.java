@@ -73,7 +73,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.panel.setLayout(new GridBagLayout());
 
         //Init of the previewList
-        this.imagesPreview = new PreviewImagesPane(this.pointControler);
+        this.imagesPreview = new PreviewImagesPane(this.pointControler, this);
 
         GridBagConstraints gbcPanel = new GridBagConstraints();
         gbcPanel.gridx = 0;
@@ -129,6 +129,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.addListeners();
         this.checkPointsForAlignment();
         this.showDialog();
+        this.checkPointsForAlignment();
     }
 
     /**
@@ -154,40 +155,46 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     }
     public void checkPointsForAlignment() {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-        int nPoints;
-        if (!this.pointControler.getCornerImagesImages().isEmpty()) {
-            nPoints = this.pointControler.getCornerImagesImages().get(0).getPoints().length;
-            int lowerBound = 0;
-            if(this.manualAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
-                lowerBound = TranslationalAlignment.LOWER_BOUND;
-            }else if(this.manualAlignmentController.getAlgorithm() instanceof AffineAlignment) {
-                lowerBound = AffineAlignment.LOWER_BOUND;
-            }else if(this.manualAlignmentController.getAlgorithm() instanceof ProjectiveAlignment) {
-                lowerBound = ProjectiveAlignment.LOWER_BOUND;
-            }
-            boolean ok = true;
-            for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
-                if (i.getPoints().length < lowerBound) {
-                    ok = false;
-                    break;
+        if(this.pointControler.getCornerImagesImages().size() < 2){
+            this.manualAlignment.setEnabled(false);
+            this.manualAlignment.setToolTipText("<html>" +
+                    "You have to load at least 2 images</html>");
+        }else{
+            int nPoints;
+            if (!this.pointControler.getCornerImagesImages().isEmpty()) {
+                nPoints = this.pointControler.getCornerImagesImages().get(0).getPoints().length;
+                int lowerBound = 0;
+                if(this.manualAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
+                    lowerBound = this.manualAlignmentController.getAlgorithm().getLowerBound();
+                }else if(this.manualAlignmentController.getAlgorithm() instanceof AffineAlignment) {
+                    lowerBound = AffineAlignment.LOWER_BOUND;
+                }else if(this.manualAlignmentController.getAlgorithm() instanceof ProjectiveAlignment) {
+                    lowerBound = ProjectiveAlignment.LOWER_BOUND;
                 }
-            }
-            if(ok){
+                boolean ok = true;
                 for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
-                    if (i.getPoints().length != nPoints) {
+                    if (i.getPoints().length < lowerBound) {
                         ok = false;
                         break;
                     }
                 }
-                this.manualAlignment.setEnabled(ok);
-                this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
-            }else{
-                this.manualAlignment.setEnabled(false);
-                this.manualAlignment.setToolTipText("<html>"
-                        + "The number of points inside the images is not correct."
-                        + "<br>"
-                        + "In order to use the " + getEnumFromAlgorithm(this.manualAlignmentController.getAlgorithm()).getType() + " alignment you must use at least " + lowerBound + " points in each image."
-                        + "</html>");
+                if(ok){
+                    for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
+                        if (i.getPoints().length != nPoints) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    this.manualAlignment.setEnabled(ok);
+                    this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
+                }else{
+                    this.manualAlignment.setEnabled(false);
+                    this.manualAlignment.setToolTipText("<html>"
+                            + "The number of points inside the images is not correct."
+                            + "<br>"
+                            + "In order to use the " + getEnumFromAlgorithm(this.manualAlignmentController.getAlgorithm()).getType() + " alignment you must use at least " + lowerBound + " points in each image."
+                            + "</html>");
+                }
             }
         }
     }
@@ -390,6 +397,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     if (result == JFileChooser.APPROVE_OPTION) {
                         try {
                             this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
+                            this.checkPointsForAlignment();
                         }catch (OutOfMemoryError ex){
                             JOptionPane.showMessageDialog(this,
                                     ex.getMessage(),
