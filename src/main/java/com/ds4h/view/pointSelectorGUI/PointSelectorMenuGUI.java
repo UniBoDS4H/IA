@@ -13,9 +13,11 @@ public class PointSelectorMenuGUI extends JPanel {
     private final JLabel copyToLabel;
     private final JButton copyButton;
     private final JButton cornerSetting;
+    private final JButton improveMatrix;
     private final JComboBox<MenuItem> copyToCombo;
     private final PointSelectorGUI container;
     private final PointSelectorSettingsGUI settings;
+    private final ImageIcon resizedImproveCR, resizedImproveBW;
     public PointSelectorMenuGUI(PointController controller, ImagePoints image, PointSelectorGUI container){
         this.container = container;
         this.image = image;
@@ -33,20 +35,34 @@ public class PointSelectorMenuGUI extends JPanel {
         this.deleteButton = new JButton("Delete");
         this.copyButton = new JButton("Copy");
         ImageIcon settingsIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/settings.png")));
+        ImageIcon improveIconBW = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/magic_BW.png")));
+        ImageIcon improveIconCR = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/magic_CR.png")));
         ImageIcon resized = new ImageIcon(settingsIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        resizedImproveBW = new ImageIcon(improveIconBW.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        resizedImproveCR = new ImageIcon(improveIconCR.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
         this.cornerSetting = new JButton(resized);
-        this.cornerSetting.setBorder(null);
-        this.cornerSetting.setBorderPainted(false);
-        this.cornerSetting.setContentAreaFilled(false);
-        this.cornerSetting.setOpaque(false);
-        this.cornerSetting.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        this.improveMatrix = new JButton(resizedImproveBW);
+
+        this.setIconButtons(cornerSetting);
+        this.setIconButtons(improveMatrix);
+
         this.settings = new PointSelectorSettingsGUI(container);
 
         this.addComponents();
         this.addListeners();
         this.updateView();
     }
+
+    private void setIconButtons(final JButton button){
+        button.setBorder(null);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+    }
+
     public void addListeners() {
         this.deleteButton.addActionListener(e->{
             container.getSelectedPoints().forEach(image::removePoint);
@@ -67,6 +83,17 @@ public class PointSelectorMenuGUI extends JPanel {
         this.cornerSetting.addActionListener(e->{
             this.settings.showDialog();
         });
+
+        this.improveMatrix.addActionListener(event  -> {
+            if (this.image.toImprove()) {
+                this.image.useStock();
+                this.improveMatrix.setBackground(Color.RED);
+                this.improveMatrix.setIcon(this.resizedImproveBW);
+            } else {
+                this.image.improve();
+                this.improveMatrix.setIcon(this.resizedImproveCR);
+            }
+        });
     }
     public void addComponents(){
         this.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -78,6 +105,9 @@ public class PointSelectorMenuGUI extends JPanel {
         this.add(Box.createRigidArea(new Dimension(5, 0)));
         this.add(this.deleteButton);
         this.add(Box.createHorizontalGlue());
+        this.add(this.improveMatrix);
+        this.add(Box.createRigidArea(new Dimension(5, 0)));
+
         this.add(this.cornerSetting);
         this.add(Box.createRigidArea(new Dimension(5, 0)));
     }

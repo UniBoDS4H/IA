@@ -15,22 +15,21 @@ public class ORBDetector extends PointDetector {
     private final BFMatcher matcher = BFMatcher.create();
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();
         final Mat descriptors2 = new Mat();
 
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
+
+        Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
-
-        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
-                null : scalingFactor > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : super.getScalingFactor() > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                 targetImage.getGrayScaleMat();
-
 
         // Start detection
         this.detector.detectAndCompute(grayImg, new Mat(),  keypoints1, descriptors1);
@@ -63,7 +62,7 @@ public class ORBDetector extends PointDetector {
         keypoints1.release();
         keypoints2.release();
 
-        final double scale = scalingFactor >= 1 ? Math.pow(2, scalingFactor-1) : 1;
+        final double scale = Math.pow(2, super.getScalingFactor()-1);
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {

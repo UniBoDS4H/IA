@@ -15,18 +15,17 @@ public class SIFTDetector extends PointDetector {
 
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
 
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
+
+        Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
-
-        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
-                null : scalingFactor > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : super.getScalingFactor() > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                 targetImage.getGrayScaleMat();
-
 
         final Mat descriptors1 = new Mat();
         //
@@ -63,7 +62,7 @@ public class SIFTDetector extends PointDetector {
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        final double scale = Math.pow(2, scalingFactor-1);
+        final double scale = Math.pow(2, super.getScalingFactor()-1);
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
