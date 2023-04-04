@@ -86,9 +86,19 @@ public class TargetImagePreprocessing {
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
         final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
         final MatOfPoint2f pts2_ = new MatOfPoint2f();
-
-        algorithm.transform(pts2, pts2_, algorithm.getTransformationMatrix(ImagePoints.getMatOfPoint(), target.getMatOfPoint()),target.numberOfPoints());
+        final Mat H = algorithm.getTransformationMatrix(ImagePoints.getMatOfPoint(), target.getMatOfPoint());
+        for(int i = 0; i < H.rows(); i++){
+            for(int j = 0; j < H.cols(); j++){
+                System.out.print(Arrays.toString(H.get(i, j)));
+            }
+            System.out.println();
+        }
+        algorithm.transform(pts2, pts2_, H);
         final MatOfPoint2f pts = new MatOfPoint2f();
+        System.out.println("pt1");
+        pts1.toList().forEach(System.out::println);
+        System.out.println("pt2");
+        pts2_.toList().forEach(System.out::println);
         Core.hconcat(Arrays.asList(pts1, pts2_), pts);
         final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(), pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
         final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(), pts.toList().stream().map(p->p.y).max(Double::compareTo).get());

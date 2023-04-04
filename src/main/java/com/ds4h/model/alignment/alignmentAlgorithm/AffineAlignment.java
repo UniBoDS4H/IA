@@ -12,6 +12,11 @@ import org.opencv.imgproc.Imgproc;
 
 public class AffineAlignment implements AlignmentAlgorithm{
     public static int LOWER_BOUND = 3;
+    private PointOverloadEnum overload;
+    public AffineAlignment(){
+        this.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+    }
+
     @Override
     public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException {
         if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
@@ -33,12 +38,22 @@ public class AffineAlignment implements AlignmentAlgorithm{
     }
 
     @Override
-    public void transform(Mat source, Mat destination, Mat H, int nPoints) {
+    public void transform(Mat source, Mat destination, Mat H) {
         Core.transform(source,destination,H);
     }
 
     @Override
     public int getLowerBound() {
         return LOWER_BOUND;
+    }
+
+    @Override
+    public void setPointOverload(PointOverloadEnum overload){
+        this.overload = overload;
+    }
+
+    @Override
+    public PointOverloadEnum getPointOverload() {
+        return this.overload;
     }
 }

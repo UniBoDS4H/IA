@@ -11,6 +11,11 @@ import org.opencv.imgproc.Imgproc;
 
 public class ProjectiveAlignment implements AlignmentAlgorithm{
     public static int LOWER_BOUND = 4;
+    private PointOverloadEnum overload;
+
+    public ProjectiveAlignment(){
+        this.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+    }
     @Override
     public AlignedImage align(ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException {
         if(targetImage.getPoints().length >= LOWER_BOUND && imageToShift.getPoints().length >= LOWER_BOUND){
@@ -31,12 +36,22 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
     }
 
     @Override
-    public void transform(Mat source, Mat destination, Mat H, int nPoints) {
+    public void transform(Mat source, Mat destination, Mat H) {
         Core.perspectiveTransform(source,destination,H);
     }
 
     @Override
     public int getLowerBound() {
         return LOWER_BOUND;
+    }
+
+    @Override
+    public void setPointOverload(PointOverloadEnum overload){
+        this.overload = overload;
+    }
+
+    @Override
+    public PointOverloadEnum getPointOverload() {
+        return this.overload;
     }
 }

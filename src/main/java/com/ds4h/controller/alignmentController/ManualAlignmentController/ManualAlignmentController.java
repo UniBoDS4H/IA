@@ -24,10 +24,12 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm translational = new TranslationalAlignment();
     private final AlignmentAlgorithm projective = new ProjectiveAlignment();
     private final AlignmentAlgorithm affine = new AffineAlignment();
+    private PointOverloadEnum overload;
 
     public ManualAlignmentController(){
         this.algorithm = this.translational;
         this.alignment = new Alignment();
+        this.overload = PointOverloadEnum.FIRST_AVAILABLE;
     }
 
     /**
@@ -107,5 +109,12 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 return this.affine;
         }
         throw new IllegalArgumentException("Algorithm not present");
+    }
+
+    public PointOverloadEnum getPointOverload() {
+        return this.algorithm.getPointOverload();
+    }
+    public void setPointOverload(PointOverloadEnum overload) {
+        this.algorithm.setPointOverload(overload);
     }
 }
