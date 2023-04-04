@@ -1,7 +1,10 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
@@ -11,7 +14,11 @@ import org.opencv.imgproc.Imgproc;
  */
 public abstract class PointDetector {
     private double factor = 0;
+    private int scalingFactor = 1;
     final MatCache matCache;
+    public static final int LOWER_BOUND = 1;
+    public static final int UPPER_BOUND = 8;
+
 
     public PointDetector(){
         this.matCache = new MatCache();
@@ -28,9 +35,8 @@ public abstract class PointDetector {
     /**
      * @param targetImage
      * @param imagePoint
-     * @param scalingFactor
      */
-    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, final int scalingFactor);
+    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
 
     /**
      *
@@ -40,6 +46,16 @@ public abstract class PointDetector {
         if(factor >= 0){
             this.factor = factor;
         }
+    }
+
+    public void setScalingFactor(final int scaling){
+        if(scaling >= PointDetector.LOWER_BOUND && scaling <= PointDetector.UPPER_BOUND){
+            this.scalingFactor = scaling;
+        }
+    }
+
+    public int getScalingFactor(){
+        return this.scalingFactor;
     }
 
     /**
@@ -67,7 +83,7 @@ public abstract class PointDetector {
         }
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
         IJ.log("[POINT DETECTOR] Resize done.");
-        return matrix;//this.improveMatrix(matrix);
+        return matrix;
     }
 
     protected Mat improveMatrix(final Mat matrix){
@@ -85,9 +101,12 @@ public abstract class PointDetector {
             Core.convertScaleAbs(destination, destination);
             //Use the border as mask
             Core.bitwise_and(matrix, destination, matrix);
+
+
             filteredM.release();
             destination.release();
             System.gc();
+
             return matrix;
         }
         return matrix;

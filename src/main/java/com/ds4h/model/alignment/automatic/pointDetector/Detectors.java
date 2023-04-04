@@ -6,10 +6,12 @@ import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetecto
 import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.siftDetector.SIFTDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
+import ij.IJ;
 
 import java.awt.*;
 
 public enum Detectors {
+
     BRISK("BRISK", new BRISKDetector(), 0),
     KAZE("KAZE", new KAZEDetector(), 0),
     ORB("ORB", new ORBDetector(), 0),
@@ -20,18 +22,37 @@ public enum Detectors {
     private final PointDetector pointDetector;
     private double factor;
 
+    private int scaling;
+
+    public static final int LOWER_BOUND = PointDetector.LOWER_BOUND;
+    public static final int UPPER_BOUND = PointDetector.UPPER_BOUND;
+
     Detectors(final String name, final PointDetector pointDetector, final double factor){
         this.name = name;
         this.pointDetector = pointDetector;
         this.factor = factor;
+        this.scaling = 1;
     }
+
+
     public void setFactor(final double factor){
         if(factor >= 0){
             this.factor = (factor/10);
         }
     }
+
+    public void setScaling(final int scaling){
+        if(scaling >= Detectors.LOWER_BOUND && scaling <= Detectors.UPPER_BOUND){
+            this.scaling = scaling;
+            IJ.log("[DETECTORS] Set scaling: " + scaling);
+        }
+    }
     public double getFactor(){
         return this.factor;
+    }
+
+    public int getScaling(){
+        return this.scaling;
     }
 
     public PointDetector pointDetector(){

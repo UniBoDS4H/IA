@@ -86,22 +86,15 @@ public class TargetImagePreprocessing {
         IJ.log("[PREPROCESS] ImageP Rows: " + h2 + " ImageP Cols: " + w2);
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
         final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
-        MatOfPoint2f pts2_ = new MatOfPoint2f();
-        IJ.log("[PREPROCESS] Before KTM: " + pts2_);
+        final MatOfPoint2f pts2_ = new MatOfPoint2f();
+
         algorithm.transform(pts2, pts2_,
                 algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
                         target.getMatOfPoint()),
                 target.numberOfPoints());
-        IJ.log("[PREPROCESS] After KTM: " + pts2_);
 
         final MatOfPoint2f pts = new MatOfPoint2f();
-        IJ.log("[PREPROCESS] Before AKTM: " + pts);
 
-        IJ.log("[PREPROCESS] Rows: " + pts1.rows());
-        IJ.log("[PREPROCESS] Cols: " + pts1.cols());
-        IJ.log("[PREPROCESS] Rows: " + pts2_.rows());
-        IJ.log("[PREPROCESS] Cols: " + pts2_.cols());
-        IJ.log("[PREPROCESS] Matrix: " + pts2_);
         Core.hconcat(Arrays.asList(pts1, pts2_), pts);
 
         final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(),
@@ -116,8 +109,8 @@ public class TargetImagePreprocessing {
         final int ymax = (int) Math.ceil(pts_max.y + 0.5);
         final double[] t = {-xmin, -ymin};
         final Size s = new Size(xmax-xmin, ymax-ymin);
-        IJ.log("[PREPROCESS] Before copy:  " + s);
-        IJ.log("[PREPROCESS] Before copy:  " + imagePoints.type());
+        IJ.log("[PREPROCESS] Before copy: " + s);
+        IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
 
         final Mat alignedImage = Mat.zeros(s, imagePoints.type());
         IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
