@@ -110,7 +110,7 @@ public class Alignment implements Runnable{
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.imagesToAlign.forEach(img->{
-            final ImagePoints t = new ImagePoints(this.targetImage.getPath());
+            final ImagePoints t = new ImagePoints(this.targetImage.getPath(), this.targetImage.toImprove());
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(t, img,4);
             IJ.log("[AUTOMATIC] End Detection");
@@ -139,16 +139,16 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
             this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
             key.getMatImage().release();
-            //value.clearPoints();
-            //key.clearPoints();
+            value.clearPoints();
+            key.clearPoints();
             key = null;
             value = null;
             System.gc();
         });
         images.clear();
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
-        //this.alignedImages.clear();
+        this.alignedImages.clear();
     }
 
     /**

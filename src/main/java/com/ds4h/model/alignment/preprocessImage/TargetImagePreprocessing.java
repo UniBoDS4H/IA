@@ -9,6 +9,7 @@ import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -53,12 +54,12 @@ public class TargetImagePreprocessing {
                         .collect(Collectors.toList()));
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
-                target.getMatImage().release();
+                //target.getMatImage().release(); remove it if size is null
                 target = new ImagePoints(target.getTitle(), res.getFirst());
                 target.setTitle(title);
-                IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
+                IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatSize());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
-                IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
+                //IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points);
                 points.clear();
                 System.gc();
@@ -76,43 +77,59 @@ public class TargetImagePreprocessing {
     }
 
     //returns the mat of the new target and the shift of the points
-    private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints ImagePoints, final AlignmentAlgorithm algorithm) {
+    private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
         final int h1 = target.getRows();
         final int w1 = target.getCols();
-        final int h2 = ImagePoints.getRows();
-        final int w2 = ImagePoints.getCols();
+        final int h2 = imagePoints.getRows();
+        final int w2 = imagePoints.getCols();
         IJ.log("[PREPROCESS] Target Rows: " + h1 + " Target Cols: " + w1);
         IJ.log("[PREPROCESS] ImageP Rows: " + h2 + " ImageP Cols: " + w2);
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
         final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
-        final MatOfPoint2f pts2_ = new MatOfPoint2f();
-        final Mat H = algorithm.getTransformationMatrix(ImagePoints.getMatOfPoint(), target.getMatOfPoint());
-        for(int i = 0; i < H.rows(); i++){
-            for(int j = 0; j < H.cols(); j++){
-                System.out.print(Arrays.toString(H.get(i, j)));
-            }
-            System.out.println();
-        }
-        algorithm.transform(pts2, pts2_, H);
+        MatOfPoint2f pts2_ = new MatOfPoint2f();
+        IJ.log("[PREPROCESS] Before KTM: " + pts2_);
+        algorithm.transform(pts2, pts2_,
+                algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
+                        target.getMatOfPoint()),
+                target.numberOfPoints());
+        IJ.log("[PREPROCESS] After KTM: " + pts2_);
+
         final MatOfPoint2f pts = new MatOfPoint2f();
-        System.out.println("pt1");
-        pts1.toList().forEach(System.out::println);
-        System.out.println("pt2");
-        pts2_.toList().forEach(System.out::println);
+        IJ.log("[PREPROCESS] Before AKTM: " + pts);
+
+        IJ.log("[PREPROCESS] Rows: " + pts1.rows());
+        IJ.log("[PREPROCESS] Cols: " + pts1.cols());
+        IJ.log("[PREPROCESS] Rows: " + pts2_.rows());
+        IJ.log("[PREPROCESS] Cols: " + pts2_.cols());
+        IJ.log("[PREPROCESS] Matrix: " + pts2_);
         Core.hconcat(Arrays.asList(pts1, pts2_), pts);
-        final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(), pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
-        final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(), pts.toList().stream().map(p->p.y).max(Double::compareTo).get());
+
+        final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(),
+                pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
+
+        final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(),
+                pts.toList().stream().map(p->p.y).max(Double::compareTo).get());
+
         final int xmin = (int) Math.floor(pts_min.x - 0.5);
         final int ymin = (int) Math.floor(pts_min.y - 0.5);
         final int xmax = (int) Math.ceil(pts_max.x + 0.5);
         final int ymax = (int) Math.ceil(pts_max.y + 0.5);
         final double[] t = {-xmin, -ymin};
         final Size s = new Size(xmax-xmin, ymax-ymin);
-        final Mat alignedImage = Mat.zeros(s, ImagePoints.getMatImage().type());
-        IJ.log("[PREPROCESS] Before copy:  " + target.getMatImage());
+        IJ.log("[PREPROCESS] Before copy:  " + s);
+        IJ.log("[PREPROCESS] Before copy:  " + imagePoints.type());
+
+        final Mat alignedImage = Mat.zeros(s, imagePoints.type());
+        IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
-        IJ.log("[PREPROCESS] After copy: " + alignedImage);
-        target.getMatImage().release();
+        IJ.log("[PREPROCESS] After copy: " + alignedImage.size());
+        if(Objects.nonNull(target.getMatSize())){
+            target.getMatImage().release();
+            System.gc();
+        }
+        pts1.release();
+        pts2.release();
+        pts.release();
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }

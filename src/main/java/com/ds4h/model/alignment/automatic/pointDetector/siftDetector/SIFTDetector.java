@@ -17,33 +17,39 @@ public class SIFTDetector extends PointDetector {
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
-        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
 
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
-        final Mat grayTarget = super.getMatCache().isSet() ?
-                super.getMatCache().getTargetMatrix() :
-                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
-                        this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                        targetImage.getGrayScaleMat());
+
+        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : scalingFactor > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
 
         final Mat descriptors1 = new Mat();
-        final Mat descriptors2 = new Mat();
         //
         this.sift.detect(grayImg, keypoints1);
         this.sift.compute(grayImg, keypoints1, descriptors1);
         IJ.log("[SIFT DETECTOR] Detected points for the first image.");
         grayImg.release();
         System.gc();
-        this.sift.detect(grayTarget, keypoints2);
-        this.sift.compute(grayTarget, keypoints2, descriptors2);
+
+        if(!super.getMatCache().isAlreadyDetected()) {
+            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+            final Mat descriptors2 = new Mat();
+            this.sift.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            super.getMatCache().setDetection(descriptors2, keypoints2);
+            grayTarget.release();
+        }
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
         System.gc();
         final MatOfDMatch matches = new MatOfDMatch();
-        this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
+        this.matcher.match(descriptors1,
+                super.getMatCache().getDescriptor(),
+                matches); // save all the matches from image1 and image2
         descriptors1.release();
-        descriptors2.release();
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
 
@@ -54,10 +60,9 @@ public class SIFTDetector extends PointDetector {
         }
 
         final double threshold = (1.8 + this.getFactor()) * min_dist;
-        final List<KeyPoint> keypoints1List = keypoints1.toList();//originalKeyPoints.toList();
-        final List<KeyPoint> keypoints2List = keypoints2.toList();//targetKeyPoints.toList();
+        final List<KeyPoint> keypoints1List = keypoints1.toList();
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        keypoints2.release();
         final double scale = Math.pow(2, scalingFactor-1);
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)

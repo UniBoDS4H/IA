@@ -28,11 +28,12 @@ public class KAZEDetector extends PointDetector {
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
-        final Mat grayTarget = super.getMatCache().isSet() ?
-                super.getMatCache().getTargetMatrix() :
-                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
-                        this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                        targetImage.getGrayScaleMat());
+
+        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : scalingFactor > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
 
         this.detector.detectAndCompute(grayImg, new Mat(), this.keypoints1, this.descriptors1);
         this.detector.detectAndCompute(grayTarget, new Mat(), this.keypoints2, this.descriptors2);

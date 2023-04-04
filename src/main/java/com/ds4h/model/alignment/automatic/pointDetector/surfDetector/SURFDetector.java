@@ -2,10 +2,12 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
+import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
 import java.util.List;
+import java.util.Objects;
 
 public class SURFDetector extends PointDetector {
 
@@ -18,31 +20,36 @@ public class SURFDetector extends PointDetector {
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         System.gc();
-        // Detect the keypoints and compute the descriptors for both images:
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
+
+        Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
-        //è settata ? la ritorno :
-        final Mat grayTarget = super.getMatCache().isSet() ?
-                                super.getMatCache().getTargetMatrix() :
-                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
-                    this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                    targetImage.getGrayScaleMat());
+
+        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : scalingFactor > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
+        grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
+        grayTarget = Objects.nonNull(grayTarget) && targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
+
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
 
         this.detector.detectAndCompute(grayImg, new Mat(), keypoints1,descriptors1);
         grayImg.release();
-        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
-        final Mat descriptors2 = new Mat();
-        this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-        //grayTarget.release();
-        // Detect key points for the second image
+        if(!super.getMatCache().isAlreadyDetected()) {
+            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+            final Mat descriptors2 = new Mat();
+            this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            super.getMatCache().setDetection(descriptors2, keypoints2);
+            grayTarget.release();
+            keypoints2.release();
+        }
 
         final MatOfDMatch matches = new MatOfDMatch();
-        this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
+        this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches); // save all the matches from image1 and image2
         descriptors1.release();
-        descriptors2.release();
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
@@ -55,9 +62,8 @@ public class SURFDetector extends PointDetector {
 
         final double threshold = (1.1+this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
-        final List<KeyPoint> keypoints2List = keypoints2.toList();
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        keypoints2.release();
         final double scale = Math.pow(2, scalingFactor-1);
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)
