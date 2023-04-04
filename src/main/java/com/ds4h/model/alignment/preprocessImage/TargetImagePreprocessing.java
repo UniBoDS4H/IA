@@ -76,11 +76,11 @@ public class TargetImagePreprocessing {
     }
 
     //returns the mat of the new target and the shift of the points
-    private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints ImagePoints, final AlignmentAlgorithm algorithm) {
+    private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
         final int h1 = target.getRows();
         final int w1 = target.getCols();
-        final int h2 = ImagePoints.getRows();
-        final int w2 = ImagePoints.getCols();
+        final int h2 = imagePoints.getRows();
+        final int w2 = imagePoints.getCols();
         IJ.log("[PREPROCESS] Target Rows: " + h1 + " Target Cols: " + w1);
         IJ.log("[PREPROCESS] ImageP Rows: " + h2 + " ImageP Cols: " + w2);
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
@@ -89,8 +89,7 @@ public class TargetImagePreprocessing {
 
         algorithm.transform(pts2, pts2_,
                 algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
-                        target.getMatOfPoint()),
-                target.numberOfPoints());
+                        target.getMatOfPoint()));
 
         final MatOfPoint2f pts = new MatOfPoint2f();
 
