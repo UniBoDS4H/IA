@@ -138,6 +138,8 @@ public class Alignment implements Runnable{
                 this.algorithm), this.targetImage.getName()));
         IJ.log("[AUTOMATIC] End preprocess");
 
+        this.alignedImages.get(0).getAlignedImage().show();
+
         IJ.log("[AUTOMATIC] Start aligning the images.");
         this.targetImage = null;
         images.forEach((key, value) -> {
