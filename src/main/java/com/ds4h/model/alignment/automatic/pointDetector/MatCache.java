@@ -1,36 +1,46 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import ij.IJ;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
+import org.opencv.core.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MatCache {
-    private Mat targetMatrix;
+    private Mat descriptor;
+    private final List<KeyPoint> keyPointList;
 
     public MatCache(){
-        this.targetMatrix = null;
+        this.descriptor = null;
+        this.keyPointList = new ArrayList<>(100);
     }
 
-    public Mat setTargetMatrix(final Mat matrix){
-        this.targetMatrix = Objects.requireNonNull(matrix);
-        IJ.log("[MAT CACHE] Cached: " + targetMatrix);
-        return this.targetMatrix;
+
+    public void setDetection(final Mat descriptor, final MatOfKeyPoint keyPoints){
+        this.descriptor = Objects.requireNonNull(descriptor);
+        this.keyPointList.addAll(Objects.requireNonNull(keyPoints).toList());
     }
 
-    public Mat getTargetMatrix(){
-        IJ.log("[MAT CACHE] Get Cached: " + this.targetMatrix);
-        return this.targetMatrix;
+    public Mat getDescriptor(){
+        return this.descriptor;
     }
 
-    public boolean isSet(){
-        return Objects.nonNull(this.targetMatrix);
+    public List<KeyPoint> getKeyPoints(){
+        return this.keyPointList;
+    }
+
+    public boolean isAlreadyDetected(){
+        return Objects.nonNull(this.descriptor) && !this.keyPointList.isEmpty();
     }
 
     public void releaseMatrix(){
-        if(Objects.nonNull(this.targetMatrix)){
-            this.targetMatrix.release();
+        if(this.isAlreadyDetected()){
+            IJ.log("[MAT CACHE] Release Points");
+            this.descriptor.release();
+            this.descriptor = null;
+            this.keyPointList.clear();
+            System.gc();
         }
     }
 }

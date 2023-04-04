@@ -25,11 +25,12 @@ public class ORBDetector extends PointDetector {
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
-        final Mat grayTarget = super.getMatCache().isSet() ?
-                super.getMatCache().getTargetMatrix() :
-                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
-                        this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                        targetImage.getGrayScaleMat());
+
+        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : scalingFactor > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                targetImage.getGrayScaleMat();
+
 
         // Start detection
         this.detector.detectAndCompute(grayImg, new Mat(),  keypoints1, descriptors1);

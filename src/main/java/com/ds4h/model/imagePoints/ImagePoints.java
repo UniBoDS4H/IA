@@ -2,7 +2,7 @@ package com.ds4h.model.imagePoints;
 import com.ds4h.model.util.converter.ImageProcessorMatConverter;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.process.ImageProcessor;
+import ij.process.*;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -21,6 +21,7 @@ public class ImagePoints extends ImagePlus{
     private long address=-1;
     private Size matSize = null;
     private Mat matrix = null;
+    private int type = -1;
     private boolean improveMatrix = false;
     /**
      *
@@ -32,6 +33,8 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
+        this.detectType();
+
     }
 
     /**
@@ -41,7 +44,7 @@ public class ImagePoints extends ImagePlus{
      * @param cols
      * @param matAddress
      */
-    public ImagePoints(final String path, final int rows, final int cols, final long matAddress) {
+    public ImagePoints(final String path, final int rows, final int cols, final int type,  final long matAddress) {
         this(path);
         this.rows = rows;
         this.cols = cols;
@@ -76,6 +79,21 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
+        this.detectType();
+    }
+
+    private void detectType(){
+        final ImageProcessor ip = this.getProcessor();
+        if(ip instanceof ColorProcessor){
+            this.type = CvType.CV_8UC3;
+        }else if(ip instanceof FloatProcessor) {
+            //TODO: Check depth
+            this.type = CvType.CV_32FC1;
+        }else if(ip instanceof ShortProcessor){
+            this.type = CvType.CV_16S;
+        }else if(ip instanceof ByteProcessor){
+            this.type = CvType.CV_8UC1;
+        }
     }
 
     public void improve(){
@@ -88,6 +106,10 @@ public class ImagePoints extends ImagePlus{
 
     public boolean toImprove(){
         return this.improveMatrix;
+    }
+
+    public int type(){
+        return this.type;
     }
 
     /**

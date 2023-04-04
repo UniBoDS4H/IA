@@ -2,6 +2,7 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
+import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
@@ -21,12 +22,10 @@ public class SURFDetector extends PointDetector {
         // Detect the keypoints and compute the descriptors for both images:
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
-        //è settata ? la ritorno :
-        final Mat grayTarget = super.getMatCache().isSet() ?
-                                super.getMatCache().getTargetMatrix() :
-                super.getMatCache().setTargetMatrix(scalingFactor > 1 ?
-                    this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
-                    targetImage.getGrayScaleMat());
+
+        final Mat grayTarget = scalingFactor > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+                targetImage.getGrayScaleMat();
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
@@ -36,7 +35,7 @@ public class SURFDetector extends PointDetector {
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
         final Mat descriptors2 = new Mat();
         this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-        //grayTarget.release();
+        grayTarget.release();
         // Detect key points for the second image
 
         final MatOfDMatch matches = new MatOfDMatch();

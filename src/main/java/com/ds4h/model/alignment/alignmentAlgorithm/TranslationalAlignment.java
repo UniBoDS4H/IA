@@ -44,7 +44,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
-                    if(imageToShift.numberOfPoints() <=2){//if less than 2 points mininum least square otherwise RANSAC
+                    if(imageToShift.numberOfPoints() < 2){//if less than 2 points mininum least square otherwise RANSAC
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                         System.gc();
@@ -149,7 +149,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
 
     @Override
     public void transform(final Mat source, final Mat destination, final Mat H, int nPoints){
-        if(nPoints <=2){//if less than 2 points mininum least square otherwise RANSAC
+        if(nPoints <2){ //if less than 2 points minimum least square otherwise RANSAC
             Core.perspectiveTransform(source,destination,H);
         }else{
             Core.transform(source,destination,H);
