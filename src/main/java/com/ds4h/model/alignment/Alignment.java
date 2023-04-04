@@ -159,6 +159,7 @@ public class Alignment implements Runnable{
         this.alignedImages.clear();
     }
 
+
     /**
      * Inside this method we call the 'align' operation, It is strictly necessary that the 'align' method is present,
      * otherwise It will throw a 'NoSuchMethodException'. Each image is stored inside the 'alignedImages' collection.
