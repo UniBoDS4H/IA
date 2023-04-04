@@ -115,7 +115,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Init of the Menu Bar and all the Menu Items
         this.menuBar = new JMenuBar();
         this.menu = new JMenu("File");
-
         this.project = new JMenu("Project");
         this.about = new JMenu("About");
         this.settings = new JMenu("Settings");

@@ -2,6 +2,7 @@ package com.ds4h.view.manualAlignmentConfigGUI;
 
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithmEnum;
+import com.ds4h.model.alignment.alignmentAlgorithm.PointOverloadEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -17,12 +18,14 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JCheckBox scalingCheckbox;
     private final ManualAlignmentController controller;
     private final MainMenuGUI container;
+    private final JComboBox pointOverloadComboBox;
     public ManualAlignmentConfigGUI(MainMenuGUI container, ManualAlignmentController manualAlignmentController){
         this.setTitle("Manual alignment algorithm");
         this.controller = manualAlignmentController;
         this.container = container;
         this.getContentPane().setLayout(new GridBagLayout());
         this.algorithm = new JComboBox<>(AlignmentAlgorithmEnum.values());
+        pointOverloadComboBox = new JComboBox(PointOverloadEnum.values());
         this.text = new JTextArea();
         this.translationCheckbox = new JCheckBox("Translation");
         this.rotationCheckbox = new JCheckBox("Rotation");
@@ -56,6 +59,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     public void showDialog() {
         this.setVisible(true);
         this.algorithm.setSelectedItem(getEnumFromAlgorithm(this.controller.getAlgorithm()));
+        this.pointOverloadComboBox.setSelectedItem(this.controller.getPointOverload());
     }
 
 
@@ -68,6 +72,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
             this.text.setText(selected.getDocumentation());
             this.controller.setAlgorithm(this.controller.getAlgorithmFromEnum(selected));
 
+            this.pointOverloadComboBox.setSelectedItem(this.controller.getPointOverload());
             this.updateCheckBoxes();
             this.container.checkPointsForAlignment();
         });
@@ -89,6 +94,11 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
                 alg.setTransformation(this.translationCheckbox.isSelected(),alg.getRotate(),alg.getScale());
             }
         });
+        this.pointOverloadComboBox.addActionListener(e->{
+            PointOverloadEnum selected = (PointOverloadEnum) this.pointOverloadComboBox.getSelectedItem();
+            assert selected!= null;
+            this.controller.setPointOverload(selected);
+        });
     }
 
     @Override
@@ -101,6 +111,9 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.gridy = 0;
         add(algLbl, gbc);
         gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
         add(this.algorithm, gbc);
 
         final JLabel infoLbl = new JLabel("Info: ");
@@ -131,17 +144,13 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
         JLabel pointLbl = new JLabel("Point Overload:");
         this.add(pointLbl, gbc);
 
-        JComboBox pointComboBox = new JComboBox();
-        pointComboBox.addItem("Option 1");
-        pointComboBox.addItem("Option 2");
-        pointComboBox.addItem("Option 3");
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         gbc.weighty = 0.0;
-        this.add(pointComboBox, gbc);
+        this.add(pointOverloadComboBox, gbc);
 
         // Add translation checkbox
         gbc.gridx = 0;

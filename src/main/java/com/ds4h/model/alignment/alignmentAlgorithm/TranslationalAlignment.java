@@ -4,15 +4,12 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
@@ -24,9 +21,11 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     private boolean rotate;
     private boolean scale;
     private boolean translate;
+    private PointOverloadEnum overload;
 
     public TranslationalAlignment(){
         this.setTransformation(true, false,false);
+        this.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
     }
     public boolean getTranslate(){
         return this.translate;
@@ -37,6 +36,16 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public boolean getScale(){
         return this.scale;
     }
+    @Override
+    public void setPointOverload(PointOverloadEnum overload){
+        this.overload = overload;
+    }
+
+    @Override
+    public PointOverloadEnum getPointOverload() {
+        return this.overload;
+    }
+
     @Override
     public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
         try {
@@ -54,6 +63,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                         System.gc();
                         Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
+                    }
+                    else{
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
+                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
+                        System.gc();
+                        Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
                     final AlignedImage finalImg = new AlignedImage(transformationMatrix,
                             MatImageProcessorConverter.convert(alignedImage, imageToShift.getName(), ip),
@@ -82,54 +97,68 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
-        IJ.log("[TRANSLATIONAL ALIGNMENT] Source Points: " + srcPoints.toList().size() + ", Destination Points: " + dstPoints.toList().size());
-        if(srcPoints.toArray().length <2){
-            final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
-            final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
-            translationMatrix.put(0, 2, translation.x);
-            translationMatrix.put(1, 2, translation.y);
-            return translationMatrix;
-        }else{
-            final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99);
-
-            double a = H.get(0,0)[0];
-            double b = H.get(1,0)[0];
-            double scaling = Math.sqrt(a*a + b*b);
-            double theta = Math.acos(a/scaling);
-            double x = H.get(0,2)[0];
-            double y = H.get(1,2)[0];
-            Mat transformation = Mat.eye(2,3,H.type());
-            if(this.translate){
-                IJ.log("[TRANSLATIONAL ALIGNMENT] Translate");
-                transformation.put(0,2, x);
-                transformation.put(1,2, y);
-            }
-            if(this.scale){
-                IJ.log("[TRANSLATIONAL ALIGNMENT] Scale");
-                transformation.put(0,0,scaling);
-                transformation.put(0,1,scaling);
-                transformation.put(1,0,scaling);
-                transformation.put(1,1,scaling);
-            }else{
-                transformation.put(0,0,1);
-                transformation.put(0,1,1);
-                transformation.put(1,0,1);
-                transformation.put(1,1,1);
-            }
-            if(this.rotate){
-                IJ.log("[TRANSLATIONAL ALIGNMENT] Rotate");
-                transformation.put(0,0,transformation.get(0,0)[0]*Math.cos(theta));
-                transformation.put(0,1,transformation.get(0,1)[0]*(-Math.sin(theta)));
-                transformation.put(1,0,transformation.get(1,0)[0]*Math.sin(theta));
-                transformation.put(1,1,transformation.get(1,1)[0]*Math.cos(theta));
-            }else{
-                transformation.put(0,1,0);
-                transformation.put(1,0,0);
-            }
-            return transformation;
+        switch (this.getPointOverload()) {
+            case FIRST_AVAILABLE:
+                if(srcPoints.toList().size() > this.getLowerBound()){
+                    MatOfPoint2f newSrcPoints = new MatOfPoint2f();
+                    newSrcPoints.fromList(srcPoints.toList().subList(0, this.getLowerBound()));
+                    MatOfPoint2f newDstPoints = new MatOfPoint2f();
+                    newDstPoints.fromList(dstPoints.toList().subList(0, this.getLowerBound()));
+                    final Point translation = this.minimumLeastSquare(newSrcPoints.toArray(), newDstPoints.toArray());
+                    final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
+                    translationMatrix.put(0, 2, translation.x);
+                    translationMatrix.put(1, 2, translation.y);
+                    return translationMatrix;
+                }
+            case RANSAC:
+                return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99));
+            case MINIMUM_LAST_SQUARE:
+                final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
+                final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
+                translationMatrix.put(0, 2, translation.x);
+                translationMatrix.put(1, 2, translation.y);
+                return translationMatrix;
         }
+        throw new IllegalArgumentException("bad point overload selected");
+    }
 
+    private Mat getMatWithTransformation(Mat H) {
 
+        double a = H.get(0,0)[0];
+        double b = H.get(1,0)[0];
+        double scaling = Math.sqrt(a*a + b*b);
+        double theta = Math.acos(a/scaling);
+        double x = H.get(0,2)[0];
+        double y = H.get(1,2)[0];
+        Mat transformation = Mat.eye(2,3,H.type());
+        if(this.translate){
+            IJ.log("[TRANSLATIONAL ALIGNMENT] Translate");
+            transformation.put(0,2, x);
+            transformation.put(1,2, y);
+        }
+        if(this.scale){
+            IJ.log("[TRANSLATIONAL ALIGNMENT] Scale");
+            transformation.put(0,0,scaling);
+            transformation.put(0,1,scaling);
+            transformation.put(1,0,scaling);
+            transformation.put(1,1,scaling);
+        }else{
+            transformation.put(0,0,1);
+            transformation.put(0,1,1);
+            transformation.put(1,0,1);
+            transformation.put(1,1,1);
+        }
+        if(this.rotate){
+            IJ.log("[TRANSLATIONAL ALIGNMENT] Rotate");
+            transformation.put(0,0,transformation.get(0,0)[0]*Math.cos(theta));
+            transformation.put(0,1,transformation.get(0,1)[0]*(-Math.sin(theta)));
+            transformation.put(1,0,transformation.get(1,0)[0]*Math.sin(theta));
+            transformation.put(1,1,transformation.get(1,1)[0]*Math.cos(theta));
+        }else{
+            transformation.put(0,1,0);
+            transformation.put(1,0,0);
+        }
+        return transformation;
     }
 
 
@@ -151,8 +180,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public void transform(final Mat source, final Mat destination, final Mat H, int nPoints){
         if(nPoints <2){ //if less than 2 points minimum least square otherwise RANSAC
             Core.perspectiveTransform(source,destination,H);
-        }else{
-            Core.transform(source,destination,H);
         }
     }
 

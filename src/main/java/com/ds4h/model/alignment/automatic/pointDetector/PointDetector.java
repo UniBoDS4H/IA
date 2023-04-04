@@ -67,7 +67,7 @@ public abstract class PointDetector {
         }
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
         IJ.log("[POINT DETECTOR] Resize done.");
-        return matrix;//this.improveMatrix(matrix);
+        return this.improveMatrix(matrix);
     }
 
     protected Mat improveMatrix(final Mat matrix){
