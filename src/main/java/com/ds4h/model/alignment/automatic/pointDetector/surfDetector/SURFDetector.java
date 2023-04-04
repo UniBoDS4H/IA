@@ -7,6 +7,7 @@ import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
 import java.util.List;
+import java.util.Objects;
 
 public class SURFDetector extends PointDetector {
 
@@ -20,13 +21,17 @@ public class SURFDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         System.gc();
 
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
+        Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
-        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
                 null : scalingFactor > 1 ?
                 this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
                 targetImage.getGrayScaleMat();
+
+        grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
+        grayTarget = Objects.nonNull(grayTarget) && targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
+
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();

@@ -70,29 +70,25 @@ public abstract class PointDetector {
         return matrix;//this.improveMatrix(matrix);
     }
 
-    private Mat improveMatrix(final Mat matrix){
+    protected Mat improveMatrix(final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
         IJ.log("[MEAN] Percentage: " + percentage);
         if(percentage >= 60.0){
             final int ksize = 3;
-            //final Mat inverted = new Mat();
-            //Core.bitwise_not(matrix, inverted);
-            //Core.bitwise_and(matrix, inverted, matrix);
-
             //Reduce the Noise
             final Mat filteredM = new Mat();
             Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
-            IJ.log("[POINT DETECTOR > IMPROVE MATRIX] Done filtering.");
             final Mat destination = new Mat();
+            //Edge detection
             Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
             Core.convertScaleAbs(destination, destination);
+            //Use the border as mask
             Core.bitwise_and(matrix, destination, matrix);
-
-            //new ImagePlus("ciao", MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0, 0))).show();
-
+            filteredM.release();
+            destination.release();
+            System.gc();
             return matrix;
-
         }
         return matrix;
     }

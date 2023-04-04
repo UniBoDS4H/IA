@@ -34,7 +34,11 @@ public class ImagePoints extends ImagePlus{
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
         this.detectType();
+    }
 
+    public ImagePoints(final String path, final boolean improve){
+        this(path);
+        this.improveMatrix = improve;
     }
 
     /**
