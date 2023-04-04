@@ -105,6 +105,7 @@ public class TargetImagePreprocessing {
         IJ.log("[PREPROCESS] Before copy: " + s);
         IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
 
+        //TODO: Fix the crash when the matrix is created
         final Mat alignedImage = Mat.zeros(s, imagePoints.type());
         IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));

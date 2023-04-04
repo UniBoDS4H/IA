@@ -93,20 +93,19 @@ public abstract class PointDetector {
         if(percentage >= 60.0){
             final int ksize = 3;
             //Reduce the Noise
-            final Mat filteredM = new Mat();
+            Mat filteredM = new Mat();
+            Mat destination = new Mat();
             Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
-            final Mat destination = new Mat();
             //Edge detection
             Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
             Core.convertScaleAbs(destination, destination);
             //Use the border as mask
             Core.bitwise_and(matrix, destination, matrix);
-
-
             filteredM.release();
             destination.release();
+            filteredM = null;
+            destination = null;
             System.gc();
-
             return matrix;
         }
         return matrix;
