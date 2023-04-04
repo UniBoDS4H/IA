@@ -19,11 +19,12 @@ public class SURFDetector extends PointDetector {
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
         System.gc();
-        // Detect the keypoints and compute the descriptors for both images:
+
         final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
                 imagePoint.getGrayScaleMat();
 
-        final Mat grayTarget = scalingFactor > 1 ?
+        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : scalingFactor > 1 ?
                 this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
                 targetImage.getGrayScaleMat();
 
@@ -32,16 +33,18 @@ public class SURFDetector extends PointDetector {
 
         this.detector.detectAndCompute(grayImg, new Mat(), keypoints1,descriptors1);
         grayImg.release();
-        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
-        final Mat descriptors2 = new Mat();
-        this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
-        grayTarget.release();
-        // Detect key points for the second image
+        if(!super.getMatCache().isAlreadyDetected()) {
+            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+            final Mat descriptors2 = new Mat();
+            this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            super.getMatCache().setDetection(descriptors2, keypoints2);
+            grayTarget.release();
+            keypoints2.release();
+        }
 
         final MatOfDMatch matches = new MatOfDMatch();
-        this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
+        this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches); // save all the matches from image1 and image2
         descriptors1.release();
-        descriptors2.release();
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
@@ -54,9 +57,8 @@ public class SURFDetector extends PointDetector {
 
         final double threshold = (1.1+this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
-        final List<KeyPoint> keypoints2List = keypoints2.toList();
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        keypoints2.release();
         final double scale = Math.pow(2, scalingFactor-1);
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)
