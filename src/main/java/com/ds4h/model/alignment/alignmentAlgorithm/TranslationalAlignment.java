@@ -53,7 +53,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
-                    if(transformationMatrix.rows() <=2) {//if less than 2 points mininum least square otherwise RANSAC
+                    if(transformationMatrix.rows() <2) {//if less than 2 points mininum least square otherwise RANSAC
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                         System.gc();
@@ -94,7 +94,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
         switch (this.getPointOverload()) {
             case FIRST_AVAILABLE:
-                if(srcPoints.toList().size() > this.getLowerBound()){
+                if(srcPoints.toList().size() >= this.getLowerBound()){
                     MatOfPoint2f newSrcPoints = new MatOfPoint2f();
                     newSrcPoints.fromList(srcPoints.toList().subList(0, this.getLowerBound()));
                     MatOfPoint2f newDstPoints = new MatOfPoint2f();
@@ -105,6 +105,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     translationMatrix.put(1, 2, translation.y);
                     return translationMatrix;
                 }
+                break;
             case RANSAC:
                 return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99));
             case MINIMUM_LAST_SQUARE:
@@ -118,7 +119,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
     private Mat getMatWithTransformation(Mat H) {
-
+        IJ.log("[TRANSLATIONAL] Matrix: " + H);
         double a = H.get(0,0)[0];
         double b = H.get(1,0)[0];
         double scaling = Math.sqrt(a*a + b*b);
