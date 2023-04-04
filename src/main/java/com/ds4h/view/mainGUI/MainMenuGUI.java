@@ -365,8 +365,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     alg.setTransformation(this.automaticConfigGUI.getTranslation(),this.automaticConfigGUI.getRotation(), this.automaticConfigGUI.getScaling());
                 }
                 this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),
-                        this.pointControler,
-                        1);
+                        this.pointControler);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,

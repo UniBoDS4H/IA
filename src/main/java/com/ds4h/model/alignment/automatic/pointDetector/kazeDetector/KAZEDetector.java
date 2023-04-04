@@ -20,20 +20,19 @@ public class KAZEDetector extends PointDetector {
 
     }
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint, int scalingFactor) {
+    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
 
 
 
 
-        final Mat grayImg = scalingFactor > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), scalingFactor) :
+
+        Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
-
-        final Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
-                null : scalingFactor > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), scalingFactor) :
+        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
+                null : super.getScalingFactor() > 1 ?
+                this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                 targetImage.getGrayScaleMat();
-
 
         this.detector.detectAndCompute(grayImg, new Mat(), this.keypoints1, this.descriptors1);
         this.detector.detectAndCompute(grayTarget, new Mat(), this.keypoints2, this.descriptors2);
@@ -59,7 +58,7 @@ public class KAZEDetector extends PointDetector {
         final List<KeyPoint> keypoints2List = this.keypoints2.toList();//targetKeyPoints.toList();
         this.keypoints1.release();
         this.keypoints2.release();
-        final double scale = scalingFactor > 1 ?  Math.pow(2, scalingFactor-1) : 1;
+        final double scale = super.getScalingFactor() > 1 ?  Math.pow(2, super.getScalingFactor()-1) : 1;
 
         matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {

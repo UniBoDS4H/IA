@@ -46,14 +46,15 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public List<AlignedImage> getAlignedImages() {
         return new LinkedList<>(alignment.alignedImages());
     }
-    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager, final int scalingFactor){
+
+    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager){
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getCornerManager())) {
-            if(pointManager.getCornerManager().getCornerImages().size() > 1 && scalingFactor >= 1) {
+            if(pointManager.getCornerManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
                 this.alignment.alignImages(pointManager.getCornerManager(), algorithm,
                         AlignmentEnum.AUTOMATIC,
                         Objects.requireNonNull(detector.pointDetector()),
                         detector.getFactor(),
-                        scalingFactor);
+                        detector.getScaling());
             }else{
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images and the SCALING FACTOR must be at least 1.");
             }
@@ -77,13 +78,13 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     @Override
     public CompositeImage getAlignedImagesAsStack() {
         if(!this.getAlignedImages().isEmpty()){
-            ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
+            final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
-            List<AlignedImage> images = this.getAlignedImages();
-            LUT[] luts = new LUT[images.size()];
+            final List<AlignedImage> images = this.getAlignedImages();
+            final LUT[] luts = new LUT[images.size()];
             int index = 0;
-            for (AlignedImage image : images) {
+            for (final AlignedImage image : images) {
                 luts[index] = image.getAlignedImage().getProcessor().getLut();
                 IJ.log("[NAME] " + image.getName());
                 stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
@@ -91,7 +92,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
             }
             //TODO: Understand how to increase the performace without loosing the images
             //this.alignment.clearList();
-            CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
+            final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
             composite.setLuts(luts);
             return composite;
         }

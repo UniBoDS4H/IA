@@ -12,7 +12,7 @@ import static com.ds4h.model.util.AlignmentUtil.getEnumFromAlgorithm;
 
 public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<Detectors> detectors;
-    private final JSlider slider;
+    private final JSlider slider, sliderFactor;
     private final GridBagLayout layout;
     private final JCheckBox translationCheckbox;
     private final JCheckBox rotationCheckbox;
@@ -32,10 +32,20 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.detectors = new JComboBox<>(Detectors.values());
         this.selectedDetector = Detectors.SURF;
         this.slider = new JSlider(0, 20);
+        this.sliderFactor = new JSlider(Detectors.LOWER_BOUND, Detectors.UPPER_BOUND);
+
+        this.sliderFactor.setMajorTickSpacing(1);
+        this.sliderFactor.setMinorTickSpacing(1);
+        this.sliderFactor.setPaintTicks(true);
+        this.sliderFactor.setPaintLabels(true);
+        this.sliderFactor.setValue(4);
+        this.selectedDetector.setScaling(this.sliderFactor.getValue());
+
         this.slider.setMajorTickSpacing(5);
         this.slider.setMinorTickSpacing(1);
         this.slider.setPaintTicks(true);
         this.slider.setPaintLabels(true);
+
 
         this.slider.setValue((int)(this.selectedDetector.getFactor()*10));
         this.translationCheckbox = new JCheckBox("Translation");
@@ -90,6 +100,9 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
                 TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
                 alg.setTransformation(this.translationCheckbox.isSelected(),alg.getRotate(),alg.getScale());
             }
+        });
+        this.sliderFactor.addChangeListener(event -> {
+            this.selectedDetector.setScaling(this.sliderFactor.getValue());
         });
     }
 
@@ -152,9 +165,27 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.weightx = 1.0;
         this.add(this.slider, gbc);
 
-        final JLabel algTypeLbl = new JLabel("Algorithm: ");
+
+        final JLabel scalingLbl = new JLabel("Scaling factor: ");
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        this.add(scalingLbl, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        this.add(this.sliderFactor, gbc);
+
+
+
+        final JLabel algTypeLbl = new JLabel("Algorithm: ");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
@@ -162,14 +193,14 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.add(algTypeLbl, gbc);
 
         gbc.gridx = 1;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         this.add(this.algorithm, gbc);
 
         final JLabel infoLbl = new JLabel("Info: ");
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         this.add(infoLbl, gbc);
 
         this.text.setLineWrap(true);
@@ -178,7 +209,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(250, 80));
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
@@ -186,7 +217,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.add(scrollPane, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;

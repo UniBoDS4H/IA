@@ -82,8 +82,11 @@ public class Alignment implements Runnable{
                 Objects.nonNull(pointDetector) &&
                 factor >= 0 &&
                 scalingFactor >= 1) {
+
             this.pointDetector = (pointDetector);
             this.pointDetector.setFactor(factor);
+            this.pointDetector.setScalingFactor(scalingFactor);
+
             this.alignImages(pointManager, algorithm, type);
         }else{
             throw new IllegalArgumentException("One of the argument for the alignment are not correct. Please," +
@@ -109,10 +112,13 @@ public class Alignment implements Runnable{
 
     private void auto(){
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
+
+        IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
+
         this.imagesToAlign.forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath(), this.targetImage.toImprove());
             IJ.log("[AUTOMATIC] Start Detection");
-            this.pointDetector.detectPoint(t, img,4);
+            this.pointDetector.detectPoint(t, img);
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");

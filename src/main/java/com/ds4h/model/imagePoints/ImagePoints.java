@@ -33,6 +33,7 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
+        this.matSize = new Size(cols, rows);
         this.detectType();
     }
 
@@ -94,7 +95,7 @@ public class ImagePoints extends ImagePlus{
             //TODO: Check depth
             this.type = CvType.CV_32FC1;
         }else if(ip instanceof ShortProcessor){
-            this.type = CvType.CV_16S;
+            this.type = CvType.CV_16UC1;
         }else if(ip instanceof ByteProcessor){
             this.type = CvType.CV_8UC1;
         }
