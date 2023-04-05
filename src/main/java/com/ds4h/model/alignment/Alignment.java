@@ -2,6 +2,7 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
+import com.ds4h.model.alignment.alignmentAlgorithm.PointOverloadEnum;
 import com.ds4h.model.alignment.automatic.pointDetector.MatCache;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
@@ -123,6 +124,12 @@ public class Alignment implements Runnable{
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
                 images.put(img, t);
+                //if we find at least 3 points in every image we can use ransac otherwise first available
+                if(t.numberOfPoints() >= 3){
+                    this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
+                }else{
+                    this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+                }
             }
         });
         this.pointDetector.clearCache();
