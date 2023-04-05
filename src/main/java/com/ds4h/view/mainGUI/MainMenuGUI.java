@@ -254,6 +254,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     JOptionPane.YES_NO_OPTION);
             if(result == JOptionPane.YES_OPTION) {
                 ImageCache.clear();
+                this.checkPointsForAlignment();
                 this.pointControler.clearProject();
                 this.imagesPreview.clearPanels();
                 this.imagesPreview.showPreviewImages();
@@ -301,6 +302,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 try {
                     ImportController.importProject(file, this.pointControler.getCornerManager());
                     this.imagesPreview.showPreviewImages();
+                    this.checkPointsForAlignment();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -437,6 +439,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
     public void reloadImages(){
         this.imagesPreview.showPreviewImages();
+        this.checkPointsForAlignment();
         this.repaint();
     }
 

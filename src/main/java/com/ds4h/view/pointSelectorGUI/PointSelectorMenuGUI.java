@@ -78,6 +78,7 @@ public class PointSelectorMenuGUI extends JPanel {
                 JOptionPane.showMessageDialog(this, "Some of the points are out of the selected image, they have not been copied");
             }else{
                 JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
+                container.checkPointsForAlignment();
             }
         });
         this.cornerSetting.addActionListener(e->{

@@ -34,6 +34,10 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public AutomaticAlignmentController(){
         this.algorithm = this.translational;
         this.alignment = new Alignment();
+        //we always use ransac for automatic alignment
+        this.translational.setPointOverload(PointOverloadEnum.RANSAC);
+        this.projective.setPointOverload(PointOverloadEnum.RANSAC);
+        this.affine.setPointOverload(PointOverloadEnum.RANSAC);
     }
 
 

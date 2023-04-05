@@ -10,6 +10,7 @@ import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
@@ -53,7 +54,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                     final Mat alignedImage = new Mat();
                     final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
-                    if(transformationMatrix.rows() <2) {//if less than 2 points mininum least square otherwise RANSAC
+                    if(transformationMatrix.rows() <=2) {
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
                         IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                         System.gc();
@@ -94,26 +95,38 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
         switch (this.getPointOverload()) {
             case FIRST_AVAILABLE:
-                if(srcPoints.toList().size() >= this.getLowerBound()){
-                    MatOfPoint2f newSrcPoints = new MatOfPoint2f();
+                MatOfPoint2f newSrcPoints = new MatOfPoint2f();
+                MatOfPoint2f newDstPoints = new MatOfPoint2f();
+                if(srcPoints.toList().size() > this.getLowerBound()){
                     newSrcPoints.fromList(srcPoints.toList().subList(0, this.getLowerBound()));
-                    MatOfPoint2f newDstPoints = new MatOfPoint2f();
                     newDstPoints.fromList(dstPoints.toList().subList(0, this.getLowerBound()));
+                }else{
+                    newSrcPoints.fromList(srcPoints.toList());
+                    newDstPoints.fromList(dstPoints.toList());
+                }
+                if(this.getLowerBound() == 1){
                     final Point translation = this.minimumLeastSquare(newSrcPoints.toArray(), newDstPoints.toArray());
                     final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
                     translationMatrix.put(0, 2, translation.x);
                     translationMatrix.put(1, 2, translation.y);
                     return translationMatrix;
+                }else if(this.getLowerBound() > 2){
+                    return getMatWithTransformation(Calib3d.estimateAffinePartial2D(newSrcPoints,newDstPoints));
+                }else{
+                    throw new IllegalArgumentException("the number of point is not correct");
                 }
-                break;
             case RANSAC:
                 return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99));
             case MINIMUM_LAST_SQUARE:
-                final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
-                final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
-                translationMatrix.put(0, 2, translation.x);
-                translationMatrix.put(1, 2, translation.y);
-                return translationMatrix;
+                if(srcPoints.toList().size() < 3){
+                    final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());
+                    final Mat translationMatrix = Mat.eye(3, 3, CvType.CV_32FC1);
+                    translationMatrix.put(0, 2, translation.x);
+                    translationMatrix.put(1, 2, translation.y);
+                    return translationMatrix;
+                }else{
+                    return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.LMEDS));
+                }
         }
         throw new IllegalArgumentException("bad point overload selected");
     }
