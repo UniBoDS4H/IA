@@ -109,21 +109,19 @@ public abstract class PointDetector {
             System.gc();
             return matrix;
         }else{
-            Mat filterMat = new Mat();
-            //Reduce noise by Blurring the image
-            Imgproc.medianBlur(matrix, filterMat, ksize);
 
+            final Mat blur = new Mat();
+            Imgproc.medianBlur(matrix, blur, ksize);
             final Mat sobelx = new Mat();
             final Mat sobely = new Mat();
-            //Edge Detection
-            Imgproc.Sobel(filterMat, sobelx, CvType.CV_32F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
-            Imgproc.Sobel(filterMat, sobely, CvType.CV_32F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
-            Core.magnitude(sobelx, sobely, filterMat);
-            //Normalize the values
-            Core.normalize(filterMat, filterMat, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+            Imgproc.Sobel(blur, sobelx, CvType.CV_64F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Imgproc.Sobel(blur, sobely, CvType.CV_64F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Core.magnitude(sobelx, sobely, blur);
+            Core.normalize(blur, blur, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
             matrix.release();
             System.gc();
-            return filterMat;
+
+            return blur;
         }
     }
         /*
@@ -146,16 +144,7 @@ public abstract class PointDetector {
 
 
 
-        Mat kerner = Imgproc.getGaussianKernel(5, 2);
-        Mat F_b = new Mat();
-        Core.multiply(kerner.reshape(1, kerner.rows() * kerner.cols()), kerner, F_b);
-        Mat F_id = Mat.zeros(kerner.size(), CvType.CV_32F);
-        F_id.put(F_id.rows()/2, F_id.cols()/2, 1);
-        Core.divide(F_b, Core.sumElems(F_b), F_b);
-        final Mat d = new Mat();
-        Imgproc.filter2D(matrix, d, -1, F_b);
-        new ImagePlus("ciao", MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0,0)))
-                .show();
+
          */
     /**
      *

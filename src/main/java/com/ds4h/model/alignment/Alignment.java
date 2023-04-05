@@ -116,23 +116,29 @@ public class Alignment implements Runnable{
 
         IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
         this.targetImage.clearPoints();
-        this.imagesToAlign.stream().peek(ImagePoints::clearPoints).forEach(img->{
-            final ImagePoints t = new ImagePoints(this.targetImage.getPath(), this.targetImage.toImprove());
+        boolean ransac = true;
+        for(final ImagePoints image : this.imagesToAlign){
+            final ImagePoints target = new ImagePoints(this.targetImage.getPath(), this.targetImage.toImprove());
             IJ.log("[AUTOMATIC] Start Detection");
-            img.clearPoints();
-            this.pointDetector.detectPoint(t, img);
+            image.clearPoints();
+            this.pointDetector.detectPoint(target, image);
             IJ.log("[AUTOMATIC] End Detection");
-            if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
+            if(target.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
-                images.put(img, t);
-                //if we find at least 3 points in every image we can use ransac otherwise first available
-                if(t.numberOfPoints() >= 3){
-                    this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
-                }else{
-                    this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+                images.put(image, target);
+                if(target.numberOfPoints() < 3){
+                    IJ.log("[AUTOMATIC] No RANSAC");
+                    ransac = false;
                 }
             }
-        });
+        }
+
+        //if we find at least 3 points in every image we can use ransac otherwise first available
+        if(ransac){
+            this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
+        }else{
+            this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+        }
 
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
