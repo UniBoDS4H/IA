@@ -40,6 +40,7 @@ public class TargetImagePreprocessing {
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
         target.setProcessor(MatImageProcessorConverter.convert(target.getMatImage(), title, ip));
+        target.setTitle(title);
         return target;
     }
 
