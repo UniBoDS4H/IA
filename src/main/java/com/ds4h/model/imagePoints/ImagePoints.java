@@ -55,6 +55,7 @@ public class ImagePoints extends ImagePlus{
         this.cols = cols;
         this.address = matAddress;
         this.matSize = new Size(cols, rows);
+        this.type = type;
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
 
@@ -64,11 +65,14 @@ public class ImagePoints extends ImagePlus{
      * @param mat
      */
     public ImagePoints(final String path, final Mat mat){
-        this(path);
-        matrix = mat;
+        super(Objects.requireNonNull(path));
+        this.path = path;
+        this.matrix = mat;
         this.rows = mat.rows();
         this.cols = mat.cols();
         this.matSize = matrix.size();
+        this.type = matrix.type();
+        this.pointList = new ArrayList<>(5);
         IJ.log("[IMAGE POINTS] Image created");
     }
 
@@ -93,6 +97,7 @@ public class ImagePoints extends ImagePlus{
             this.type = CvType.CV_8UC3;
         }else if(ip instanceof FloatProcessor) {
             //TODO: Check depth
+
             this.type = CvType.CV_32FC1;
         }else if(ip instanceof ShortProcessor){
             this.type = CvType.CV_16UC1;

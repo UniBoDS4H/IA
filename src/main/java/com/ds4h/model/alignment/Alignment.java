@@ -115,10 +115,11 @@ public class Alignment implements Runnable{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
 
         IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
-
-        this.imagesToAlign.forEach(img->{
+        this.targetImage.clearPoints();
+        this.imagesToAlign.stream().peek(ImagePoints::clearPoints).forEach(img->{
             final ImagePoints t = new ImagePoints(this.targetImage.getPath(), this.targetImage.toImprove());
             IJ.log("[AUTOMATIC] Start Detection");
+            img.clearPoints();
             this.pointDetector.detectPoint(t, img);
             IJ.log("[AUTOMATIC] End Detection");
             if(t.numberOfPoints() >= this.algorithm.getLowerBound()){
@@ -132,36 +133,39 @@ public class Alignment implements Runnable{
                 }
             }
         });
+
         this.pointDetector.clearCache();
-        System.gc();
-        IJ.log("[AUTOMATIC] Starting preprocess");
         this.imagesToAlign.clear();
+        System.gc();
+
+        IJ.log("[AUTOMATIC] Starting preprocess");
         if(images.size() == 0){
             throw new IllegalArgumentException("The detection has failed,\n" +
                     " please consider to expand the memory (by going to Edit > Options > Memory & Threads) and also increase the Threshold Factor.");
-        }
-        this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
-                images,
-                this.algorithm), this.targetImage.getName()));
-        IJ.log("[AUTOMATIC] End preprocess");
+        }else {
+            this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
+                    images,
+                    this.algorithm), this.targetImage.getName()));
+            IJ.log("[AUTOMATIC] End preprocess");
 
-        IJ.log("[AUTOMATIC] Start aligning the images.");
-        this.targetImage = null;
-        images.forEach((key, value) -> {
-            value.getMatImage().release();
-            IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
-            this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
-            key.getMatImage().release();
-            value.clearPoints();
-            key.clearPoints();
-            key = null;
-            value = null;
-            System.gc();
-        });
-        images.clear();
-        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
-        IJ.log("[AUTOMATIC] The alignment is done.");
-        //this.alignedImages.clear();
+            IJ.log("[AUTOMATIC] Start aligning the images.");
+            this.targetImage = null;
+            images.forEach((key, value) -> {
+                value.getMatImage().release();
+                IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
+                this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
+                key.getMatImage().release();
+                value.clearPoints();
+                key.clearPoints();
+                key = null;
+                value = null;
+                System.gc();
+            });
+            images.clear();
+            //this.alignedImages.forEach(i -> i.getAlignedImage().show());
+            IJ.log("[AUTOMATIC] The alignment is done.");
+            //this.alignedImages.clear();
+        }
     }
 
 
