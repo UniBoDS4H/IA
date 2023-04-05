@@ -25,6 +25,7 @@ import com.ds4h.view.util.ImageCache;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
+import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -392,20 +393,18 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         try {
             final Thread loadingThread = new Thread(() -> {
                 try {
-                    final JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    fileChooser.setMultiSelectionEnabled(true);
-                    final int result = fileChooser.showOpenDialog(this);
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
-                            this.checkPointsForAlignment();
-                        }catch (OutOfMemoryError ex){
-                            JOptionPane.showMessageDialog(this,
-                                    ex.getMessage(),
-                                    "Warning",
-                                    JOptionPane.WARNING_MESSAGE);
-                        }
+                    final FileDialog fileDialog = new FileDialog(this, "Select Files");
+                    fileDialog.setMode(JFileChooser.FILES_ONLY);
+                    fileDialog.setMultipleMode(true);
+                    fileDialog.setVisible(true);
+                    try {
+                        this.pointControler.loadImages(Arrays.stream(fileDialog.getFiles()).collect(Collectors.toList()));
+                        this.checkPointsForAlignment();
+                    }catch (OutOfMemoryError ex){
+                        JOptionPane.showMessageDialog(this,
+                                ex.getMessage(),
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,
