@@ -87,6 +87,12 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
             if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
                 TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
                 alg.setTransformation(alg.getTranslate(),alg.getRotate(),this.scalingCheckbox.isSelected());
+                if(this.scalingCheckbox.isSelected()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Hello World!",
+                            "Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                }
             }
             this.container.checkPointsForAlignment();
         });
