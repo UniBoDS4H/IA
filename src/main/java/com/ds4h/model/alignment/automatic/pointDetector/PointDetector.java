@@ -109,21 +109,32 @@ public abstract class PointDetector {
             System.gc();
             return matrix;
         }else{
-            Mat filterMat = new Mat();
-            //Reduce noise by Blurring the image
-            Imgproc.medianBlur(matrix, filterMat, ksize);
+            Mat filteredM = new Mat();
+            Mat destination = new Mat();
+            Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
+            //Edge detection
+            Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
+            Core.convertScaleAbs(destination, destination);
 
-            final Mat sobelx = new Mat();
-            final Mat sobely = new Mat();
-            //Edge Detection
-            Imgproc.Sobel(filterMat, sobelx, CvType.CV_32F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
-            Imgproc.Sobel(filterMat, sobely, CvType.CV_32F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
-            Core.magnitude(sobelx, sobely, filterMat);
-            //Normalize the values
-            Core.normalize(filterMat, filterMat, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+            //Sharpening
+            Mat gaussianKernel = Imgproc.getGaussianKernel(ksize, 2);
+            Mat F_b = new Mat();
+            Mat identityFilter = Mat.zeros(gaussianKernel.size(), CvType.CV_64F);
+
+            Core.multiply(gaussianKernel.reshape(1, gaussianKernel.rows() * gaussianKernel.cols()),
+                    gaussianKernel, F_b);
+            identityFilter.put(identityFilter.rows()/2, identityFilter.cols()/2, 1);
+            Core.divide(F_b, Core.sumElems(F_b), F_b);
+            final Mat m = new Mat();
+            Imgproc.filter2D(destination, m, -1, F_b);
+
             matrix.release();
+            gaussianKernel.release();
+            identityFilter.release();
+            F_b.release();
+            destination.release();
             System.gc();
-            return filterMat;
+            return m;
         }
     }
         /*
@@ -146,16 +157,7 @@ public abstract class PointDetector {
 
 
 
-        Mat kerner = Imgproc.getGaussianKernel(5, 2);
-        Mat F_b = new Mat();
-        Core.multiply(kerner.reshape(1, kerner.rows() * kerner.cols()), kerner, F_b);
-        Mat F_id = Mat.zeros(kerner.size(), CvType.CV_32F);
-        F_id.put(F_id.rows()/2, F_id.cols()/2, 1);
-        Core.divide(F_b, Core.sumElems(F_b), F_b);
-        final Mat d = new Mat();
-        Imgproc.filter2D(matrix, d, -1, F_b);
-        new ImagePlus("ciao", MatImageProcessorConverter.convert(matrix, "ciao", new ByteProcessor(0,0)))
-                .show();
+
          */
     /**
      *
