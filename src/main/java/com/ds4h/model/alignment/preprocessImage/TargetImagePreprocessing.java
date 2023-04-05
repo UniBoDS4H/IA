@@ -53,7 +53,7 @@ public class TargetImagePreprocessing {
                         .collect(Collectors.toList()));
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
-                target.getMatImage().release();
+                //target.getMatImage().release();
                 target = new ImagePoints(target.getTitle(), res.getFirst());
                 target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
@@ -110,7 +110,8 @@ public class TargetImagePreprocessing {
         IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
         IJ.log("[PREPROCESS] After copy: " + alignedImage);
-        target.getMatImage().release();
+        //target.getMatImage().release();
+        System.gc();
         return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }

@@ -75,32 +75,16 @@ public abstract class PointDetector {
     protected Mat createPyramid(Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
-
-
-        for(int i = 1; i < levels; i++){
-            IJ.log("[POINT DETECTOR] Resize");
+        for(int i = 1; i < levels; i++) {
             Imgproc.resize(matrix, matrix,
-                    new Size(lastSize.width / 2, lastSize.height /2),
+                    new Size(lastSize.width / 2, lastSize.height / 2),
                     Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
-
-        /*
-        final int dimension = (int) Math.pow(2, levels-1);
-        Imgproc.resize(matrix, matrix,
-                new Size(lastSize.width / dimension, lastSize.height / dimension),
-                Imgproc.INTER_LINEAR);
-        */
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
         IJ.log("[POINT DETECTOR] Resize done.");
         return matrix;
     }
-
-    /*
-
-         */
-
-
 
     protected Mat improveMatrix(final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
@@ -126,16 +110,19 @@ public abstract class PointDetector {
             return matrix;
         }else{
             Mat filterMat = new Mat();
+            //Reduce noise by Blurring the image
             Imgproc.medianBlur(matrix, filterMat, ksize);
 
             final Mat sobelx = new Mat();
             final Mat sobely = new Mat();
+            //Edge Detection
             Imgproc.Sobel(filterMat, sobelx, CvType.CV_32F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
             Imgproc.Sobel(filterMat, sobely, CvType.CV_32F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
             Core.magnitude(sobelx, sobely, filterMat);
+            //Normalize the values
             Core.normalize(filterMat, filterMat, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
             matrix.release();
-
+            System.gc();
             return filterMat;
         }
     }
