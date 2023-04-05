@@ -11,30 +11,21 @@ import java.awt.*;
 public class ConfigureImagesGUI extends JFrame implements StandardGUI {
     private final JButton reset;
     private final JComboBox<String> comboBox;
-    private final JSlider opacitySlider;
     private final ColorComboBox colorComboBox;
-    private final JLabel labelCombo, labelSlider;
-    private final GridBagConstraints constraints;
-
-    private final static int WIDTH = 700, HEIGHT = 400;
+    private final JLabel labelCombo;
     private final AlignmentOutputGUI outputGUI;
 
     public ConfigureImagesGUI(AlignmentOutputGUI alignmentOutputGUI){
+        this.setTitle("Configure Images");
         this.outputGUI = alignmentOutputGUI;
-        this.setSize(new Dimension(WIDTH, HEIGHT));
-        this.constraints = new GridBagConstraints();
-        this.constraints.insets = new Insets(0, 0, 5, 5);
-        this.constraints.anchor = GridBagConstraints.WEST;
         this.setLayout(new GridBagLayout());
         this.colorComboBox = new ColorComboBox();
         this.reset = new JButton("Reset");
-        this.labelCombo = new JLabel("Choose the Image");
-        this.labelSlider = new JLabel("Choose the opacity of the image");
+        this.labelCombo = new JLabel("Image:");
         this.comboBox = new JComboBox<>();
-
-        this.opacitySlider = new JSlider(0,10);
         this.addComponents();
         this.addListeners();
+        this.setResizable(false);
     }
 
 
@@ -59,13 +50,6 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         this.comboBox.addActionListener(event -> {
             final int index = this.comboBox.getSelectedIndex();
         });
-        this.opacitySlider.addChangeListener(event -> {
-           /* final float value = (this.opacitySlider.getValue() / DIV);
-            final int index = this.comboBox.getSelectedIndex();
-            this.imagePanels.get(index).setOpacity(value);
-
-            */
-        });
         this.reset.addActionListener(evenet -> {
             ((CompositeImage)this.outputGUI.getImagePlus()).setLuts(this.outputGUI.getOriginalLuts());
             this.outputGUI.getImagePlus().setSlice(1);
@@ -75,18 +59,39 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addComponents() {
-        this.addElement(this.labelCombo, new JPanel(), this.comboBox);
-        this.addElement(new JLabel("Pick a color : "), new JPanel(), this.colorComboBox);
-        this.addElement(this.labelSlider, new JPanel(), this.opacitySlider);
-        this.opacitySlider.setMajorTickSpacing(5);
-        this.opacitySlider.setMinorTickSpacing(1);
-        this.opacitySlider.setPaintTicks(true);
-        this.opacitySlider.setPaintLabels(true);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Row 1
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        this.add(this.labelCombo, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        this.add(this.comboBox, gbc);
+
+        // Row 2
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        this.add(new JLabel("Color:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        this.add(this.colorComboBox, gbc);
+
+        // Row 4
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        this.add(reset, gbc);
+
+        // Configure the combo boxes
         this.populateCombo();
-        final JPanel buttonPanel = new JPanel();
-        buttonPanel.add(reset);
-        this.constraints.gridy++;
-        this.add(buttonPanel, this.constraints);
+        this.pack();
     }
 
     private void populateCombo(){
@@ -94,12 +99,5 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
             this.comboBox.addItem(this.outputGUI.getImagePlus().getStack().getSliceLabels()[i]);
         }
 
-    }
-    private void addElement(final JLabel label, final JPanel panel, final JComponent component){
-        panel.add(label);
-        panel.add(component);
-        this.constraints.gridx = 0;
-        this.constraints.gridy++;
-        add(panel, this.constraints);
     }
 }
