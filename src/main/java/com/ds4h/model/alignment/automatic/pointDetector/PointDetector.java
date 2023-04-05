@@ -109,32 +109,19 @@ public abstract class PointDetector {
             System.gc();
             return matrix;
         }else{
-            Mat filteredM = new Mat();
-            Mat destination = new Mat();
-            Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
-            //Edge detection
-            Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
-            Core.convertScaleAbs(destination, destination);
 
-            //Sharpening
-            Mat gaussianKernel = Imgproc.getGaussianKernel(ksize, 2);
-            Mat F_b = new Mat();
-            Mat identityFilter = Mat.zeros(gaussianKernel.size(), CvType.CV_64F);
-
-            Core.multiply(gaussianKernel.reshape(1, gaussianKernel.rows() * gaussianKernel.cols()),
-                    gaussianKernel, F_b);
-            identityFilter.put(identityFilter.rows()/2, identityFilter.cols()/2, 1);
-            Core.divide(F_b, Core.sumElems(F_b), F_b);
-            final Mat m = new Mat();
-            Imgproc.filter2D(destination, m, -1, F_b);
-
+            final Mat blur = new Mat();
+            Imgproc.medianBlur(matrix, blur, ksize);
+            final Mat sobelx = new Mat();
+            final Mat sobely = new Mat();
+            Imgproc.Sobel(blur, sobelx, CvType.CV_64F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Imgproc.Sobel(blur, sobely, CvType.CV_64F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Core.magnitude(sobelx, sobely, blur);
+            Core.normalize(blur, blur, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
             matrix.release();
-            gaussianKernel.release();
-            identityFilter.release();
-            F_b.release();
-            destination.release();
             System.gc();
-            return m;
+
+            return blur;
         }
     }
         /*
