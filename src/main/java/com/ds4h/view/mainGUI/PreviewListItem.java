@@ -12,6 +12,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 //TODO: Implement the StandardGUI interface
 
@@ -33,7 +34,7 @@ public class PreviewListItem extends JPanel {
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
-        ImageIcon deleteIcon = new ImageIcon(getClass().getResource("/icons/remove.png"));
+        ImageIcon deleteIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/remove.png")));
         ImageIcon resized = new ImageIcon(deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
         this.deleteButton = new JButton(resized);
         this.deleteButton.setBorder(null);
