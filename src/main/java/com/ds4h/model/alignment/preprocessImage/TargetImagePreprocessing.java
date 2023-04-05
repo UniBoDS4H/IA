@@ -28,10 +28,14 @@ public class TargetImagePreprocessing {
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
-            final MatOfPoint2f points = new MatOfPoint2f();
-            points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
+            //final MatOfPoint2f points = new MatOfPoint2f();
+            //points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
+            List<Point> points = (target.getListPoints()
+                    .stream()
+                    .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
+                    .collect(Collectors.toList()));
             target = new ImagePoints(target.getTitle(), res.getFirst().clone());
-            target.addPoints(points.toList());
+            target.addPoints(points);
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
