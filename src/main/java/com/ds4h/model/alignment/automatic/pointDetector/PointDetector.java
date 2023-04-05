@@ -76,23 +76,28 @@ public abstract class PointDetector {
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
 
+
+        for(int i = 1; i < levels; i++){
+            IJ.log("[POINT DETECTOR] Resize");
+            Imgproc.resize(matrix, matrix,
+                    new Size(lastSize.width / 2, lastSize.height /2),
+                    Imgproc.INTER_LINEAR);
+            lastSize = matrix.size();
+        }
+
+        /*
         final int dimension = (int) Math.pow(2, levels-1);
         Imgproc.resize(matrix, matrix,
                 new Size(lastSize.width / dimension, lastSize.height / dimension),
                 Imgproc.INTER_LINEAR);
-
+        */
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
         IJ.log("[POINT DETECTOR] Resize done.");
         return matrix;
     }
 
     /*
-        for(int i = 1; i < levels; i++){
-            Imgproc.resize(matrix, matrix,
-                    new Size(lastSize.width / 2, lastSize.height /2),
-                    Imgproc.INTER_LINEAR);
-            lastSize = matrix.size();
-        }
+
          */
 
 
