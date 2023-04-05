@@ -116,7 +116,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     throw new IllegalArgumentException("the number of point is not correct");
                 }
             case RANSAC:
-                return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99));
+                return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 5, 2000, 0.99));
             case MINIMUM_LAST_SQUARE:
                 if(srcPoints.toList().size() < 3){
                     final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());

@@ -75,11 +75,18 @@ public abstract class PointDetector {
     protected Mat createPyramid(Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
+
         final int dimension = (int) Math.pow(2, levels-1);
         Imgproc.resize(matrix, matrix,
                 new Size(lastSize.width / dimension, lastSize.height / dimension),
                 Imgproc.INTER_LINEAR);
-        /*
+
+        IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
+        IJ.log("[POINT DETECTOR] Resize done.");
+        return matrix;
+    }
+
+    /*
         for(int i = 1; i < levels; i++){
             Imgproc.resize(matrix, matrix,
                     new Size(lastSize.width / 2, lastSize.height /2),
@@ -87,17 +94,16 @@ public abstract class PointDetector {
             lastSize = matrix.size();
         }
          */
-        IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
-        IJ.log("[POINT DETECTOR] Resize done.");
-        return matrix;
-    }
+
+
 
     protected Mat improveMatrix(final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
         IJ.log("[MEAN] Percentage: " + percentage);
+        final int ksize = 3;
+
         if(percentage >= 60.0){
-            final int ksize = 3;
             //Reduce the Noise
             Mat filteredM = new Mat();
             Mat destination = new Mat();
@@ -113,8 +119,20 @@ public abstract class PointDetector {
             destination = null;
             System.gc();
             return matrix;
+        }else{
+            Mat filterMat = new Mat();
+            Imgproc.medianBlur(matrix, filterMat, ksize);
+
+            final Mat sobelx = new Mat();
+            final Mat sobely = new Mat();
+            Imgproc.Sobel(filterMat, sobelx, CvType.CV_32F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Imgproc.Sobel(filterMat, sobely, CvType.CV_32F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Core.magnitude(sobelx, sobely, filterMat);
+            Core.normalize(filterMat, filterMat, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+            matrix.release();
+
+            return filterMat;
         }
-        return matrix;
     }
         /*
 
