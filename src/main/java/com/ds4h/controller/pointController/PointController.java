@@ -25,7 +25,8 @@ public class PointController {
             this.pointManager.addImages(imagePointsList);
             MemoryController.controllMemory(this.pointManager.getCornerImages());
         }else {
-            throw new IllegalArgumentException("You can not upload one single photo or less.");
+            throw new IllegalArgumentException("You can not upload one single photo or less.\n" +
+                    "Or maybe what you chose is not a image.");
         }
     }
 

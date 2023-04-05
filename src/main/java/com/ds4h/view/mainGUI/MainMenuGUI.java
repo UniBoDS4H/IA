@@ -394,7 +394,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             final Thread loadingThread = new Thread(() -> {
                 try {
                     final FileDialog fileDialog = new FileDialog(this, "Select Files");
-                    fileDialog.setMode(JFileChooser.FILES_ONLY);
+                    fileDialog.setMode(FileDialog.LOAD);
                     fileDialog.setMultipleMode(true);
                     fileDialog.setVisible(true);
                     try {
