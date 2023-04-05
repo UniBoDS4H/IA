@@ -159,9 +159,9 @@ public class Alignment implements Runnable{
             System.gc();
         });
         images.clear();
-        this.alignedImages.forEach(i -> i.getAlignedImage().show());
+        //this.alignedImages.forEach(i -> i.getAlignedImage().show());
         IJ.log("[AUTOMATIC] The alignment is done.");
-        this.alignedImages.clear();
+        //this.alignedImages.clear();
     }
 
 

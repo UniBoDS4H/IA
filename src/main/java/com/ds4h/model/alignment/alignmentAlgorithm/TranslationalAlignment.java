@@ -116,18 +116,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     throw new IllegalArgumentException("the number of point is not correct");
                 }
             case RANSAC:
-                final Mat H = Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 3, 2000, 0.99);
-                System.out.println("source");
-                srcPoints.toList().forEach(System.out::println);
-                System.out.println("destination");
-                dstPoints.toList().forEach(System.out::println);
-                for(int i = 0; i < H.rows(); i++){
-                    for(int j = 0; j < H.cols(); j++){
-                        System.out.print(Arrays.toString(H.get(i, j)) + " ");
-                    }
-                    System.out.println();
-                }
-                return getMatWithTransformation(H);
+                return getMatWithTransformation(Calib3d.estimateAffinePartial2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 5, 2000, 0.99));
             case MINIMUM_LAST_SQUARE:
                 if(srcPoints.toList().size() < 3){
                     final Point translation = this.minimumLeastSquare(srcPoints.toArray(), dstPoints.toArray());

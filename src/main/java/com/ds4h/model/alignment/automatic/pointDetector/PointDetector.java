@@ -75,9 +75,9 @@ public abstract class PointDetector {
     protected Mat createPyramid(Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
-        for(int i = 1; i < levels; i++){
+        for(int i = 1; i < levels; i++) {
             Imgproc.resize(matrix, matrix,
-                    new Size(lastSize.width / 2, lastSize.height /2),
+                    new Size(lastSize.width / 2, lastSize.height / 2),
                     Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
@@ -90,26 +90,41 @@ public abstract class PointDetector {
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
         IJ.log("[MEAN] Percentage: " + percentage);
+        final int ksize = 3;
+
         if(percentage >= 60.0){
-            final int ksize = 3;
             //Reduce the Noise
-            final Mat filteredM = new Mat();
+            Mat filteredM = new Mat();
+            Mat destination = new Mat();
             Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
-            final Mat destination = new Mat();
             //Edge detection
             Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
             Core.convertScaleAbs(destination, destination);
             //Use the border as mask
             Core.bitwise_and(matrix, destination, matrix);
-
-
             filteredM.release();
             destination.release();
+            filteredM = null;
+            destination = null;
             System.gc();
-
             return matrix;
+        }else{
+            Mat filterMat = new Mat();
+            //Reduce noise by Blurring the image
+            Imgproc.medianBlur(matrix, filterMat, ksize);
+
+            final Mat sobelx = new Mat();
+            final Mat sobely = new Mat();
+            //Edge Detection
+            Imgproc.Sobel(filterMat, sobelx, CvType.CV_32F, 1, 0, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Imgproc.Sobel(filterMat, sobely, CvType.CV_32F, 0, 1, ksize, 1, 0, Core.BORDER_DEFAULT);
+            Core.magnitude(sobelx, sobely, filterMat);
+            //Normalize the values
+            Core.normalize(filterMat, filterMat, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+            matrix.release();
+            System.gc();
+            return filterMat;
         }
-        return matrix;
     }
         /*
 
