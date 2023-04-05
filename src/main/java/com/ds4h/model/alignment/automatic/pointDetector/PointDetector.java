@@ -75,12 +75,18 @@ public abstract class PointDetector {
     protected Mat createPyramid(Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
+        final int dimension = (int) Math.pow(2, levels-1);
+        Imgproc.resize(matrix, matrix,
+                new Size(lastSize.width / dimension, lastSize.height / dimension),
+                Imgproc.INTER_LINEAR);
+        /*
         for(int i = 1; i < levels; i++){
             Imgproc.resize(matrix, matrix,
                     new Size(lastSize.width / 2, lastSize.height /2),
                     Imgproc.INTER_LINEAR);
             lastSize = matrix.size();
         }
+         */
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
         IJ.log("[POINT DETECTOR] Resize done.");
         return matrix;
