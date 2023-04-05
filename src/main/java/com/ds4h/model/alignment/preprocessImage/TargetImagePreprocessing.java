@@ -90,14 +90,14 @@ public class TargetImagePreprocessing {
         final MatOfPoint2f pts1 = new MatOfPoint2f(new Point(0, 0), new Point(0, h1), new Point(w1, h1), new Point(w1, 0));
         final MatOfPoint2f pts2 = new MatOfPoint2f(new Point(0, 0), new Point(0, h2), new Point(w2, h2), new Point(w2, 0));
         final MatOfPoint2f pts2_ = new MatOfPoint2f();
+        final MatOfPoint2f pts = new MatOfPoint2f();
 
         algorithm.transform(pts2, pts2_,
                 algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
                         target.getMatOfPoint()));
 
-        final MatOfPoint2f pts = new MatOfPoint2f();
-
         Core.hconcat(Arrays.asList(pts1, pts2_), pts);
+
         final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(), pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
         final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(), pts.toList().stream().map(p->p.y).max(Double::compareTo).get());
         final int xmin = (int) Math.floor(pts_min.x - 0.5);
@@ -109,7 +109,6 @@ public class TargetImagePreprocessing {
         IJ.log("[PREPROCESS] Before copy: " + s);
         IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
 
-        //TODO: Fix the crash when the matrix is created
         final Mat alignedImage = Mat.zeros(s, imagePoints.type());
         IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
         target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
