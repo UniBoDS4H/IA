@@ -7,6 +7,7 @@ import org.opencv.features2d.AKAZE;
 import org.opencv.features2d.BFMatcher;
 
 import java.util.List;
+import java.util.Objects;
 
 public class AKAZEDetector extends PointDetector {
 
@@ -17,7 +18,6 @@ public class AKAZEDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
-        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
 
 
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
@@ -28,15 +28,27 @@ public class AKAZEDetector extends PointDetector {
                 this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                 targetImage.getGrayScaleMat();
 
+        grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
+        grayTarget = Objects.nonNull(grayTarget) && targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
+
+
         final Mat descriptors1 = new Mat();
-        final Mat descriptors2 = new Mat();
         detector.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
-        detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
+        if(!super.getMatCache().isAlreadyDetected()) {
+            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+            final Mat descriptors2 = new Mat();
+            this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            super.getMatCache().setDetection(descriptors2, keypoints2);
+            grayTarget.release();
+        }
+        System.gc();
         grayImg.release();
+
+
+
         final MatOfDMatch matches = new MatOfDMatch();
-        matcher.match(descriptors1, descriptors2, matches);
+        matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches);
         descriptors1.release();
-        descriptors2.release();
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
@@ -48,9 +60,9 @@ public class AKAZEDetector extends PointDetector {
         final double threshold = (0.8+this.getFactor()) * min_dist;
 
         final List<KeyPoint> keypoints1List = keypoints1.toList();
-        final List<KeyPoint> keypoints2List = keypoints2.toList();
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        keypoints2.release();
+
         final double scale = Math.pow(2, super.getScalingFactor()-1);
 
         matches.toList().stream()

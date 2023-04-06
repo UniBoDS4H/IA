@@ -7,6 +7,7 @@ import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.BRISK;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BRISKDetector extends PointDetector {
 
@@ -19,8 +20,7 @@ public class BRISKDetector extends PointDetector {
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
-        final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
-
+        final Mat descriptors1 = new Mat();
 
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
@@ -30,15 +30,24 @@ public class BRISKDetector extends PointDetector {
                 this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                 targetImage.getGrayScaleMat();
 
-        final Mat descriptors1 = new Mat();
-        final Mat descriptors2 = new Mat();
+        grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
+        grayTarget = Objects.nonNull(grayTarget) && targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
+
+
         brisk.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
-        brisk.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2);
+        if(!super.getMatCache().isAlreadyDetected()) {
+            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+            final Mat descriptors2 = new Mat();
+            this.brisk.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            super.getMatCache().setDetection(descriptors2, keypoints2);
+            grayTarget.release();
+        }
         grayImg.release();
+        System.gc();
+
         final MatOfDMatch matches = new MatOfDMatch();
-        this.matcher.match(descriptors1, descriptors2, matches); // save all the matches from image1 and image2
+        this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches); // save all the matches from image1 and image2
         descriptors1.release();
-        descriptors2.release();
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
 
@@ -49,9 +58,9 @@ public class BRISKDetector extends PointDetector {
         }
         double threshold = (1.8 + this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
-        final List<KeyPoint> keypoints2List = keypoints2.toList();
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        keypoints2.release();
+
         final double scale = Math.pow(2, super.getScalingFactor()-1);
         matches.toList().stream().filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {

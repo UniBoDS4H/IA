@@ -13,9 +13,6 @@ import ij.plugin.PlugIn;
 import java.awt.*;
 
 /**
- * A template for processing each pixel of either
- * GRAY8, GRAY16, GRAY32 or COLOR_RGB images.
- *
  * DS4H Team:
  * @author Iorio Matteo
  * @author Vincenzi Fabio
@@ -28,10 +25,8 @@ public class Process_Pixels implements PlugIn {
 
 	@Override
 	public void run(String s) {
-
-		OpencvController.loadLibrary();
 		try {
-
+			OpencvController.loadLibrary();
 			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());
 			EventQueue.invokeLater(MainMenuGUI::new);
 		} catch (Exception e) {

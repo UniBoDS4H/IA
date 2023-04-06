@@ -29,7 +29,6 @@ public class SURFDetector extends PointDetector {
                 this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                 targetImage.getGrayScaleMat();
 
-        IJ.log("[SURF DETECTOR] Gray: " + imagePoint.toImprove());
         grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
         grayTarget = Objects.nonNull(grayTarget) && targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
 

@@ -12,6 +12,7 @@ import java.awt.*;
 
 public enum Detectors {
 
+    AKAZE("AKAZE", new AKAZEDetector(), 0),
     BRISK("BRISK", new BRISKDetector(), 0),
     KAZE("KAZE", new KAZEDetector(), 0),
     ORB("ORB", new ORBDetector(), 0),
