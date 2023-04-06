@@ -7,6 +7,7 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
+import com.ds4h.model.util.MemoryController;
 import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
@@ -95,7 +96,6 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
             //TODO: OPTIMIZE THE IMAGES INSIDE SAVE AND REUSE.
             final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
             composite.setLuts(luts);
-            composite.show();
             return composite;
         }
         throw new RuntimeException("stack is empty");

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class SURFDetector extends PointDetector {
 
-    private final SURF detector = SURF.create(100);
+    private final SURF detector = SURF.create();
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
     public SURFDetector(){
         super();
@@ -65,6 +65,7 @@ public class SURFDetector extends PointDetector {
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
         final double scale = Math.pow(2, super.getScalingFactor()-1);
+
         matches.toList().stream()
                 .filter(match -> match.distance < threshold)
                 .forEach(goodMatch -> {
