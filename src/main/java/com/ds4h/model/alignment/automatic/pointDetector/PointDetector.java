@@ -13,11 +13,14 @@ import org.opencv.imgproc.Imgproc;
  *
  */
 public abstract class PointDetector {
+    public static final int LOWER_BOUND = 1;
+    public static final int UPPER_BOUND = 8;
+    public static final int DEFAULT = 4;
     private double factor = 0;
     private int scalingFactor = 1;
     final MatCache matCache;
-    public static final int LOWER_BOUND = 1;
-    public static final int UPPER_BOUND = 8;
+
+
 
 
     public PointDetector(){

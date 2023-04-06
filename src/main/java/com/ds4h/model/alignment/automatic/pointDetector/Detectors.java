@@ -32,7 +32,7 @@ public enum Detectors {
         this.name = name;
         this.pointDetector = pointDetector;
         this.factor = factor;
-        this.scaling = 1;
+        this.scaling = PointDetector.DEFAULT;
     }
 
 

@@ -1,6 +1,7 @@
 package com.ds4h.controller.importController;
 
 import com.ds4h.model.pointManager.PointManager;
+import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.projectManager.importProject.ImportProject;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class ImportController {
             if(ImportProject.getTargetImage().isPresent()){
                 pointManager.setAsSource(ImportProject.getTargetImage().get());
             }
+            MemoryController.controllMemory(pointManager.getCornerImages());
         }
     }
 }
