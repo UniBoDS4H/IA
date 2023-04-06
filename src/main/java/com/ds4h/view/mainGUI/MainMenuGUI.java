@@ -18,6 +18,7 @@ import com.ds4h.view.automaticAlignmentConfigGUI.AutomaticAlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
+import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -25,7 +26,6 @@ import com.ds4h.view.util.ImageCache;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -249,16 +249,24 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.clearItem.addActionListener(event -> {
-            final int result = JOptionPane.showConfirmDialog(this,
-                    "Are you sure to clear the entire project ?",
-                    "Confirm operation",
-                    JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION) {
-                ImageCache.clear();
-                this.checkPointsForAlignment();
-                this.pointControler.clearProject();
-                this.imagesPreview.clearPanels();
-                this.imagesPreview.showPreviewImages();
+            if(this.pointControler.getPointManager().getCornerImages().size() > 0) {
+                final int result = JOptionPane.showConfirmDialog(this,
+                        "Are you sure to clear the entire project ?",
+                        "Confirm operation",
+                        JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    ImageCache.clear();
+                    this.checkPointsForAlignment();
+                    this.pointControler.clearProject();
+                    this.imagesPreview.clearPanels();
+                    this.imagesPreview.showPreviewImages();
+                }
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "You can not clear the project\n" +
+                                "because it is empty.",
+                        "Clear Project",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -283,19 +291,27 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.exportItem.addActionListener(event -> {
-            this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            final int result = this.fileChooser.showOpenDialog(this);
-            if(result == JFileChooser.APPROVE_OPTION){
-                final File file = this.fileChooser.getSelectedFile();
-                try {
-                    ExportController.exportProject(this.pointControler.getCornerManager(), file.getPath());
-                    JOptionPane.showMessageDialog(this,
-                            "The export is done.",
-                            "Export Project",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            if(this.pointControler.getPointManager().getCornerImages().size() > 0) {
+                this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                final int result = this.fileChooser.showOpenDialog(this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    final File file = this.fileChooser.getSelectedFile();
+                    try {
+                        ExportController.exportProject(this.pointControler.getPointManager(), file.getPath());
+                        JOptionPane.showMessageDialog(this,
+                                "The export is done.",
+                                "Export Project",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "In order to export your project you first have to\n" +
+                                "load the images.",
+                        "Export Project",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -305,15 +321,21 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
                 try {
-                    ImportController.importProject(file, this.pointControler.getCornerManager());
+                    //TODO: Fix the text message.
+                    LoadingGUI loadingGUI = new LoadingGUI(LoadingType.IMPORT);
+                    ImportController.importProject(file, this.pointControler.getPointManager());
                     this.imagesPreview.showPreviewImages();
                     this.checkPointsForAlignment();
+                    loadingGUI.dispose();
                     JOptionPane.showMessageDialog(this,
                             "The import is done.",
                             "Import Project",
                             JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -350,7 +372,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
     private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface){
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
-            final LoadingGUI loadingGUI = new LoadingGUI();
+            final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.ALGORITHM);
             while (alignmentControllerInterface.isAlive()) {
                 try {
                     Thread.sleep(2000);

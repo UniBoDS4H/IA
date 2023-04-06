@@ -7,7 +7,6 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
-import com.ds4h.model.util.MemoryController;
 import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
@@ -49,9 +48,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager){
-        if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getCornerManager())) {
-            if(pointManager.getCornerManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
-                this.alignment.alignImages(pointManager.getCornerManager(), algorithm,
+        if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
+            if(pointManager.getPointManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
+                this.alignment.alignImages(pointManager.getPointManager(), algorithm,
                         AlignmentEnum.AUTOMATIC,
                         Objects.requireNonNull(detector.pointDetector()),
                         detector.getFactor(),

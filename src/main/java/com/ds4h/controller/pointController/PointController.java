@@ -30,7 +30,7 @@ public class PointController {
         }
     }
 
-    public PointManager getCornerManager(){
+    public PointManager getPointManager(){
         return this.pointManager;
     }
 
