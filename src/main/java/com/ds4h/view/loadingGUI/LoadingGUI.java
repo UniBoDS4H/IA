@@ -29,7 +29,6 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.addListeners();
         this.setVisible(true);
     }
-
     public void close(){
         this.setVisible(false);
     }
@@ -47,6 +46,7 @@ public class LoadingGUI extends JFrame implements StandardGUI {
             }
         });
     }
+
 
     @Override
     public void addComponents() {

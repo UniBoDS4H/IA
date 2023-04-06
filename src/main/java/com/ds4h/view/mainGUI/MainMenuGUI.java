@@ -289,6 +289,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 final File file = this.fileChooser.getSelectedFile();
                 try {
                     ExportController.exportProject(this.pointControler.getCornerManager(), file.getPath());
+                    JOptionPane.showMessageDialog(this,
+                            "The export is done.",
+                            "Export Project",
+                            JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -304,6 +308,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     ImportController.importProject(file, this.pointControler.getCornerManager());
                     this.imagesPreview.showPreviewImages();
                     this.checkPointsForAlignment();
+                    JOptionPane.showMessageDialog(this,
+                            "The import is done.",
+                            "Import Project",
+                            JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
