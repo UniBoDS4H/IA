@@ -28,13 +28,13 @@ public class SaveImagesGUI extends JFrame implements StandardGUI {
         this.scrollPane = new JScrollPane();
         this.saveButton = new JButton("Save");
         this.imagesPane = new SaveImagesPanel(this.controller);
-        this.imagesPane.showPreviewImages();
         this.addComponents();
         this.addListeners();
     }
 
     @Override
     public void showDialog() {
+        this.imagesPane.showPreviewImages();
         this.setVisible(true);
     }
 
