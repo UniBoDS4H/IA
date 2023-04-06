@@ -19,7 +19,7 @@ public class ImagePoints extends ImagePlus{
     private final String path;
     private int rows, cols;
     private long address=-1;
-    private Size matSize = null;
+    private final Size matSize;
     private Mat matrix = null;
     private int type = -1;
     private boolean improveMatrix = false;
@@ -54,7 +54,6 @@ public class ImagePoints extends ImagePlus{
         this.rows = rows;
         this.cols = cols;
         this.address = matAddress;
-        this.matSize = new Size(cols, rows);
         this.type = type;
         IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
     }
@@ -88,9 +87,13 @@ public class ImagePoints extends ImagePlus{
         this.rows = this.getHeight();
         this.cols = this.getWidth();
         this.pointList = new ArrayList<>(5);
+        this.matSize = new Size(this.cols, this.rows);
         this.detectType();
     }
 
+    /**
+     *
+     */
     private void detectType(){
         final ImageProcessor ip = this.getProcessor();
         if(ip instanceof ColorProcessor){
@@ -106,18 +109,32 @@ public class ImagePoints extends ImagePlus{
         }
     }
 
+    /**
+     *
+     */
     public void improve(){
         this.improveMatrix = true;
     }
 
+    /**
+     *
+     */
     public void useStock(){
         this.improveMatrix = false;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean toImprove(){
         return this.improveMatrix;
     }
 
+    /**
+     *
+     * @return
+     */
     public int type(){
         return this.type;
     }
