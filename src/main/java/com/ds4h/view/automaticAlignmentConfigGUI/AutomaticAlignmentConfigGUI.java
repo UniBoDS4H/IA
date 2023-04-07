@@ -198,7 +198,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.weightx = 1.0;
         this.add(this.algorithm, gbc);
 
-        final JLabel infoLbl = new JLabel("Info: ");
+        final JLabel infoLbl = new JLabel("Algorithm info: ");
         gbc.gridx = 0;
         gbc.gridy = 4;
         this.add(infoLbl, gbc);

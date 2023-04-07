@@ -120,7 +120,7 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
         gbc.weightx = 1.0;
         add(this.algorithm, gbc);
 
-        final JLabel infoLbl = new JLabel("Info: ");
+        final JLabel infoLbl = new JLabel("Algorithm info: ");
         gbc.gridx = 0;
         gbc.gridy = 1;
         this.add(infoLbl, gbc);

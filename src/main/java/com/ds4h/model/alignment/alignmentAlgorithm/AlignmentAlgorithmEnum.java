@@ -2,10 +2,10 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 
 public enum AlignmentAlgorithmEnum {
 
-    AFFINE("Affine", "You must put: " + AffineAlignment.LOWER_BOUND + " points for each image."),
+    AFFINE("Affine", "At least " + AffineAlignment.LOWER_BOUND + " corresponding point(s) for each image is required."),
 
-    PROJECTIVE("Projective", "You must pust at least: " + ProjectiveAlignment.LOWER_BOUND + " points for each image."),
-    TRANSLATIONAL("Translational", "You must pust at least: " + TranslationalAlignment.LOWER_BOUND +" points for each image.");
+    PROJECTIVE("Projective", "At least " + ProjectiveAlignment.LOWER_BOUND + " corresponding point(s) for each image is required."),
+    TRANSLATIONAL("Translational", "At least " + TranslationalAlignment.LOWER_BOUND +" corresponding point(s) for each image is required.");
 
 
     private String type;
