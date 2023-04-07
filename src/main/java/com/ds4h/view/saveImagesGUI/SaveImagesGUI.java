@@ -6,12 +6,13 @@ import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
+import ij.gui.ImageWindow;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class SaveImagesGUI extends JFrame implements StandardGUI {
+    public class SaveImagesGUI extends ImageWindow implements StandardGUI {
     private final JButton saveButton;
     private final JFileChooser fileChooser;
     private final SaveImagesPanel imagesPane;
@@ -21,6 +22,7 @@ public class SaveImagesGUI extends JFrame implements StandardGUI {
 
 
     public SaveImagesGUI(final ImageController controller){
+        super("Save Images");
         this.setSize();
         this.controller = controller;
         this.fileChooser = new JFileChooser();
