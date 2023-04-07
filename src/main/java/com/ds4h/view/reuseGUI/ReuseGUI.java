@@ -13,9 +13,7 @@ import java.io.FileNotFoundException;
 
 public class ReuseGUI extends JFrame implements StandardGUI {
     private final JButton reuseButton;
-    private final JFileChooser fileChooser;
     private final ReuseImagesPanel imagesPane;
-    private final JScrollPane scrollPane;
     private final MainMenuGUI mainGUI;
     private final ImageController controller;
     private final PointController pointController;
@@ -27,9 +25,7 @@ public class ReuseGUI extends JFrame implements StandardGUI {
         this.outputGUI = alignmentOutputGUI;
         this.pointController = pointController;
         this.controller = controller;
-        this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());
-        this.scrollPane = new JScrollPane();
         this.reuseButton = new JButton("Reuse");
         this.imagesPane = new ReuseImagesPanel(this.controller);
         this.addComponents();
@@ -63,9 +59,9 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     }
 
     private void setSize(){
-        final Dimension screenSize = DisplayInfo.getDisplaySize(50);
-        final int min_width = (int) (screenSize.width);
-        final int min_height =(int) (screenSize.height);
+        final Dimension screenSize = DisplayInfo.getDisplaySize(80);
+        final int min_width = (screenSize.width/5);
+        final int min_height =(screenSize.height/2);
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
     }

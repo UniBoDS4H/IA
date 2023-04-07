@@ -2,9 +2,8 @@ package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.view.pointSelectorGUI.PointSelectorCanvas;
-import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.util.ImageCache;
 
 import javax.swing.*;
@@ -19,6 +18,7 @@ import java.util.Objects;
 public class PreviewListItem extends JPanel {
     private final JButton targetButton, deleteButton;
     private final JLabel idLabel;
+    private final JLabel nameLabel;
     private final JLabel imageLabel;
     private final PointController controller;
     private final ImagePoints image;
@@ -31,6 +31,7 @@ public class PreviewListItem extends JPanel {
         this.controller = controller;
         this.centerPanel = new JPanel();
         this.image = image;
+        nameLabel = new JLabel(this.image.toString());
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
@@ -58,7 +59,7 @@ public class PreviewListItem extends JPanel {
         this.setBorder( new MatteBorder(0, 0, 1, 0, Color.gray));
 
 
-        JLabel nameLabel = new JLabel(this.image.toString());
+
         nameLabel.setFont(new Font("Serif", Font.PLAIN, DisplayInfo.getTextSize(3)));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(this.leftJustify(nameLabel));

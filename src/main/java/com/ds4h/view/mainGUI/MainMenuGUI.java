@@ -480,8 +480,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void setFrameSize(){
         // Get the screen size
         final Dimension screenSize = DisplayInfo.getDisplaySize(80);
-        final int min_width = (int) (screenSize.width/5);
-        final int min_height =(int) (screenSize.height);
+        final int min_width = (screenSize.width/5);
+        final int min_height =(screenSize.height);
         // Set the size of the frame to be half of the screen width and height
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
