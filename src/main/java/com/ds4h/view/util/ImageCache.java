@@ -15,7 +15,7 @@ public class ImageCache {
         String key = originalImage.toString() + "_" + originalImage.getWidth() + "_" + originalImage.getHeight();
         BufferedImage scaledImage = cache.get(key);
         if (scaledImage == null) {
-            scaledImage = originalImage.resize(40,40,"bilinear").getBufferedImage();
+            scaledImage = originalImage.getProcessor().resize(40,40).getBufferedImage();//.resize(40,40,"bilinear").getBufferedImage();
             cache.put(key, scaledImage);
         }
         return scaledImage;
@@ -25,7 +25,7 @@ public class ImageCache {
         String key = originalImage.getName() + "_Aligned_" + originalImage.getAlignedImage().getWidth() + "_" + originalImage.getAlignedImage().getHeight();
         BufferedImage scaledImage = cache.get(key);
         if (scaledImage == null) {
-            scaledImage = originalImage.getAlignedImage().resize(40,40,"bilinear").getBufferedImage();
+            scaledImage = originalImage.getAlignedImage().getProcessor().resize(40,40).getBufferedImage();//.resize(40,40,"bilinear").getBufferedImage();
             cache.put(key, scaledImage);
         }
         return scaledImage;
