@@ -40,8 +40,8 @@ public class ImagePoints extends ImagePlus{
     public ImagePoints(final String path, final boolean improve, final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
-        this.improveMatrix = improve;
         IJ.log("[IMAGE POINT] Processor: " + ip);
+        this.improveMatrix = improve;
         this.path = path;
         this.rows = this.getHeight();
         this.cols = this.getWidth();

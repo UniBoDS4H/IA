@@ -122,8 +122,6 @@ public class Alignment implements Runnable{
                     this.targetImage.toImprove(),
                     this.targetImage.getProcessor());
             image.clearPoints();
-            IJ.log("[AUTOMATIC] Target's IP: " + target.getProcessor());
-            IJ.log("[AUTOMATIC] Image's IP: " + image.getProcessor());
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(target, image);
             IJ.log("[AUTOMATIC] End Detection");
