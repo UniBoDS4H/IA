@@ -76,9 +76,10 @@ public class AlignmentOutputGUI extends StackWindow {
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                controller.getAlignedImages().forEach(i->{
+                controller.getAlignedImages().parallelStream().forEach(i->{
                     new ImageIcon(ImageCache.getScaledImage(i));
                 });
+                reuseItem.setEnabled(true);
             }
         });
         t1.start();
@@ -96,6 +97,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.setMenuBar(this.menuBar);
         this.panel.add(sliceSelector, BorderLayout.PAGE_END);
         this.add(this.panel, BorderLayout.CENTER);
+        this.reuseItem.setEnabled(false);
         this.pack();
     }
     public void addListeners() {
