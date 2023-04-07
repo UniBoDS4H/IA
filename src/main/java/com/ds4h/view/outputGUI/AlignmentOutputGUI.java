@@ -79,6 +79,7 @@ public class AlignmentOutputGUI extends StackWindow {
                 controller.getAlignedImages().parallelStream().forEach(i->{
                     new ImageIcon(ImageCache.getScaledImage(i));
                 });
+                System.gc();
                 reuseItem.setEnabled(true);
             }
         });
