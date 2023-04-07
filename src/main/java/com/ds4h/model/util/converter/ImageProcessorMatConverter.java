@@ -86,8 +86,9 @@ public class ImageProcessorMatConverter {
      * @param ip
      * @return
      */
-    public static Mat convert(final ImageProcessor ip){
-        if(!Objects.isNull(ip)){
+    public static Mat convert(final ImageProcessor ip) throws IllegalArgumentException{
+        IJ.log("[IMAGE PROCESSOR CONVERTER] Ip: " + ip);
+        if(Objects.nonNull(ip)){
             if(ip instanceof ColorProcessor){
                 return ImageProcessorMatConverter.toMat((ColorProcessor) ip);
             }else if(ip instanceof ShortProcessor){

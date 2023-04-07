@@ -42,16 +42,13 @@ public class ReuseSources {
     }
 
     private static List<ImagePoints> convertImages(final List<AlignedImage> images){
-        final List<ImagePoints> imagePoints = new ArrayList<>(images.size());
-        images.stream()
+        return images.stream()
                 .map(AlignedImage::getAlignedImage)
                 .map(imagePlus -> {
                     final ImagePoints image = new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor());
                     image.setTitle(imagePlus.getTitle());
                     return image;
                 })
-                .forEach(imagePoints::add);
-        return imagePoints;
-
+                .collect(Collectors.toList());
     }
 }
