@@ -15,7 +15,7 @@ public class ImportController {
 
     }
 
-    public static void importProject(final File directory, final PointManager pointManager) throws FileNotFoundException {
+    public static void importProject(final File directory, final PointManager pointManager) throws FileNotFoundException, OutOfMemoryError {
         if(directory.isDirectory() && Objects.nonNull(pointManager)) {
             final List<ImagePoints> images = (ImportProject.importProject(directory));
             pointManager.addImages(images);
@@ -23,11 +23,11 @@ public class ImportController {
             if(ImportProject.getTargetImage().isPresent()){
                 pointManager.setAsSource(ImportProject.getTargetImage().get());
             }
-            MemoryController.controllMemory(pointManager.getCornerImages());
             if(images.size() == 0){
                 throw new FileNotFoundException("The directory chosen does not contain any type of images.\n" +
                         "Please select a directory with images.");
             }
+            MemoryController.controllMemory(pointManager.getCornerImages());
             images.clear();
         }
     }

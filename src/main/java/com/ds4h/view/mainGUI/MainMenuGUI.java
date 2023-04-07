@@ -334,8 +334,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 final Thread importThread = new Thread(() -> {
                     try {
                         ImportController.importProject(file, this.pointControler.getPointManager());
-                        this.imagesPreview.showPreviewImages();
-                        this.checkPointsForAlignment();
+
                         loadingGUI.close();
                         JOptionPane.showMessageDialog(this,
                                 "The import is done.",
@@ -348,11 +347,17 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 e.getMessage(),
                                 "Error",
                                 JOptionPane.ERROR_MESSAGE);
+                    }catch(OutOfMemoryError ex){
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                ex.getMessage(),
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
                     }
+                    this.imagesPreview.showPreviewImages();
+                    this.checkPointsForAlignment();
                 });
                 importThread.start();
-                //loadingGUI.dispose();
-
             }
         });
 
