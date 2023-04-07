@@ -44,7 +44,7 @@ public class TargetImagePreprocessing {
         return target;
     }
 
-    static public ImageProcessor automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws IllegalArgumentException{
+    static public ImageProcessor automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws RuntimeException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
         final String title = s.get(0).getValue().getTitle();
@@ -58,7 +58,6 @@ public class TargetImagePreprocessing {
                         .collect(Collectors.toList()));
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
-                //target.getMatImage().release();
                 target = new ImagePoints(target.getTitle(), res.getFirst());
                 target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
@@ -81,7 +80,7 @@ public class TargetImagePreprocessing {
     }
 
     //returns the mat of the new target and the shift of the points
-    private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) {
+    private static Pair<Mat, Point> singleProcess(final ImagePoints target, final ImagePoints imagePoints, final AlignmentAlgorithm algorithm) throws RuntimeException{
         final int h1 = target.getRows();
         final int w1 = target.getCols();
         final int h2 = imagePoints.getRows();
@@ -93,31 +92,39 @@ public class TargetImagePreprocessing {
         final MatOfPoint2f pts2_ = new MatOfPoint2f();
         final MatOfPoint2f pts = new MatOfPoint2f();
 
-        algorithm.transform(pts2, pts2_,
-                algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
-                        target.getMatOfPoint()));
+        try {
+            algorithm.transform(pts2, pts2_,
+                    algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
+                            target.getMatOfPoint()));
 
-        Core.hconcat(Arrays.asList(pts1, pts2_), pts);
+            if (pts1.type() == pts2_.type()) {
+                Core.hconcat(Arrays.asList(pts1, pts2_), pts);
+            } else {
+                throw new RuntimeException("Something went wrong in the alignment, the Core.hconcat can not work\n" +
+                        "with different data types. Please check your images.");
+            }
+            final Point pts_min = new Point(pts.toList().stream().map(p -> p.x).min(Double::compareTo).get(), pts.toList().stream().map(p -> p.y).min(Double::compareTo).get());
+            final Point pts_max = new Point(pts.toList().stream().map(p -> p.x).max(Double::compareTo).get(), pts.toList().stream().map(p -> p.y).max(Double::compareTo).get());
+            final int xmin = (int) Math.floor(pts_min.x - 0.5);
+            final int ymin = (int) Math.floor(pts_min.y - 0.5);
+            final int xmax = (int) Math.ceil(pts_max.x + 0.5);
+            final int ymax = (int) Math.ceil(pts_max.y + 0.5);
+            final double[] t = {-xmin, -ymin};
+            final Size s = new Size(xmax - xmin, ymax - ymin);
+            IJ.log("[PREPROCESS] Before copy: " + s);
+            IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
 
-        final Point pts_min = new Point(pts.toList().stream().map(p->p.x).min(Double::compareTo).get(), pts.toList().stream().map(p->p.y).min(Double::compareTo).get());
-        final Point pts_max = new Point(pts.toList().stream().map(p->p.x).max(Double::compareTo).get(), pts.toList().stream().map(p->p.y).max(Double::compareTo).get());
-        final int xmin = (int) Math.floor(pts_min.x - 0.5);
-        final int ymin = (int) Math.floor(pts_min.y - 0.5);
-        final int xmax = (int) Math.ceil(pts_max.x + 0.5);
-        final int ymax = (int) Math.ceil(pts_max.y + 0.5);
-        final double[] t = {-xmin, -ymin};
-        final Size s = new Size(xmax-xmin, ymax-ymin);
-        IJ.log("[PREPROCESS] Before copy: " + s);
-        IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
-
-        final Mat alignedImage = Mat.zeros(s, imagePoints.type());
-        IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
-        if(target.type() != imagePoints.type()) {
-            alignedImage.convertTo(alignedImage, target.type());
+            final Mat alignedImage = Mat.zeros(s, imagePoints.type());
+            IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
+            if (target.type() != imagePoints.type()) {
+                alignedImage.convertTo(alignedImage, target.type());
+            }
+            target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
+            IJ.log("[PREPROCESS] After copy: " + alignedImage);
+            System.gc();
+            return new Pair<>(alignedImage, new Point(t[0], t[1]));
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
-        target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
-        IJ.log("[PREPROCESS] After copy: " + alignedImage);
-        System.gc();
-        return new Pair<>(alignedImage, new Point(t[0], t[1]));
     }
 }

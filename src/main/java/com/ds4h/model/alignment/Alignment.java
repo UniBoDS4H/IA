@@ -90,8 +90,8 @@ public class Alignment implements Runnable{
 
             this.alignImages(pointManager, algorithm, type);
         }else{
-            throw new IllegalArgumentException("One of the argument for the alignment are not correct. Please," +
-                    "take a look to: Alignment Algorithm, the factor must be greater than 0 and the scaling factor " +
+            throw new IllegalArgumentException("One of the argument for the alignment are not correct.\n" +
+                    " Please, take a look to: Alignment Algorithm, the factor must be greater than 0 and the scaling factor\n" +
                     "must be at least 1.");
         }
     }
@@ -111,7 +111,7 @@ public class Alignment implements Runnable{
         this.targetImage = null;
     }
 
-    private void auto(){
+    private void auto() {
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
 
         IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
@@ -181,7 +181,7 @@ public class Alignment implements Runnable{
      * In order to perform the alignment It is necessary that the targetImage is present.
      */
     @Override
-    public void run() {
+    public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
                 if(type == AlignmentEnum.MANUAL){
@@ -191,9 +191,9 @@ public class Alignment implements Runnable{
                 }
             }
             this.thread = new Thread(this);
-        } catch (final Exception e) {
+        } catch (final Exception ex) {
             this.thread = new Thread(this);
-            throw e;
+            throw ex;
         }
     }
 
