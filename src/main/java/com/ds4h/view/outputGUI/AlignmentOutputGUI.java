@@ -76,7 +76,7 @@ public class AlignmentOutputGUI extends StackWindow {
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                controller.getAlignedImages().parallelStream().forEach(i->{
+                controller.getAlignedImages().forEach(i->{
                     new ImageIcon(ImageCache.getScaledImage(i));
                 });
                 System.gc();

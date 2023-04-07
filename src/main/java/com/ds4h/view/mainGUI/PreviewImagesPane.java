@@ -31,7 +31,7 @@ public class PreviewImagesPane extends JPanel {
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         IJ.log("[LOADING IMAGES] Start");
         long start = System.currentTimeMillis();
-        this.controller.getCornerImagesImages().parallelStream().forEach(ImageCache::getScaledImage);
+        this.controller.getCornerImagesImages().forEach(ImageCache::getScaledImage);
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         System.gc();
