@@ -10,6 +10,7 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
+import com.ds4h.view.util.ImageCache;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
@@ -68,6 +69,19 @@ public class AlignmentOutputGUI extends StackWindow {
         this.saveItem = new MenuItem("Save Project");
         this.addComponents();
         this.addListeners();
+        this.createOutputIcons();
+    }
+
+    private void createOutputIcons() {
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                controller.getAlignedImages().forEach(i->{
+                    new ImageIcon(ImageCache.getScaledImage(i));
+                });
+            }
+        });
+        t1.start();
     }
 
     public void addComponents() {

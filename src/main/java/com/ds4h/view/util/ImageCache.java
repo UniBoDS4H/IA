@@ -1,5 +1,6 @@
 package com.ds4h.view.util;
 
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 
 import java.awt.*;
@@ -20,6 +21,15 @@ public class ImageCache {
         return scaledImage;
     }
 
+    public static BufferedImage getScaledImage(AlignedImage originalImage) {
+        String key = originalImage.getName() + "_Aligned_" + originalImage.getAlignedImage().getWidth() + "_" + originalImage.getAlignedImage().getHeight();
+        BufferedImage scaledImage = cache.get(key);
+        if (scaledImage == null) {
+            scaledImage = originalImage.getAlignedImage().resize(40,40,"bilinear").getBufferedImage();
+            cache.put(key, scaledImage);
+        }
+        return scaledImage;
+    }
     public static void clear() {
         cache.clear();
     }

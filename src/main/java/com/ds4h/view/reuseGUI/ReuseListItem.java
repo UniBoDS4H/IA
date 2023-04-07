@@ -8,6 +8,7 @@ import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.PreviewImagesPane;
 import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import com.ds4h.view.util.ImageCache;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -37,7 +38,7 @@ public class ReuseListItem extends JPanel implements StandardGUI {
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.reuseButton = new JButton("INCLUDE");
         this.nameLabel = new JLabel(this.image.getAlignedImage().getTitle());
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getAlignedImage().getBufferedImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         this.addComponents();
