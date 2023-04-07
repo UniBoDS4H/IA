@@ -25,8 +25,8 @@ public class ReuseListItem extends JPanel implements StandardGUI {
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.reuseButton = new JButton("INCLUDE");
         this.nameLabel = new JLabel(this.image.getAlignedImage().getTitle());
-        //this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
-        this.imageLabel = new JLabel();
+        this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
+        //this.imageLabel = new JLabel();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         this.addComponents();
