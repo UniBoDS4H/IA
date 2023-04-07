@@ -1,4 +1,4 @@
-package com.ds4h.view.reuseGUI;
+package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.displayInfo.DisplayInfo;
@@ -8,25 +8,24 @@ import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 
-public class ReuseListItem extends JPanel implements StandardGUI {
+public class SaveListItem extends JPanel implements StandardGUI {
     private final AlignedImage image;
     private final JButton reuseButton;
     private final JLabel idLabel;
     private final JLabel nameLabel;
     private final JLabel imageLabel;
     private final JPanel centerPanel;
-    private boolean reuse;
+    private boolean save;
 
-    public ReuseListItem(final AlignedImage image, final int id){
+    public SaveListItem(final AlignedImage image, final int id){
         this.centerPanel = new JPanel();
         this.image = image;
-        this.reuse = true;
+        this.save = true;
         this.idLabel = new JLabel(Integer.toString(id));
         this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.reuseButton = new JButton("INCLUDE");
         this.nameLabel = new JLabel(this.image.getAlignedImage().getTitle());
-        //this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
-        this.imageLabel = new JLabel();
+        this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         this.addComponents();
@@ -42,13 +41,13 @@ public class ReuseListItem extends JPanel implements StandardGUI {
     @Override
     public void addListeners() {
         this.reuseButton.addActionListener(event -> {
-            this.reuse =!this.reuse;
+            this.save = !this.save;
             this.updateButtons();
         });
     }
 
     private void updateButtons(){
-        if(this.toReuse()){
+        if(this.toSave()){
             this.reuseButton.setBackground(new Color(0,153,0));
             this.reuseButton.setText("INCLUDED");
             this.reuseButton.setForeground(Color.BLACK);
@@ -59,8 +58,8 @@ public class ReuseListItem extends JPanel implements StandardGUI {
         }
     }
 
-    public boolean toReuse(){
-        return this.reuse;
+    public boolean toSave(){
+        return this.save;
     }
 
     public AlignedImage getImage(){

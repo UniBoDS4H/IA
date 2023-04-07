@@ -14,9 +14,8 @@ import java.io.File;
 
     public class SaveImagesGUI extends ImageWindow implements StandardGUI {
     private final JButton saveButton;
+        private final SaveImagesPanel imagesPane;
     private final JFileChooser fileChooser;
-    private final SaveImagesPanel imagesPane;
-    private final JScrollPane scrollPane;
     private final ImageController controller;
 
 
@@ -27,7 +26,6 @@ import java.io.File;
         this.controller = controller;
         this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());
-        this.scrollPane = new JScrollPane();
         this.saveButton = new JButton("Save");
         this.imagesPane = new SaveImagesPanel(this.controller);
         this.addComponents();
@@ -64,9 +62,9 @@ import java.io.File;
     }
 
     private void setSize(){
-        Dimension screenSize = DisplayInfo.getDisplaySize(50);
-        int min_width = (int) (screenSize.width);
-        int min_height =(int) (screenSize.height);
+        final Dimension screenSize = DisplayInfo.getDisplaySize(80);
+        final int min_width = (screenSize.width/5);
+        final int min_height =(screenSize.height/2);
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
     }
