@@ -118,9 +118,13 @@ public class Alignment implements Runnable{
         this.targetImage.clearPoints();
         boolean ransac = true;
         for(final ImagePoints image : this.imagesToAlign){
-            final ImagePoints target = new ImagePoints(this.targetImage.getPath(), this.targetImage.toImprove());
-            IJ.log("[AUTOMATIC] Start Detection");
+            final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
+                    this.targetImage.toImprove(),
+                    this.targetImage.getProcessor());
             image.clearPoints();
+            IJ.log("[AUTOMATIC] Target's IP: " + target.getProcessor());
+            IJ.log("[AUTOMATIC] Image's IP: " + image.getProcessor());
+            IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(target, image);
             IJ.log("[AUTOMATIC] End Detection");
             if(target.numberOfPoints() >= this.algorithm.getLowerBound()){

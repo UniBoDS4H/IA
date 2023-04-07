@@ -37,9 +37,17 @@ public class ImagePoints extends ImagePlus{
         this.detectType();
     }
 
-    public ImagePoints(final String path, final boolean improve){
-        this(path);
+    public ImagePoints(final String path, final boolean improve, final ImageProcessor ip){
+        super(Objects.requireNonNull(path));
+        this.setProcessor(ip);
         this.improveMatrix = improve;
+        IJ.log("[IMAGE POINT] Processor: " + ip);
+        this.path = path;
+        this.rows = this.getHeight();
+        this.cols = this.getWidth();
+        this.pointList = new ArrayList<>(5);
+        this.matSize = new Size(this.cols, this.rows);
+        this.detectType();
     }
 
     /**
@@ -83,6 +91,7 @@ public class ImagePoints extends ImagePlus{
     public ImagePoints(final String path, final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
+        IJ.log("[IMAGE POINT] Processor: " + ip);
         this.path = path;
         this.rows = this.getHeight();
         this.cols = this.getWidth();
