@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -295,16 +296,25 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 final int result = this.fileChooser.showOpenDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    final File file = this.fileChooser.getSelectedFile();
-                    try {
-                        ExportController.exportProject(this.pointControler.getPointManager(), file.getPath());
-                        JOptionPane.showMessageDialog(this,
-                                "The export is done.",
-                                "Export Project",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.EXPORT);
+                    final Thread exportThread = new Thread(() -> {
+                        final File file = this.fileChooser.getSelectedFile();
+                        try {
+                            ExportController.exportProject(this.pointControler.getPointManager(), file.getPath());
+                            loadingGUI.close();
+                            JOptionPane.showMessageDialog(this,
+                                    "The export is done.",
+                                    "Export Project",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } catch (IOException e) {
+                            loadingGUI.close();
+                            JOptionPane.showMessageDialog(this,
+                                    e.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                    exportThread.start();
                 }
             }else{
                 JOptionPane.showMessageDialog(this,
@@ -320,23 +330,29 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             final int result = this.fileChooser.showOpenDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
-                try {
-                    //TODO: Fix the text message.
-                    LoadingGUI loadingGUI = new LoadingGUI(LoadingType.IMPORT);
-                    ImportController.importProject(file, this.pointControler.getPointManager());
-                    this.imagesPreview.showPreviewImages();
-                    this.checkPointsForAlignment();
-                    loadingGUI.dispose();
-                    JOptionPane.showMessageDialog(this,
-                            "The import is done.",
-                            "Import Project",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this,
-                            e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+                final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.IMPORT);
+                final Thread importThread = new Thread(() -> {
+                    try {
+                        ImportController.importProject(file, this.pointControler.getPointManager());
+                        this.imagesPreview.showPreviewImages();
+                        this.checkPointsForAlignment();
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                "The import is done.",
+                                "Import Project",
+                                JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (FileNotFoundException e) {
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                e.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+                importThread.start();
+                //loadingGUI.dispose();
+
             }
         });
 

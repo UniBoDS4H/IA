@@ -54,8 +54,8 @@ public class LoadingGUI extends JFrame implements StandardGUI {
     public void addComponents() {
         this.text.setVerticalAlignment(JLabel.CENTER);
         this.text.setHorizontalAlignment(JLabel.CENTER);
-        IJ.log("[LOADING GUI] text: " + this.loadingType.getDescription());
         this.text.setText(this.loadingType.getDescription());
+        IJ.log("[LOADING GUI] text: " + this.text.getText());
         this.add(this.loadingLabel, FlowLayout.LEFT);
         this.add(this.text);
     }
