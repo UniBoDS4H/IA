@@ -47,7 +47,7 @@ public class TargetImagePreprocessing {
     static public ImageProcessor automaticProcess(final ImageProcessor ip, final Map<ImagePoints, ImagePoints> images, final AlignmentAlgorithm algorithm) throws RuntimeException{
         final List<Map.Entry<ImagePoints, ImagePoints>> s = new ArrayList<>(images.entrySet());
         IJ.log("[AUTOMATIC PREPROCESS] Starting the automatic preprocess");
-        final String title = s.get(0).getValue().getTitle();
+        final String title = s.get(0).getValue().getTitle().isEmpty() ? "ImageToAlign.tif" : s.get(0).getValue().getTitle();
         IntStream.range(0, s.size()).forEach(i -> {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(s.get(i).getValue(), s.get(i).getKey(), algorithm);
             IntStream.range(0, s.size()).forEach(j -> {
@@ -58,8 +58,8 @@ public class TargetImagePreprocessing {
                         .collect(Collectors.toList()));
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
-                target = new ImagePoints(target.getTitle(), res.getFirst());
-                target.setTitle(title);
+                target = new ImagePoints(title, res.getFirst());
+                //target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
@@ -76,7 +76,7 @@ public class TargetImagePreprocessing {
         s.forEach(e->images.put(e.getKey(),e.getValue()));
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
         return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
-                s.get(s.size()-1).getValue().getTitle(), ip);
+                title, ip);
     }
 
     //returns the mat of the new target and the shift of the points
