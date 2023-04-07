@@ -12,6 +12,7 @@ import java.awt.*;
 
 public enum Detectors {
 
+    AKAZE("AKAZE", new AKAZEDetector(), 0),
     BRISK("BRISK", new BRISKDetector(), 0),
     KAZE("KAZE", new KAZEDetector(), 0),
     ORB("ORB", new ORBDetector(), 0),
@@ -31,7 +32,7 @@ public enum Detectors {
         this.name = name;
         this.pointDetector = pointDetector;
         this.factor = factor;
-        this.scaling = 1;
+        this.scaling = PointDetector.DEFAULT;
     }
 
 

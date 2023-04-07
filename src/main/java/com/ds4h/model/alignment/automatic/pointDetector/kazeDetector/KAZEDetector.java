@@ -6,46 +6,51 @@ import org.opencv.core.*;
 import org.opencv.features2d.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class KAZEDetector extends PointDetector {
     private final KAZE detector = KAZE.create();
     private final BFMatcher matcher = BFMatcher.create();
-    final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
-    final MatOfKeyPoint keypoints2 = new MatOfKeyPoint();
 
-    final Mat descriptors1 = new Mat();
-    final Mat descriptors2 = new Mat();
     public KAZEDetector(){
         super();
 
     }
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
-
-
-
-
+        final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
+        final Mat descriptors1 = new Mat();
 
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
-        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
-                null : super.getScalingFactor() > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
-                targetImage.getGrayScaleMat();
+        grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
 
-        this.detector.detectAndCompute(grayImg, new Mat(), this.keypoints1, this.descriptors1);
-        this.detector.detectAndCompute(grayTarget, new Mat(), this.keypoints2, this.descriptors2);
+
+        this.detector.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
         grayImg.release();
+        if(!super.getMatCache().isAlreadyDetected()) {
+
+            Mat grayTarget = super.getScalingFactor() > 1 ?
+                    this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
+                    targetImage.getGrayScaleMat();
+            grayTarget = targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
+
+            final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
+            final Mat descriptors2 = new Mat();
+            this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
+            super.getMatCache().setDetection(descriptors2, keypoints2);
+            grayTarget.release();
+        }
+        System.gc();
         // Match keypoints between the two images using a BFMatcher
         final MatOfDMatch matches = new MatOfDMatch();
-        this.matcher.match(this.descriptors1, this.descriptors2, matches);
+        this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches);
 
         double max_dist = 0;
         double min_dist = Double.MAX_VALUE;
 
-        this.descriptors1.release();
-        this.descriptors2.release();
+        descriptors1.release();
         for(final DMatch match : matches.toList()){
             final double dist = match.distance;
             if (dist < min_dist) min_dist = dist;
@@ -54,10 +59,10 @@ public class KAZEDetector extends PointDetector {
 
 
         final double threshold = (1.4)+this.getFactor();
-        final List<KeyPoint> keypoints1List = this.keypoints1.toList();//originalKeyPoints.toList();
-        final List<KeyPoint> keypoints2List = this.keypoints2.toList();//targetKeyPoints.toList();
-        this.keypoints1.release();
-        this.keypoints2.release();
+        final List<KeyPoint> keypoints1List = keypoints1.toList();//originalKeyPoints.toList();
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();//targetKeyPoints.toList();
+        keypoints1.release();
+
         final double scale = super.getScalingFactor() > 1 ?  Math.pow(2, super.getScalingFactor()-1) : 1;
 
         matches.toList().stream().filter(match -> match.distance < threshold)

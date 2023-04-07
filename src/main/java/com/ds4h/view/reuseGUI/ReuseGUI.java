@@ -32,13 +32,13 @@ public class ReuseGUI extends JFrame implements StandardGUI {
         this.scrollPane = new JScrollPane();
         this.reuseButton = new JButton("Reuse");
         this.imagesPane = new ReuseImagesPanel(this.controller);
-        this.imagesPane.showPreviewImages();
         this.addComponents();
         this.addListeners();
     }
 
     @Override
     public void showDialog() {
+        this.imagesPane.showPreviewImages();
         this.setVisible(true);
     }
 

@@ -8,6 +8,7 @@ import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.SIFT;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SIFTDetector extends PointDetector {
     private final SIFT sift = SIFT.create();
@@ -17,25 +18,28 @@ public class SIFTDetector extends PointDetector {
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
+        final Mat descriptors1 = new Mat();
 
 
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
-        Mat grayTarget = super.getMatCache().isAlreadyDetected() ?
-                null : super.getScalingFactor() > 1 ?
-                this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
-                targetImage.getGrayScaleMat();
+        grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
 
-        final Mat descriptors1 = new Mat();
+
         //
         this.sift.detect(grayImg, keypoints1);
         this.sift.compute(grayImg, keypoints1, descriptors1);
+
         IJ.log("[SIFT DETECTOR] Detected points for the first image.");
         grayImg.release();
-        System.gc();
-
         if(!super.getMatCache().isAlreadyDetected()) {
+
+            Mat grayTarget = super.getScalingFactor() > 1 ?
+                    this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
+                    targetImage.getGrayScaleMat();
+            grayTarget = targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
+
             final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
             final Mat descriptors2 = new Mat();
             this.sift.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
@@ -44,6 +48,7 @@ public class SIFTDetector extends PointDetector {
         }
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
         System.gc();
+
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1,
                 super.getMatCache().getDescriptor(),

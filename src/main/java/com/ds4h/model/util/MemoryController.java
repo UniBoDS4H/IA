@@ -17,6 +17,12 @@ public class MemoryController {
 
     }
 
+    public static void controllMemory(){
+        long free = Runtime.getRuntime().freeMemory();
+        long used = Runtime.getRuntime().maxMemory();
+        IJ.log("[MEMORY CONTROLLER] Total Memory: " + (used - free));
+    }
+
 
     public static void controllMemory(final List<ImagePoints> inputImaes) throws OutOfMemoryError{
         long memorySize = 0;

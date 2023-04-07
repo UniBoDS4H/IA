@@ -18,6 +18,7 @@ import com.ds4h.view.automaticAlignmentConfigGUI.AutomaticAlignmentConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
+import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
@@ -30,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -248,16 +250,24 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.clearItem.addActionListener(event -> {
-            final int result = JOptionPane.showConfirmDialog(this,
-                    "Are you sure to clear the entire project ?",
-                    "Confirm operation",
-                    JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION) {
-                ImageCache.clear();
-                this.checkPointsForAlignment();
-                this.pointControler.clearProject();
-                this.imagesPreview.clearPanels();
-                this.imagesPreview.showPreviewImages();
+            if(this.pointControler.getPointManager().getCornerImages().size() > 0) {
+                final int result = JOptionPane.showConfirmDialog(this,
+                        "Are you sure to clear the entire project ?",
+                        "Confirm operation",
+                        JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    ImageCache.clear();
+                    this.checkPointsForAlignment();
+                    this.pointControler.clearProject();
+                    this.imagesPreview.clearPanels();
+                    this.imagesPreview.showPreviewImages();
+                }
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "You can not clear the project\n" +
+                                "because it is empty.",
+                        "Clear Project",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -282,15 +292,36 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.exportItem.addActionListener(event -> {
-            this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            final int result = this.fileChooser.showOpenDialog(this);
-            if(result == JFileChooser.APPROVE_OPTION){
-                final File file = this.fileChooser.getSelectedFile();
-                try {
-                    ExportController.exportProject(this.pointControler.getCornerManager(), file.getPath());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            if(this.pointControler.getPointManager().getCornerImages().size() > 0) {
+                this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                final int result = this.fileChooser.showOpenDialog(this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.EXPORT);
+                    final Thread exportThread = new Thread(() -> {
+                        final File file = this.fileChooser.getSelectedFile();
+                        try {
+                            ExportController.exportProject(this.pointControler.getPointManager(), file.getPath());
+                            loadingGUI.close();
+                            JOptionPane.showMessageDialog(this,
+                                    "The export is done.",
+                                    "Export Project",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } catch (IOException e) {
+                            loadingGUI.close();
+                            JOptionPane.showMessageDialog(this,
+                                    e.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                    exportThread.start();
                 }
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "In order to export your project you first have to\n" +
+                                "load the images.",
+                        "Export Project",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -299,13 +330,34 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             final int result = this.fileChooser.showOpenDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
-                try {
-                    ImportController.importProject(file, this.pointControler.getCornerManager());
+                final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.IMPORT);
+                final Thread importThread = new Thread(() -> {
+                    try {
+                        ImportController.importProject(file, this.pointControler.getPointManager());
+
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                "The import is done.",
+                                "Import Project",
+                                JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (FileNotFoundException e) {
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                e.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }catch(OutOfMemoryError ex){
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                ex.getMessage(),
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
                     this.imagesPreview.showPreviewImages();
                     this.checkPointsForAlignment();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                });
+                importThread.start();
             }
         });
 
@@ -341,7 +393,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
     private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface){
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
-            final LoadingGUI loadingGUI = new LoadingGUI();
+            final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.ALGORITHM);
             while (alignmentControllerInterface.isAlive()) {
                 try {
                     Thread.sleep(2000);
@@ -392,20 +444,18 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         try {
             final Thread loadingThread = new Thread(() -> {
                 try {
-                    final JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    fileChooser.setMultiSelectionEnabled(true);
-                    final int result = fileChooser.showOpenDialog(this);
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            this.pointControler.loadImages(Arrays.stream(fileChooser.getSelectedFiles()).collect(Collectors.toList()));
-                            this.checkPointsForAlignment();
-                        }catch (OutOfMemoryError ex){
-                            JOptionPane.showMessageDialog(this,
-                                    ex.getMessage(),
-                                    "Warning",
-                                    JOptionPane.WARNING_MESSAGE);
-                        }
+                    final FileDialog fileDialog = new FileDialog(this, "Select Files");
+                    fileDialog.setMode(FileDialog.LOAD);
+                    fileDialog.setMultipleMode(true);
+                    fileDialog.setVisible(true);
+                    try {
+                        this.pointControler.loadImages(Arrays.stream(fileDialog.getFiles()).collect(Collectors.toList()));
+                        this.checkPointsForAlignment();
+                    }catch (OutOfMemoryError ex){
+                        JOptionPane.showMessageDialog(this,
+                                ex.getMessage(),
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,

@@ -18,8 +18,11 @@ public class LoadingGUI extends JFrame implements StandardGUI {
     private final Icon loadingGif = new ImageIcon(Objects.requireNonNull(LoadingGUI.class.getResource(GIF_PATH)));
     private final JLabel loadingLabel, text;
 
-    public LoadingGUI(){
-        this.setTitle("The algorithm is running");
+    private final LoadingType loadingType;
+
+    public LoadingGUI(final LoadingType loadingType){
+        this.loadingType = loadingType;
+        this.setTitle(loadingType.getTitle());
         this.loadingLabel = new JLabel(this.loadingGif);
         this.loadingLabel.setSize(new Dimension(20, 20));
         this.setLayout(new GridLayout(1, 2));
@@ -29,7 +32,6 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.addListeners();
         this.setVisible(true);
     }
-
     public void close(){
         this.setVisible(false);
     }
@@ -43,16 +45,17 @@ public class LoadingGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                IJ.showMessage("You can not interrupt the algorithm");
             }
         });
     }
+
 
     @Override
     public void addComponents() {
         this.text.setVerticalAlignment(JLabel.CENTER);
         this.text.setHorizontalAlignment(JLabel.CENTER);
-        this.text.setText("<html>The algorithm is running, please wait.<br/> </html>");
+        this.text.setText(this.loadingType.getDescription());
+        IJ.log("[LOADING GUI] text: " + this.text.getText());
         this.add(this.loadingLabel, FlowLayout.LEFT);
         this.add(this.text);
     }
