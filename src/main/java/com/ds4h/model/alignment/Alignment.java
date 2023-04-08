@@ -187,7 +187,7 @@ public class Alignment implements Runnable{
     }
 
     public synchronized int getStatus(){
-        return (this.status*100/this.total);
+        return (int) (this.status*100/this.total);
     }
 
 
