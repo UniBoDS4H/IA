@@ -4,6 +4,8 @@ import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.displayInfo.DisplayInfo;
+import com.ds4h.view.loadingGUI.LoadingGUI;
+import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 import ij.gui.ImageWindow;
@@ -41,16 +43,30 @@ import java.io.File;
     @Override
     public void addListeners() {
         this.saveButton.addActionListener(event -> {
-            this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            final int result = this.fileChooser.showOpenDialog(this);
-            if(result == JFileChooser.APPROVE_OPTION){
-                final File selectedDirectory = this.fileChooser.getSelectedFile();
-                try {
-                    SaveController.saveImages(this.imagesPane.getImagesToSave(), selectedDirectory.getPath());
-                    this.dispose();
-                }catch (Exception e){
-                    IJ.showMessage(e.getMessage());
+            LoadingGUI loadingGUI = new LoadingGUI(LoadingType.SAVE);
+            if(this.imagesPane.getImagesToSave().size() > 0) {
+                this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                final int result = this.fileChooser.showOpenDialog(this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    final File selectedDirectory = this.fileChooser.getSelectedFile();
+                    loadingGUI.showDialog();
+                    try {
+                        SaveController.saveImages(this.imagesPane.getImagesToSave(), selectedDirectory.getPath());
+                        this.dispose();
+                        loadingGUI.close();
+                    } catch (Exception e) {
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                e.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "You must pick at least one image.",
+                        "Info",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }

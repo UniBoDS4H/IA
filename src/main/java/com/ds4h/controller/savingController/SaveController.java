@@ -21,7 +21,11 @@ public class SaveController {
      * @param path
      * @throws IOException
      */
-    public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
-        SaveImages.saveImages(images, path);
+    public static void saveImages(final List<AlignedImage> images, final String path) throws IOException, IllegalArgumentException {
+        if(!images.isEmpty()) {
+            SaveImages.saveImages(images, path);
+        }else {
+            throw new IllegalArgumentException("You must choose at least one image.");
+        }
     }
 }
