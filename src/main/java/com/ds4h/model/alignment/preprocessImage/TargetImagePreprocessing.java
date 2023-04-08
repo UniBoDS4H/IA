@@ -112,8 +112,13 @@ public class TargetImagePreprocessing {
             final double[] t = {-xmin, -ymin};
             final Size s = new Size(xmax - xmin, ymax - ymin);
             IJ.log("[PREPROCESS] Before copy: " + s);
+            IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
+
             final Mat alignedImage = Mat.zeros(s, target.type());
             IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
+            if (target.type() != imagePoints.type()) {
+                alignedImage.convertTo(alignedImage, target.type());
+            }
             target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
             IJ.log("[PREPROCESS] After copy: " + alignedImage);
             System.gc();
