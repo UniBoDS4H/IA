@@ -16,12 +16,9 @@ import java.io.File;
 
     public class SaveImagesGUI extends JFrame implements StandardGUI {
     private final JButton saveButton;
-        private final SaveImagesPanel imagesPane;
+    private final SaveImagesPanel imagesPane;
     private final JFileChooser fileChooser;
     private final ImageController controller;
-
-
-
     public SaveImagesGUI(final ImageController controller){
         this.setTitle("Save");
         this.setSize();

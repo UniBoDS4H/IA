@@ -84,7 +84,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcPanel.fill = GridBagConstraints.BOTH;
         gbcPanel.weightx = 1;
         gbcPanel.weighty = 1;
-        this.panel.add(new JScrollPane(this.imagesPreview), gbcPanel);
+        this.panel.add(this.imagesPreview, gbcPanel);
 
         GridBagConstraints gbcAuto = new GridBagConstraints();
         gbcAuto.gridx = 0;
@@ -399,9 +399,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
             final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.ALGORITHM);
             loadingGUI.showDialog();
+            loadingGUI.setMaxProgress();
             while (alignmentControllerInterface.isAlive()) {
                 try {
-                    Thread.sleep(2000);
+                    loadingGUI.updateProgress();
+                    Thread.sleep(500);
                 } catch (final InterruptedException e) {
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),

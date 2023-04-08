@@ -26,8 +26,8 @@ public class SaveImagesPanel extends JPanel {
 
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         this.controller.getAlignedImages().forEach(image->{
-            final SaveListItem panel = new SaveListItem(image, this.controller.getAlignedImages().indexOf(image));
-            panel.setPreferredSize(this.getPreferredSize());
+            final SaveListItem panel = new SaveListItem(image, this.controller.getAlignedImages().indexOf(image)+1);
+            //panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
             panel.setPreferredSize(new Dimension(0,this.getHeight()/6)); // Imposta la dimensione preferita del pannello di anteprima
             innerPanel.add(panel);
