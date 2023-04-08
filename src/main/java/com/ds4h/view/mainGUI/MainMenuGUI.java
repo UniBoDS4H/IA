@@ -353,6 +353,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 JOptionPane.ERROR_MESSAGE);
                     }catch(OutOfMemoryError ex){
                         loadingGUI.close();
+                        this.automaticAlignment.setEnabled(true);
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
                                 "Warning",
@@ -462,6 +463,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         loadingGUI.close();
                     }catch (OutOfMemoryError ex){
                         loadingGUI.close();
+                        this.automaticAlignment.setEnabled(true);
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
                                 "Warning",

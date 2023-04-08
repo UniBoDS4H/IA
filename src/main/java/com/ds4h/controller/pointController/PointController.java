@@ -84,5 +84,6 @@ public class PointController {
 
     public void clearProject(){
         this.pointManager.clearProject();
+        System.gc();
     }
 }
