@@ -30,15 +30,16 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.setSize(new Dimension(300, 200));
         this.addComponents();
         this.addListeners();
-        this.setVisible(true);
     }
+
     public void close(){
         this.setVisible(false);
+        this.dispose();
     }
 
     @Override
     public void showDialog() {
-
+        this.setVisible(true);
     }
 
     @Override
