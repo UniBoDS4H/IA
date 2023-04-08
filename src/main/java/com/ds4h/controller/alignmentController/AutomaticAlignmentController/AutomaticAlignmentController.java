@@ -77,7 +77,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     @Override
-    public CompositeImage getAlignedImagesAsStack() {
+    public CompositeImage getAlignedImagesAsStack() throws RuntimeException{
         if(!this.getAlignedImages().isEmpty()){
             final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
@@ -91,13 +91,13 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                 stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
                 index++;
             }
-            final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
             try {
+                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
                 composite.setLuts(luts);
+                return composite;
             }catch (Exception e){
-                IJ.log(e.getMessage());
+                throw new RuntimeException(e.getMessage());
             }
-            return composite;
         }
         throw new RuntimeException("stack is empty");
     }
