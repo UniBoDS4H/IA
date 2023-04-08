@@ -26,8 +26,8 @@ public class Alignment implements Runnable{
     private AlignmentEnum type;
     private PointDetector pointDetector;
     private AlignmentAlgorithm algorithm;
-    private int status = 0;
-    private int total = 2;
+    private double status = 0;
+    private double total = 2;
 
     public Alignment(){
         this.thread = new Thread(this);
@@ -116,7 +116,6 @@ public class Alignment implements Runnable{
     private void auto() {
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
-        IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
         this.targetImage.clearPoints();
         boolean ransac = true;
         for(final ImagePoints image : this.imagesToAlign){
@@ -126,7 +125,7 @@ public class Alignment implements Runnable{
             image.clearPoints();
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(target, image);
-            this.status+=1; //
+            this.status+=1; //detected points
             IJ.log("[AUTOMATIC] End Detection");
             IJ.log("[AUTOMATIC] Number of points T: " + target.numberOfPoints());
             IJ.log("[AUTOMATIC] Number of points I: " + image.numberOfPoints());
@@ -139,12 +138,13 @@ public class Alignment implements Runnable{
                     ransac = false;
                 }
             }
+            IJ.log("[AUTOMATIC] Status: " + this.getStatus());
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
         System.gc();
-        IJ.log("[AUTOMATIC] Starting preprocess");
         if(images.size() == 0){
+            this.status =(int) total;
             throw new IllegalArgumentException("The detection has failed,\n" +
                     " please consider to expand the memory (by going to Edit > Options > Memory & Threads) and also increase the Threshold Factor.");
         }else {
@@ -154,12 +154,14 @@ public class Alignment implements Runnable{
             }else{
                 this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
             }
+            IJ.log("[AUTOMATIC] Starting preprocess");
             this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                     images,
                     this.algorithm), this.targetImage.getName()));
             this.status+=1; //pre process
-            IJ.log("[AUTOMATIC] End preprocess");
+            IJ.log("[AUTOMATIC] Status: " + this.getStatus());
 
+            IJ.log("[AUTOMATIC] End preprocess");
             IJ.log("[AUTOMATIC] Start aligning the images.");
             this.targetImage = null;
             images.forEach((key, value) -> {
@@ -167,6 +169,7 @@ public class Alignment implements Runnable{
                 IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
                 this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
                 this.status+=1; //warp image
+                IJ.log("[AUTOMATIC] Status: " + this.getStatus());
                 key.getMatImage().release();
                 value.clearPoints();
                 key.clearPoints();
@@ -174,6 +177,8 @@ public class Alignment implements Runnable{
                 value = null;
                 System.gc();
             });
+            this.status+=1;
+            IJ.log("[AUTOMATIC] Status: " + this.getStatus());
             images.clear();
             //this.alignedImages.forEach(i -> i.getAlignedImage().show());
             IJ.log("[AUTOMATIC] The alignment is done.");
@@ -196,6 +201,7 @@ public class Alignment implements Runnable{
         try {
             if(Objects.nonNull(this.targetImage)) {
                 this.status = 0;
+                this.total = 2;
                 if(type == AlignmentEnum.MANUAL){
                     manual();
                 }else if(type == AlignmentEnum.AUTOMATIC){
