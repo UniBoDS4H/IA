@@ -20,6 +20,7 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     private final AlignmentOutputGUI outputGUI;
 
     public ReuseGUI(final PointController pointController, final ImageController controller, MainMenuGUI mainGUI, AlignmentOutputGUI alignmentOutputGUI){
+        this.setTitle("Reuse");
         this.setSize();
         this.mainGUI = mainGUI;
         this.outputGUI = alignmentOutputGUI;

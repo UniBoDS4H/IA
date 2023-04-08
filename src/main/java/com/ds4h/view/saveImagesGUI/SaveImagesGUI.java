@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-    public class SaveImagesGUI extends ImageWindow implements StandardGUI {
+    public class SaveImagesGUI extends JFrame implements StandardGUI {
     private final JButton saveButton;
         private final SaveImagesPanel imagesPane;
     private final JFileChooser fileChooser;
@@ -23,7 +23,7 @@ import java.io.File;
 
 
     public SaveImagesGUI(final ImageController controller){
-        super("Save Images");
+        this.setTitle("Save");
         this.setSize();
         this.controller = controller;
         this.fileChooser = new JFileChooser();
