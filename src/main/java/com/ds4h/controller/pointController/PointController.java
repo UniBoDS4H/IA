@@ -11,6 +11,7 @@ import org.opencv.core.Point;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 public class PointController {
@@ -18,7 +19,7 @@ public class PointController {
     public PointController(){
         this.pointManager = new PointManager();
     }
-    public void loadImages(final List<File> paths) throws Exception {
+    public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
         System.gc();
         if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getCornerImages().size() > 0)) {

@@ -23,6 +23,7 @@ import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import com.ds4h.view.util.ImageCache;
+import ij.IJ;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -301,6 +302,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 final int result = this.fileChooser.showOpenDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.EXPORT);
+                    loadingGUI.showDialog();
                     final Thread exportThread = new Thread(() -> {
                         final File file = this.fileChooser.getSelectedFile();
                         try {
@@ -335,6 +337,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             if(result == JFileChooser.APPROVE_OPTION){
                 final File file = this.fileChooser.getSelectedFile();
                 final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.IMPORT);
+                loadingGUI.showDialog();
                 final Thread importThread = new Thread(() -> {
                     try {
                         ImportController.importProject(file, this.pointControler.getPointManager());
@@ -398,6 +401,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface){
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
             final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.ALGORITHM);
+            loadingGUI.showDialog();
             while (alignmentControllerInterface.isAlive()) {
                 try {
                     Thread.sleep(2000);
@@ -445,38 +449,42 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      * Open a File dialog in order to choose all the images for our tool
      */
     private void pickImages(){
-        try {
             final Thread loadingThread = new Thread(() -> {
+                final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.LOAD);
                 try {
                     final FileDialog fileDialog = new FileDialog(this, "Select Files");
                     fileDialog.setMode(FileDialog.LOAD);
                     fileDialog.setMultipleMode(true);
                     fileDialog.setVisible(true);
+                    loadingGUI.showDialog();
                     try {
                         this.pointControler.loadImages(Arrays.stream(fileDialog.getFiles()).collect(Collectors.toList()));
                         this.checkPointsForAlignment();
                         this.automaticAlignment.setEnabled(true);
+                        this.imagesPreview.showPreviewImages();
+                        loadingGUI.close();
                     }catch (OutOfMemoryError ex){
+                        loadingGUI.close();
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
                                 "Warning",
                                 JOptionPane.WARNING_MESSAGE);
+                    }catch (IllegalArgumentException | IOException ex){
+                        loadingGUI.close();
+                        JOptionPane.showMessageDialog(this,
+                                ex.getMessage(),
+                                "Errors",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (Exception e) {
+                    loadingGUI.close();
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-                this.imagesPreview.showPreviewImages();
             });
             loadingThread.start();
-        }catch (final Exception exception){
-            JOptionPane.showMessageDialog(this,
-                    exception.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     /**
