@@ -1,7 +1,5 @@
 package com.ds4h.view.loadingGUI;
 
-import com.ds4h.controller.directoryManager.DirectoryManager;
-import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 
@@ -9,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Objects;
 
 public class LoadingGUI extends JFrame implements StandardGUI {
@@ -19,6 +16,7 @@ public class LoadingGUI extends JFrame implements StandardGUI {
     private final JLabel loadingLabel, text;
 
     private final LoadingType loadingType;
+    private final JProgressBar progressBar;
 
     public LoadingGUI(final LoadingType loadingType){
         this.loadingType = loadingType;
@@ -27,7 +25,10 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.loadingLabel.setSize(new Dimension(20, 20));
         this.setLayout(new GridLayout(1, 2));
         this.text = new JLabel();
+        this.progressBar = new JProgressBar();
         this.setSize(new Dimension(300, 200));
+        this.progressBar.setValue(0);
+        this.progressBar.setStringPainted(true);
         this.addComponents();
         this.addListeners();
     }
@@ -58,6 +59,11 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.text.setText(this.loadingType.getDescription());
         IJ.log("[LOADING GUI] text: " + this.text.getText());
         this.add(this.loadingLabel, FlowLayout.LEFT);
+        this.add(this.progressBar);
         this.add(this.text);
+    }
+
+    public void updateProgress(int val) {
+        this.progressBar.setValue(val);
     }
 }

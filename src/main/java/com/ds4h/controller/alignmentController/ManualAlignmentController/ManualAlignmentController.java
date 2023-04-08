@@ -59,6 +59,12 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         }
         throw new RuntimeException("stack is empty");
     }
+
+    @Override
+    public int getStatus() {
+        return this.alignment.getStatus();
+    }
+
     /**
      *
      * @return

@@ -84,7 +84,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcPanel.fill = GridBagConstraints.BOTH;
         gbcPanel.weightx = 1;
         gbcPanel.weighty = 1;
-        this.panel.add(new JScrollPane(this.imagesPreview), gbcPanel);
+        this.panel.add(this.imagesPreview, gbcPanel);
 
         GridBagConstraints gbcAuto = new GridBagConstraints();
         gbcAuto.gridx = 0;
@@ -400,7 +400,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             loadingGUI.showDialog();
             while (alignmentControllerInterface.isAlive()) {
                 try {
-                    Thread.sleep(2000);
+                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "+ alignmentControllerInterface.getStatus());
+                    loadingGUI.updateProgress(alignmentControllerInterface.getStatus());
+                    Thread.sleep(500);
                 } catch (final InterruptedException e) {
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
