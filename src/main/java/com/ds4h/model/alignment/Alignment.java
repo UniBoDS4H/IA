@@ -26,6 +26,8 @@ public class Alignment implements Runnable{
     private AlignmentEnum type;
     private PointDetector pointDetector;
     private AlignmentAlgorithm algorithm;
+    private int status = 0;
+    private int total = 2;
 
     public Alignment(){
         this.thread = new Thread(this);
@@ -113,7 +115,7 @@ public class Alignment implements Runnable{
 
     private void auto() {
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
-
+        this.total += this.imagesToAlign.size();
         IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
         this.targetImage.clearPoints();
         boolean ransac = true;
@@ -124,33 +126,34 @@ public class Alignment implements Runnable{
             image.clearPoints();
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(target, image);
+            this.status+=1;
             IJ.log("[AUTOMATIC] End Detection");
+            IJ.log("[AUTOMATIC] Number of points T: " + target.numberOfPoints());
+            IJ.log("[AUTOMATIC] Number of points I: " + image.numberOfPoints());
             if(target.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
                 images.put(image, target);
+                this.total+=1;//this is for the warp;
                 if(target.numberOfPoints() < 3){
                     IJ.log("[AUTOMATIC] No RANSAC");
                     ransac = false;
                 }
             }
         }
-
-        //if we find at least 3 points in every image we can use ransac otherwise first available
-        if(ransac){
-            this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
-        }else{
-            this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
-        }
-
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
         System.gc();
-
         IJ.log("[AUTOMATIC] Starting preprocess");
         if(images.size() == 0){
             throw new IllegalArgumentException("The detection has failed,\n" +
                     " please consider to expand the memory (by going to Edit > Options > Memory & Threads) and also increase the Threshold Factor.");
         }else {
+            //if we find at least 3 points in every image we can use ransac otherwise first available
+            if(ransac){
+                this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
+            }else{
+                this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+            }
             this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                     images,
                     this.algorithm), this.targetImage.getName()));
@@ -176,6 +179,10 @@ public class Alignment implements Runnable{
         }
     }
 
+    public synchronized int getStatus(){
+        return this.status/this.total;
+    }
+
 
     /**
      * Inside this method we call the 'align' operation, It is strictly necessary that the 'align' method is present,
@@ -186,6 +193,7 @@ public class Alignment implements Runnable{
     public void run(){
         try {
             if(Objects.nonNull(this.targetImage)) {
+                this.status = 0;
                 if(type == AlignmentEnum.MANUAL){
                     manual();
                 }else if(type == AlignmentEnum.AUTOMATIC){

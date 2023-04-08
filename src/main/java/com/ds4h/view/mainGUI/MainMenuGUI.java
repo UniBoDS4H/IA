@@ -158,7 +158,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         if(this.pointControler.getCornerImagesImages().size() < 2){
             this.manualAlignment.setEnabled(false);
-            this.automaticAlignment.setEnabled(false);
             this.automaticAlignment.setToolTipText("<html>" +
                     "You have to load at least 2 images</html>");
             this.manualAlignment.setToolTipText("<html>" +
@@ -338,7 +337,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 final Thread importThread = new Thread(() -> {
                     try {
                         ImportController.importProject(file, this.pointControler.getPointManager());
-
                         loadingGUI.close();
                         JOptionPane.showMessageDialog(this,
                                 "The import is done.",

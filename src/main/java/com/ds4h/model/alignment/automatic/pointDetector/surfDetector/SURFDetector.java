@@ -2,7 +2,10 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
@@ -40,7 +43,6 @@ public class SURFDetector extends PointDetector {
                     this.createPyramid(targetImage.getGrayScaleMat(), super.getScalingFactor()) :
                     targetImage.getGrayScaleMat();
             grayTarget = targetImage.toImprove() ? super.improveMatrix(grayTarget) : grayTarget;
-
             final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
             final Mat descriptors2 = new Mat();
             this.detector.detectAndCompute(grayTarget, new Mat(), keypoints2, descriptors2); // Detect and save the keypoints
