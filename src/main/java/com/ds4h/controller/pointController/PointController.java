@@ -7,6 +7,7 @@ import com.ds4h.model.reuse.ReuseSources;
 import com.ds4h.model.util.ImagingConversion;
 import com.ds4h.model.util.MemoryController;
 import com.ds4h.view.pointSelectorGUI.MenuItem;
+import ij.IJ;
 import org.opencv.core.Point;
 
 import java.io.File;
@@ -83,5 +84,6 @@ public class PointController {
 
     public void clearProject(){
         this.pointManager.clearProject();
+        System.gc();
     }
 }

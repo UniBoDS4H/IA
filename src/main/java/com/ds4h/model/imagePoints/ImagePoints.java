@@ -108,13 +108,11 @@ public class ImagePoints extends ImagePlus{
         if(ip instanceof ColorProcessor){
             this.type = CvType.CV_8UC3;
         }else if(ip instanceof FloatProcessor) {
-            //TODO: Check depth
-
-            this.type = CvType.CV_32FC1;
+            this.type = ip.getBitDepth() == 3 ? CvType.CV_32FC3 : CvType.CV_32FC1;
         }else if(ip instanceof ShortProcessor){
-            this.type = CvType.CV_16UC1;
+            this.type = ip.getBitDepth() == 3 ? CvType.CV_16UC3 : CvType.CV_16UC1;
         }else if(ip instanceof ByteProcessor){
-            this.type = CvType.CV_8UC1;
+            this.type = ip.getBitDepth() == 3 ? CvType.CV_8UC3 : CvType.CV_8UC1;
         }
     }
 

@@ -20,17 +20,24 @@ public abstract class PointDetector {
     private int scalingFactor = 1;
     final MatCache matCache;
 
-
-
-
+    /**
+     *
+     */
     public PointDetector(){
         this.matCache = new MatCache();
     }
 
+    /**
+     *
+     * @return
+     */
     public MatCache getMatCache(){
         return this.matCache;
     }
 
+    /**
+     *
+     */
     public void clearCache(){
         this.matCache.releaseMatrix();
     }
@@ -51,12 +58,20 @@ public abstract class PointDetector {
         }
     }
 
+    /**
+     *
+     * @param scaling
+     */
     public void setScalingFactor(final int scaling){
         if(scaling >= PointDetector.LOWER_BOUND && scaling <= PointDetector.UPPER_BOUND){
             this.scalingFactor = scaling;
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getScalingFactor(){
         return this.scalingFactor;
     }

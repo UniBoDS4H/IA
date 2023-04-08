@@ -10,6 +10,9 @@ import ij.IJ;
 
 import java.awt.*;
 
+/**
+ *
+ */
 public enum Detectors {
 
     AKAZE("AKAZE", new AKAZEDetector(), 0),
@@ -35,31 +38,55 @@ public enum Detectors {
         this.scaling = PointDetector.DEFAULT;
     }
 
-
+    /**
+     *
+     * @param factor
+     */
     public void setFactor(final double factor){
         if(factor >= 0){
             this.factor = (factor/10);
         }
     }
 
+    /**
+     *
+     * @param scaling
+     */
     public void setScaling(final int scaling){
         if(scaling >= Detectors.LOWER_BOUND && scaling <= Detectors.UPPER_BOUND){
             this.scaling = scaling;
             IJ.log("[DETECTORS] Set scaling: " + scaling);
         }
     }
+
+    /**
+     *
+     * @return
+     */
     public double getFactor(){
         return this.factor;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getScaling(){
         return this.scaling;
     }
 
+    /**
+     *
+     * @return
+     */
     public PointDetector pointDetector(){
         return this.pointDetector;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString(){
         return this.name;

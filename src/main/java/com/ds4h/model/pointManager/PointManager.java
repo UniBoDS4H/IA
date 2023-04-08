@@ -85,5 +85,6 @@ public class PointManager {
     public void clearProject(){
         this.sourceImage = Optional.empty();
         this.imagesWithPoints.clear();
+        System.gc();
     }
 }

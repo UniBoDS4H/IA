@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  */
 public class ReuseSources {
 
+    /**
+     *
+     */
     private ReuseSources(){
 
     }
@@ -28,16 +31,12 @@ public class ReuseSources {
      * @param pointManager : Inside the corner manager we will be going to store the now images
      * @param images : The list of images that we want to use
      */
-    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) throws FileNotFoundException {
+    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) {
         if(!images.isEmpty()) {
-            //final String path = SaveImages.saveTMPImages(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()));
-            final List<ImagePoints> backUpList = pointManager.getCornerImages();
-            try {
-                pointManager.clearList();
-                pointManager.addImages(ReuseSources.convertImages(images));
-            }catch(final Exception ex){
-                throw ex;
-            }
+            pointManager.clearList();
+            pointManager.clearProject();
+            System.gc();
+            pointManager.addImages(ReuseSources.convertImages(images));
         }
     }
 
