@@ -4,8 +4,6 @@ import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
-import com.ds4h.view.util.ImageCache;
-
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
@@ -43,7 +41,7 @@ public class PreviewListItem extends JPanel {
         this.deleteButton.setContentAreaFilled(false);
         this.deleteButton.setOpaque(false);
         this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.imageLabel = new JLabel(new ImageIcon(ImageCache.getScaledImage(this.image)));
+        this.imageLabel = new JLabel(new ImageIcon(this.image.getProcessor().resize(40,40).getBufferedImage()));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image

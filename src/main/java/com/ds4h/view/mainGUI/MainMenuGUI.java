@@ -22,8 +22,6 @@ import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import com.ds4h.view.util.ImageCache;
-
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -256,7 +254,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         "Confirm operation",
                         JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
-                    ImageCache.clear();
                     this.checkPointsForAlignment();
                     this.pointControler.clearProject();
                     this.imagesPreview.clearPanels();

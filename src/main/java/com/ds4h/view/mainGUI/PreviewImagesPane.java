@@ -1,10 +1,7 @@
 package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.view.util.ImageCache;
 import ij.IJ;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -31,7 +28,6 @@ public class PreviewImagesPane extends JPanel {
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         IJ.log("[LOADING IMAGES] Start");
         long start = System.currentTimeMillis();
-        this.controller.getCornerImagesImages().forEach(ImageCache::getScaledImage);
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         System.gc();

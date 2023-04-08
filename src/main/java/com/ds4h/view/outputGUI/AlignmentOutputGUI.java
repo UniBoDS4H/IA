@@ -10,12 +10,10 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
-import com.ds4h.view.util.ImageCache;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
 import ij.process.LUT;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -76,9 +74,6 @@ public class AlignmentOutputGUI extends StackWindow {
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                controller.getAlignedImages().forEach(i->{
-                    new ImageIcon(ImageCache.getScaledImage(i));
-                });
                 System.gc();
                 reuseItem.setEnabled(true);
             }
