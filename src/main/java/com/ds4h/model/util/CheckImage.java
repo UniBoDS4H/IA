@@ -1,5 +1,6 @@
 package com.ds4h.model.util;
 
+import ij.IJ;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -18,7 +19,7 @@ public class CheckImage {
     public static boolean checkImage(final File file) throws IllegalArgumentException{
         if(Objects.nonNull(file) && file.isFile()) {
             final String fileExtension = FilenameUtils.getExtension(file.getName());
-            if(CheckImage.EXTENSIONS.contains(fileExtension.toLowerCase())){
+            if(!fileExtension.isEmpty() && CheckImage.EXTENSIONS.contains(fileExtension.toLowerCase())){
                 return CheckImage.checkSize(file);
             }
         }
