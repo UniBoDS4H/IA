@@ -126,7 +126,7 @@ public class Alignment implements Runnable{
             image.clearPoints();
             IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(target, image);
-            this.status+=1;
+            this.status+=1; //
             IJ.log("[AUTOMATIC] End Detection");
             IJ.log("[AUTOMATIC] Number of points T: " + target.numberOfPoints());
             IJ.log("[AUTOMATIC] Number of points I: " + image.numberOfPoints());
@@ -157,6 +157,7 @@ public class Alignment implements Runnable{
             this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                     images,
                     this.algorithm), this.targetImage.getName()));
+            this.status+=1; //pre process
             IJ.log("[AUTOMATIC] End preprocess");
 
             IJ.log("[AUTOMATIC] Start aligning the images.");
@@ -165,6 +166,7 @@ public class Alignment implements Runnable{
                 value.getMatImage().release();
                 IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
                 this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
+                this.status+=1; //warp image
                 key.getMatImage().release();
                 value.clearPoints();
                 key.clearPoints();
