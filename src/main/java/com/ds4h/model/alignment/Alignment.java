@@ -119,8 +119,6 @@ public class Alignment implements Runnable{
         IJ.log("[AUTOMATIC] Scaling Factor: " + this.pointDetector.getScalingFactor());
         this.targetImage.clearPoints();
         boolean ransac = true;
-        Progress.clear();
-        Progress.setMaxProgress(this.imagesToAlign.size()*2);
         for(final ImagePoints image : this.imagesToAlign){
             final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
                     this.targetImage.toImprove(),
@@ -141,7 +139,6 @@ public class Alignment implements Runnable{
                     ransac = false;
                 }
             }
-            Progress.increase();
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
@@ -176,7 +173,6 @@ public class Alignment implements Runnable{
                 key = null;
                 value = null;
                 System.gc();
-                Progress.increase();
             });
             images.clear();
             //this.alignedImages.forEach(i -> i.getAlignedImage().show());
@@ -186,7 +182,7 @@ public class Alignment implements Runnable{
     }
 
     public synchronized int getStatus(){
-        return (this.status/this.total) * 100;
+        return (this.status*100/this.total);
     }
 
 

@@ -98,6 +98,11 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         throw new RuntimeException("stack is empty");
     }
 
+    @Override
+    public int getStatus() {
+        return this.alignment.getStatus();
+    }
+
     public AlignmentAlgorithm getAlgorithm() {
         return this.algorithm;
     }

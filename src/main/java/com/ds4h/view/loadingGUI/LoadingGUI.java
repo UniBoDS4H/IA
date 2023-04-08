@@ -1,8 +1,5 @@
 package com.ds4h.view.loadingGUI;
 
-import com.ds4h.controller.directoryManager.DirectoryManager;
-import com.ds4h.controller.opencvController.OpencvController;
-import com.ds4h.model.alignment.Progress;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 
@@ -10,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Objects;
 
 public class LoadingGUI extends JFrame implements StandardGUI {
@@ -31,6 +27,8 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.text = new JLabel();
         this.progressBar = new JProgressBar();
         this.setSize(new Dimension(300, 200));
+        this.progressBar.setValue(0);
+        this.progressBar.setStringPainted(true);
         this.addComponents();
         this.addListeners();
     }
@@ -65,12 +63,7 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.add(this.text);
     }
 
-    public void setMaxProgress(){
-        this.progressBar.setValue(0);
-        this.progressBar.setStringPainted(true);
-    }
-    public void updateProgress() {
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA"+Progress.getProgress());
-        this.progressBar.setValue(Progress.getProgress());
+    public void updateProgress(int val) {
+        this.progressBar.setValue(val);
     }
 }

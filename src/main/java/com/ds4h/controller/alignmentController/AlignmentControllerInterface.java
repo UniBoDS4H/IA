@@ -18,4 +18,6 @@ public interface AlignmentControllerInterface {
 
     public String name();
     public CompositeImage getAlignedImagesAsStack();
+
+    int getStatus();
 }

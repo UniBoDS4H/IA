@@ -398,10 +398,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
             final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.ALGORITHM);
             loadingGUI.showDialog();
-            loadingGUI.setMaxProgress();
             while (alignmentControllerInterface.isAlive()) {
                 try {
-                    loadingGUI.updateProgress();
+                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "+ alignmentControllerInterface.getStatus());
+                    loadingGUI.updateProgress(alignmentControllerInterface.getStatus());
                     Thread.sleep(500);
                 } catch (final InterruptedException e) {
                     JOptionPane.showMessageDialog(this,
