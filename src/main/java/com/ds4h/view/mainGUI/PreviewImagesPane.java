@@ -26,14 +26,6 @@ public class PreviewImagesPane extends JPanel {
         this.innerPanel.removeAll();
         try {
             innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-            IJ.log("[LOADING IMAGES] Start");
-            long start = System.currentTimeMillis();
-            this.controller.getCornerImagesImages().forEach(ImageCache::getScaledImage);
-            long finish = System.currentTimeMillis();
-            long timeElapsed = finish - start;
-            System.gc();
-            IJ.log("[LOADING IMAGES] TIme elapsed" + timeElapsed + "ms");
-
             this.controller.getCornerImagesImages().forEach(image -> {
                 final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image) + 1);
                 panel.setPreferredSize(this.getPreferredSize());
