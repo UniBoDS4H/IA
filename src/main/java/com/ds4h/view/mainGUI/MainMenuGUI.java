@@ -69,7 +69,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
-
+        this.automaticAlignment.setEnabled(false);
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
         this.panel.setLayout(new GridBagLayout());
@@ -159,6 +159,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         if(this.pointControler.getCornerImagesImages().size() < 2){
             this.manualAlignment.setEnabled(false);
+            this.automaticAlignment.setToolTipText("<html>" +
+                    "You have to load at least 2 images</html>");
             this.manualAlignment.setToolTipText("<html>" +
                     "You have to load at least 2 images</html>");
         }else{
@@ -340,7 +342,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 "The import is done.",
                                 "Import Project",
                                 JOptionPane.INFORMATION_MESSAGE);
-
+                        this.automaticAlignment.setEnabled(true);
                     } catch (FileNotFoundException e) {
                         loadingGUI.close();
                         JOptionPane.showMessageDialog(this,
@@ -451,6 +453,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     try {
                         this.pointControler.loadImages(Arrays.stream(fileDialog.getFiles()).collect(Collectors.toList()));
                         this.checkPointsForAlignment();
+                        this.automaticAlignment.setEnabled(true);
                     }catch (OutOfMemoryError ex){
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
