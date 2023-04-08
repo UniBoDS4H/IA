@@ -144,7 +144,7 @@ public class Alignment implements Runnable{
         this.imagesToAlign.clear();
         System.gc();
         if(images.size() == 0){
-            this.status =(int) total;
+            this.status = total;
             throw new IllegalArgumentException("The detection has failed,\n" +
                     " please consider to expand the memory (by going to Edit > Options > Memory & Threads) and also increase the Threshold Factor.");
         }else {
