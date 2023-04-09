@@ -53,8 +53,6 @@ public class ImagePoints extends ImagePlus{
     /**
      *
      * @param path
-     * @param rows
-     * @param cols
      * @param matAddress
      */
     public ImagePoints(final String path, final long matAddress) {

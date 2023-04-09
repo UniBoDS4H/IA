@@ -54,7 +54,14 @@ public class AffineAlignment implements AlignmentAlgorithm{
     }
 
     @Override
-    public void transform(Mat source, Mat destination, Mat H) {
+    public void transform(final Mat source, final Mat destination, final Mat H) {
+        /*
+        if(H.rows() <=2){
+            Core.transform(source,destination,H);
+        }else{
+            Core.perspectiveTransform(source,destination,H);
+        }
+        */
         Core.transform(source,destination,H);
     }
 
@@ -64,7 +71,7 @@ public class AffineAlignment implements AlignmentAlgorithm{
     }
 
     @Override
-    public void setPointOverload(PointOverloadEnum overload){
+    public void setPointOverload(final PointOverloadEnum overload){
         this.overload = overload;
     }
 

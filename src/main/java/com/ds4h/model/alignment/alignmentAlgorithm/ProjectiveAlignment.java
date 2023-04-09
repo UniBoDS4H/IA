@@ -35,7 +35,7 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
     }
 
     @Override
-    public void transform(Mat source, Mat destination, Mat H) {
+    public void transform(final Mat source, Mat destination, final Mat H) {
         Core.perspectiveTransform(source,destination,H);
     }
 
@@ -45,7 +45,7 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
     }
 
     @Override
-    public void setPointOverload(PointOverloadEnum overload){
+    public void setPointOverload(final PointOverloadEnum overload){
         this.overload = overload;
     }
 

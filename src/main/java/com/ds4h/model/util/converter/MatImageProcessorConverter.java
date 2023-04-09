@@ -11,8 +11,14 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.Objects;
 
+/**
+ *
+ */
 public class MatImageProcessorConverter {
 
+    /**
+     *
+     */
     private MatImageProcessorConverter(){
 
     }
@@ -32,11 +38,6 @@ public class MatImageProcessorConverter {
         matrix.release();
         matrix = null;
         int[] iData = (int[]) cp.getPixels();
-        /*
-        if(matrix.channels() != 3){
-            matrix.convertTo(matrix, CvType.CV_8UC3);
-        }
-         */
         for (int i = 0; i < width * height; i++) {
             int red = pixels[i * 3 + 0] & 0xff;
             int grn = pixels[i * 3 + 1] & 0xff;
@@ -68,7 +69,6 @@ public class MatImageProcessorConverter {
             //We use the LUT table for the colors
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
-
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
         matrix.get(0,0, (short[]) shortProcessor.getPixels());
         matrix.release();
@@ -120,6 +120,7 @@ public class MatImageProcessorConverter {
         matrix.get(0,0, (float[])floatProcessor.getPixels());
         matrix.release();
         matrix = null;
+        System.gc();
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return floatProcessor;
     }
