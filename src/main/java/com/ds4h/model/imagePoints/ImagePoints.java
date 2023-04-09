@@ -57,13 +57,15 @@ public class ImagePoints extends ImagePlus{
      * @param cols
      * @param matAddress
      */
-    public ImagePoints(final String path, final int rows, final int cols, final int type,  final long matAddress) {
-        this(path);
-        this.rows = rows;
-        this.cols = cols;
-        this.address = matAddress;
-        this.type = type;
-        IJ.log("New ImagePoints --> Rows: " + this.rows + " Cols: " + this.cols + " Address: " + this.address);
+    public ImagePoints(final String path, final long matAddress) {
+        super(Objects.requireNonNull(path));
+        this.path = path;
+        this.matrix = new Mat(matAddress);
+        this.rows = this.matrix.rows();
+        this.cols = this.matrix.cols();
+        this.matSize = matrix.size();
+        this.type = matrix.type();
+        this.pointList = new ArrayList<>(5);
     }
 
     /**
