@@ -1,8 +1,7 @@
 package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
-import com.ds4h.model.alignment.alignmentAlgorithm.PointOverloadEnum;
+import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.MatCache;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
@@ -101,7 +100,6 @@ public class Alignment implements Runnable{
 
     private void manual(){
         assert this.targetImage.getProcessor() != null;
-
         final ImagePoints target =  TargetImagePreprocessing.manualProcess(this.targetImage, this.imagesToAlign, this.algorithm, this.targetImage.getProcessor());
         this.alignedImages.add(new AlignedImage(target.getImagePlus().getProcessor(), target.getName()));
         IJ.log("[MANUAL] Start alignment.");
@@ -118,6 +116,7 @@ public class Alignment implements Runnable{
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
         boolean ransac = true;
+        final boolean equalsToLimit = this.algorithm instanceof TranslationalAlignment || this.algorithm instanceof AffineAlignment;
         for(final ImagePoints image : this.imagesToAlign){
             final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
                     this.targetImage.toImprove(),
@@ -129,14 +128,19 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] End Detection");
             IJ.log("[AUTOMATIC] Number of points T: " + target.numberOfPoints());
             IJ.log("[AUTOMATIC] Number of points I: " + image.numberOfPoints());
-            if(target.numberOfPoints() >= this.algorithm.getLowerBound()){
+            if(equalsToLimit && target.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
                 images.put(image, target);
-                this.total+=1;//this is for the warp;
-                if(target.numberOfPoints() < 3){
+                this.total += 1;//this is for the warp;
+                if (target.numberOfPoints() < 3) {
                     IJ.log("[AUTOMATIC] No RANSAC");
                     ransac = false;
                 }
+            }else if(target.numberOfPoints() == this.algorithm.getLowerBound()){
+                IJ.log("[AUTOMATIC] Inside ");
+                images.put(image, target);
+                this.total += 1;//this is for the warp;
+
             }
         }
         this.pointDetector.clearCache();
