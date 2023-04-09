@@ -67,11 +67,10 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                         Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                     }
                     final AlignedImage finalImg = new AlignedImage(transformationMatrix,
-                            MatImageProcessorConverter.convert(alignedImage, imageToShift.getName(), ip),
+                            MatImageProcessorConverter.convert(alignedImage, ip),
                             imageToShift.getName());
                     ip = null;
                     System.gc();
-
                     return finalImg;
                 }else{
                     throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +

@@ -39,7 +39,7 @@ public class TargetImagePreprocessing {
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
-        target.setProcessor(MatImageProcessorConverter.convert(target.getMatImage(), title, ip));
+        target.setProcessor(MatImageProcessorConverter.convert(target.getMatImage(), ip));
         target.setTitle(title);
         return target;
     }
@@ -75,8 +75,7 @@ public class TargetImagePreprocessing {
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
-        return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
-                title, ip);
+        return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(), ip);
     }
 
     //returns the mat of the new target and the shift of the points

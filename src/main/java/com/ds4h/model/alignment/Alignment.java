@@ -138,7 +138,6 @@ public class Alignment implements Runnable{
                     ransac = false;
                 }
             }
-            IJ.log("[AUTOMATIC] Status: " + this.getStatus());
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
@@ -159,8 +158,6 @@ public class Alignment implements Runnable{
                     images,
                     this.algorithm), this.targetImage.getName()));
             this.status+=1; //pre process
-            IJ.log("[AUTOMATIC] Status: " + this.getStatus());
-
             IJ.log("[AUTOMATIC] End preprocess");
             IJ.log("[AUTOMATIC] Start aligning the images.");
             this.targetImage = null;
@@ -178,11 +175,8 @@ public class Alignment implements Runnable{
                 System.gc();
             });
             this.status+=1;
-            IJ.log("[AUTOMATIC] Status: " + this.getStatus());
             images.clear();
-            //this.alignedImages.forEach(i -> i.getAlignedImage().show());
             IJ.log("[AUTOMATIC] The alignment is done.");
-            //this.alignedImages.clear();
         }
     }
 

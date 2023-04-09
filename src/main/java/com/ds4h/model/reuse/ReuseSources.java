@@ -3,6 +3,7 @@ package com.ds4h.model.reuse;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.projectManager.importProject.ImportProject;
 import com.ds4h.model.util.saveProject.SaveImages;
 
@@ -36,6 +37,7 @@ public class ReuseSources {
             pointManager.clearList();
             pointManager.clearProject();
             System.gc();
+            MemoryController.controllMemory();
             pointManager.addImages(ReuseSources.convertImages(images));
         }
     }

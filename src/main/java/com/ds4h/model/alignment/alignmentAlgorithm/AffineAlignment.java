@@ -24,8 +24,7 @@ public class AffineAlignment implements AlignmentAlgorithm{
                 final Mat alignedImage = new Mat();
                 final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                 Imgproc.warpAffine(imageToShiftMat, alignedImage, transformationMatrix, targetImage.getMatImage().size());
-                return new AlignedImage(transformationMatrix, MatImageProcessorConverter.convert(alignedImage,
-                        imageToShift.getName(), ip), imageToShift.getName());
+                return new AlignedImage(transformationMatrix, MatImageProcessorConverter.convert(alignedImage, ip), imageToShift.getName());
         }else {
             throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
                     "In order to use the Affine alignment you must use: " + AffineAlignment.LOWER_BOUND + " points.");

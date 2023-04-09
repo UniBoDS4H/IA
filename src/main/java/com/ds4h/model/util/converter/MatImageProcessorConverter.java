@@ -6,7 +6,10 @@ import ij.ImagePlus;
 import ij.process.*;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.Objects;
 
 public class MatImageProcessorConverter {
 
@@ -138,12 +141,11 @@ public class MatImageProcessorConverter {
     /**
      *
      * @param matrix
-     * @param fileName
      * @param ip
      * @return
      */
-    public static ImageProcessor convert(final Mat matrix, final String fileName, final ImageProcessor ip){
-        if(!matrix.empty() && !fileName.isEmpty()){
+    public static ImageProcessor convert(final Mat matrix, final ImageProcessor ip){
+        if(Objects.nonNull(matrix) && Objects.nonNull(ip) && !matrix.empty()){
             if(ip instanceof ColorProcessor){
                 return MatImageProcessorConverter.makeColorProcessor(matrix, matrix.cols(), matrix.rows());
             }else if(ip instanceof ShortProcessor){

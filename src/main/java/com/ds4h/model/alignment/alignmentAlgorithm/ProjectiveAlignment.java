@@ -23,8 +23,7 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
             final Mat alignedImage = new Mat();
             final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
             Imgproc.warpPerspective(imageToShiftMat, alignedImage, transformationMatrix, targetImage.getMatImage().size());
-            return new AlignedImage(transformationMatrix, MatImageProcessorConverter.convert(alignedImage,
-                    imageToShift.getName(), ip), imageToShift.getName());
+            return new AlignedImage(transformationMatrix, MatImageProcessorConverter.convert(alignedImage, ip), imageToShift.getName());
         }else{
             throw new IllegalArgumentException("For the Projective alignment the points must be at least: 4");
         }
