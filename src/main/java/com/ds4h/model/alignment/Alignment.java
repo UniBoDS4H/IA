@@ -42,7 +42,7 @@ public class Alignment implements Runnable{
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws IllegalArgumentException {
+    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws IllegalArgumentException, RuntimeException {
         if (Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
             if (!this.isAlive()) {
                 this.targetImage = pointManager.getSourceImage().get();
@@ -53,8 +53,9 @@ public class Alignment implements Runnable{
                 try {
                     this.imagesToAlign.addAll(pointManager.getImagesToAlign());
                     this.thread.start();
-                } catch (final Exception ex) {
-                    throw new IllegalArgumentException("Error: " + ex.getMessage());
+                } catch (Exception ex) {
+                    IJ.log("QUI");
+                    throw new RuntimeException("Error: " + ex.getMessage());
                 }
             }
         } else {
@@ -72,23 +73,22 @@ public class Alignment implements Runnable{
      * @param factor
      * @param scalingFactor
      * @throws IllegalArgumentException
+     * @throws RuntimeException
      */
     public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
                             final AlignmentEnum type,
                             final PointDetector pointDetector,
                             final double factor,
-                            final int scalingFactor) throws IllegalArgumentException{
+                            final int scalingFactor) throws IllegalArgumentException, RuntimeException{
         if(Objects.nonNull(pointManager) &&
                 Objects.nonNull(algorithm) &&
                 Objects.nonNull(type) &&
                 Objects.nonNull(pointDetector) &&
                 factor >= 0 &&
                 scalingFactor >= 1) {
-
             this.pointDetector = (pointDetector);
             this.pointDetector.setFactor(factor);
             this.pointDetector.setScalingFactor(scalingFactor);
-
             this.alignImages(pointManager, algorithm, type);
         }else{
             throw new IllegalArgumentException("One of the argument for the alignment are not correct.\n" +
@@ -111,7 +111,7 @@ public class Alignment implements Runnable{
         this.targetImage = null;
     }
 
-    private void auto() {
+    private void auto() throws RuntimeException{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
@@ -148,7 +148,7 @@ public class Alignment implements Runnable{
         System.gc();
         if(images.size() == 0){
             this.status = total;
-            throw new IllegalArgumentException("The detection has failed,\n" +
+            throw new RuntimeException("The detection has failed,\n" +
                     " please consider to expand the memory (by going to Edit > Options > Memory & Threads) and also increase the Threshold Factor.");
         }else {
             //if we find at least 3 points in every image we can use ransac otherwise first available
@@ -195,7 +195,7 @@ public class Alignment implements Runnable{
      * In order to perform the alignment It is necessary that the targetImage is present.
      */
     @Override
-    public void run(){
+    public void run() throws RuntimeException{
         try {
             if(Objects.nonNull(this.targetImage)) {
                 this.status = 0;
@@ -207,8 +207,10 @@ public class Alignment implements Runnable{
                 }
             }
             this.thread = new Thread(this);
-        } catch (final Exception ex) {
+        } catch (final RuntimeException ex) {
             this.thread = new Thread(this);
+            IJ.log("Inside RUN");
+            //TODO: understand how to throw this exception outside this method.
             throw ex;
         }
     }
