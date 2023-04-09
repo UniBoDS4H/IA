@@ -48,6 +48,7 @@ public class ReuseSources {
                 .map(imagePlus -> {
                     final ImagePoints image = new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor());
                     image.setTitle(imagePlus.getTitle());
+                    imagePlus.setProcessor(null);
                     return image;
                 })
                 .collect(Collectors.toList());

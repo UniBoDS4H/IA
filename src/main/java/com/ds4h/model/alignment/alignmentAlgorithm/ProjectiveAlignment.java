@@ -4,6 +4,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.process.ImageProcessor;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
@@ -31,7 +32,25 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
 
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints) {
-        return Imgproc.getPerspectiveTransform(srcPoints, dstPoints);
+        //return Imgproc.getPerspectiveTransform(srcPoints, dstPoints); THIS IS THE ORIGINAL!!
+        switch (this.getPointOverload()) {
+            case FIRST_AVAILABLE:
+                MatOfPoint2f newSrcPoints = new MatOfPoint2f();
+                MatOfPoint2f newDstPoints = new MatOfPoint2f();
+                if(srcPoints.toList().size() > this.getLowerBound()){
+                    newSrcPoints.fromList(srcPoints.toList().subList(0, this.getLowerBound()));
+                    newDstPoints.fromList(dstPoints.toList().subList(0, this.getLowerBound()));
+                }else{
+                    newSrcPoints.fromList(srcPoints.toList());
+                    newDstPoints.fromList(dstPoints.toList());
+                }
+                return Calib3d.estimateAffine2D(newSrcPoints, newDstPoints, new Mat(), Calib3d.LMEDS);
+            case RANSAC:
+                return Calib3d.estimateAffine2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 5, 2000, 0.99);
+            case MINIMUM_LAST_SQUARE:
+                return Calib3d.estimateAffine2D(srcPoints, dstPoints, new Mat(), Calib3d.LMEDS);
+        }
+        throw new IllegalArgumentException("The point overload is not correct.");
     }
 
     @Override

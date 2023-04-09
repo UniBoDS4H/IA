@@ -53,11 +53,17 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
                 index++;
             }
-            CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
-            composite.setLuts(luts);
-            return composite;
+            try {
+                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
+                composite.setLuts(luts);
+                return composite;
+            }catch (Exception e){
+                throw e;
+            }
         }
-        throw new RuntimeException("stack is empty");
+        throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
+                "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +
+                "increase the Threshold Factor and change the \"Algorithm\".");
     }
 
     @Override

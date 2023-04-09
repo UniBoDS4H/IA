@@ -412,23 +412,20 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     return;
                 }
             }
-            if (alignmentControllerInterface.getAlignedImages().size() > 0) {
-                try {
-                    if (alignmentControllerInterface instanceof ManualAlignmentController) {
-                        new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
-                    } else {
-                        new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
-                    }
-                }catch (Exception e){
-                    JOptionPane.showMessageDialog(this,
-                            e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    loadingGUI.close();
+            try {
+                if (alignmentControllerInterface instanceof ManualAlignmentController) {
+                    new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
+                } else {
+                    new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
                 }
+            }catch (Exception e){
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 loadingGUI.close();
-
             }
+            loadingGUI.close();
         });
         pollingSemiautomaticAlignment.start();
     }

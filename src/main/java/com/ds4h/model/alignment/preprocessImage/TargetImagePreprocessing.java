@@ -24,17 +24,15 @@ public class TargetImagePreprocessing {
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         IJ.log("[MANUAL PREPROCESS] Starting manual process.");
         ImagePoints target = new ImagePoints(targetImage.getPath());
-        final String title = targetImage.getTitle();
+        final String title = targetImage.getTitle().isEmpty() ? "AlignedImage.tif" : target.getTitle();
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
-            //final MatOfPoint2f points = new MatOfPoint2f();
-            //points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
             List<Point> points = (target.getListPoints()
                     .stream()
                     .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
                     .collect(Collectors.toList()));
-            target = new ImagePoints(target.getTitle(), res.getFirst().clone());
+            target = new ImagePoints(title, res.getFirst());
             target.addPoints(points);
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");

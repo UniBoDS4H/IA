@@ -99,7 +99,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                 throw new RuntimeException("Something went wrong with the creation of the stack.");
             }
         }
-        throw new RuntimeException("stack is empty");
+        throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
+                "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +
+                "increase the Threshold Factor and change the \"Algorithm\".");
     }
 
     @Override
