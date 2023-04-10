@@ -83,7 +83,7 @@ public class PointController {
     }
 
     public void clearProject(){
-        this.pointManager.getImagesToAlign().forEach(image -> image.setProcessor(null));
+        this.pointManager.getImagesToAlign().forEach(image -> image = null);
         this.pointManager.clearProject();
         System.gc();
     }
