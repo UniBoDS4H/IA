@@ -29,7 +29,7 @@ public class SaveImages {
     public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
         final String dir = DirectoryCreator.createDirectory(path, DIRECTORY);
         if(!dir.isEmpty()){
-            SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path+"/" + dir);
+            SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path+"/"+dir);
             SaveMatrix.saveMatrix(images, path+"/"+dir);
         }else{
             SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path);
@@ -58,7 +58,7 @@ public class SaveImages {
 
 
     public static void save(final List<ImagePlus> images, final String path){
-        images.stream().parallel().forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
+        images.forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
     }
 
     public static void save(final ImagePlus image, final String path){
