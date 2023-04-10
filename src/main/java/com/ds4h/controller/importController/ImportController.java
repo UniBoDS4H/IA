@@ -4,7 +4,6 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.projectManager.importProject.ImportProject;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
