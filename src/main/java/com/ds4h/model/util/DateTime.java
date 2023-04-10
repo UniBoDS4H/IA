@@ -2,9 +2,6 @@ package com.ds4h.model.util;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.Optional;
-
 public class DateTime {
     private final LocalDate today;
     private final LocalTime now;

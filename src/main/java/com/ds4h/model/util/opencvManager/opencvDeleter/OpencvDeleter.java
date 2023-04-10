@@ -22,6 +22,9 @@ public class OpencvDeleter {
 
     }
 
+    /**
+     *
+     */
     public static void deleteOpenCV(){
         OpencvDeleter.delete(TEMPORARY_PATH, OpenCVLoader.TMP_LIBRARY_NAME);
     }
