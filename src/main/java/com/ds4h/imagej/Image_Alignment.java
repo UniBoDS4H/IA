@@ -14,12 +14,12 @@ import java.awt.*;
 
 /**
  * DS4H Team:
- * @author Iorio Matteo
- * @author Vincenzi Fabio
+ * @author Iorio Matteo, matteo.iorio01@gmail.com
+ * @author Vincenzi Fabio, fabio.vincenzi2001@gmail.com
  */
-public class Process_Pixels implements PlugIn {
-	public static void main(String[] args) throws Exception {
-		new Process_Pixels().run(null);
+public class Image_Alignment implements PlugIn {
+	public static void main(String[] args) {
+		new Image_Alignment().run(null);
 	}
 
 
