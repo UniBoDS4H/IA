@@ -3,9 +3,6 @@ package com.ds4h.model.alignedImage;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,7 +14,7 @@ import java.util.Optional;
 public class AlignedImage {
     private final ImageProcessor alignedImage;
     private final String name;
-    private final Optional<Mat> registrationMatrix;
+    private final Mat registrationMatrix;
 
     /**
      * Constructor of the AlignedImage. An AlignedImage is the result of the Alignment Algorithm.
@@ -27,7 +24,7 @@ public class AlignedImage {
     public AlignedImage(final Mat registrationMatrix,  final ImageProcessor image, final String name){
         this.alignedImage = image;
         this.name = name;
-        this.registrationMatrix = Optional.of(registrationMatrix);
+        this.registrationMatrix = registrationMatrix;
     }
     /**
      * Constructor of the AlignedImage. An AlignedImage is the result of the Alignment Algorithm.
@@ -35,7 +32,7 @@ public class AlignedImage {
      * @param image : The aligned image
      */
     public AlignedImage(final ImageProcessor image, final String name){
-        this.registrationMatrix = Optional.empty();
+        this.registrationMatrix = null;
         this.alignedImage = image;
         this.name = name;
     }
@@ -53,7 +50,7 @@ public class AlignedImage {
      * @return the registration matrix
      */
     public Optional<Mat> getRegistrationMatrix(){
-        return this.registrationMatrix;
+        return Optional.ofNullable(this.registrationMatrix);
     }
     
 

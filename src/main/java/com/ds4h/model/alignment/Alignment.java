@@ -2,7 +2,6 @@ package com.ds4h.model.alignment;
 
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
-import com.ds4h.model.alignment.automatic.pointDetector.MatCache;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
@@ -26,7 +25,7 @@ public class Alignment implements Runnable{
     private PointDetector pointDetector;
     private AlignmentAlgorithm algorithm;
     private double status = 0;
-    private double total = 2;
+    private double total = 2; //Preprocess and Target image
 
     public Alignment(){
         this.thread = new Thread(this);
@@ -42,7 +41,7 @@ public class Alignment implements Runnable{
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws IllegalArgumentException, RuntimeException {
+    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws RuntimeException {
         if (Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
             if (!this.isAlive()) {
                 this.targetImage = pointManager.getSourceImage().get();
@@ -66,14 +65,14 @@ public class Alignment implements Runnable{
 
     /**
      * Align images with the automatic algorithm
-     * @param pointManager
-     * @param algorithm
-     * @param type
-     * @param pointDetector
-     * @param factor
-     * @param scalingFactor
-     * @throws IllegalArgumentException
-     * @throws RuntimeException
+     * @param pointManager a
+     * @param algorithm b
+     * @param type c
+     * @param pointDetector d
+     * @param factor e
+     * @param scalingFactor f
+     * @throws IllegalArgumentException g
+     * @throws RuntimeException h
      */
     public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
                             final AlignmentEnum type,
@@ -100,7 +99,7 @@ public class Alignment implements Runnable{
     /**
      * Affine and Rigid accept more points than their limits
      * Perspective accept the exact number of points.
-     * @throws RuntimeException
+     * @throws RuntimeException a
      */
     private void manual() throws RuntimeException{
 
@@ -130,7 +129,7 @@ public class Alignment implements Runnable{
     /**
      * Affine and Rigid accept more points than their limits
      * Perspective accept the exact number of points.
-     * @throws RuntimeException
+     * @throws RuntimeException a
      */
     private void auto() throws RuntimeException{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
@@ -170,7 +169,6 @@ public class Alignment implements Runnable{
         System.gc();
         if(images.size() == 0){
             this.status = total;
-            return;
         }else {
             //if we find at least 3 points in every image we can use ransac otherwise first available
             if(ransac){
@@ -195,8 +193,6 @@ public class Alignment implements Runnable{
                 key.getMatImage().release();
                 value.clearPoints();
                 key.clearPoints();
-                key = null;
-                value = null;
                 System.gc();
             });
             this.status+=1;
@@ -215,7 +211,7 @@ public class Alignment implements Runnable{
      * otherwise It will throw a 'NoSuchMethodException'. Each image is stored inside the 'alignedImages' collection.
      * In order to perform the alignment It is necessary that the targetImage is present.
      *
-     * @throws RuntimeException
+     * @throws RuntimeException a
      */
     @Override
     public void run() throws RuntimeException{
@@ -239,6 +235,9 @@ public class Alignment implements Runnable{
         }
     }
 
+    /**
+     * a
+     */
     public void clearList(){
         this.alignedImages.clear();
     }
@@ -255,7 +254,7 @@ public class Alignment implements Runnable{
 
     /**
      *
-     * @return
+     * @return a
      */
     public boolean isAlive(){
         return this.thread.isAlive();
