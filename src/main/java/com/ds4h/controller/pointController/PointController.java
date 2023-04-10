@@ -47,7 +47,7 @@ public class PointController {
         this.pointManager.setAsSource(newTarget);
     }
 
-    public void reuseSource(final List<AlignedImage> alignedImages) throws FileNotFoundException {
+    public void reuseSource(final List<AlignedImage> alignedImages) throws FileNotFoundException, OutOfMemoryError {
         ReuseSources.reuseSources(this.pointManager, alignedImages);
     }
 
@@ -83,6 +83,7 @@ public class PointController {
     }
 
     public void clearProject(){
+        this.pointManager.getImagesToAlign().forEach(image -> image.setProcessor(null));
         this.pointManager.clearProject();
         System.gc();
     }

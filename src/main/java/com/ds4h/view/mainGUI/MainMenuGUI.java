@@ -352,6 +352,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     }catch(OutOfMemoryError ex){
                         loadingGUI.close();
                         this.automaticAlignment.setEnabled(true);
+                        this.imagesPreview.showPreviewImages();
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
                                 "Warning",
@@ -402,7 +403,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 try {
                     System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "+ alignmentControllerInterface.getStatus());
                     loadingGUI.updateProgress(alignmentControllerInterface.getStatus());
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (final InterruptedException e) {
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
@@ -470,6 +471,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     }catch (OutOfMemoryError ex){
                         loadingGUI.close();
                         this.automaticAlignment.setEnabled(true);
+                        this.imagesPreview.showPreviewImages();
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
                                 "Warning",

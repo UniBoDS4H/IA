@@ -7,7 +7,6 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
-
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;

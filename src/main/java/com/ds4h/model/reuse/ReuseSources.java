@@ -26,13 +26,13 @@ public class ReuseSources {
      * @param pointManager : Inside the corner manager we will be going to store the now images
      * @param images : The list of images that we want to use
      */
-    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) {
+    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) throws OutOfMemoryError{
         if(!images.isEmpty()) {
             pointManager.clearList();
             pointManager.clearProject();
-            System.gc();
-            MemoryController.controllMemory();
             pointManager.addImages(ReuseSources.convertImages(images));
+            MemoryController.controllMemory(pointManager.getCornerImages());
+            System.gc();
         }
     }
 
@@ -42,7 +42,8 @@ public class ReuseSources {
                 .map(imagePlus -> {
                     final ImagePoints image = new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor());
                     image.setTitle(imagePlus.getTitle());
-                    imagePlus.setProcessor(null);
+                    imagePlus = null;
+                    System.gc();
                     return image;
                 })
                 .collect(Collectors.toList());
