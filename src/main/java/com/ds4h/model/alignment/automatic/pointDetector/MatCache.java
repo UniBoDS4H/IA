@@ -23,8 +23,8 @@ public class MatCache {
 
     /**
      *
-     * @param descriptor
-     * @param keyPoints
+     * @param descriptor a
+     * @param keyPoints b
      */
     public void setDetection(final Mat descriptor, final MatOfKeyPoint keyPoints){
         this.descriptor = Objects.requireNonNull(descriptor);
@@ -33,7 +33,7 @@ public class MatCache {
 
     /**
      *
-     * @return
+     * @return a
      */
     public Mat getDescriptor(){
         return this.descriptor;
@@ -41,7 +41,7 @@ public class MatCache {
 
     /**
      *
-     * @return
+     * @return b
      */
     public List<KeyPoint> getKeyPoints(){
         return this.keyPointList;
@@ -49,7 +49,7 @@ public class MatCache {
 
     /**
      *
-     * @return
+     * @return a
      */
     public boolean isAlreadyDetected(){
         return Objects.nonNull(this.descriptor) && !this.keyPointList.isEmpty();

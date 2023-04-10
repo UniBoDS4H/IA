@@ -14,9 +14,21 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
     public static int LOWER_BOUND = 4;
     private PointOverloadEnum overload;
 
+    /**
+     *
+     */
     public ProjectiveAlignment(){
         this.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
     }
+
+    /**
+     *
+     * @param targetImage a
+     * @param imageToShift b
+     * @param ip c
+     * @return d
+     * @throws IllegalArgumentException e
+     */
     @Override
     public AlignedImage align(ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException {
         if(targetImage.getPoints().length >= LOWER_BOUND && imageToShift.getPoints().length >= LOWER_BOUND){
@@ -30,6 +42,12 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
         }
     }
 
+    /**
+     *
+     * @param srcPoints a
+     * @param dstPoints b
+     * @return c
+     */
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints) {
         //return Imgproc.getPerspectiveTransform(srcPoints, dstPoints); THIS IS THE ORIGINAL!!
@@ -53,21 +71,39 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
         throw new IllegalArgumentException("The point overload is not correct.");
     }
 
+    /**
+     *
+     * @param source a
+     * @param destination b
+     * @param H c
+     */
     @Override
-    public void transform(final Mat source, Mat destination, final Mat H) {
+    public void transform(final Mat source,final Mat destination, final Mat H) {
         Core.perspectiveTransform(source,destination,H);
     }
 
+    /**
+     *
+     * @return a
+     */
     @Override
     public int getLowerBound() {
         return LOWER_BOUND;
     }
 
+    /**
+     *
+     * @param overload a
+     */
     @Override
     public void setPointOverload(final PointOverloadEnum overload){
         this.overload = overload;
     }
 
+    /**
+     *
+     * @return a
+     */
     @Override
     public PointOverloadEnum getPointOverload() {
         return this.overload;

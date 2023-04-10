@@ -8,8 +8,6 @@ import com.ds4h.model.alignment.automatic.pointDetector.siftDetector.SIFTDetecto
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
 import ij.IJ;
 
-import java.awt.*;
-
 /**
  *
  */
@@ -31,6 +29,12 @@ public enum Detectors {
     public static final int LOWER_BOUND = PointDetector.LOWER_BOUND;
     public static final int UPPER_BOUND = PointDetector.UPPER_BOUND;
 
+    /**
+     *
+     * @param name a
+     * @param pointDetector b
+     * @param factor c
+     */
     Detectors(final String name, final PointDetector pointDetector, final double factor){
         this.name = name;
         this.pointDetector = pointDetector;
@@ -40,7 +44,7 @@ public enum Detectors {
 
     /**
      *
-     * @param factor
+     * @param factor a
      */
     public void setFactor(final double factor){
         if(factor >= 0){
@@ -50,7 +54,7 @@ public enum Detectors {
 
     /**
      *
-     * @param scaling
+     * @param scaling a
      */
     public void setScaling(final int scaling){
         if(scaling >= Detectors.LOWER_BOUND && scaling <= Detectors.UPPER_BOUND){
@@ -61,7 +65,7 @@ public enum Detectors {
 
     /**
      *
-     * @return
+     * @return a
      */
     public double getFactor(){
         return this.factor;
@@ -69,7 +73,7 @@ public enum Detectors {
 
     /**
      *
-     * @return
+     * @return a
      */
     public int getScaling(){
         return this.scaling;
@@ -77,7 +81,7 @@ public enum Detectors {
 
     /**
      *
-     * @return
+     * @return a
      */
     public PointDetector pointDetector(){
         return this.pointDetector;
@@ -85,7 +89,7 @@ public enum Detectors {
 
     /**
      *
-     * @return
+     * @return a
      */
     @Override
     public String toString(){

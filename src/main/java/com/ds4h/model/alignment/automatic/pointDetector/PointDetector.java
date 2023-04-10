@@ -1,10 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
@@ -43,14 +40,14 @@ public abstract class PointDetector {
     }
 
     /**
-     * @param targetImage
-     * @param imagePoint
+     * @param targetImage a
+     * @param imagePoint b
      */
     public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
 
     /**
      *
-     * @param factor
+     * @param factor a
      */
     public void setFactor(final double factor){
         if(factor >= 0){
@@ -60,7 +57,7 @@ public abstract class PointDetector {
 
     /**
      *
-     * @param scaling
+     * @param scaling a
      */
     public void setScalingFactor(final int scaling){
         if(scaling >= PointDetector.LOWER_BOUND && scaling <= PointDetector.UPPER_BOUND){
@@ -70,7 +67,7 @@ public abstract class PointDetector {
 
     /**
      *
-     * @return
+     * @return a
      */
     public int getScalingFactor(){
         return this.scalingFactor;
@@ -78,7 +75,7 @@ public abstract class PointDetector {
 
     /**
      *
-     * @return
+     * @return a
      */
     public double getFactor(){
         return this.factor;
@@ -86,9 +83,9 @@ public abstract class PointDetector {
 
     /**
      *
-     * @param matrix
-     * @param levels
-     * @return
+     * @param matrix a
+     * @param levels b
+     * @return c
      */
     protected Mat createPyramid(Mat matrix, final int levels){
         Size lastSize = matrix.size();
@@ -104,6 +101,11 @@ public abstract class PointDetector {
         return matrix;
     }
 
+    /**
+     *
+     * @param matrix a
+     * @return b
+     */
     protected Mat improveMatrix(final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
@@ -166,9 +168,9 @@ public abstract class PointDetector {
          */
     /**
      *
-     * @param image
-     * @param levels
-     * @return
+     * @param image a
+     * @param levels b
+     * @return c
      */
     protected ImageProcessor createPyramid(final ImagePoints image, final int levels){
         final ImageProcessor[] pyramid = new ImageProcessor[levels];
