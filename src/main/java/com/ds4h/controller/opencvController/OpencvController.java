@@ -9,10 +9,16 @@ public class OpencvController {
 
     }
 
+    /**
+     *
+     */
     public static void loadLibrary(){
         OpenCVLoader.loadOpenCV();
     }
 
+    /**
+     *
+     */
     public static void deleteLibrary(){
         OpencvDeleter.deleteOpenCV();
     }

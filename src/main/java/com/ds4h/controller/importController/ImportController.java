@@ -15,6 +15,13 @@ public class ImportController {
 
     }
 
+    /**
+     *
+     * @param directory a
+     * @param pointManager b
+     * @throws FileNotFoundException c
+     * @throws OutOfMemoryError d
+     */
     public static void importProject(final File directory, final PointManager pointManager) throws FileNotFoundException, OutOfMemoryError {
         if(directory.isDirectory() && Objects.nonNull(pointManager)) {
             final List<ImagePoints> images = (ImportProject.importProject(directory));
