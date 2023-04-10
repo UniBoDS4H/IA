@@ -24,7 +24,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm translational = new TranslationalAlignment();
     private final AlignmentAlgorithm projective = new ProjectiveAlignment();
     private final AlignmentAlgorithm affine = new AffineAlignment();
-    private PointOverloadEnum overload;
+    private final PointOverloadEnum overload;
 
     public ManualAlignmentController(){
         this.algorithm = this.translational;
@@ -34,13 +34,17 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
 
     /**
      *
-     * @return
+     * @return a
      */
     @Override
     public List<AlignedImage> getAlignedImages(){
         return new LinkedList<>(alignment.alignedImages());
     }
 
+    /**
+     *
+     * @return b
+     */
     public CompositeImage getAlignedImagesAsStack(){
         if(!this.getAlignedImages().isEmpty()){
             ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
@@ -53,19 +57,19 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
                 stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
                 index++;
             }
-            try {
-                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
-                composite.setLuts(luts);
-                return composite;
-            }catch (Exception e){
-                throw e;
-            }
+            final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
+            composite.setLuts(luts);
+            return composite;
         }
         throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
                 "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +
                 "increase the Threshold Factor and change the \"Algorithm\".");
     }
 
+    /**
+     *
+     * @return a
+     */
     @Override
     public int getStatus() {
         return this.alignment.getStatus();
@@ -73,7 +77,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
 
     /**
      *
-     * @return
+     * @return a
      */
     @Override
     public boolean isAlive() {
@@ -82,7 +86,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
 
     /**
      *
-     * @return
+     * @return a
      */
     @Override
     public String name() {
@@ -91,8 +95,8 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
 
     /**
      *
-     * @param algorithm
-     * @param pointManager
+     * @param algorithm a
+     * @param pointManager b
      */
     public void align(final AlignmentAlgorithm algorithm, final PointController pointManager){
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
@@ -104,14 +108,28 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     public AlignmentAlgorithm getAlgorithm() {
         return this.algorithm;
     }
+
+    /**
+     *
+     * @param algorithm a
+     */
     public void setAlgorithm(AlignmentAlgorithm algorithm){
         this.algorithm = algorithm;
     }
 
-    public AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e) {
+    /**
+     *
+     * @param e a
+     * @return b
+     */
+    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum e) {
         switch (e){
             case TRANSLATIONAL:
                 return this.translational;
@@ -123,9 +141,18 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
         throw new IllegalArgumentException("Algorithm not present");
     }
 
+    /**
+     *
+     * @return a
+     */
     public PointOverloadEnum getPointOverload() {
         return this.algorithm.getPointOverload();
     }
+
+    /**
+     *
+     * @param overload a
+     */
     public void setPointOverload(PointOverloadEnum overload) {
         this.algorithm.setPointOverload(overload);
     }

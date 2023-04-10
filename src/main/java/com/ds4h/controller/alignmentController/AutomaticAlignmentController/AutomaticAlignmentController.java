@@ -47,6 +47,14 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         return new LinkedList<>(alignment.alignedImages());
     }
 
+    /**
+     *
+     * @param algorithm a
+     * @param detector b
+     * @param pointManager c
+     * @throws IllegalArgumentException d
+     * @throws RuntimeException e
+     */
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws IllegalArgumentException, RuntimeException{
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
             if(pointManager.getPointManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
@@ -60,6 +68,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
             }
         }
     }
+
     /**
      * This method is used in order to get all the infos about the running thread, if it still alive it means
      * the alignment algorithm is not done yet, otherwise the alignment is done.
@@ -70,11 +79,20 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         return this.alignment.isAlive();
     }
 
+    /**
+     *
+     * @return a
+     */
     @Override
     public String name() {
         return "AUTOMATIC";
     }
 
+    /**
+     *
+     * @return a
+     * @throws RuntimeException b
+     */
     @Override
     public CompositeImage getAlignedImagesAsStack() throws RuntimeException{
         if(!this.getAlignedImages().isEmpty()){
@@ -104,18 +122,37 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                 "increase the Threshold Factor and change the \"Algorithm\".");
     }
 
+    /**
+     *
+     * @return a
+     */
     @Override
     public int getStatus() {
         return this.alignment.getStatus();
     }
 
+    /**
+     *
+     * @return a
+     */
     public AlignmentAlgorithm getAlgorithm() {
         return this.algorithm;
     }
-    public void setAlgorithm(AlignmentAlgorithm algorithm){
+
+    /**
+     *
+     * @param algorithm a
+     */
+    public void setAlgorithm(final AlignmentAlgorithm algorithm){
         this.algorithm = algorithm;
     }
-    public AlignmentAlgorithm getAlgorithmFromEnum(AlignmentAlgorithmEnum e){
+
+    /**
+     *
+     * @param e a
+     * @return b
+     */
+    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum e){
         switch (e){
             case TRANSLATIONAL:
                 return this.translational;
