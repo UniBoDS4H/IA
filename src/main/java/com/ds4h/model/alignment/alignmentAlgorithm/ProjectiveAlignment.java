@@ -50,8 +50,7 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
      */
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints) {
-        //return Imgproc.getPerspectiveTransform(srcPoints, dstPoints); THIS IS THE ORIGINAL!!
-        switch (this.getPointOverload()) {
+       switch (this.getPointOverload()) {
             case FIRST_AVAILABLE:
                 MatOfPoint2f newSrcPoints = new MatOfPoint2f();
                 MatOfPoint2f newDstPoints = new MatOfPoint2f();
@@ -62,14 +61,17 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
                     newSrcPoints.fromList(srcPoints.toList());
                     newDstPoints.fromList(dstPoints.toList());
                 }
-                return Calib3d.estimateAffine2D(newSrcPoints, newDstPoints, new Mat(), Calib3d.LMEDS);
+                return Calib3d.findHomography(newSrcPoints, newDstPoints, Calib3d.LMEDS);
             case RANSAC:
-                return Calib3d.estimateAffine2D(srcPoints, dstPoints, new Mat(), Calib3d.RANSAC, 5, 2000, 0.99);
+                return Calib3d.findHomography(srcPoints, dstPoints, Calib3d.RANSAC, 5);
             case MINIMUM_LAST_SQUARE:
-                return Calib3d.estimateAffine2D(srcPoints, dstPoints, new Mat(), Calib3d.LMEDS);
+                return Calib3d.findHomography(srcPoints, dstPoints, Calib3d.LMEDS);
         }
         throw new IllegalArgumentException("The point overload is not correct.");
+
     }
+
+
 
     /**
      *
@@ -78,7 +80,7 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
      * @param H c
      */
     @Override
-    public void transform(final Mat source,final Mat destination, final Mat H) {
+    public void transform(final Mat source,final Mat destination, Mat H) {
         Core.perspectiveTransform(source,destination,H);
     }
 

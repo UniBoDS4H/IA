@@ -103,11 +103,9 @@ public class Alignment implements Runnable{
     private void manual() throws RuntimeException{
 
         assert this.targetImage.getProcessor() != null;
-        final boolean noEqualsToLimit = this.algorithm instanceof TranslationalAlignment || this.algorithm instanceof AffineAlignment;
         if(this.imagesToAlign.stream()
                 .map(ImagePoints::numberOfPoints)
-                .anyMatch(n -> (noEqualsToLimit && n >= this.algorithm.getLowerBound())
-                        || (!noEqualsToLimit && n == this.algorithm.getLowerBound()))) {
+                .anyMatch(n -> (n >= this.algorithm.getLowerBound()))) {
 
             final ImagePoints target = TargetImagePreprocessing.manualProcess(this.targetImage,
                     this.imagesToAlign,
