@@ -12,14 +12,13 @@ import java.util.stream.Collectors;
  *
  */
 public class SaveController {
-
     //TODO:ADD DOC
 
     /**
      *
-     * @param images
-     * @param path
-     * @throws IOException
+     * @param images a
+     * @param path b
+     * @throws IOException c
      */
     public static void saveImages(final List<AlignedImage> images, final String path) throws IOException, IllegalArgumentException {
         if(!images.isEmpty()) {

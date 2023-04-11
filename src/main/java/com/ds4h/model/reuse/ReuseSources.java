@@ -3,12 +3,7 @@ package com.ds4h.model.reuse;
 import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.projectManager.importProject.ImportProject;
-import com.ds4h.model.util.saveProject.SaveImages;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import com.ds4h.model.util.MemoryController;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,12 +26,13 @@ public class ReuseSources {
      * @param pointManager : Inside the corner manager we will be going to store the now images
      * @param images : The list of images that we want to use
      */
-    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) {
+    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) throws OutOfMemoryError{
         if(!images.isEmpty()) {
             pointManager.clearList();
             pointManager.clearProject();
-            System.gc();
             pointManager.addImages(ReuseSources.convertImages(images));
+            MemoryController.controllMemory(pointManager.getCornerImages());
+            System.gc();
         }
     }
 
@@ -46,6 +42,8 @@ public class ReuseSources {
                 .map(imagePlus -> {
                     final ImagePoints image = new ImagePoints(imagePlus.getTitle(), imagePlus.getProcessor());
                     image.setTitle(imagePlus.getTitle());
+                    imagePlus = null;
+                    System.gc();
                     return image;
                 })
                 .collect(Collectors.toList());

@@ -3,10 +3,8 @@ package com.ds4h.model.util;
 import ij.ImagePlus;
 import ij.plugin.ContrastEnhancer;
 import ij.process.ImageProcessor;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 
 public class ChangeImage {
 
@@ -14,6 +12,12 @@ public class ChangeImage {
 
     }
 
+    /**
+     *
+     * @param inputImage a
+     * @param color b
+     * @return c
+     */
     public static ImagePlus changeColor(final ImagePlus inputImage, final Color color){
         final BufferedImage img = inputImage.getBufferedImage();
         final BufferedImage image = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -31,9 +35,15 @@ public class ChangeImage {
         return new ImagePlus(inputImage.getTitle(), image);
     }
 
+    /**
+     *
+     * @param inputImage a
+     * @param contrast b
+     * @return c
+     */
     public static ImagePlus changeContrast(final ImagePlus inputImage, final float contrast){
-        ImageProcessor ip = inputImage.getProcessor();
-        ContrastEnhancer ce = new ContrastEnhancer();
+        final ImageProcessor ip = inputImage.getProcessor();
+        final ContrastEnhancer ce = new ContrastEnhancer();
         ce.stretchHistogram(ip, contrast);
         return new ImagePlus(inputImage.getTitle(),ip);
     }

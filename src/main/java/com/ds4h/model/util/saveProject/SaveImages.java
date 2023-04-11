@@ -24,18 +24,28 @@ public class SaveImages {
     private SaveImages(){
 
     }
-    //TODO:ADD DOC
 
+    /**
+     *
+     * @param images a
+     * @param path b
+     * @throws IOException c
+     */
     public static void saveImages(final List<AlignedImage> images, final String path) throws IOException {
         final String dir = DirectoryCreator.createDirectory(path, DIRECTORY);
         if(!dir.isEmpty()){
-            SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path+"/" + dir);
+            SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path+"/"+dir);
             SaveMatrix.saveMatrix(images, path+"/"+dir);
         }else{
             SaveImages.save(images.stream().map(AlignedImage::getAlignedImage).collect(Collectors.toList()), path);
         }
     }
 
+    /**
+     *
+     * @param images a
+     * @return b
+     */
     public static String saveTMPImages(final List<ImagePlus> images){
         final String dir = DirectoryCreator.createTemporaryDirectory(TMP_DIRECTORY);
         if(!dir.isEmpty()){
@@ -44,6 +54,11 @@ public class SaveImages {
         return TEMPORARY_PATH + "/" + dir;
     }
 
+    /**
+     *
+     * @param image a
+     * @return b
+     */
     public static String saveTMPImage(final ImagePlus image){
         final String dir = DirectoryCreator.createTemporaryDirectory(TMP_DIRECTORY);
         if(!dir.isEmpty()){
@@ -56,11 +71,20 @@ public class SaveImages {
         IJ.save(image, path+"/"+image.getTitle());
     }
 
-
+    /**
+     *
+     * @param images a
+     * @param path b
+     */
     public static void save(final List<ImagePlus> images, final String path){
-        images.stream().parallel().forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
+        images.forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
     }
 
+    /**
+     *
+     * @param image a
+     * @param path b
+     */
     public static void save(final ImagePlus image, final String path){
         if(!path.isEmpty() && Objects.nonNull(image)) {
             IJ.save(image, path + "/" + image.getTitle());

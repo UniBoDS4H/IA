@@ -70,6 +70,11 @@ public class AlignmentOutputGUI extends StackWindow {
         this.createOutputIcons();
     }
 
+    public void clearStack(){
+        image = null;
+        System.gc();
+    }
+
     private void createOutputIcons() {
         Thread t1 = new Thread(new Runnable() {
             @Override

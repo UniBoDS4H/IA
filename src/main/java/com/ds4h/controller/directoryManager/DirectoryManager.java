@@ -11,6 +11,9 @@ public class DirectoryManager {
 
     }
 
+    /**
+     *
+     */
     public static void deleteTMPDirectories(){
         DirectoryDeleter.deleteTMP(PROJECT_NAME);
     }

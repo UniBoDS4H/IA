@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
  */
 public class PointManager {
     private final List<ImagePoints> imagesWithPoints;
-    private Optional<ImagePoints> sourceImage;
+    private ImagePoints sourceImage;
     public PointManager(){
-        this.sourceImage = Optional.empty();
+        this.sourceImage = null;
         this.imagesWithPoints = new ArrayList<>();
     }
 
     /**
      *
-     * @param images
+     * @param images a
      */
     public void addImages(final List<ImagePoints> images){
         if(Objects.nonNull(images) && images.size() > 0) {
@@ -31,10 +31,10 @@ public class PointManager {
 
     /**
      *
-     * @param image
+     * @param image a
      */
     public void removeImage(final ImagePoints image){
-        if(Objects.nonNull(image) && this.sourceImage.isPresent() && !this.sourceImage.get().equals(image)) {
+        if(Objects.nonNull(image) && Objects.nonNull(this.sourceImage) && !this.sourceImage.equals(image)) {
             this.imagesWithPoints.removeIf(img -> img.equals(image));
         }
     }
@@ -48,7 +48,7 @@ public class PointManager {
 
     /**
      *
-     * @return
+     * @return a
      */
     public List<ImagePoints> getCornerImages(){
         return new ArrayList<>(this.imagesWithPoints);
@@ -56,34 +56,37 @@ public class PointManager {
 
     /**
      *
-     * @return
+     * @return a
      */
     public List<ImagePoints> getImagesToAlign(){
-        return this.sourceImage.map(imageCorners -> this.imagesWithPoints.stream().filter(im -> !im.equals(imageCorners)).collect(Collectors.toList())).orElseGet(() -> new LinkedList<>(this.imagesWithPoints));
+        final Optional<ImagePoints> target = Optional.ofNullable(this.sourceImage);
+        return target
+                .map(imageCorners -> this.imagesWithPoints.stream().filter(im -> !im.equals(imageCorners))
+                .collect(Collectors.toList())).orElseGet(() -> new LinkedList<>(this.imagesWithPoints));
     }
 
     /**
      *
-     * @return
+     * @return a
      */
     public Optional<ImagePoints> getSourceImage(){
-        return this.sourceImage;
+        return Optional.ofNullable(this.sourceImage);
     }
 
     /**
      *
-     * @param image
+     * @param image a
      */
     public void setAsSource(final ImagePoints image){
         if(Objects.nonNull(image) && this.imagesWithPoints.contains(image)){
-            this.sourceImage = Optional.of(image);
+            this.sourceImage = image;
         }else{
             throw new IllegalArgumentException("The given image was not fount among the loaded or the image input is NULL.");
         }
     }
 
     public void clearProject(){
-        this.sourceImage = Optional.empty();
+        this.sourceImage = null;
         this.imagesWithPoints.clear();
         System.gc();
     }

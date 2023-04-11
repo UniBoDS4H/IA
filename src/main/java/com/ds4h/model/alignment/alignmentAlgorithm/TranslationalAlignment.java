@@ -9,8 +9,6 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
@@ -24,73 +22,117 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     private boolean translate;
     private PointOverloadEnum overload;
 
+    /**
+     *
+     */
     public TranslationalAlignment(){
         this.setTransformation(true, false,false);
         this.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
     }
+
+    /**
+     *
+     * @return a
+     */
     public boolean getTranslate(){
         return this.translate;
     }
+
+    /**
+     *
+     * @return a
+     */
     public boolean getRotate(){
         return this.rotate;
     }
+
+    /**
+     *
+     * @return a
+     */
     public boolean getScale(){
         return this.scale;
     }
+
+    /**
+     *
+     * @param overload a
+     */
     @Override
     public void setPointOverload(PointOverloadEnum overload){
         this.overload = overload;
     }
 
+    /**
+     *
+     * @return b
+     */
     @Override
     public PointOverloadEnum getPointOverload() {
         return this.overload;
     }
 
+    /**
+     *
+     * @param targetImage a
+     * @param imageToShift b
+     * @param ip c
+     * @return d
+     * @throws IllegalArgumentException e
+     */
     @Override
     public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
-        try {
-            if(targetImage.numberOfPoints() >= this.getLowerBound() && imageToShift.numberOfPoints() >= this.getLowerBound()) {
-                if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
-                    final Mat alignedImage = new Mat();
-                    final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
-                    if(transformationMatrix.rows() <=2) {
-                        IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
-                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
-                        System.gc();
-                        Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
-                    }
-                    else{
-                        IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
-                        IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
-                        System.gc();
-                        Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
-                    }
-                    final AlignedImage finalImg = new AlignedImage(transformationMatrix,
-                            MatImageProcessorConverter.convert(alignedImage, imageToShift.getName(), ip),
-                            imageToShift.getName());
-                    ip = null;
+        if(targetImage.numberOfPoints() >= this.getLowerBound() && imageToShift.numberOfPoints() >= this.getLowerBound()) {
+            if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
+                final Mat alignedImage = new Mat();
+                final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
+                if(transformationMatrix.rows() <=2) {
+                    IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
+                    IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
                     System.gc();
-
-                    return finalImg;
-                }else{
-                    throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
-                            "inside the target image.");
+                    Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                 }
+                else{
+                    IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
+                    IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
+                    System.gc();
+                    Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
+                }
+                final AlignedImage finalImg = new AlignedImage(transformationMatrix,
+                        MatImageProcessorConverter.convert(alignedImage, ip),
+                        imageToShift.getName());
+                ip = null;
+                System.gc();
+                return finalImg;
             }else{
-                throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
-                        "In order to use the Translation alignment" + (this.scale?" with scaling ":"") + (this.rotate?" with rotation ":"") +" you must at least: " + this.getLowerBound() + " points.");
+                throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
+                        "inside the target image.");
             }
-        }catch (Exception ex){
-            throw ex;
+        }else{
+            throw new IllegalArgumentException("The number of points inside the source image or inside the target image is not correct.\n" +
+                    "In order to use the Translation alignment" + (this.scale?" with scaling ":"") + (this.rotate?" with rotation ":"") +" you must at least: " + this.getLowerBound() + " points.");
         }
     }
+
+    /**
+     *
+     * @param translate a
+     * @param rotate b
+     * @param scale c
+     */
     public void setTransformation(boolean translate,boolean rotate, boolean scale){
         System.out.println(translate + " " + rotate + " " +scale);
         this.translate = translate;
         this.rotate = rotate;
         this.scale = scale;
     }
+
+    /**
+     *
+     * @param srcPoints a
+     * @param dstPoints b
+     * @return c
+     */
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
         switch (this.getPointOverload()) {
@@ -131,6 +173,11 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         throw new IllegalArgumentException("bad point overload selected");
     }
 
+    /**
+     *
+     * @param H a
+     * @return b
+     */
     private Mat getMatWithTransformation(Mat H) {
         IJ.log("[TRANSLATIONAL] Matrix: " + H);
         double a = H.get(0,0)[0];
@@ -185,6 +232,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         return new Point(meanDeltaX, meanDeltaY);
     }
 
+    /**
+     *
+     * @param source a
+     * @param destination b
+     * @param H c
+     */
     @Override
     public void transform(final Mat source, final Mat destination, final Mat H){
         if(H.rows() <=2){
@@ -194,6 +247,10 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     @Override
     public int getLowerBound() {
         return LOWER_BOUND + (this.scale || this.rotate? 2 : 0);

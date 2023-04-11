@@ -45,10 +45,22 @@ public class ReuseGUI extends JFrame implements StandardGUI {
             try {
                 this.pointController.reuseSource(this.imagesPane.getImagesToReuse());
                 this.mainGUI.reloadImages();
+                this.outputGUI.clearStack();
                 this.outputGUI.dispose();
                 this.dispose();
             } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (OutOfMemoryError e){
+                this.mainGUI.reloadImages();
+                this.outputGUI.dispose();
+                this.dispose();
+                JOptionPane.showMessageDialog(this,
+                        e.getMessage(),
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
             }
         });
     }

@@ -6,10 +6,19 @@ import ij.ImagePlus;
 import ij.process.*;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Objects;
+
+/**
+ *
+ */
 public class MatImageProcessorConverter {
 
+    /**
+     *
+     */
     private MatImageProcessorConverter(){
 
     }
@@ -29,11 +38,6 @@ public class MatImageProcessorConverter {
         matrix.release();
         matrix = null;
         int[] iData = (int[]) cp.getPixels();
-        /*
-        if(matrix.channels() != 3){
-            matrix.convertTo(matrix, CvType.CV_8UC3);
-        }
-         */
         for (int i = 0; i < width * height; i++) {
             int red = pixels[i * 3 + 0] & 0xff;
             int grn = pixels[i * 3 + 1] & 0xff;
@@ -65,7 +69,6 @@ public class MatImageProcessorConverter {
             //We use the LUT table for the colors
             Imgproc.cvtColor(matrix, matrix, Imgproc.COLOR_BGR2GRAY);
         }
-
         IJ.log("[MAKE SHORTPROCESSOR] Matrix Type: " + matrix);
         matrix.get(0,0, (short[]) shortProcessor.getPixels());
         matrix.release();
@@ -117,6 +120,7 @@ public class MatImageProcessorConverter {
         matrix.get(0,0, (float[])floatProcessor.getPixels());
         matrix.release();
         matrix = null;
+        System.gc();
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return floatProcessor;
     }
@@ -138,12 +142,11 @@ public class MatImageProcessorConverter {
     /**
      *
      * @param matrix
-     * @param fileName
      * @param ip
      * @return
      */
-    public static ImageProcessor convert(final Mat matrix, final String fileName, final ImageProcessor ip){
-        if(!matrix.empty() && !fileName.isEmpty()){
+    public static ImageProcessor convert(final Mat matrix, final ImageProcessor ip){
+        if(Objects.nonNull(matrix) && Objects.nonNull(ip) && !matrix.empty()){
             if(ip instanceof ColorProcessor){
                 return MatImageProcessorConverter.makeColorProcessor(matrix, matrix.cols(), matrix.rows());
             }else if(ip instanceof ShortProcessor){

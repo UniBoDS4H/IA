@@ -9,8 +9,6 @@ import com.ds4h.model.util.saveProject.SaveImages;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-//TODO : ADD COLORS INFORMATIONS FOR POINTS
-
 public class ExportProject {
 
     private final static String PROJECT_FOLDER = "DS4H_Project";

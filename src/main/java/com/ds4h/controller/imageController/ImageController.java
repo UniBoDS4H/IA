@@ -13,11 +13,20 @@ public class ImageController {
     private final BunwarpJController bunwarpJController;
     private ImageEnum imageEnum = ImageEnum.ALIGNED;
 
+    /**
+     *
+     * @param alignmentControllerInterface a
+     * @param bunwarpJController b
+     */
     public ImageController(final AlignmentControllerInterface alignmentControllerInterface, final BunwarpJController bunwarpJController){
         this.alignmentControllerInterface = alignmentControllerInterface;
         this.bunwarpJController = bunwarpJController;
     }
 
+    /**
+     *
+     * @return a
+     */
     public List<AlignedImage> getAlignedImages(){
         switch (this.imageEnum){
             case ALIGNED:
@@ -29,14 +38,25 @@ public class ImageController {
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     public ImageEnum type(){
         return this.imageEnum;
     }
 
+    /**
+     *
+     */
     public void align(){
         this.imageEnum = ImageEnum.ALIGNED;
     }
 
+    /**
+     *
+     * @param alignedImages a
+     */
     public void elastic(final List<AlignedImage> alignedImages){
         if(Objects.nonNull(alignedImages) && !alignedImages.isEmpty()) {
             this.bunwarpJController.transformation(alignedImages);
@@ -44,10 +64,18 @@ public class ImageController {
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     public boolean isAlive(){
         return this.alignmentControllerInterface.isAlive();
     }
 
+    /**
+     *
+     * @return a
+     */
     public String name(){
         switch (this.imageEnum){
             case ALIGNED:
@@ -59,6 +87,10 @@ public class ImageController {
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     public boolean deformationIsAlive(){
         return this.bunwarpJController.isAlive();
     }

@@ -25,6 +25,9 @@ public class OpenCVLoader {
 
     }
 
+    /**
+     *
+     */
     public static void loadOpenCV(){
         if(OS.contains(WINDOWS)){
             OpenCVLoader.loadWindows();

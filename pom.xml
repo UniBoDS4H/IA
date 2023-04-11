@@ -91,7 +91,7 @@
 
 	<properties>
 		<package-name>com.ds4h.imagej</package-name>                   <!-- FIXME: Your project package prefix here -->
-		<main-class>com.ds4h.imagej.Process_Pixels</main-class>        <!-- FIXME: Your project main class here, or delete for none -->
+		<main-class>com.ds4h.imagej.Image_Alignment</main-class>        <!-- FIXME: Your project main class here, or delete for none -->
 		<license.licenseName>cc0</license.licenseName>                      <!-- FIXME: Your license-maven-plugin license code here -->
 		<license.copyrightOwners>My Company, Inc.</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
 	</properties>
@@ -212,7 +212,7 @@
 					<appendAssemblyId>false</appendAssemblyId>
 					<archive>
 						<manifest>
-							<mainClass>com.ds4h.imagej.Process_Pixels</mainClass>
+							<mainClass>com.ds4h.imagej.Image_Alignment</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

@@ -2,7 +2,6 @@ package com.ds4h.model.alignment.preprocessImage;
 
 import com.ds4h.model.alignment.alignmentAlgorithm.AlignmentAlgorithm;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.MemoryController;
 import com.ds4h.model.util.Pair;
 import com.ds4h.model.util.converter.MatImageProcessorConverter;
 import ij.IJ;
@@ -24,22 +23,20 @@ public class TargetImagePreprocessing {
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         IJ.log("[MANUAL PREPROCESS] Starting manual process.");
         ImagePoints target = new ImagePoints(targetImage.getPath());
-        final String title = targetImage.getTitle();
+        final String title = targetImage.getTitle().isEmpty() ? "AlignedImage.tif" : target.getTitle();
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
             final Pair<Mat, Point> res = TargetImagePreprocessing.singleProcess(target, image, algorithm);
-            //final MatOfPoint2f points = new MatOfPoint2f();
-            //points.fromList(target.getListPoints().stream().map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y)).collect(Collectors.toList()));
             List<Point> points = (target.getListPoints()
                     .stream()
                     .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
                     .collect(Collectors.toList()));
-            target = new ImagePoints(target.getTitle(), res.getFirst().clone());
+            target = new ImagePoints(title, res.getFirst());
             target.addPoints(points);
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");
         IJ.log("[MANUAL PREPROCESS] Target Title: " + title);
-        target.setProcessor(MatImageProcessorConverter.convert(target.getMatImage(), title, ip));
+        target.setProcessor(MatImageProcessorConverter.convert(target.getMatImage(), ip));
         target.setTitle(title);
         return target;
     }
@@ -75,8 +72,7 @@ public class TargetImagePreprocessing {
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
-        return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(),
-                title, ip);
+        return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(), ip);
     }
 
     //returns the mat of the new target and the shift of the points
@@ -116,9 +112,6 @@ public class TargetImagePreprocessing {
 
             final Mat alignedImage = Mat.zeros(s, target.type());
             IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
-            if (target.type() != imagePoints.type()) {
-                alignedImage.convertTo(alignedImage, target.type());
-            }
             target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
             IJ.log("[PREPROCESS] After copy: " + alignedImage);
             System.gc();

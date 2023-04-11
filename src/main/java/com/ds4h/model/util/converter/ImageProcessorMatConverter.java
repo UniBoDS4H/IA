@@ -1,12 +1,10 @@
 package com.ds4h.model.util.converter;
 
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.*;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
 
 import java.util.Objects;
 
@@ -18,8 +16,8 @@ public class ImageProcessorMatConverter {
 
     /**
      *
-     * @param sp
-     * @return
+     * @param sp a
+     * @return b
      */
     private static Mat toMat(final ShortProcessor sp){
         IJ.log("[TO MAT - SHORTPROCESSOR] From ShortProcessor");
@@ -32,8 +30,8 @@ public class ImageProcessorMatConverter {
 
     /**
      *
-     * @param cp
-     * @return
+     * @param cp a
+     * @return b
      */
     private static Mat toMat(final ColorProcessor cp){
         IJ.log("[TO MAT - COLORPROCESSOR] From ColorProcessor " + ((int[])cp.getPixels()).length ) ;
@@ -43,7 +41,7 @@ public class ImageProcessorMatConverter {
 
         // convert int-encoded RGB values to byte array
         for (int i = 0; i < pixels.length; i++) {
-            bData[i * 3 + 0] = (byte) ((pixels[i] >> 16) & 0xFF);	// red
+            bData[i * 3] = (byte) ((pixels[i] >> 16) & 0xFF);	// red
             bData[i * 3 + 1] = (byte) ((pixels[i] >> 8) & 0xFF);	// grn
             bData[i * 3 + 2] = (byte) ((pixels[i]) & 0xFF);	// blu
         }
@@ -55,8 +53,8 @@ public class ImageProcessorMatConverter {
 
     /**
      *
-     * @param fp
-     * @return
+     * @param fp a
+     * @return b
      */
     private static Mat toMat(final FloatProcessor fp){
         IJ.log("[TO MAT - FLOATPROCESSOR] From FloatProcessor");
@@ -69,8 +67,8 @@ public class ImageProcessorMatConverter {
 
     /**
      *
-     * @param bp
-     * @return
+     * @param bp a
+     * @return b
      */
     private static Mat toMat(final ByteProcessor bp){
         IJ.log("[TO MAT - BYTEPROCESSOR] From ByteProcessor");
@@ -83,8 +81,8 @@ public class ImageProcessorMatConverter {
 
     /**
      *
-     * @param ip
-     * @return
+     * @param ip a
+     * @return b
      */
     public static Mat convert(final ImageProcessor ip) throws IllegalArgumentException{
         IJ.log("[IMAGE PROCESSOR CONVERTER] Ip: " + ip);
@@ -105,8 +103,8 @@ public class ImageProcessorMatConverter {
 
     /**
      *
-     * @param ip
-     * @return
+     * @param ip a
+     * @return b
      */
     public static Mat convertGray(final ImageProcessor ip){
         final Mat matrix = ImageProcessorMatConverter.convert(ip);

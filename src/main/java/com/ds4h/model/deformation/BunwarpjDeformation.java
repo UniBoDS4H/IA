@@ -7,8 +7,6 @@ import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
-
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,7 +22,7 @@ public class BunwarpjDeformation implements Runnable{
 
     private final List<AlignedImage> outputList;
     private final List<AlignedImage> alignedImages;
-    private Optional<AlignedImage> source;
+    private AlignedImage target;
     private Thread thread;
     public final static double MIN_ZERO = 0.0,
             MIN_ZERO_ONE = 0.01,
@@ -38,11 +36,13 @@ public class BunwarpjDeformation implements Runnable{
             parConsistencyWeigth = MIN_TEN,
             parThreshold = MIN_ZERO_ONE;
 
-
+    /**
+     *
+     */
     public BunwarpjDeformation(){
         this.outputList = new CopyOnWriteArrayList<>();
         this.alignedImages = new CopyOnWriteArrayList<>();
-        this.source = Optional.empty();
+        this.target = null;
         this.thread = new Thread(this);
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
@@ -57,7 +57,6 @@ public class BunwarpjDeformation implements Runnable{
      */
 
     public ImagePlus deform(final ImagePlus target, final ImagePlus source){
-        //Compute the tranformation
         final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
                 source,
                 target.getProcessor(),
@@ -75,9 +74,14 @@ public class BunwarpjDeformation implements Runnable{
         return transformation.getDirectResults();
     }
 
+    /**
+     *
+     * @param images a
+     */
     public void deformList(final List<AlignedImage> images){
-        this.source = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
-        if(source.isPresent()  && !this.thread.isAlive()) {
+        final Optional<AlignedImage> targetImage = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
+        if(targetImage.isPresent()  && !this.thread.isAlive()) {
+            this.target = targetImage.get();
             this.outputList.clear();
             this.alignedImages.clear();
             this.alignedImages.addAll(images);
@@ -85,10 +89,18 @@ public class BunwarpjDeformation implements Runnable{
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     public boolean isAlive(){
         return this.thread.isAlive();
     }
 
+    /**
+     *
+     * @return a
+     */
     public List<AlignedImage> getOutputList(){
         return new LinkedList<>(this.outputList);
     }
@@ -99,8 +111,8 @@ public class BunwarpjDeformation implements Runnable{
      */
     @Override
     public void run() {
-        if(this.source.isPresent()){
-            final ImagePlus sourceImage = this.source.get().getAlignedImage();
+        if(Objects.nonNull(this.target)){
+            final ImagePlus sourceImage = this.target.getAlignedImage();
             for(final AlignedImage alignedImage : this.alignedImages){
                 final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImage.getAlignedImage(),
                         sourceImage,
@@ -126,6 +138,12 @@ public class BunwarpjDeformation implements Runnable{
         this.thread = new Thread(this);
     }
 
+    /**
+     *
+     * @param target a
+     * @param source b
+     * @return c
+     */
     public ImagePlus[] align(final ImagePlus target, final ImagePlus source){
         System.gc();
         return bUnwarpJ_.alignImagesBatch(target,
@@ -145,19 +163,30 @@ public class BunwarpjDeformation implements Runnable{
 
     }
 
-
+    /**
+     *
+     * @param modeInput a
+     */
     public void setModeInput(final BunwarpJMode modeInput) {
         if(Objects.nonNull(modeInput)) {
             this.modeInput = modeInput;
         }
     }
 
+    /**
+     *
+     * @param minScale a
+     */
     public void setMinScale(final BunwarpJMinScale minScale) {
         if(Objects.nonNull(minScale)) {
             this.minScale = minScale;
         }
     }
 
+    /**
+     *
+     * @param maxScale a
+     */
     public void setMaxScale(final BunwarpJMaxScale maxScale) {
         if(Objects.nonNull(maxScale)) {
             this.maxScale = maxScale;
@@ -170,78 +199,142 @@ public class BunwarpjDeformation implements Runnable{
         }
     }
 
+    /**
+     *
+     * @param parDivWeigth a
+     */
     public void setParDivWeigth(final double parDivWeigth) {
         if(parDivWeigth >= MIN_ZERO) {
             this.parDivWeigth = parDivWeigth;
         }
     }
 
+    /**
+     *
+     * @param parCurlWeigth a
+     */
     public void setParCurlWeigth(final double parCurlWeigth) {
         if(parCurlWeigth >= MIN_ZERO) {
             this.parCurlWeigth = parCurlWeigth;
         }
     }
 
+    /**
+     *
+     * @param parLandmarkWeigth a
+     */
     public void setParLandmarkWeigth(final double parLandmarkWeigth) {
         if(parLandmarkWeigth >= MIN_ZERO) {
             this.parLandmarkWeigth = parLandmarkWeigth;
         }
     }
 
+    /**
+     *
+     * @param parImageWeigth a
+     */
     public void setParImageWeigth(final double parImageWeigth) {
         if(parImageWeigth >= MIN_ONE) {
             this.parImageWeigth = parImageWeigth;
         }
     }
 
+    /**
+     *
+     * @param parConsistencyWeigth a
+     */
     public void setParConsistencyWeigth(double parConsistencyWeigth) {
         if(parConsistencyWeigth >= MIN_TEN) {
             this.parConsistencyWeigth = parConsistencyWeigth;
         }
     }
 
+    /**
+     *
+     * @param parThreshold a
+     */
     public void setParThreshold(double parThreshold) {
         if(parThreshold >= MIN_ZERO_ONE) {
             this.parThreshold = parThreshold;
         }
     }
 
+    /**
+     *
+     * @return a
+     */
     public BunwarpJMode getModeInput() {
         return modeInput;
     }
 
+    /**
+     *
+     * @return a
+     */
     public BunwarpJMinScale getMinScale() {
         return minScale;
     }
 
+    /**
+     *
+     * @return a
+     */
     public BunwarpJMaxScale getMaxScale() {
         return maxScale;
     }
 
+    /**
+     *
+     * @return a
+     */
     public int getSampleFactor() {
         return sampleFactor;
     }
 
+    /**
+     *
+     * @return a
+     */
     public double getParDivWeigth() {
         return parDivWeigth;
     }
 
+    /**
+     *
+     * @return a
+     */
     public double getParCurlWeigth() {
         return parCurlWeigth;
     }
 
+    /**
+     *
+     * @return a
+     */
     public double getParLandmarkWeigth() {
         return parLandmarkWeigth;
     }
 
+    /**
+     *
+     * @return a
+     */
     public double getParImageWeigth() {
         return parImageWeigth;
     }
 
+    /**
+     *
+     * @return a
+     */
     public double getParConsistencyWeigth() {
         return parConsistencyWeigth;
     }
 
+    /**
+     *
+     * @return a
+     */
     public double getParThreshold() {
         return parThreshold;
     }

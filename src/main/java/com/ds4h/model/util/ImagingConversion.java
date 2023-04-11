@@ -1,57 +1,42 @@
 package com.ds4h.model.util;
 
 
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
-import com.ds4h.model.util.saveProject.SaveImages;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.plugin.LutLoader;
-import ij.process.*;
 import org.apache.commons.io.FilenameUtils;
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.FloatPointer;
-import org.bytedeco.javacpp.ShortPointer;
 import org.opencv.core.*;
-import org.opencv.highgui.HighGui;
-import org.opencv.highgui.ImageWindow;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
-import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class ImagingConversion {
 
     private static final String TMP_DIRECTORY_NAME = "DS4H_Images";
     private static final String TMP_DIRECTORY_NAME_MAT = "DS4H_ImagesMat";
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
+
+    /**
+     *
+     */
     private ImagingConversion(){}
 
     /**
      *
-     * @param paths
-     * @return
-     * @throws IOException
+     * @param paths a
+     * @return b
+     * @throws IOException c
      */
     public static List<ImagePoints> fromPath(final List<File> paths) throws IOException{
         return paths.parallelStream()
@@ -115,6 +100,11 @@ public class ImagingConversion {
         return outputFiles;
     }
 
+    /**
+     *
+     * @param path a
+     * @return b
+     */
     public static Optional<ImagePlus> fromSinglePathToImagePlus(final String path){
         try {
             if(Objects.nonNull(path)) {
@@ -126,12 +116,23 @@ public class ImagingConversion {
         return Optional.empty();
     }
 
+    /**
+     *
+     * @param matrix a
+     * @return b
+     */
     public static Mat fromGray2Rgb(final Mat matrix){
+
         final Mat rgb = new Mat();
-        Imgproc.cvtColor(matrix, rgb, COLOR_GRAY2RGB);
+        Imgproc.cvtColor(Objects.requireNonNull(matrix), rgb, COLOR_GRAY2RGB);
         return rgb;
     }
 
+    /**
+     *
+     * @param imagePlus a
+     * @return b
+     */
     public static Optional<Mat> fromImagePlus2Mat(final ImagePlus imagePlus){
         try{
             final String dir = DirectoryCreator.createTemporaryDirectory(ImagingConversion.TMP_DIRECTORY_NAME_MAT);

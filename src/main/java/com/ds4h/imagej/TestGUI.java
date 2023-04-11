@@ -34,7 +34,7 @@ public class TestGUI implements PlugIn{
 		// start ImageJ
 		new ImageJ();
 		// run the plugin
-		IJ.runPlugIn(Process_Pixels.class.getName(), "");
+		IJ.runPlugIn(Image_Alignment.class.getName(), "");
 
     }
 
