@@ -6,14 +6,15 @@ import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.SIFT;
-
 import java.util.List;
-import java.util.Objects;
 
 public class SIFTDetector extends PointDetector {
     private final SIFT sift = SIFT.create();
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
 
+    public SIFTDetector(){
+
+    }
 
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {

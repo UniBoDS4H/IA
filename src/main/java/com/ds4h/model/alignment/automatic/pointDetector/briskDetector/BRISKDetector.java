@@ -5,9 +5,7 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.BRISK;
-
 import java.util.List;
-import java.util.Objects;
 
 public class BRISKDetector extends PointDetector {
 

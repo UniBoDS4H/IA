@@ -2,15 +2,10 @@ package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.converter.MatImageProcessorConverter;
-import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ByteProcessor;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
 import java.util.List;
-import java.util.Objects;
 
 public class SURFDetector extends PointDetector {
 

@@ -1,12 +1,9 @@
 package com.ds4h.model.util.converter;
 
-import com.ds4h.model.util.MemoryController;
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.*;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Objects;
@@ -25,10 +22,10 @@ public class MatImageProcessorConverter {
 
     /**
      *
-     * @param matrix
-     * @param width
-     * @param height
-     * @return
+     * @param matrix a
+     * @param width b
+     * @param height c
+     * @return d
      */
     private static ColorProcessor makeColorProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
@@ -39,7 +36,7 @@ public class MatImageProcessorConverter {
         matrix = null;
         int[] iData = (int[]) cp.getPixels();
         for (int i = 0; i < width * height; i++) {
-            int red = pixels[i * 3 + 0] & 0xff;
+            int red = pixels[i * 3] & 0xff;
             int grn = pixels[i * 3 + 1] & 0xff;
             int blu = pixels[i * 3 + 2] & 0xff;
             iData[i] = (red << 16) | (grn << 8) | blu;
@@ -52,13 +49,13 @@ public class MatImageProcessorConverter {
 
     /**
      *
-     * @param matrix
-     * @param width
-     * @param height
-     * @param lut
-     * @param min
-     * @param max
-     * @return
+     * @param matrix a
+     * @param width b
+     * @param height c
+     * @param lut d
+     * @param min e
+     * @param max f
+     * @return g
      */
     private static ImageProcessor makeShortProcessor(Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
@@ -82,10 +79,10 @@ public class MatImageProcessorConverter {
 
     /**
      *
-     * @param matrix
-     * @param width
-     * @param height
-     * @return
+     * @param matrix a
+     * @param width b
+     * @param height c
+     * @return d
      */
     private static ByteProcessor makeByteProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
@@ -104,10 +101,10 @@ public class MatImageProcessorConverter {
 
     /**
      *
-     * @param matrix
-     * @param width
-     * @param height
-     * @return
+     * @param matrix a
+     * @param width b
+     * @param height c
+     * @return d
      */
     private static FloatProcessor makeFloatProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE FLOATPROCESSOR] Creating FloatProcessor");
@@ -127,10 +124,10 @@ public class MatImageProcessorConverter {
 
     /**
      *
-     * @param matrix
-     * @param width
-     * @param height
-     * @return
+     * @param matrix a
+     * @param width b
+     * @param height c
+     * @return d
      */
     private static BinaryProcessor makeBinaryProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BINARYPROCESSOR] Creating BinaryProcessor");
@@ -141,9 +138,9 @@ public class MatImageProcessorConverter {
 
     /**
      *
-     * @param matrix
-     * @param ip
-     * @return
+     * @param matrix a
+     * @param ip b
+     * @return c
      */
     public static ImageProcessor convert(final Mat matrix, final ImageProcessor ip){
         if(Objects.nonNull(matrix) && Objects.nonNull(ip) && !matrix.empty()){
@@ -165,5 +162,4 @@ public class MatImageProcessorConverter {
             throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
         }
     }
-
 }
