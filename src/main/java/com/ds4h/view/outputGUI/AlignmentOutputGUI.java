@@ -122,7 +122,6 @@ public class AlignmentOutputGUI extends StackWindow {
         /*this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         */
         this.overlappedItem.addActionListener(event -> {
-            System.out.println(this.getImagePlus().getDisplayMode());
             this.getImagePlus().setDisplayMode(CompositeImage.COMPOSITE);
             this.settings.remove(this.overlappedItem);
             this.settings.add(this.carouselItem);

@@ -2,6 +2,8 @@ package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.view.displayInfo.DisplayInfo;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
@@ -27,9 +29,9 @@ public class SaveImagesPanel extends JPanel {
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         this.controller.getAlignedImages().forEach(image->{
             final SaveListItem panel = new SaveListItem(image, this.controller.getAlignedImages().indexOf(image)+1);
-            //panel.setPreferredSize(this.getPreferredSize());
             panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            panel.setPreferredSize(new Dimension(0,this.getHeight()/6)); // Imposta la dimensione preferita del pannello di anteprima
+            final Dimension screenSize = DisplayInfo.getDisplaySize(80);
+            panel.setPreferredSize(new Dimension(0,screenSize.height/8));
             innerPanel.add(panel);
         });
         scrollPane.setViewportView(innerPanel);
