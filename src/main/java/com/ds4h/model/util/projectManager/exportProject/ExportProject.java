@@ -7,6 +7,8 @@ import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
 import com.ds4h.model.util.saveProject.SaveImages;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExportProject {
@@ -27,7 +29,10 @@ public class ExportProject {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         if(!directory.isEmpty()){
-            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImagePlus).collect(Collectors.toList()), path+"/"+directory);
+            SaveImages.save(new ArrayList<>(pointManager.getCornerImages()).stream()
+                    .peek(ImagePoints::clearPoints)
+                    .map(ImagePoints::getImagePlus)
+                    .collect(Collectors.toList()), path+"/"+directory);
             JSONSerializer.createJSON(pointManager, path+"/"+directory);
         }else{
             //Something happen, the creation failed I save the image inside the path.

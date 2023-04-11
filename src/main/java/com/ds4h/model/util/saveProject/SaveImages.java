@@ -77,7 +77,9 @@ public class SaveImages {
      * @param path b
      */
     public static void save(final List<ImagePlus> images, final String path){
-        images.parallelStream().forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
+        images.stream().peek(imagePlus -> imagePlus.getOverlay().clear()).forEach(image -> {
+            IJ.save(image, path+"/"+image.getTitle());
+        });
     }
 
     /**
