@@ -31,24 +31,21 @@ public class ExportProject {
     public static void exportProject(final PointManager pointManager, final String path) throws IOException {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
+        final List<ImagePoints> copy = new ArrayList<>(pointManager.getCornerImages().size());
+        copy.addAll(pointManager.getCornerImages());
+
         if(!directory.isEmpty()){
-
-            final List<ImagePoints> copy = new ArrayList<>(pointManager.getCornerImages().size());
-            copy.addAll(pointManager.getCornerImages());
-
             SaveImages.save(copy.stream()
                     .map(ImagePoints::getImagePlus)
                     .collect(Collectors.toList()), path+"/"+directory);
             JSONSerializer.createJSON(pointManager, path+"/"+directory);
         }else{
-            //Something happen, the creation failed I save the image inside the path.
-            SaveImages.save(new ArrayList<>(pointManager.getCornerImages())
-                    .stream()
+            SaveImages.save(copy.stream()
                     .map(ImagePoints::getImagePlus)
-                    .peek(imagePlus -> imagePlus.getOverlay().clear())
                     .collect(Collectors.toList()), path);
             JSONSerializer.createJSON(pointManager, path);
         }
+        copy.clear();
     }
 
 
