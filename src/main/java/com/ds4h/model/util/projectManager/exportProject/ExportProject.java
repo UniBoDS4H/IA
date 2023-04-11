@@ -5,8 +5,12 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
 import com.ds4h.model.util.saveProject.SaveImages;
+import ij.IJ;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExportProject {
@@ -23,17 +27,25 @@ public class ExportProject {
      * @param path the path where store the project
      * @throws IOException error in the saving s
      */
+
     public static void exportProject(final PointManager pointManager, final String path) throws IOException {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
+        final List<ImagePoints> copy = new ArrayList<>(pointManager.getCornerImages().size());
+        copy.addAll(pointManager.getCornerImages());
+
         if(!directory.isEmpty()){
-            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImagePlus).collect(Collectors.toList()), path+"/"+directory);
+            SaveImages.save(copy.stream()
+                    .map(ImagePoints::getImagePlus)
+                    .collect(Collectors.toList()), path+"/"+directory);
             JSONSerializer.createJSON(pointManager, path+"/"+directory);
         }else{
-            //Something happen, the creation failed I save the image inside the path.
-            SaveImages.save(pointManager.getCornerImages().stream().map(ImagePoints::getImagePlus).collect(Collectors.toList()), path);
+            SaveImages.save(copy.stream()
+                    .map(ImagePoints::getImagePlus)
+                    .collect(Collectors.toList()), path);
             JSONSerializer.createJSON(pointManager, path);
         }
+        copy.clear();
     }
 
 
