@@ -17,7 +17,7 @@ public interface AlignmentControllerInterface {
     public boolean isAlive();
 
     public String name();
-    public CompositeImage getAlignedImagesAsStack();
+    public ImagePlus getAlignedImagesAsStack();
 
     int getStatus();
 }
