@@ -65,7 +65,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                     this.alignment.alignImages(pointManager.getPointManager(), algorithm,
                             AlignmentEnum.AUTOMATIC,
                             Objects.requireNonNull(detector.pointDetector()),
-                            detector.getFactor(),
+                            detector.getThresholdFactor(),
                             detector.getScaling());
                 }catch (Exception e){
                     throw new RuntimeException(e);
