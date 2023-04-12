@@ -227,7 +227,6 @@ public class Alignment implements Runnable{
             this.thread = new Thread(this);
             IJ.log("Inside RUN");
             //TODO: understand how to throw this exception outside this method.
-
             throw ex;
         }
     }
