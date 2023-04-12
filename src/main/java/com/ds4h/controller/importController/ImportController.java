@@ -33,7 +33,7 @@ public class ImportController {
                 throw new FileNotFoundException("The directory chosen does not contain any type of images.\n" +
                         "Please select a directory with images.");
             }
-            MemoryController.controllMemory(pointManager.getPointImages());
+            MemoryController.controlMemory(pointManager.getPointImages());
             images.clear();
         }
     }

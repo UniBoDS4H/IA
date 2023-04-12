@@ -3,28 +3,26 @@ package com.ds4h.model.util;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.sun.management.OperatingSystemMXBean;
 import ij.IJ;
-import org.opencv.core.Size;
-
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+/**
+ * This class is used in order to check the memory when the images are loaded inside the Plugin.
+ */
 public class MemoryController {
 
-    private final static long  MEMORY_LIMIT = 150_000;
     private final static double MEMORY_PERCENTAGE_LIMIT = 0.35;
 
     private MemoryController(){
 
     }
 
-    public static void controllMemory(){
-        long free = Runtime.getRuntime().freeMemory();
-        long used = Runtime.getRuntime().maxMemory();
-        IJ.log("[MEMORY CONTROLLER] Total Memory: " + (used - free));
-    }
-
-
-    public static void controllMemory(final List<ImagePoints> inputImaes) throws OutOfMemoryError{
+    /**
+     * Control the memory after the "inputImages" are loaded.
+     * @param inputImaes the images loaded from the Plugin.
+     * @throws OutOfMemoryError if the 35% of the memory is used by the images.
+     */
+    public static void controlMemory(final List<ImagePoints> inputImaes) throws OutOfMemoryError{
         long memorySize = 0;
         final long totalMemory = (IJ.maxMemory()/(1024*1024));
         for(final ImagePoints img : inputImaes){
@@ -43,17 +41,20 @@ public class MemoryController {
         }
     }
 
+    /**
+     * Returns the error message.
+     * @return the error message.
+     */
     private static String getError(){
         OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
         long physicalMemorySize = osBean.getTotalPhysicalMemorySize() -
                 (osBean.getFreePhysicalMemorySize() + osBean.getFreeSwapSpaceSize()) ;
         long ramSizeGB = physicalMemorySize / (1024 * 1024);
-        final String errorMsg = "The memory is not enough.\n"+
+        return "The memory is not enough.\n"+
                 "Please, expand your memory to use this Plugin.\n " +
                 "You can expand the memory from the Fiji/ImageJ menu:\n" +
                 "\"Edit\" > \"Options\" > \"Memory & Thread\".\n" +
                 "Write inside \"Maximum Memory\" a value higher than 4000 but lower than " + ramSizeGB + ".\n" +
                 "After, re-start Fiji/ImageJ.";
-        return errorMsg;
     }
 }

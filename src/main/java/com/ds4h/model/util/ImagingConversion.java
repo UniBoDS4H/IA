@@ -4,12 +4,7 @@ package com.ds4h.model.util;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
-import ij.IJ;
-import ij.ImagePlus;
 import org.apache.commons.io.FilenameUtils;
-import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
@@ -19,8 +14,11 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static org.opencv.imgproc.Imgproc.COLOR_GRAY2RGB;
 
+/**
+ * This class is used in order to create the ImagePoints from the Files. With the using of this class we check if the files
+ * are images, and stack of images. All the images will be converted to ImagePoints object.
+ */
 public class ImagingConversion {
 
     private static final String TMP_DIRECTORY_NAME = "DS4H_Images";
@@ -33,12 +31,11 @@ public class ImagingConversion {
     private ImagingConversion(){}
 
     /**
-     *
-     * @param paths a
-     * @return b
-     * @throws IOException c
+     * Returns a List of images from an input List of files.
+     * @param paths the input list of the images.
+     * @return the list of ImagePoints.
      */
-    public static List<ImagePoints> fromPath(final List<File> paths) throws IOException{
+    public static List<ImagePoints> fromPath(final List<File> paths){
         return paths.parallelStream()
                 .filter(File::isFile)
                 .filter(CheckImage::checkImage)
@@ -99,52 +96,4 @@ public class ImagingConversion {
         }
         return outputFiles;
     }
-
-    /**
-     *
-     * @param path a
-     * @return b
-     */
-    public static Optional<ImagePlus> fromSinglePathToImagePlus(final String path){
-        try {
-            if(Objects.nonNull(path)) {
-                return !path.isEmpty() ? Optional.of(IJ.openImage(path)) : Optional.empty();
-            }
-        }catch(Exception e){
-            IJ.showMessage("An error occurred with this file : " + path + ". Are you sure that is correct ?");
-        }
-        return Optional.empty();
-    }
-
-    /**
-     *
-     * @param matrix a
-     * @return b
-     */
-    public static Mat fromGray2Rgb(final Mat matrix){
-
-        final Mat rgb = new Mat();
-        Imgproc.cvtColor(Objects.requireNonNull(matrix), rgb, COLOR_GRAY2RGB);
-        return rgb;
-    }
-
-    /**
-     *
-     * @param imagePlus a
-     * @return b
-     */
-    public static Optional<Mat> fromImagePlus2Mat(final ImagePlus imagePlus){
-        try{
-            final String dir = DirectoryCreator.createTemporaryDirectory(ImagingConversion.TMP_DIRECTORY_NAME_MAT);
-            final String path = ImagingConversion.TMP_DIRECTORY+ "/"+dir+"/" + "Converted"+imagePlus.getTitle();
-            IJ.save(imagePlus, path);
-            return Optional.of(Imgcodecs.imread(path));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-
-
-
 }

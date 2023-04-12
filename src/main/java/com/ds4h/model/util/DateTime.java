@@ -2,9 +2,17 @@ package com.ds4h.model.util;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+/**
+ * This class is used in order to obtain the Date and the Time that will be used for the creation of Directories.
+ */
 public class DateTime {
     private final LocalDate today;
     private final LocalTime now;
+
+    /**
+     * Constructor for the DateTime object.
+     */
     public DateTime(){
         today = LocalDate.now();
         this.now = LocalTime.now();

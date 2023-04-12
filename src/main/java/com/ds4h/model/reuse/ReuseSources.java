@@ -31,7 +31,7 @@ public class ReuseSources {
             pointManager.clearList();
             pointManager.clearProject();
             pointManager.addImages(ReuseSources.convertImages(images));
-            MemoryController.controllMemory(pointManager.getPointImages());
+            MemoryController.controlMemory(pointManager.getPointImages());
             System.gc();
         }
     }

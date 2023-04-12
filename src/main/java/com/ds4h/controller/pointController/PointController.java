@@ -37,7 +37,7 @@ public class PointController {
         System.gc();
         if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getPointImages().size() > 0)) {
             this.pointManager.addImages(imagePointsList);
-            MemoryController.controllMemory(this.pointManager.getPointImages());
+            MemoryController.controlMemory(this.pointManager.getPointImages());
         }else {
             throw new IllegalArgumentException("You can not upload one single photo or less.\n" +
                     "Or maybe what you chose is not a image.");
