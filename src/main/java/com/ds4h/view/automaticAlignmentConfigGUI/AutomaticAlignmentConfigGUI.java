@@ -47,7 +47,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.slider.setPaintLabels(true);
 
 
-        this.slider.setValue((int)(this.selectedDetector.getFactor()*10));
+        this.slider.setValue((int)(this.selectedDetector.getThresholdFactor()*10));
         this.translationCheckbox = new JCheckBox("Translation");
         this.rotationCheckbox = new JCheckBox("Rotation");
         this.scalingCheckbox = new JCheckBox("Scaling");
@@ -62,7 +62,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.setVisible(true);
         this.detectors.setSelectedItem(this.selectedDetector);
         this.algorithm.setSelectedItem(getEnumFromAlgorithm(this.controller.getAlgorithm()));
-        this.slider.setValue((int)(this.selectedDetector.getFactor()*10));
+        this.slider.setValue((int)(this.selectedDetector.getThresholdFactor()*10));
     }
     @Override
     public void addListeners() {
@@ -78,10 +78,10 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.detectors.addActionListener(event -> {
             this.selectedDetector = (Detectors) this.detectors.getSelectedItem();
             assert this.selectedDetector != null;
-            this.slider.setValue((int)(this.selectedDetector.getFactor()*10));
+            this.slider.setValue((int)(this.selectedDetector.getThresholdFactor()*10));
         });
         this.slider.addChangeListener(event -> {
-            this.selectedDetector.setFactor(this.slider.getValue());
+            this.selectedDetector.setThresholdFactor(this.slider.getValue());
         });
         this.rotationCheckbox.addActionListener(e->{
             if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
