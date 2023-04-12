@@ -12,7 +12,7 @@ import java.util.*;
  *
  */
 public class ImportProject {
-    private static Optional<ImagePoints> TARGET_IMAGE = Optional.empty();
+    private static ImagePoints target = null;
 
     private final static String JSON = ".json";
 
@@ -48,11 +48,11 @@ public class ImportProject {
                 //If we have found the configuration json, we read it and we assing for each image its points.
                 JSONDeserializer.readImportProjectJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
                     if (file.getName().equals(key)) {
-                        final ImagePoints ImagePoints = new ImagePoints(file.getPath());
-                        value.forEach(ImagePoints::addPoint);
-                        images.add(ImagePoints);
+                        final ImagePoints imagePoints = new ImagePoints(file.getPath());
+                        value.forEach(imagePoints::addPoint);
+                        images.add(imagePoints);
                         if(JSONDeserializer.isTargetPresent() && JSONDeserializer.targetName().equals(file.getName())){
-                            TARGET_IMAGE = Optional.of(ImagePoints);
+                            target = imagePoints;
                         }
                     }
                 }));
@@ -80,6 +80,6 @@ public class ImportProject {
     }
 
     public static Optional<ImagePoints> getTargetImage(){
-        return TARGET_IMAGE;
+        return Optional.ofNullable(target);
     }
 }

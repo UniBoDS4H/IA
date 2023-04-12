@@ -1,6 +1,8 @@
 package com.ds4h.model.util.opencvManager.opencvDeleter;
 
 import com.ds4h.model.util.opencvManager.opencvLoader.OpenCVLoader;
+import ij.IJ;
+
 import java.io.File;
 import java.util.Objects;
 
@@ -9,23 +11,23 @@ public class OpencvDeleter {
     private OpencvDeleter(){
 
     }
-    private static void delete(final String path, final String tmpName){
-        final File directory = new File(path);
+    private static void delete(){
+        final File directory = new File(TEMPORARY_PATH);
         if(directory.isDirectory()){
             for(final File file : Objects.requireNonNull(directory.listFiles())){
-                if(file.isFile() && file.getName().contains(tmpName)){
-                    //TODO: read the value and understand what to do if it is false
-                    file.delete();
+                if(file.isFile() && file.getName().contains(OpenCVLoader.TMP_LIBRARY_NAME)){
+                    if(file.delete()){
+                        IJ.log("[OPENCV DELETER] Library removed successfully!");
+                    }
                 }
             }
         }
-
     }
 
     /**
      *
      */
     public static void deleteOpenCV(){
-        OpencvDeleter.delete(TEMPORARY_PATH, OpenCVLoader.TMP_LIBRARY_NAME);
+        OpencvDeleter.delete();
     }
 }
