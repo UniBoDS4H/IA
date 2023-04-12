@@ -6,7 +6,8 @@ With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by 
 
 ## Implementation
 
-DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji. 
+DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji. This plugin can run on MacOs, Windows and Linux.
+
 
 
 ## How to Align
@@ -16,16 +17,14 @@ In order to align the images first of all we have to *load the images* inside th
 
 
 ### Manual Alignment
-The manual aligmment algorithm used inside this project are two : 
-   - Translational Alignment
-   - Perspective Alignment
-   - Affine Alignment
-    
+The manual alignment algorithm used inside this plugin are three: 
+   - **Translational Alignment**
+   - **Perspective Alignment**
+   - **Affine Alignment**
 
 
 ### Automatic Alignment
 The automatic alignment use what is called a *Point Detector*. A *Point Detector* is a class used for the detection of points for the alignment of the images. The Point Detector used inside this project are:
-* **BRISK**
 * **ORB**
 * **SIFT**
 * **SURF** 
@@ -34,9 +33,8 @@ The automatic alignment use what is called a *Point Detector*. A *Point Detector
 
 ## Installation
 
-
-DS4H Image Alignment can be installed easily, on Windows, Linux and Apple Silicon M1 and Intel Based Mac ( Mac-ImageJ is the ARM version, Mac-Fiji is the x86 Intel version). In order to use our tool, you can just download the version that you need for your pc, copy the jar 
-inside the "plugins" folder of ImageJ/Fiji. 
+DS4H Image Alignment can be installed easily, on Windows, Linux and Apple Silicon M1 and Intel Based Mac (Mac-ImageJ is the ARM version, Mac-Fiji is the x86 Intel version). In order to use our tool, you can just download the version that you need for your pc, copy the jar 
+inside the "plugins" folder of ImageJ/Fiji. You will find in the ImageJ/Fiji _Plugin_ voice out tool, **DS4H Image Alignment**
 
 
 ## How to use It
@@ -82,9 +80,7 @@ The Data Science for Health (DS4H) group:
 
 
 
-
-
-
+<!--
 
 This is an example Maven project implementing an ImageJ 1.x plugin.
 
@@ -170,3 +166,4 @@ How to use this project as a starting point
 
 This ensures that the final `.jar` file will also be copied to
 your ImageJ plugins folder everytime you run the Maven build.
+-->

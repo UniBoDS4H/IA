@@ -7,13 +7,12 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
-import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
-import ij.process.LUT;
+
 import java.awt.image.ColorModel;
 import java.util.Comparator;
 import java.util.LinkedList;
