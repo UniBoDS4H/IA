@@ -27,13 +27,13 @@ public class ImportController {
             pointManager.addImages(images);
 
             if(ImportProject.getTargetImage().isPresent()){
-                pointManager.setAsSource(ImportProject.getTargetImage().get());
+                pointManager.setAsTarget(ImportProject.getTargetImage().get());
             }
             if(images.size() == 0){
                 throw new FileNotFoundException("The directory chosen does not contain any type of images.\n" +
                         "Please select a directory with images.");
             }
-            MemoryController.controllMemory(pointManager.getCornerImages());
+            MemoryController.controllMemory(pointManager.getPointImages());
             images.clear();
         }
     }

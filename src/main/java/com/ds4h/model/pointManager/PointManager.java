@@ -10,83 +10,91 @@ import java.util.stream.Collectors;
  */
 public class PointManager {
     private final List<ImagePoints> imagesWithPoints;
-    private ImagePoints sourceImage;
+    private ImagePoints targetImage;
+
+    /**
+     * Creates the PointManager object.
+     */
     public PointManager(){
-        this.sourceImage = null;
+        this.targetImage = null;
         this.imagesWithPoints = new ArrayList<>();
     }
 
     /**
-     *
-     * @param images a
+     * Add the images inside "imageWithPoints" ArrayList.
+     * @param images the images to be added inside "imageWithPoints".
      */
     public void addImages(final List<ImagePoints> images){
         if(Objects.nonNull(images) && images.size() > 0) {
             images.stream()
                     .filter(img -> !this.imagesWithPoints.contains(img))
                     .forEach(this.imagesWithPoints::add);
-            this.setAsSource(images.get(0));
+            this.setAsTarget(images.get(0));
         }
     }
 
     /**
-     *
-     * @param image a
+     * Remove the image from the "imagesWithPoint".
+     * @param image the image to remove.
      */
     public void removeImage(final ImagePoints image){
-        if(Objects.nonNull(image) && Objects.nonNull(this.sourceImage) && !this.sourceImage.equals(image)) {
+        if(Objects.nonNull(image) && Objects.nonNull(this.targetImage) && !this.targetImage.equals(image)) {
             this.imagesWithPoints.removeIf(img -> img.equals(image));
         }
     }
 
     /**
-     *
+     * Remove all the images inside "imagesWithPoints".
      */
     public void clearList(){
         this.imagesWithPoints.clear();
     }
 
     /**
-     *
-     * @return a
+     * Returns the list of all the images stored inside the PointManager object.
+     * @return the list of all the images.
      */
-    public List<ImagePoints> getCornerImages(){
+    public List<ImagePoints> getPointImages(){
         return new ArrayList<>(this.imagesWithPoints);
     }
 
     /**
-     *
-     * @return a
+     * Returns all the images to align stored inside the PointManager object.
+     * @return all the iages to align stored inside the PointManager object.
      */
     public List<ImagePoints> getImagesToAlign(){
-        final Optional<ImagePoints> target = Optional.ofNullable(this.sourceImage);
-        return target
-                .map(imageCorners -> this.imagesWithPoints.stream().filter(im -> !im.equals(imageCorners))
-                .collect(Collectors.toList())).orElseGet(() -> new LinkedList<>(this.imagesWithPoints));
+        return Optional.ofNullable(this.targetImage)
+                .map(imageCorners -> this.imagesWithPoints.stream()
+                        .filter(im -> !im.equals(imageCorners))
+                .collect(Collectors.toList()))
+                .orElseGet(() -> new LinkedList<>(this.imagesWithPoints));
     }
 
     /**
-     *
-     * @return a
+     * Returns the targetImage.
+     * @return the targetImage.
      */
-    public Optional<ImagePoints> getSourceImage(){
-        return Optional.ofNullable(this.sourceImage);
+    public Optional<ImagePoints> getTargetImage(){
+        return Optional.ofNullable(this.targetImage);
     }
 
     /**
-     *
-     * @param image a
+     * Set the new target inside the PointManager.
+     * @param image the new target to be added.
      */
-    public void setAsSource(final ImagePoints image){
+    public void setAsTarget(final ImagePoints image){
         if(Objects.nonNull(image) && this.imagesWithPoints.contains(image)){
-            this.sourceImage = image;
+            this.targetImage = image;
         }else{
             throw new IllegalArgumentException("The given image was not fount among the loaded or the image input is NULL.");
         }
     }
 
+    /**
+     * Remove all the images inside the point manager and also remove the targetImage.  
+     */
     public void clearProject(){
-        this.sourceImage = null;
+        this.targetImage = null;
         this.imagesWithPoints.clear();
         System.gc();
     }

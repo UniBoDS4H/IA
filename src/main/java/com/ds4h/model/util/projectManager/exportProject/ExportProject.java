@@ -28,8 +28,8 @@ public class ExportProject {
     public static void exportProject(final PointManager pointManager, final String path) throws IOException {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
-        final List<ImagePoints> copy = new ArrayList<>(pointManager.getCornerImages().size());
-        copy.addAll(pointManager.getCornerImages());
+        final List<ImagePoints> copy = new ArrayList<>(pointManager.getPointImages().size());
+        copy.addAll(pointManager.getPointImages());
 
         if(!directory.isEmpty()){
             SaveImages.save(copy.stream()

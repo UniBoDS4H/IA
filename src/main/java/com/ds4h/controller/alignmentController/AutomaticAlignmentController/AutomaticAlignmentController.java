@@ -60,7 +60,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws IllegalArgumentException, RuntimeException{
 
         if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
-            if (pointManager.getPointManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
+            if (pointManager.getPointManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {
                 try{
                     this.alignment.alignImages(pointManager.getPointManager(), algorithm,
                             AlignmentEnum.AUTOMATIC,

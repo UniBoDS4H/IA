@@ -22,7 +22,7 @@ import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -251,7 +251,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.clearItem.addActionListener(event -> {
-            if(this.pointControler.getPointManager().getCornerImages().size() > 0) {
+            if(this.pointControler.getPointManager().getPointImages().size() > 0) {
                 final int result = JOptionPane.showConfirmDialog(this,
                         "Are you sure to clear the entire project ?",
                         "Confirm operation",
@@ -293,7 +293,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         });
 
         this.exportItem.addActionListener(event -> {
-            if(this.pointControler.getPointManager().getCornerImages().size() > 0) {
+            if(this.pointControler.getPointManager().getPointImages().size() > 0) {
                 this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 final int result = this.fileChooser.showOpenDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
