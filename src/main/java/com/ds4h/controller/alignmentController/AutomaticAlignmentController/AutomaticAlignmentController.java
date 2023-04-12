@@ -11,8 +11,11 @@ import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ByteProcessor;
+import ij.process.ImageConverter;
 import ij.process.LUT;
 import java.awt.image.ColorModel;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -101,25 +104,32 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @throws RuntimeException b
      */
     @Override
-    public CompositeImage getAlignedImagesAsStack() throws RuntimeException{
+    public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
         if(!this.getAlignedImages().isEmpty()){
             final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
             final List<AlignedImage> images = this.getAlignedImages();
-            final LUT[] luts = new LUT[images.size()];
-            int index = 0;
+            //final LUT[] luts = new LUT[images.size()];
+            //int index = 0;
+            final int bitDepth = images.stream()
+                    .min(Comparator.comparingInt(img -> img.getAlignedImage().getBitDepth())).get().getAlignedImage().getBitDepth();
+            IJ.log("[ALIGNED STACK] Bit Depth: " + bitDepth);
             for (final AlignedImage image : images) {
-                luts[index] = image.getAlignedImage().getProcessor().getLut();
+                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)) {
+                    final ImageConverter imageConverter = new ImageConverter(image.getAlignedImage());
+                    imageConverter.convertToGray8();
+                    IJ.log("[STACK] " + (image.getAlignedImage().getProcessor() instanceof ByteProcessor));
+                }
+                //luts[index] = image.getAlignedImage().getProcessor().getLut();
                 IJ.log("[NAME] " + image.getName());
                 stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
-                index++;
+                //index++;
             }
             try {
-                //new ImagePlus("Aligned Stack", stack).show();
-                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
-                composite.setLuts(luts);
-                return composite;
+                //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
+                //composite.setLuts(luts);
+                return new ImagePlus("Aligned Stack", stack);
             }catch (Exception e){
                 throw new RuntimeException("Something went wrong with the creation of the stack.");
             }

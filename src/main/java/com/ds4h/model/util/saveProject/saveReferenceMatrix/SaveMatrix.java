@@ -1,17 +1,10 @@
 package com.ds4h.model.util.saveProject.saveReferenceMatrix;
 
 import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
 import org.opencv.core.Mat;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -24,6 +17,11 @@ public class SaveMatrix {
 
     }
 
+    /**
+     *
+     * @param images a
+     * @param path b
+     */
     public static void saveMatrix(final List<AlignedImage> images, final String path){
         final StringBuilder content = new StringBuilder();
 
@@ -36,6 +34,7 @@ public class SaveMatrix {
                     final StringBuilder stringBuilder = new StringBuilder();
                     final int rows = matrix.rows();
                     final int cols = matrix.cols();
+
                     IntStream.range(0, rows).forEach(row -> {
                         IntStream.range(0, cols).forEach(col -> {
                             final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));

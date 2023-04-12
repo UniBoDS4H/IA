@@ -38,18 +38,16 @@ public class DirectoryCreator {
      * @param path : where to create the directory
      * @param dirName : the directory name
      * @return the name of the directory if It is successfully created otherwise It returns an empty string.
+     * @throws IllegalArgumentException a
      */
-    public static String createDirectory(final String path, final String dirName){
+    public static String createDirectory(final String path, final String dirName) throws IllegalArgumentException{
         if(!path.isEmpty() && !dirName.isEmpty()) {
             final String finalName = DirectoryCreator.createName(dirName);
             final String baseDirectoryName = path + "/" + finalName;
             final File directory = new File(baseDirectoryName);
-            //TODO: when the creation returns false, it menas that already exists another directory with the same name. Add random values to it
-            return directory.mkdir() ? finalName : "";
+            return directory.mkdir() ? finalName : ""; //if the creation fails, save the images inside the path
         }else{
-            //TODO: Add more controls
-            //throw IllegalArgumentException("");
-            return "";
+            throw new IllegalArgumentException("One of the parameters is empty, please choose a a path.");
         }
     }
 

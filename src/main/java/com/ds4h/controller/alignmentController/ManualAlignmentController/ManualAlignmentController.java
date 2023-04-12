@@ -7,8 +7,11 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import ij.CompositeImage;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ByteProcessor;
+import ij.process.ImageConverter;
 import ij.process.LUT;
 import java.awt.image.ColorModel;
 import java.util.LinkedList;
@@ -45,21 +48,26 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      *
      * @return b
      */
-    public CompositeImage getAlignedImagesAsStack(){
+    public ImagePlus getAlignedImagesAsStack(){
         if(!this.getAlignedImages().isEmpty()){
-            ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
+            final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(), this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
-            List<AlignedImage> images = this.getAlignedImages();
-            LUT[] luts = new LUT[images.size()];
-            int index = 0;
-            for (AlignedImage image : images) {
-                luts[index] = image.getAlignedImage().getProcessor().getLut();
+            final List<AlignedImage> images = this.getAlignedImages();
+            //LUT[] luts = new LUT[images.size()];
+            //int index = 0;
+            for (final AlignedImage image : images) {
+                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)) {
+                    final ImageConverter imageConverter = new ImageConverter(image.getAlignedImage());
+                    imageConverter.convertToGray8();
+                    IJ.log("[STACK] " + (image.getAlignedImage().getProcessor() instanceof ByteProcessor));
+                }
+                //luts[index] = image.getAlignedImage().getProcessor().getLut();
                 stack.addSlice(image.getName(),image.getAlignedImage().getProcessor());
-                index++;
+                //index++;
             }
-            final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
-            composite.setLuts(luts);
-            return composite;
+            //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
+            //composite.setLuts(luts);
+            return new ImagePlus("Aligned Stack", stack);
         }
         throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
                 "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +

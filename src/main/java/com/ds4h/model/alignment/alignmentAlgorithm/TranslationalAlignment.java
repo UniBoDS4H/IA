@@ -98,6 +98,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                     System.gc();
                     Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                 }
+                IJ.log("[TRANSLATIONAL] Final matrix: " + alignedImage);
                 final AlignedImage finalImg = new AlignedImage(transformationMatrix,
                         MatImageProcessorConverter.convert(alignedImage, ip),
                         imageToShift.getName());

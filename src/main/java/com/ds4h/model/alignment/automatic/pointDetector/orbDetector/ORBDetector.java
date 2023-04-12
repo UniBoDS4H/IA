@@ -6,9 +6,7 @@ import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.ORB;
-
 import java.util.List;
-import java.util.Objects;
 
 public class ORBDetector extends PointDetector {
 
@@ -66,7 +64,7 @@ public class ORBDetector extends PointDetector {
 
         final double threshold = (2.0 + this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
-        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();;
+        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
 
         final double scale = Math.pow(2, super.getScalingFactor()-1);
