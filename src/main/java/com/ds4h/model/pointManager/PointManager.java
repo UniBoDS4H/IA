@@ -6,7 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *
+ * This class has all the images to be aligned stored inside "imagesWithPoints". With the using of this class we can manage all the images
+ * stored inside the Plugin, add new images, remove images and so on.
  */
 public class PointManager {
     private final List<ImagePoints> imagesWithPoints;
@@ -91,7 +92,7 @@ public class PointManager {
     }
 
     /**
-     * Remove all the images inside the point manager and also remove the targetImage.  
+     * Remove all the images inside the point manager and also remove the targetImage.
      */
     public void clearProject(){
         this.targetImage = null;
