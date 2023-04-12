@@ -13,9 +13,9 @@ import ij.IJ;
  */
 public enum Detectors {
 
-    AKAZE("AKAZE", new AKAZEDetector(), 0),
-    BRISK("BRISK", new BRISKDetector(), 0),
-    KAZE("KAZE", new KAZEDetector(), 0),
+    //AKAZE("AKAZE", new AKAZEDetector(), 0),
+    //BRISK("BRISK", new BRISKDetector(), 0),
+    //KAZE("KAZE", new KAZEDetector(), 0),
     ORB("ORB", new ORBDetector(), 0),
     SIFT("SIFT", new SIFTDetector(), 0),
     SURF("SURF", new SURFDetector(), 0);
