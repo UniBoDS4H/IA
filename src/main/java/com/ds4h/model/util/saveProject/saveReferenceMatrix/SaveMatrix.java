@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- *
+ * Save the Registration matrix.
  */
 public class SaveMatrix {
 
@@ -18,9 +18,9 @@ public class SaveMatrix {
     }
 
     /**
-     *
-     * @param images a
-     * @param path b
+     * Save all the registration matrix stored inside "images".
+     * @param images the list of all the "AlignedImage" object.
+     * @param path where will be stored the file with all the matrix.
      */
     public static void saveMatrix(final List<AlignedImage> images, final String path){
         final StringBuilder content = new StringBuilder();
