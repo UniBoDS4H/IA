@@ -442,6 +442,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         this.pointControler);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
+                System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
                         "Error",

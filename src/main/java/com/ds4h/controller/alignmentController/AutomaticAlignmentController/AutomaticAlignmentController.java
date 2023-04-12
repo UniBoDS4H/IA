@@ -56,17 +56,24 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @throws RuntimeException e
      */
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws IllegalArgumentException, RuntimeException{
-        if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
-            if(pointManager.getPointManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
-                this.alignment.alignImages(pointManager.getPointManager(), algorithm,
-                        AlignmentEnum.AUTOMATIC,
-                        Objects.requireNonNull(detector.pointDetector()),
-                        detector.getFactor(),
-                        detector.getScaling());
-            }else{
+
+        if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
+            if (pointManager.getPointManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
+                try{
+                    this.alignment.alignImages(pointManager.getPointManager(), algorithm,
+                            AlignmentEnum.AUTOMATIC,
+                            Objects.requireNonNull(detector.pointDetector()),
+                            detector.getFactor(),
+                            detector.getScaling());
+                }catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+
+            } else {
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images and the SCALING FACTOR must be at least 1.");
             }
         }
+
     }
 
     /**

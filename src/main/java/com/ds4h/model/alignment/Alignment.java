@@ -132,9 +132,7 @@ public class Alignment implements Runnable{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
-        boolean ransac = true;
-        final boolean noEqualsToLimit = this.algorithm instanceof TranslationalAlignment || this.algorithm instanceof AffineAlignment;
-        for(final ImagePoints image : this.imagesToAlign){
+        boolean ransac = true;for(final ImagePoints image : this.imagesToAlign){
             final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
                     this.targetImage.toImprove(),
                     this.targetImage.getProcessor());
@@ -146,7 +144,7 @@ public class Alignment implements Runnable{
             IJ.log("[AUTOMATIC] Number of points T: " + target.numberOfPoints());
             IJ.log("[AUTOMATIC] Number of points I: " + image.numberOfPoints());
 
-            if(noEqualsToLimit && target.numberOfPoints() >= this.algorithm.getLowerBound()){
+            if(target.numberOfPoints() >= this.algorithm.getLowerBound()){
                 IJ.log("[AUTOMATIC] Inside ");
                 images.put(image, target);
                 this.total += 1;//this is for the warp;
@@ -212,23 +210,27 @@ public class Alignment implements Runnable{
      */
     @Override
     public void run() throws RuntimeException{
-        try {
-            if(Objects.nonNull(this.targetImage)) {
-                this.status = 0;
-                this.total = 2;
-                if(type == AlignmentEnum.MANUAL){
-                    manual();
-                }else if(type == AlignmentEnum.AUTOMATIC){
-                    auto();
+        try{
+            try {
+                if(Objects.nonNull(this.targetImage)) {
+                    this.status = 0;
+                    this.total = 2;
+                    if(type == AlignmentEnum.MANUAL){
+                        manual();
+                    }else if(type == AlignmentEnum.AUTOMATIC){
+                        auto();
+                    }
                 }
-            }
-            this.thread = new Thread(this);
-        } catch (final RuntimeException ex) {
-            this.thread = new Thread(this);
-            IJ.log("Inside RUN");
-            //TODO: understand how to throw this exception outside this method.
+                this.thread = new Thread(this);
+            } catch (final RuntimeException ex) {
+                this.thread = new Thread(this);
+                IJ.log("Inside RUN");
+                //TODO: understand how to throw this exception outside this method.
 
-            throw ex;
+                throw ex;
+            }
+        }catch (OutOfMemoryError e){
+            throw new RuntimeException("The alignment required more memory than is available.");
         }
     }
 
