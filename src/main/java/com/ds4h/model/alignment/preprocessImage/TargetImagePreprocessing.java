@@ -56,7 +56,6 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix : " + res.getFirst().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] New Matrix ADDR: " + res.getFirst().getNativeObjAddr());
                 target = new ImagePoints(title, res.getFirst());
-                //target.setTitle(title);
                 IJ.log("[AUTOMATIC PREPROCESS] Target Matrix: " + target.getMatImage().toString());
                 IJ.log("[AUTOMATIC PREPROCESS] Target Title: " + target.getTitle());
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
@@ -118,7 +117,6 @@ public class TargetImagePreprocessing {
             final Size s = new Size(xmax - xmin, ymax - ymin);
             IJ.log("[PREPROCESS] Before copy: " + s);
             IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
-
             final Mat alignedImage = Mat.zeros(s, target.type());
             IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
             target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));

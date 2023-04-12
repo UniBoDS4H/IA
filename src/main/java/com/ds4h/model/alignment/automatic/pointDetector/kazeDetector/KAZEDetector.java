@@ -4,9 +4,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
-
 import java.util.List;
-import java.util.Objects;
 
 public class KAZEDetector extends PointDetector {
     private final KAZE detector = KAZE.create();
@@ -29,6 +27,7 @@ public class KAZEDetector extends PointDetector {
 
         this.detector.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
         grayImg.release();
+
         if(!super.getMatCache().isAlreadyDetected()) {
 
             Mat grayTarget = super.getScalingFactor() > 1 ?
@@ -42,6 +41,7 @@ public class KAZEDetector extends PointDetector {
             super.getMatCache().setDetection(descriptors2, keypoints2);
             grayTarget.release();
         }
+
         System.gc();
         // Match keypoints between the two images using a BFMatcher
         final MatOfDMatch matches = new MatOfDMatch();

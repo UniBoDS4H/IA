@@ -87,10 +87,18 @@ public class JSONDeserializer extends JSONFile {
         return new Pair<>(x, y);
     }
 
+    /**
+     *
+     * @return a
+     */
     public static boolean isTargetPresent(){
         return TARGET_IMAGE_NAME.isPresent();
     }
 
+    /**
+     *
+     * @return a
+     */
     public static String targetName(){
         return TARGET_IMAGE_NAME.orElse("");
     }
