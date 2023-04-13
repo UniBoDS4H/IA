@@ -1,16 +1,20 @@
 package com.ds4h.view.outputGUI;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
+import com.ds4h.view.loadingGUI.LoadingGUI;
+import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
 import ij.CompositeImage;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
 import ij.process.LUT;
@@ -27,6 +31,8 @@ public class AlignmentOutputGUI extends StackWindow {
     private final Menu settings;
     private final Menu reuse;
     private final Menu save;
+    private final Menu elastic;
+    private final MenuItem elasticItem;
     private final MenuItem reuseItem;
     private final MenuItem overlappedItem;
     private final MenuItem saveItem;
@@ -41,30 +47,32 @@ public class AlignmentOutputGUI extends StackWindow {
     private final MainMenuGUI mainGUI;
     private final LUT[] originalLuts;
 
-    public AlignmentOutputGUI(AlignmentControllerInterface alignmentController, BunwarpjGUI settingsBunwarpj, BunwarpJController bunwarpJController, PointController pointController, MainMenuGUI mainMenuGUI) {
-        super(image = alignmentController.getAlignedImagesAsStack(), new StandardCanvas(image));
+    public AlignmentOutputGUI(final ImageController controller, final BunwarpjGUI settingsBunwarpj, final PointController pointController, final MainMenuGUI mainMenuGUI) {
+        super(image = controller.getAlignedImagesAsStack(), new StandardCanvas(image));
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
+        this.controller = controller;
         this.setLayout(new BorderLayout());
         this.originalLuts = this.getImagePlus().getLuts();
         this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
-        this.controller = new ImageController(alignmentController, bunwarpJController);
         this.configureImagesGUI = new ConfigureImagesGUI(this);
-        this.algorithm = alignmentController.name();
+        this.algorithm = controller.name();
         this.bunwarpjGUI = settingsBunwarpj;
-        this.saveGui = new SaveImagesGUI(this.controller);
+        this.saveGui = new SaveImagesGUI(controller);
         this.panel = new JPanel();
         this.panel.setLayout(new BorderLayout());
         this.menuBar = new MenuBar();
         this.settingsImages = new MenuItem("Configure images");
         this.settings = new Menu("Settings");
+        this.elastic = new Menu("Elastic");
         this.reuse = new Menu("Reuse");
         this.save = new Menu("Save");
+        this.elasticItem = new MenuItem("Elastic deformation");
         this.reuseItem = new MenuItem("Reuse as source");
-        this.overlappedItem = new MenuItem("View Overlapped");
-        this.carouselItem = new MenuItem("View Carousel");
-        this.saveItem = new MenuItem("Save Project");
+        this.overlappedItem = new MenuItem("View overlapped");
+        this.carouselItem = new MenuItem("View carousel");
+        this.saveItem = new MenuItem("Save project");
         this.addComponents();
         this.addListeners();
         this.createOutputIcons();
@@ -90,10 +98,12 @@ public class AlignmentOutputGUI extends StackWindow {
         this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
         this.menuBar.add(this.reuse);
+        this.menuBar.add(this.elastic);
         this.settings.add(this.settingsImages);
         this.settings.add(this.overlappedItem);
         this.save.add(this.saveItem);
         this.reuse.add(this.reuseItem);
+        this.elastic.add(this.elasticItem);
         this.panel.add(this.canvas, BorderLayout.CENTER);
         this.setMenuBar(this.menuBar);
         this.panel.add(sliceSelector, BorderLayout.PAGE_END);
@@ -126,17 +136,41 @@ public class AlignmentOutputGUI extends StackWindow {
             this.settings.remove(this.overlappedItem);
             this.settings.add(this.carouselItem);
         });
+
         this.carouselItem.addActionListener(event -> {
             this.getImagePlus().setDisplayMode(2);
             this.settings.remove(this.carouselItem);
             this.settings.add(this.overlappedItem);
         });
+
         this.saveItem.addActionListener(event -> {
             this.saveGui.showDialog();
         });
+
         this.reuseItem.addActionListener(event -> {
             final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI, this);
             reuseGUI.showDialog();
+        });
+
+        this.elasticItem.addActionListener(event -> {
+            this.controller.elastic(this.controller.getAlignedImages());
+            final Thread pollingElastic = new Thread(() -> {
+                try {
+                    while (this.controller.deformationIsAlive()){
+                        Thread.sleep(1000);
+                    }
+                    if(this.controller.getAlignedImages().size() > 0) {
+                        new AlignmentOutputGUI(this.controller, this.bunwarpjGUI, this.pointController, this.mainGUI);
+                        this.dispose();
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
+            pollingElastic.start();
         });
     }
 
