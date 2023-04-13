@@ -6,6 +6,7 @@ import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualA
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.exportController.ExportController;
+import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.controller.pointController.PointController;
@@ -72,7 +73,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         //Adding the Left Panel, where are stored the buttons for the transformations
         this.panel = new JPanel();
         this.panel.setLayout(new GridBagLayout());
-
         //Init of the previewList
         this.imagesPreview = new PreviewImagesPane(this.pointControler, this);
 
@@ -385,7 +385,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     ((TranslationalAlignment) this.manualAlignmentController.getAlgorithm()).setTransformation(this.manualConfigGUI.getTranslation(),this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
                 }
                 this.manualAlignmentController.align(this.manualAlignmentController.getAlgorithm(), this.pointControler);
-                this.startPollingThread(this.manualAlignmentController);
+                this.startPollingThread(this.manualAlignmentController, new ImageController(manualAlignmentController, bunwarpJController));
             }catch(final Exception e){
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
@@ -395,7 +395,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         }
     }
 
-    private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface){
+    private void startPollingThread(final AlignmentControllerInterface alignmentControllerInterface, final ImageController imageController){
+        imageController.align();
         final Thread pollingSemiautomaticAlignment = new Thread(() -> {
             final LoadingGUI loadingGUI = new LoadingGUI(LoadingType.ALGORITHM);
             loadingGUI.showDialog();
@@ -414,9 +415,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             try {
                 if (alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
+                    new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
                 } else {
-                    new AlignmentOutputGUI(alignmentControllerInterface, this.settingsBunwarpj, bunwarpJController, this.pointControler, this);
+                    new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
                 }
             }catch (Exception e){
                 JOptionPane.showMessageDialog(this,
@@ -439,7 +440,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 }
                 this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),
                         this.pointControler);
-                this.startPollingThread(this.automaticAlignmentController);
+                this.startPollingThread(this.automaticAlignmentController, new ImageController(automaticAlignmentController, bunwarpJController));
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),

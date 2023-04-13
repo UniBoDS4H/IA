@@ -44,6 +44,4 @@ public class ExportProject {
         }
         copy.clear();
     }
-
-
 }
