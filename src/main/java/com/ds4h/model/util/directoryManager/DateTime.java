@@ -1,4 +1,4 @@
-package com.ds4h.model.util;
+package com.ds4h.model.util.directoryManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
