@@ -17,26 +17,12 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
     private final JComboBox<BunwarpJMode> modeMenu;
     private final JComboBox<BunwarpJMinScale> initialDef;
     private final JComboBox<BunwarpJMaxScale>finalDef;
-    private final JPanel modmenuPanel,
-            sliderPanel,
-            initialPanel,
-            finalPanel,
-            divPanel,
-            curlPanel,
-            landmarkPanel,
-            imagePanel,
-            consistencyPanel,
-            thresholdPanel,
-            buttonPanel;
     private final JFormattedTextField divWeight,
             curlWeight,
             landmarkWeight,
             imageWeight,
             consistencyWeight,
             thresholdWeight;
-
-    private final JButton buttonSave, buttonCancel;
-    private final GridBagConstraints constraints;
 
     private BunwarpJMode modeInput;
     private BunwarpJMinScale minScale;
@@ -56,38 +42,15 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
     private final static int WIDTH = 200, HEIGHT = 30;
     private final BunwarpJController bunwarpJController;
     public BunwarpjGUI(final BunwarpJController bunwarpJController){
-        super("BunwaprJ settings");
+        super("bUnwaprJ settings");
         // Get the screens dimension
         this.bunwarpJController = bunwarpJController;
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
         this.setLayout(new GridBagLayout());
 
         this.modeInput = this.bunwarpJController.getModeInput();
         this.minScale = this.bunwarpJController.getMinScale();
         this.maxScale = this.bunwarpJController.getMaxScale();
 
-        // Set the Frame size
-        int width = (int) (screenSize.width * 0.25);
-        int height = (int) (screenSize.height * 0.50);
-        setSize(width, height);
-
-        // Input field Panel
-        this.modmenuPanel = new JPanel();
-        this.sliderPanel = new JPanel();
-        this.initialPanel = new JPanel();
-        this.finalPanel = new JPanel();
-        this.divPanel = new JPanel();
-        this.curlPanel = new JPanel();
-        this.landmarkPanel = new JPanel();
-        this.imagePanel = new JPanel();
-        this.consistencyPanel = new JPanel();
-        this.thresholdPanel = new JPanel();
-        this.buttonPanel = new JPanel();
-        // Setting the layout
-        this.constraints = new GridBagConstraints();
-        this.constraints.insets = new Insets(0, 0, 5, 5);
-        this.constraints.anchor = GridBagConstraints.WEST;
 
         this.slider = new JSlider(0, 7);
         this.modeMenu = new JComboBox<>();
@@ -101,12 +64,16 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         this.consistencyWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_TEN()));
         this.thresholdWeight = new JFormattedTextField(String.valueOf(this.bunwarpJController.getMIN_ZERO_ONE()));
 
+        this.slider.setMajorTickSpacing(7);
+        this.slider.setMinorTickSpacing(1);
+        this.slider.setPaintTicks(true);
+        this.slider.setPaintLabels(true);
+
         // Init the buttons
         this.sampleFactor = this.slider.getValue();
-        this.buttonSave = new JButton("Save");
-        this.buttonCancel = new JButton("Cancel");
         this.addComponents();
         this.addListeners();
+        this.setResizable(false);
     }
 
     @Override
@@ -130,37 +97,46 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
      */
     @Override
     public void addListeners() {
-
-        this.buttonSave.addActionListener(event -> {
-            try {
-                this.modeInput = this.modeMenu.getItemAt(this.modeMenu.getSelectedIndex());
-                this.bunwarpJController.setModeInput(this.modeInput);
-                this.minScale = this.initialDef.getItemAt(this.initialDef.getSelectedIndex());
-                this.bunwarpJController.setMinScale(this.minScale);
-                this.maxScale = this.finalDef.getItemAt(this.finalDef.getSelectedIndex());
-                this.bunwarpJController.setMaxScale(this.maxScale);
-                this.sampleFactor = this.slider.getValue();
-                this.bunwarpJController.setSampleFactor(this.sampleFactor);
-                this.parDivWeigth = this.checkInput(this.divWeight) ? Double.parseDouble(this.divWeight.getText()) : BunwarpjGUI.MIN_ZERO;
-                this.bunwarpJController.setParDivWeigth(this.parDivWeigth);
-                this.parCurlWeigth = this.checkInput(this.curlWeight) ? Double.parseDouble(this.curlWeight.getText()) : BunwarpjGUI.MIN_ZERO;
-                this.bunwarpJController.setParCurlWeigth(this.parCurlWeigth);
-                this.parLandmarkWeigth = this.checkInput(this.landmarkWeight) ? Double.parseDouble(this.landmarkWeight.getText()) : BunwarpjGUI.MIN_ZERO;
-                this.bunwarpJController.setParLandmarkWeigth(this.parLandmarkWeigth);
-                this.parImageWeigth = this.checkInput(this.imageWeight) ? Double.parseDouble(this.imageWeight.getText()) : BunwarpjGUI.MIN_ONE;
-                this.bunwarpJController.setParImageWeigth(this.parImageWeigth);
-                this.parConsistencyWeigth = this.checkInput(this.consistencyWeight) ? Double.parseDouble(this.consistencyWeight.getText()) : BunwarpjGUI.MIN_TEN;
-                this.bunwarpJController.setParConsistencyWeigth(this.parConsistencyWeigth);
-                this.parThreshold = this.checkInput(this.thresholdWeight) ? Double.parseDouble(this.thresholdWeight.getText()) : BunwarpjGUI.MIN_ZERO_ONE;
-                this.bunwarpJController.setParThreshold(this.parThreshold);
-                dispose();
-            }catch(Exception e){
-
-            }
+        this.modeMenu.addActionListener(e -> {
+            this.modeInput = this.modeMenu.getItemAt(this.modeMenu.getSelectedIndex());
+            this.bunwarpJController.setModeInput(this.modeInput);
         });
 
-        this.buttonCancel.addActionListener(evenet -> {
-            this.dispose();
+        this.initialDef.addActionListener(e -> {
+            this.minScale = this.initialDef.getItemAt(this.initialDef.getSelectedIndex());
+            this.bunwarpJController.setMinScale(this.minScale);
+        });
+        this.finalDef.addActionListener(e -> {
+            this.maxScale = this.finalDef.getItemAt(this.finalDef.getSelectedIndex());
+            this.bunwarpJController.setMaxScale(this.maxScale);
+        });
+        this.slider.addChangeListener(e->{
+            this.sampleFactor = this.slider.getValue();
+            this.bunwarpJController.setSampleFactor(this.sampleFactor);
+        });
+        this.divWeight.addActionListener(e->{
+            this.parDivWeigth = this.checkInput(this.divWeight) ? Double.parseDouble(this.divWeight.getText()) : BunwarpjGUI.MIN_ZERO;
+            this.bunwarpJController.setParDivWeigth(this.parDivWeigth);
+        });
+        this.curlWeight.addActionListener(e->{
+            this.parCurlWeigth = this.checkInput(this.curlWeight) ? Double.parseDouble(this.curlWeight.getText()) : BunwarpjGUI.MIN_ZERO;
+            this.bunwarpJController.setParCurlWeigth(this.parCurlWeigth);
+        });
+        this.landmarkWeight.addActionListener(e->{
+            this.parLandmarkWeigth = this.checkInput(this.landmarkWeight) ? Double.parseDouble(this.landmarkWeight.getText()) : BunwarpjGUI.MIN_ZERO;
+            this.bunwarpJController.setParLandmarkWeigth(this.parLandmarkWeigth);
+        });
+        this.imageWeight.addActionListener(e->{
+            this.parImageWeigth = this.checkInput(this.imageWeight) ? Double.parseDouble(this.imageWeight.getText()) : BunwarpjGUI.MIN_ONE;
+            this.bunwarpJController.setParImageWeigth(this.parImageWeigth);
+        });
+        this.consistencyWeight.addActionListener(e->{
+            this.parConsistencyWeigth = this.checkInput(this.consistencyWeight) ? Double.parseDouble(this.consistencyWeight.getText()) : BunwarpjGUI.MIN_TEN;
+            this.bunwarpJController.setParConsistencyWeigth(this.parConsistencyWeigth);
+        });
+        this.thresholdWeight.addActionListener(e->{
+            this.parThreshold = this.checkInput(this.thresholdWeight) ? Double.parseDouble(this.thresholdWeight.getText()) : BunwarpjGUI.MIN_ZERO_ONE;
+            this.bunwarpJController.setParThreshold(this.parThreshold);
         });
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -178,21 +154,74 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         this.fillCombo(BunwarpJMode.values());
         this.fillCombo(BunwarpJMinScale.values());
         this.fillCombo(BunwarpJMaxScale.values());
-        this.addElement(new JLabel("Mode : "), this.modmenuPanel, this.modeMenu);
-        this.addElement(new JLabel("Initial_Deformation : "), this.initialPanel, this.initialDef);
-        this.addElement(new JLabel("Final_Deformation : "), this.finalPanel, this.finalDef);
-        this.addElement(new JLabel(("Image Sample Factor : ")), this.sliderPanel, this.slider);
-        this.addElement(new JLabel("Divergence Weight :"), this.divPanel, this.divWeight);
-        this.addElement(new JLabel("Curl Weight :"), this.curlPanel, this.curlWeight);
-        this.addElement(new JLabel("Landmark Weight :"), this.landmarkPanel, this.landmarkWeight);
-        this.addElement(new JLabel("Image Weight :"), this.imagePanel, this.imageWeight);
-        this.addElement(new JLabel("Consistency Weight :"), this.consistencyPanel, this.consistencyWeight);
-        this.addElement(new JLabel("Stop Threshold :"), this.thresholdPanel, this.thresholdWeight);
-        this.buttonPanel.add(this.buttonSave);
-        this.buttonPanel.add(this.buttonCancel);
-        this.constraints.gridy++;
-        add(this.buttonPanel, this.constraints);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10); // Increase vertical spacing
+        gbc.anchor = GridBagConstraints.WEST; // Left align components
+        gbc.weightx = 0.5; // Distribute extra horizontal space evenly
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        this.add(new JLabel("Mode : "), gbc);
+        gbc.gridx++;
+        this.add(this.modeMenu, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel("Initial_Deformation : "), gbc);
+        gbc.gridx++;
+        add(this.initialDef, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel("Final_Deformation : "), gbc);
+        gbc.gridx++;
+        this.add(this.finalDef, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel(("Image Sample Factor : ")), gbc);
+        gbc.gridx++;
+        this.add(this.slider, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel("Divergence Weight :"), gbc);
+        gbc.gridx++;
+        this.add(this.divWeight, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel("Curl Weight :"), gbc);
+        gbc.gridx++;
+        this.add(this.curlWeight, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel("Landmark Weight :"), gbc);
+        gbc.gridx++;
+        this.add(this.landmarkWeight, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        this.add(new JLabel("Image Weight :"), gbc);
+        gbc.gridx++;
+        this.add(this.imageWeight, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        add(new JLabel("Consistency Weight :"), gbc);
+        gbc.gridx = 1;
+        add(this.consistencyWeight, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        add(new JLabel("Stop Threshold :"), gbc);
+        gbc.gridx = 1;
+        add(this.thresholdWeight, gbc);
+
+        this.pack();
     }
 
     private void fillCombo(final BunwarpJMode[] values){
@@ -213,51 +242,6 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         }
     }
 
-
-
-    /**
-     * Add a single element inside the GUI.
-     * @param label : The label where we show which parameter are we setting
-     * @param panel : The panel where we store the label and the field
-     * @param field : The input field for the parameter
-     */
-    private void addElement(final JLabel label, final JPanel panel, final JFormattedTextField field){
-        label.setPreferredSize(new Dimension(BunwarpjGUI.WIDTH, BunwarpjGUI.HEIGHT));
-        field.setPreferredSize(new Dimension(BunwarpjGUI.WIDTH, BunwarpjGUI.HEIGHT));
-        panel.add(label);
-        panel.add(field);
-        this.constraints.gridx = 0;
-        this.constraints.gridy++;
-        add(panel, this.constraints);
-    }
-    private void addElement(final JLabel label, final JPanel panel, final JSlider slider){
-        label.setPreferredSize(new Dimension(BunwarpjGUI.WIDTH, BunwarpjGUI.HEIGHT));
-        slider.setMajorTickSpacing(7);
-        slider.setMinorTickSpacing(1);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        panel.add(label);
-        panel.add(slider);
-        this.constraints.gridx = 0;
-        this.constraints.gridy++;
-        add(panel, this.constraints);
-    }
-
-    /**
-     * Add a single element inside the GUI. In particular the element is a JComboBox
-     * @param label : The label where we show which parameter are we setting
-     * @param panel : The panel where we store the label and the field
-     * @param combo : Combobox where a stored the infos for BunwarpJ settings (Mode, MinScaleDeformation and MaxScaleDeformation)
-     */
-    private void addElement(final JLabel label, final JPanel panel, final JComboBox<? extends Enum> combo){
-        label.setPreferredSize(new Dimension(BunwarpjGUI.WIDTH, BunwarpjGUI.HEIGHT));
-        combo.setPreferredSize(new Dimension(BunwarpjGUI.WIDTH, BunwarpjGUI.HEIGHT));
-        panel.add(label);
-        panel.add(combo);
-        this.constraints.gridx = 0;
-        this.constraints.gridy++;
-        add(panel, this.constraints);
-    }
     private boolean checkInput(final JFormattedTextField field){
         try {
             if(!field.getText().isEmpty()){
