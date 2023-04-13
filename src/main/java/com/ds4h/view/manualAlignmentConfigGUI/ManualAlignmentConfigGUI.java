@@ -90,7 +90,8 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
                 if(this.scalingCheckbox.isSelected()) {
                     JOptionPane.showMessageDialog(this,
                             "Warning: \n" +
-                                    "using the \"scaling\" can lead to data loss!",
+                                    "When using \"scaling\", all the images are scaled to the reference one.\n" +
+                                    "This can lead to data loss.",
                             "Warning",
                             JOptionPane.WARNING_MESSAGE);
                 }
