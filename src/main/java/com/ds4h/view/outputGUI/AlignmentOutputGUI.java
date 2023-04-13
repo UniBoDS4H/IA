@@ -43,60 +43,23 @@ public class AlignmentOutputGUI extends StackWindow {
     private final SaveImagesGUI saveGui;
     private final ImageController controller;
     private final ConfigureImagesGUI configureImagesGUI;
-    private final BunwarpJController bunwarpJController;
-    private final AlignmentControllerInterface alignmentControllerInterface;
     private final PointController pointController;
     private final MainMenuGUI mainGUI;
     private final LUT[] originalLuts;
 
-    public AlignmentOutputGUI(final AlignmentControllerInterface alignmentController, final BunwarpjGUI settingsBunwarpj, final BunwarpJController bunwarpJController, final PointController pointController, final MainMenuGUI mainMenuGUI) {
-        super(image = alignmentController.getAlignedImagesAsStack(), new StandardCanvas(image));
+    public AlignmentOutputGUI(final ImageController controller, final BunwarpjGUI settingsBunwarpj, final PointController pointController, final MainMenuGUI mainMenuGUI) {
+        super(image = controller.getAlignedImagesAsStack(), new StandardCanvas(image));
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
+        this.controller = controller;
         this.setLayout(new BorderLayout());
         this.originalLuts = this.getImagePlus().getLuts();
         this.mainGUI = mainMenuGUI;
-        this.bunwarpJController = bunwarpJController;
-        this.alignmentControllerInterface = alignmentController;
         this.pointController = pointController;
-        this.controller = new ImageController(alignmentController, bunwarpJController);
         this.configureImagesGUI = new ConfigureImagesGUI(this);
-        this.algorithm = alignmentController.name();
+        this.algorithm = controller.name();
         this.bunwarpjGUI = settingsBunwarpj;
-        this.saveGui = new SaveImagesGUI(this.controller);
-        this.panel = new JPanel();
-        this.panel.setLayout(new BorderLayout());
-        this.menuBar = new MenuBar();
-        this.settingsImages = new MenuItem("Configure images");
-        this.settings = new Menu("Settings");
-        this.elastic = new Menu("Elastic");
-        this.reuse = new Menu("Reuse");
-        this.save = new Menu("Save");
-        this.elasticItem = new MenuItem("Elastic deformation");
-        this.reuseItem = new MenuItem("Reuse as source");
-        this.overlappedItem = new MenuItem("View overlapped");
-        this.carouselItem = new MenuItem("View carousel");
-        this.saveItem = new MenuItem("Save project");
-        this.addComponents();
-        this.addListeners();
-        this.createOutputIcons();
-    }
-
-    public AlignmentOutputGUI(final ImagePlus stack, final AlignmentControllerInterface alignmentController,  final BunwarpjGUI settingsBunwarpj, final BunwarpJController bunwarpJController, final PointController pointController, final MainMenuGUI mainMenuGUI) {
-        super(image = stack, new StandardCanvas(image));
-        this.canvas = (StandardCanvas)this.getCanvas();
-        this.removeAll();
-        this.setLayout(new BorderLayout());
-        this.originalLuts = this.getImagePlus().getLuts();
-        this.mainGUI = mainMenuGUI;
-        this.bunwarpJController = bunwarpJController;
-        this.alignmentControllerInterface = alignmentController;
-        this.pointController = pointController;
-        this.controller = new ImageController(alignmentController, bunwarpJController);
-        this.configureImagesGUI = new ConfigureImagesGUI(this);
-        this.algorithm = alignmentController.name();
-        this.bunwarpjGUI = settingsBunwarpj;
-        this.saveGui = new SaveImagesGUI(this.controller);
+        this.saveGui = new SaveImagesGUI(controller);
         this.panel = new JPanel();
         this.panel.setLayout(new BorderLayout());
         this.menuBar = new MenuBar();
@@ -190,14 +153,14 @@ public class AlignmentOutputGUI extends StackWindow {
         });
 
         this.elasticItem.addActionListener(event -> {
-            this.controller.elastic(this.alignmentControllerInterface.getAlignedImages());
+            this.controller.elastic(this.controller.getAlignedImages());
             final Thread pollingElastic = new Thread(() -> {
                 try {
                     while (this.controller.deformationIsAlive()){
                         Thread.sleep(1000);
                     }
                     if(this.controller.getAlignedImages().size() > 0) {
-                        new AlignmentOutputGUI(this.controller.getAlignedImagesAsStack(), this.alignmentControllerInterface, this.bunwarpjGUI, this.bunwarpJController, this.pointController, this.mainGUI);
+                        new AlignmentOutputGUI(this.controller, this.bunwarpjGUI, this.pointController, this.mainGUI);
                         this.dispose();
                     }
                 } catch (Exception e) {
