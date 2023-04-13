@@ -28,7 +28,7 @@ public class AlignmentUtil {
             } else if (alg instanceof AffineAlignment) {
                 return AlignmentAlgorithmEnum.AFFINE;
             }
-            throw new IllegalArgumentException("Algorithm not present");
+            throw new NullPointerException("Algorithm not present");
         }
         throw new NullPointerException("Algorithm is NULL");
     }
