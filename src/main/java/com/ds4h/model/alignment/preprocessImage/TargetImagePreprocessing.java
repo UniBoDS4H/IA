@@ -88,7 +88,6 @@ public class TargetImagePreprocessing {
         final MatOfPoint2f pts = new MatOfPoint2f();
 
         try {
-            pts1.toList().forEach(System.out::println);
             algorithm.transform(pts2, pts2_,
                     algorithm.getTransformationMatrix(imagePoints.getMatOfPoint(),
                             target.getMatOfPoint()));
@@ -96,11 +95,6 @@ public class TargetImagePreprocessing {
             final MatOfPoint2f pt2 = new MatOfPoint2f();
             pt2.fromList(pts2_.toList());
 
-            System.out.println(pts1.type() + "  " + pt2.type());
-            System.out.println();
-            pts1.toList().forEach(System.out::println);
-            System.out.println();
-            pt2.toList().forEach(System.out::println);
             if (pts1.type() == pt2.type()) {
                 Core.hconcat(Arrays.asList(pts1, pt2), pts);
             } else {

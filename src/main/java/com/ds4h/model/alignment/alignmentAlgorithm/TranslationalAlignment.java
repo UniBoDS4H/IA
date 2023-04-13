@@ -122,7 +122,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      * @param scale c
      */
     public void setTransformation(boolean translate,boolean rotate, boolean scale){
-        System.out.println(translate + " " + rotate + " " +scale);
         this.translate = translate;
         this.rotate = rotate;
         this.scale = scale;

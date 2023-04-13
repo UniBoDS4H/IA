@@ -401,7 +401,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             loadingGUI.showDialog();
             while (alignmentControllerInterface.isAlive()) {
                 try {
-                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "+ alignmentControllerInterface.getStatus());
                     loadingGUI.updateProgress(alignmentControllerInterface.getStatus());
                     Thread.sleep(1000);
                 } catch (final InterruptedException e) {
@@ -442,7 +441,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         this.pointControler);
                 this.startPollingThread(this.automaticAlignmentController);
             }catch (final Exception e){
-                System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
                         "Error",

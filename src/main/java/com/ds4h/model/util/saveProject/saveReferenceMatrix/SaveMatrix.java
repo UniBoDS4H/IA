@@ -39,7 +39,6 @@ public class SaveMatrix {
                         IntStream.range(0, cols).forEach(col -> {
                             final StringBuilder element = new StringBuilder(String.valueOf(matrix.get(row, col)[0]));
                             final String output = String.format("%-22s", element);
-                            System.out.println(output.length());
                             stringBuilder.append("| ").append(output).append(" |");
                         });
                         stringBuilder.append("\n");
