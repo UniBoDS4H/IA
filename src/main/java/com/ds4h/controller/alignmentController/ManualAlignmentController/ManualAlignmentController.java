@@ -6,13 +6,12 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
-import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
-import ij.process.LUT;
+
 import java.awt.image.ColorModel;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,7 +107,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      */
     public void align(final AlignmentAlgorithm algorithm, final PointController pointManager){
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
-            if(pointManager.getPointManager().getCornerImages().size() > 1) {
+            if(pointManager.getPointManager().getPointImages().size() > 1) {
                 this.alignment.alignImages(pointManager.getPointManager(), algorithm, AlignmentEnum.MANUAL);
             }else{
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images.");

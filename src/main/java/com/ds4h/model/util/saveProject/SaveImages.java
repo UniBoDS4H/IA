@@ -20,9 +20,9 @@ public class SaveImages {
     }
 
     /**
-     *
-     * @param images a
-     * @param path b
+     * Save all the images inside the selected path.
+     * @param images all the images that will be stored.
+     * @param path the path where the images will be stored.
      */
     public static void saveImages(final List<AlignedImage> images, final String path) {
         final String dir = DirectoryCreator.createDirectory(path, DIRECTORY);
@@ -35,9 +35,9 @@ public class SaveImages {
     }
 
     /**
-     *
-     * @param images a
-     * @param path b
+     * Save the images inside the path.
+     * @param images the images to be saved.
+     * @param path the path where will be stored the images.
      */
     public static void save(final List<ImagePlus> images, final String path){
         //TODO: The parallel can cause out of memory exception.
@@ -45,9 +45,9 @@ public class SaveImages {
     }
 
     /**
-     *
-     * @param image a
-     * @param path b
+     * Save a single image inside the path.
+     * @param image the image to be stored.
+     * @param path the path where will be stored the image.
      */
     public static void save(final ImagePlus image, final String path){
         if(!path.isEmpty() && Objects.nonNull(image)) {

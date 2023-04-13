@@ -41,9 +41,9 @@ public class Alignment implements Runnable{
      * is thrown.
      */
     public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws RuntimeException {
-        if (Objects.nonNull(pointManager) && pointManager.getSourceImage().isPresent()) {
+        if (Objects.nonNull(pointManager) && pointManager.getTargetImage().isPresent()) {
             if (!this.isAlive()) {
-                this.targetImage = pointManager.getSourceImage().get();
+                this.targetImage = pointManager.getTargetImage().get();
                 this.alignedImages.clear();
                 this.imagesToAlign.clear();
                 this.type = type;
@@ -226,7 +226,6 @@ public class Alignment implements Runnable{
                 this.thread = new Thread(this);
                 IJ.log("Inside RUN");
                 //TODO: understand how to throw this exception outside this method.
-
                 throw ex;
             }
         }catch (OutOfMemoryError e){

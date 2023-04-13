@@ -21,8 +21,8 @@ public class ImagePoints extends ImagePlus{
     private int type = -1;
     private boolean improveMatrix = false;
     /**
-     *
-     * @param path a
+     * Creates a new ImagePoints object with the specified path.
+     * @param path the path of the image file.
      */
     public ImagePoints(final String path){
         super(Objects.requireNonNull(path));
@@ -37,9 +37,10 @@ public class ImagePoints extends ImagePlus{
 
     /**
      *
-     * @param path a
-     * @param improve b
-     * @param ip c
+     * Creates a new ImagePoints object with the specified path, image processing options, and ImageProcessor object.
+     * @param path the path to the image file.
+     * @param improve a boolean flag indicating whether to improve the matrix or not.
+     * @param ip the ImageProcessor object to use for the image.
      */
     public ImagePoints(final String path, final boolean improve, final ImageProcessor ip){
         super(Objects.requireNonNull(path));
@@ -56,9 +57,9 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
-     * @param path a
-     * @param matAddress b
+     * Creates a new ImagePoints object with the specific path, and the Matrix address
+     * @param path the path to the image file.
+     * @param matAddress the address to the image matrix.
      */
     public ImagePoints(final String path, final long matAddress) {
         super(Objects.requireNonNull(path));
@@ -73,9 +74,9 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
-     * @param path a
-     * @param mat b
+     * Creates a new ImagePoints object with the specific path, and the matrix image.
+     * @param path the path to the image file.
+     * @param mat the image matrix.
      */
     public ImagePoints(final String path, final Mat mat){
         super(Objects.requireNonNull(path));
@@ -91,9 +92,9 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
-     * @param path a
-     * @param ip b
+     * Creates a new ImagePoints object with the specific path, and the ImageProcessor of the Image.
+     * @param path the path to the image file.
+     * @param ip the ImageProcessor of the image.
      */
     public ImagePoints(final String path, final ImageProcessor ip){
         super(Objects.requireNonNull(path));
@@ -108,9 +109,6 @@ public class ImagePoints extends ImagePlus{
         this.detectType();
     }
 
-    /**
-     *
-     */
     private void detectType(){
         final ImageProcessor ip = this.getProcessor();
         if(ip instanceof ColorProcessor){
@@ -132,64 +130,64 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
+     * Sets the "improveMatrix" instance variable to true.
      */
     public void useStock(){
         this.improveMatrix = false;
     }
 
     /**
-     *
-     * @return a
+     * Returns the value of the "improveMatrix" instance variable.
+     * @return the value of the "improveMatrix" instance variable.
      */
     public boolean toImprove(){
         return this.improveMatrix;
     }
 
     /**
-     *
-     * @return a
+     * Returns the value of the "type" instance variable.
+     * @return the value of the "type" instance variable.
      */
     public int type(){
         return this.type;
     }
 
     /**
-     *
-     * @return a
+     * Returns all the points saved inside the ImagePoint object.
+     * @return all the points saved inside the ImagePoint object.
      */
     public Point[] getPoints(){
         return this.pointList.toArray(new Point[0]);
     }
 
     /**
-     *
-     * @param point a
-     * @return b
+     * Returns the index of the specified point in the "pointList" ArrayList, plus one.
+     * @param point the point to search for.
+     * @return the index of the specified point in the "pointList" ArrayList, plus one.
      */
     public int getIndexOfPoint(final Point point){
         return this.pointList.indexOf(point) + 1;
     }
 
     /**
-     *
-     * @param point a
+     * Add a new point inside the "pointList" ArrayList.
+     * @param point the new point to add inside the "pointList".
      */
     public void addPoint(final Point point){
         this.pointList.add(point);
     }
 
     /**
-     *
-     * @param point a
+     * Remove the input point from the "pointList" ArrayList.
+     * @param point the point to remove from the "pointList".
      */
     public void removePoint(final Point point){
         this.pointList.removeIf(p -> p.equals(point));
     }
 
     /**
-     *
-     * @return a
+     * Returns the MatOfPoint of all the points stored inside "pointList."
+     * @return the MatOfPoint of all the points stored inside "pointList".
      */
     public MatOfPoint2f getMatOfPoint(){
         final MatOfPoint2f mat = new MatOfPoint2f();
@@ -198,49 +196,49 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
-     * @param points a
+     * Adds the specified list of points to the "pointList" ArrayList.
+     * @param points the list of points to add to the "pointList" ArrayList
      */
     public void addPoints(final List<Point> points){
-        this.pointList.addAll(points);
+        if(Objects.nonNull(points)) {
+            this.pointList.addAll(points);
+        }
     }
 
     /**
-     *
-     * @return a
+     * Returns all the points inside "pointList".
+     * @return all the points inside "pointList".
      */
     public List<Point> getListPoints(){
         return this.pointList;
     }
 
     /**
-     *
-     * @return a
+     * Returns the ImagePlus.
+     * @return the ImagePlus.
      */
     public ImagePlus getImagePlus(){
         return this;
     }
 
-
-
     /**
-     *
-     * @return a
+     * Returns a grayscale Mat object converted from the ImageProcessor of the ImagePoints object.
+     * @return a grayscale Mat object converted from the ImageProcessor of the ImagePoints object.
      */
     public Mat getGrayScaleMat(){
         return ImageProcessorMatConverter.convertGray(this.getProcessor());
     }
 
     /**
-     *
+     * Remove all the points from "pointList".
      */
     public void clearPoints(){
         this.pointList.clear();
     }
 
     /**
-     *
-     * @return a
+     * Returns a Mat object of the ImagePoints object.
+     * @return a Mat object of the ImagePoints object.
      */
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
@@ -249,51 +247,53 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
-     * @return a
+     * Returns the number of rows.
+     * @return the number of rows.
      */
     public int getRows(){
         return rows;
     }
 
     /**
-     *
-     * @return a
+     * Returns the number of cols.
+     * @return the number of cols.
      */
     public int getCols(){
         return cols;
     }
 
     /**
-     *
-     * @return a
+     * Returns the Mat Size.
+     * @return the Mat Size.
      */
     public Size getMatSize(){
         return this.matSize;
     }
 
     /**
-     *
-     * @param point a
-     * @param newPoint b
+     * Replaces the specified point in the "pointList" ArrayList with a new point.
+     * @param point the point to replace.
+     * @param newPoint the new point to add in place of the old point.
      */
     public void movePoint(final Point point, final Point newPoint){
-        this.pointList.set(this.pointList.indexOf(point), newPoint);
+        if(Objects.nonNull(point) && Objects.nonNull(newPoint)) {
+            this.pointList.set(this.pointList.indexOf(point), newPoint);
+        }
     }
 
     /**
-     *
-     * @return a
+     * Returns the total number of points inside "pointList".
+     * @return the total number of points inside "pointList".
      */
     public int numberOfPoints(){
         return this.pointList.size();
     }
 
     /**
-     *
-     * @param indexToEdit a
-     * @param newIndex b
-     */
+    * Moves the point at the specified index in the "pointList" ArrayList to a new index.
+    * @param indexToEdit the index of the point to move
+    * @param newIndex the index to move the point to
+    */
     public void editPointIndex(final int indexToEdit, final int newIndex) {
         final Point pointToMove = this.pointList.get(indexToEdit);
         if(this.pointList.contains(pointToMove)){
@@ -303,24 +303,24 @@ public class ImagePoints extends ImagePlus{
     }
 
     /**
-     *
-     * @return a
+     * Returns the ImagePoint file path.
+     * @return the ImagePoint file path.
      */
     public String getPath(){
         return this.path;
     }
 
     /**
-     *
-     * @return a
+     * Returns the file name.
+     * @return the file name.
      */
     public String getName() {
         return super.getTitle();
     }
 
     /**
-     *
-     * @return a
+     * Returns the toString of the ImagePoints.
+     * @return the toString of the ImagePoints.
      */
     @Override
     public String toString() {

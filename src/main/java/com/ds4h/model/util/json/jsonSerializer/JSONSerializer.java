@@ -1,17 +1,13 @@
 package com.ds4h.model.util.json.jsonSerializer;
 
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.util.json.JSONFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class JSONSerializer extends JSONFile {
 
@@ -44,14 +40,14 @@ public class JSONSerializer extends JSONFile {
     public static void createJSON(final PointManager pointManager, final String path){
         final JSONArray imageList = new JSONArray();
         //Create the json
-        pointManager.getCornerImages().forEach(imageCorners -> {
+        pointManager.getPointImages().forEach(imageCorners -> {
             final JSONObject obj = new JSONObject();
             final JSONArray array = new JSONArray();
             for(Point point : imageCorners.getPoints()){
                 array.put(point.toString());
             }
             obj.put(FILE_KEY, imageCorners.getTitle());
-            if(pointManager.getSourceImage().isPresent() && pointManager.getSourceImage().get().equals(imageCorners)){
+            if(pointManager.getTargetImage().isPresent() && pointManager.getTargetImage().get().equals(imageCorners)){
                 obj.put(TARGET_KEY, true);
             }
             obj.put(POINTS_KEY, array);

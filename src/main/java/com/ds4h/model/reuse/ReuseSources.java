@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ReuseSources {
 
     /**
-     *
+     * Constructor of the ReuseSources object.
      */
     private ReuseSources(){
 
@@ -31,7 +31,7 @@ public class ReuseSources {
             pointManager.clearList();
             pointManager.clearProject();
             pointManager.addImages(ReuseSources.convertImages(images));
-            MemoryController.controllMemory(pointManager.getCornerImages());
+            MemoryController.controlMemory(pointManager.getPointImages());
             System.gc();
         }
     }

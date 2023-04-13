@@ -18,7 +18,7 @@ public class ExportController {
      * @throws IOException c
      */
     public static void exportProject(final PointManager pointManager, final String path) throws IOException {
-        if(!pointManager.getCornerImages().isEmpty()) {
+        if(!pointManager.getPointImages().isEmpty()) {
             ExportProject.exportProject(pointManager, path);
         }
     }

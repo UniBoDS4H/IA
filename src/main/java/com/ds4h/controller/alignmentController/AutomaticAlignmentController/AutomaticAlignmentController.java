@@ -7,13 +7,12 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
-import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
-import ij.process.LUT;
+
 import java.awt.image.ColorModel;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -61,12 +60,12 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws IllegalArgumentException, RuntimeException{
 
         if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
-            if (pointManager.getPointManager().getCornerImages().size() > 1 && detector.getScaling() >= 1) {
+            if (pointManager.getPointManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {
                 try{
                     this.alignment.alignImages(pointManager.getPointManager(), algorithm,
                             AlignmentEnum.AUTOMATIC,
                             Objects.requireNonNull(detector.pointDetector()),
-                            detector.getFactor(),
+                            detector.getThresholdFactor(),
                             detector.getScaling());
                 }catch (Exception e){
                     throw new RuntimeException(e);

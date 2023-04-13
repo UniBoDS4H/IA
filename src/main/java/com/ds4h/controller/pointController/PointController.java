@@ -35,9 +35,9 @@ public class PointController {
     public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
         System.gc();
-        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getCornerImages().size() > 0)) {
+        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getPointImages().size() > 0)) {
             this.pointManager.addImages(imagePointsList);
-            MemoryController.controllMemory(this.pointManager.getCornerImages());
+            MemoryController.controlMemory(this.pointManager.getPointImages());
         }else {
             throw new IllegalArgumentException("You can not upload one single photo or less.\n" +
                     "Or maybe what you chose is not a image.");
@@ -57,7 +57,7 @@ public class PointController {
      * @return a
      */
     public List<ImagePoints> getCornerImagesImages() {
-        return this.pointManager.getCornerImages();
+        return this.pointManager.getPointImages();
     }
 
     /**
@@ -66,7 +66,7 @@ public class PointController {
      * @return b
      */
     public boolean isSource(final ImagePoints image){
-        return this.pointManager.getSourceImage().isPresent() && this.pointManager.getSourceImage().get().equals(image);
+        return this.pointManager.getTargetImage().isPresent() && this.pointManager.getTargetImage().get().equals(image);
     }
 
     /**
@@ -74,7 +74,7 @@ public class PointController {
      * @param newTarget a
      */
     public void changeTarget(final ImagePoints newTarget){
-        this.pointManager.setAsSource(newTarget);
+        this.pointManager.setAsTarget(newTarget);
     }
 
     /**
@@ -93,7 +93,7 @@ public class PointController {
      * @return b
      */
     public boolean isTarget(final ImagePoints image){
-        return this.pointManager.getSourceImage().isPresent() && this.pointManager.getSourceImage().get().equals(image);
+        return this.pointManager.getTargetImage().isPresent() && this.pointManager.getTargetImage().get().equals(image);
     }
 
     /**
@@ -101,7 +101,7 @@ public class PointController {
      * @param image a
      */
     public void removeImage(final ImagePoints image){
-        if(this.pointManager.getCornerImages().contains(image)){
+        if(this.pointManager.getPointImages().contains(image)){
             this.pointManager.removeImage(image);
         }
     }
