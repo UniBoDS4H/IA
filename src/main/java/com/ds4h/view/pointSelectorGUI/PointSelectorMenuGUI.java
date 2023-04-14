@@ -24,11 +24,11 @@ public class PointSelectorMenuGUI extends JPanel {
         this.pointController = controller;
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-        final MenuItem[] options = this.pointController.getCornerImagesImages().stream()
+        final MenuItem[] options = this.pointController.getPointImages().stream()
                 .filter(i -> !i.equals(this.image)).map(this.pointController::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
-        if(pointController.getCornerImagesImages().size() > 1) {
+        if(pointController.getPointImages().size() > 1) {
             this.copyToCombo.setSelectedIndex(0);
         }
         this.copyToLabel = new JLabel("Copy to");

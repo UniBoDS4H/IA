@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -20,17 +21,17 @@ public class PointController {
     private final PointManager pointManager;
 
     /**
-     *
+     * Constructor for the PointController object.
      */
     public PointController(){
         this.pointManager = new PointManager();
     }
 
     /**
-     *
-     * @param paths a
-     * @throws IllegalArgumentException b
-     * @throws IOException c
+     * Load all the selected FILES from the input.
+     * @param paths all the selected files. This will be loaded if the files are images.
+     * @throws IllegalArgumentException if the selected file is not an image or the user is trying to load one single images where there are none in the project.
+     * @throws IOException If the path does not exists.
      */
     public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
@@ -45,60 +46,52 @@ public class PointController {
     }
 
     /**
-     *
-     * @return a
+     * Returns the "pointManager".
+     * @return the pointManager.
      */
     public PointManager getPointManager(){
         return this.pointManager;
     }
 
     /**
-     *
-     * @return a
+     * Returns all the "pointImages".
+     * @return the pointImages.
      */
-    public List<ImagePoints> getCornerImagesImages() {
+    public List<ImagePoints> getPointImages() {
         return this.pointManager.getPointImages();
     }
 
     /**
-     *
-     * @param image a
-     * @return b
-     */
-    public boolean isSource(final ImagePoints image){
-        return this.pointManager.getTargetImage().isPresent() && this.pointManager.getTargetImage().get().equals(image);
-    }
-
-    /**
-     *
-     * @param newTarget a
+     * Change the target image stored inside the Point Controller.
+     * @param newTarget the new targetImage.
      */
     public void changeTarget(final ImagePoints newTarget){
-        this.pointManager.setAsTarget(newTarget);
+        if(Objects.nonNull(newTarget)) {
+            this.pointManager.setAsTarget(newTarget);
+        }
     }
 
     /**
-     *
-     * @param alignedImages a
-     * @throws FileNotFoundException b
-     * @throws OutOfMemoryError c
+     * Reuse all the aligned images as new project.
+     * @param alignedImages the new aligned images to be used for the new project.
+     * @throws OutOfMemoryError if the project is bigger than the free memory.
      */
-    public void reuseSource(final List<AlignedImage> alignedImages) throws FileNotFoundException, OutOfMemoryError {
+    public void reuseSource(final List<AlignedImage> alignedImages) throws OutOfMemoryError {
         ReuseSources.reuseSources(this.pointManager, alignedImages);
     }
 
     /**
-     *
-     * @param image a
-     * @return b
+     * Returns "True" if the input image is the target.
+     * @param image the image to check.
+     * @return true if the input image is the target.
      */
     public boolean isTarget(final ImagePoints image){
         return this.pointManager.getTargetImage().isPresent() && this.pointManager.getTargetImage().get().equals(image);
     }
 
     /**
-     *
-     * @param image a
+     * Remove the input image from the Point Controller.
+     * @param image the image to be removed from the point controller.
      */
     public void removeImage(final ImagePoints image){
         if(this.pointManager.getPointImages().contains(image)){
@@ -107,28 +100,32 @@ public class PointController {
     }
 
     /**
-     *
-     * @param selectedPoints a
-     * @param img b
-     * @return c
+     * Copy all the "selectedPoints" in to the "img".
+     * @param selectedPoints the points to be copied.
+     * @param img the image where all the points will be saved.
+     * @return "True" if the operation went well.
      */
     public boolean copyPoints(final List<Point> selectedPoints, final ImagePoints img) {
         boolean res = true;
+        if(selectedPoints.isEmpty()){
+            return false;
+        }
         for (final Point p:selectedPoints) {
             if(this.insideImage(p,img)){
                 img.addPoint(p);
             }else{
-                res = false;
+                return false;
+                //res = false;
             }
         }
-        return res;
+        return true;
     }
 
     /**
-     *
-     * @param p a
-     * @param img b
-     * @return c
+     * Check if the input "point" is inside the input "img".
+     * @param p the point to check.
+     * @param img the image where the point should be.
+     * @return True if the image contains the input point.
      */
     private boolean insideImage(final Point p, final ImagePoints img) {
         return img.getRows() >= p.y && img.getCols() >= p.x;
@@ -137,11 +134,11 @@ public class PointController {
 
     public MenuItem getMenuItem(final ImagePoints image){
         //TODO: non penso vada bene, non ci deve essere nulla della view per MVC
-        return new MenuItem(this.getCornerImagesImages().indexOf(image)+1, image);
+        return new MenuItem(this.getPointImages().indexOf(image)+1, image);
     }
 
     /**
-     *
+     * Clear the entire project from all the images.
      */
     public void clearProject(){
         this.pointManager.getImagesToAlign().forEach(image -> image = null);
