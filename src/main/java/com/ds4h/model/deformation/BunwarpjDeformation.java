@@ -29,11 +29,11 @@ public class BunwarpjDeformation implements Runnable{
             MIN_ONE = 0.1,
             MIN_TEN = 10.0;
 
-    private double parDivWeigth = MIN_ZERO,
-            parCurlWeigth = MIN_ZERO,
-            parLandmarkWeigth = MIN_ZERO,
-            parImageWeigth = MIN_ONE,
-            parConsistencyWeigth = MIN_TEN,
+    private double parDivWeight = MIN_ZERO,
+            parCurlWeight = MIN_ZERO,
+            parLandmarkWeight = MIN_ZERO,
+            parImageWeight = MIN_ONE,
+            parConsistencyWeight = MIN_TEN,
             parThreshold = MIN_ZERO_ONE;
 
     /**
@@ -65,11 +65,11 @@ public class BunwarpjDeformation implements Runnable{
                 this.sampleFactor,
                 this.minScale.getValue(),
                 this.maxScale.getValue(),
-                this.parDivWeigth,
-                this.parCurlWeigth,
-                this.parLandmarkWeigth,
-                this.parImageWeigth,
-                this.parConsistencyWeigth,
+                this.parDivWeight,
+                this.parCurlWeight,
+                this.parLandmarkWeight,
+                this.parImageWeight,
+                this.parConsistencyWeight,
                 this.parThreshold);
         return transformation.getDirectResults();
     }
@@ -122,11 +122,11 @@ public class BunwarpjDeformation implements Runnable{
                         this.sampleFactor,
                         this.minScale.getValue(),
                         this.maxScale.getValue(),
-                        this.parDivWeigth,
-                        this.parCurlWeigth,
-                        this.parLandmarkWeigth,
-                        this.parImageWeigth,
-                        this.parConsistencyWeigth,
+                        this.parDivWeight,
+                        this.parCurlWeight,
+                        this.parLandmarkWeight,
+                        this.parImageWeight,
+                        this.parConsistencyWeight,
                         this.parThreshold);
                 final ImagePlus image = transformation.getDirectResults();
                 image.setTitle(alignedImage.getAlignedImage().getTitle());
@@ -139,33 +139,8 @@ public class BunwarpjDeformation implements Runnable{
     }
 
     /**
-     *
-     * @param target a
-     * @param source b
-     * @return c
-     */
-    public ImagePlus[] align(final ImagePlus target, final ImagePlus source){
-        System.gc();
-        return bUnwarpJ_.alignImagesBatch(target,
-                source,
-                target.getProcessor(),
-                source.getProcessor(),
-                this.modeInput.getValue(),
-                this.sampleFactor,
-                this.minScale.getValue(),
-                this.maxScale.getValue(),
-                this.parDivWeigth,
-                this.parCurlWeigth,
-                this.parLandmarkWeigth,
-                this.parImageWeigth,
-                this.parConsistencyWeigth,
-                this.parThreshold);
-
-    }
-
-    /**
-     *
-     * @param modeInput a
+     * Set the "modeInput".
+     * @param modeInput how to perform the deformation.
      */
     public void setModeInput(final BunwarpJMode modeInput) {
         if(Objects.nonNull(modeInput)) {
@@ -174,8 +149,8 @@ public class BunwarpjDeformation implements Runnable{
     }
 
     /**
-     *
-     * @param minScale a
+     * Set the "minScale".
+     * @param minScale for the alignment.
      */
     public void setMinScale(final BunwarpJMinScale minScale) {
         if(Objects.nonNull(minScale)) {
@@ -184,8 +159,8 @@ public class BunwarpjDeformation implements Runnable{
     }
 
     /**
-     *
-     * @param maxScale a
+     * Set the "maxScale".
+     * @param maxScale for the alignment.
      */
     public void setMaxScale(final BunwarpJMaxScale maxScale) {
         if(Objects.nonNull(maxScale)) {
@@ -193,6 +168,10 @@ public class BunwarpjDeformation implements Runnable{
         }
     }
 
+    /**
+     *  Set the "sampleFactor".
+     * @param sampleFactor for the alignment.
+     */
     public void setSampleFactor(final int sampleFactor) {
         if(sampleFactor >= 0 && sampleFactor <= 7) {
             this.sampleFactor = sampleFactor;
@@ -200,58 +179,58 @@ public class BunwarpjDeformation implements Runnable{
     }
 
     /**
-     *
-     * @param parDivWeigth a
+     * Set the "parDivWeight".
+     * @param parDivWeight for the alignment.
      */
-    public void setParDivWeigth(final double parDivWeigth) {
-        if(parDivWeigth >= MIN_ZERO) {
-            this.parDivWeigth = parDivWeigth;
+    public void setParDivWeight(final double parDivWeight) {
+        if(parDivWeight >= MIN_ZERO) {
+            this.parDivWeight = parDivWeight;
         }
     }
 
     /**
-     *
-     * @param parCurlWeigth a
+     * Set the "parCurlWeight".
+     * @param parCurlWeight for the alignment
      */
-    public void setParCurlWeigth(final double parCurlWeigth) {
-        if(parCurlWeigth >= MIN_ZERO) {
-            this.parCurlWeigth = parCurlWeigth;
+    public void setParCurlWeight(final double parCurlWeight) {
+        if(parCurlWeight >= MIN_ZERO) {
+            this.parCurlWeight = parCurlWeight;
         }
     }
 
     /**
-     *
-     * @param parLandmarkWeigth a
+     * Set the "parLandmarkWeight".
+     * @param parLandmarkWeight for the alignment.
      */
-    public void setParLandmarkWeigth(final double parLandmarkWeigth) {
-        if(parLandmarkWeigth >= MIN_ZERO) {
-            this.parLandmarkWeigth = parLandmarkWeigth;
+    public void setParLandmarkWeight(final double parLandmarkWeight) {
+        if(parLandmarkWeight >= MIN_ZERO) {
+            this.parLandmarkWeight = parLandmarkWeight;
         }
     }
 
     /**
-     *
-     * @param parImageWeigth a
+     * Set the "parImageWeight".
+     * @param parImageWeight for the alignment.
      */
-    public void setParImageWeigth(final double parImageWeigth) {
-        if(parImageWeigth >= MIN_ONE) {
-            this.parImageWeigth = parImageWeigth;
+    public void setParImageWeight(final double parImageWeight) {
+        if(parImageWeight >= MIN_ONE) {
+            this.parImageWeight = parImageWeight;
         }
     }
 
     /**
-     *
-     * @param parConsistencyWeigth a
+     * Set the "parConsistencyWeight".
+     * @param parConsistencyWeight for the alignment.
      */
-    public void setParConsistencyWeigth(double parConsistencyWeigth) {
-        if(parConsistencyWeigth >= MIN_TEN) {
-            this.parConsistencyWeigth = parConsistencyWeigth;
+    public void setParConsistencyWeight(double parConsistencyWeight) {
+        if(parConsistencyWeight >= MIN_TEN) {
+            this.parConsistencyWeight = parConsistencyWeight;
         }
     }
 
     /**
-     *
-     * @param parThreshold a
+     * Set the "parThreshold".
+     * @param parThreshold for the alignment.
      */
     public void setParThreshold(double parThreshold) {
         if(parThreshold >= MIN_ZERO_ONE) {
@@ -260,80 +239,80 @@ public class BunwarpjDeformation implements Runnable{
     }
 
     /**
-     *
-     * @return a
+     * Returns the "modeInput".
+     * @return the modeInput.
      */
     public BunwarpJMode getModeInput() {
         return modeInput;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "minScale".
+     * @return the minScale.
      */
     public BunwarpJMinScale getMinScale() {
         return minScale;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "maxScale".
+     * @return the maxScale.
      */
     public BunwarpJMaxScale getMaxScale() {
         return maxScale;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "sampleFactor".
+     * @return the sampleFactor.
      */
     public int getSampleFactor() {
         return sampleFactor;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "divWeight".
+     * @return the divWeight.
      */
-    public double getParDivWeigth() {
-        return parDivWeigth;
+    public double getParDivWeight() {
+        return parDivWeight;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "curlWeight".
+     * @return the curlWeight.
      */
-    public double getParCurlWeigth() {
-        return parCurlWeigth;
+    public double getParCurlWeight() {
+        return parCurlWeight;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "landmarkWeight".
+     * @return the landmarkWeight.
      */
-    public double getParLandmarkWeigth() {
-        return parLandmarkWeigth;
+    public double getParLandmarkWeight() {
+        return parLandmarkWeight;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "ImageWeight".
+     * @return the ImageWeight.
      */
-    public double getParImageWeigth() {
-        return parImageWeigth;
+    public double getParImageWeight() {
+        return parImageWeight;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "ConsistencyWeight".
+     * @return the ConsistencyWeight.
      */
-    public double getParConsistencyWeigth() {
-        return parConsistencyWeigth;
+    public double getParConsistencyWeight() {
+        return parConsistencyWeight;
     }
 
     /**
-     *
-     * @return a
+     * Returns the "Threshold".
+     * @return the Threshold.
      */
     public double getParThreshold() {
         return parThreshold;
