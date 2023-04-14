@@ -48,11 +48,6 @@ public class ReuseGUI extends JFrame implements StandardGUI {
                 this.outputGUI.clearStack();
                 this.outputGUI.dispose();
                 this.dispose();
-            } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(this,
-                        e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
             } catch (OutOfMemoryError e){
                 this.mainGUI.reloadImages();
                 this.outputGUI.dispose();
