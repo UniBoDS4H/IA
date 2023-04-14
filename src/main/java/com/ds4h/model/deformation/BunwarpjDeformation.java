@@ -37,7 +37,7 @@ public class BunwarpjDeformation implements Runnable{
             parThreshold = MIN_ZERO_ONE;
 
     /**
-     *
+     * Constructor for the BunwarpJ object.
      */
     public BunwarpjDeformation(){
         this.outputList = new CopyOnWriteArrayList<>();
@@ -49,34 +49,10 @@ public class BunwarpjDeformation implements Runnable{
         this.maxScale = BunwarpJMaxScale.VERY_COARSE;
 
     }
-    /**
-     * Use BunwarpJ in order to apply the elastic transformation.
-     * @param target : Target Image
-     * @param source : Source Image
-     * @return :
-     */
-
-    public ImagePlus deform(final ImagePlus target, final ImagePlus source){
-        final Transformation transformation = bUnwarpJ_.computeTransformationBatch(target,
-                source,
-                target.getProcessor(),
-                source.getProcessor(),
-                this.modeInput.getValue(),
-                this.sampleFactor,
-                this.minScale.getValue(),
-                this.maxScale.getValue(),
-                this.parDivWeight,
-                this.parCurlWeight,
-                this.parLandmarkWeight,
-                this.parImageWeight,
-                this.parConsistencyWeight,
-                this.parThreshold);
-        return transformation.getDirectResults();
-    }
 
     /**
-     *
-     * @param images a
+     * Perform an Elastic Deformation of all the input images.
+     * @param images all the images to deform.
      */
     public void deformList(final List<AlignedImage> images){
         final Optional<AlignedImage> targetImage = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
@@ -150,7 +126,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "minScale".
-     * @param minScale for the alignment.
+     * @param minScale for the deformation.
      */
     public void setMinScale(final BunwarpJMinScale minScale) {
         if(Objects.nonNull(minScale)) {
@@ -160,7 +136,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "maxScale".
-     * @param maxScale for the alignment.
+     * @param maxScale for the deformation.
      */
     public void setMaxScale(final BunwarpJMaxScale maxScale) {
         if(Objects.nonNull(maxScale)) {
@@ -170,7 +146,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      *  Set the "sampleFactor".
-     * @param sampleFactor for the alignment.
+     * @param sampleFactor for the deformation.
      */
     public void setSampleFactor(final int sampleFactor) {
         if(sampleFactor >= 0 && sampleFactor <= 7) {
@@ -180,7 +156,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "parDivWeight".
-     * @param parDivWeight for the alignment.
+     * @param parDivWeight for the deformation.
      */
     public void setParDivWeight(final double parDivWeight) {
         if(parDivWeight >= MIN_ZERO) {
@@ -190,7 +166,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "parCurlWeight".
-     * @param parCurlWeight for the alignment
+     * @param parCurlWeight for the deformation
      */
     public void setParCurlWeight(final double parCurlWeight) {
         if(parCurlWeight >= MIN_ZERO) {
@@ -200,7 +176,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "parLandmarkWeight".
-     * @param parLandmarkWeight for the alignment.
+     * @param parLandmarkWeight for the deformation.
      */
     public void setParLandmarkWeight(final double parLandmarkWeight) {
         if(parLandmarkWeight >= MIN_ZERO) {
@@ -210,7 +186,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "parImageWeight".
-     * @param parImageWeight for the alignment.
+     * @param parImageWeight for the deformation.
      */
     public void setParImageWeight(final double parImageWeight) {
         if(parImageWeight >= MIN_ONE) {
@@ -220,7 +196,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "parConsistencyWeight".
-     * @param parConsistencyWeight for the alignment.
+     * @param parConsistencyWeight for the deformation.
      */
     public void setParConsistencyWeight(double parConsistencyWeight) {
         if(parConsistencyWeight >= MIN_TEN) {
@@ -230,7 +206,7 @@ public class BunwarpjDeformation implements Runnable{
 
     /**
      * Set the "parThreshold".
-     * @param parThreshold for the alignment.
+     * @param parThreshold for the deformation.
      */
     public void setParThreshold(double parThreshold) {
         if(parThreshold >= MIN_ZERO_ONE) {

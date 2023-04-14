@@ -82,11 +82,11 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         this.initialDef.setSelectedItem(this.bunwarpJController.getMinScale());
         this.finalDef.setSelectedItem(this.bunwarpJController.getMaxScale());
         this.slider.setValue(this.bunwarpJController.getSampleFactor());
-        this.divWeight.setValue(String.valueOf(this.bunwarpJController.getParDivWeigth()));
-        this.curlWeight.setValue(String.valueOf(this.bunwarpJController.getParCurlWeigth()));
-        this.landmarkWeight.setValue(String.valueOf(this.bunwarpJController.getParLandmarkWeigth()));
-        this.imageWeight.setValue(String.valueOf(this.bunwarpJController.getParImageWeigth()));
-        this.consistencyWeight.setValue(String.valueOf(this.bunwarpJController.getParConsistencyWeigth()));
+        this.divWeight.setValue(String.valueOf(this.bunwarpJController.getParDivWeight()));
+        this.curlWeight.setValue(String.valueOf(this.bunwarpJController.getParCurlWeight()));
+        this.landmarkWeight.setValue(String.valueOf(this.bunwarpJController.getParLandmarkWeight()));
+        this.imageWeight.setValue(String.valueOf(this.bunwarpJController.getParImageWeight()));
+        this.consistencyWeight.setValue(String.valueOf(this.bunwarpJController.getParConsistencyWeight()));
         this.thresholdWeight.setValue(String.valueOf(this.bunwarpJController.getParThreshold()));
 
         setVisible(true);
@@ -116,23 +116,23 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
         });
         this.divWeight.addActionListener(e->{
             this.parDivWeigth = this.checkInput(this.divWeight) ? Double.parseDouble(this.divWeight.getText()) : BunwarpjGUI.MIN_ZERO;
-            this.bunwarpJController.setParDivWeigth(this.parDivWeigth);
+            this.bunwarpJController.setParDivWeight(this.parDivWeigth);
         });
         this.curlWeight.addActionListener(e->{
             this.parCurlWeigth = this.checkInput(this.curlWeight) ? Double.parseDouble(this.curlWeight.getText()) : BunwarpjGUI.MIN_ZERO;
-            this.bunwarpJController.setParCurlWeigth(this.parCurlWeigth);
+            this.bunwarpJController.setParCurlWeight(this.parCurlWeigth);
         });
         this.landmarkWeight.addActionListener(e->{
             this.parLandmarkWeigth = this.checkInput(this.landmarkWeight) ? Double.parseDouble(this.landmarkWeight.getText()) : BunwarpjGUI.MIN_ZERO;
-            this.bunwarpJController.setParLandmarkWeigth(this.parLandmarkWeigth);
+            this.bunwarpJController.setParLandmarkWeight(this.parLandmarkWeigth);
         });
         this.imageWeight.addActionListener(e->{
             this.parImageWeigth = this.checkInput(this.imageWeight) ? Double.parseDouble(this.imageWeight.getText()) : BunwarpjGUI.MIN_ONE;
-            this.bunwarpJController.setParImageWeigth(this.parImageWeigth);
+            this.bunwarpJController.setParImageWeight(this.parImageWeigth);
         });
         this.consistencyWeight.addActionListener(e->{
             this.parConsistencyWeigth = this.checkInput(this.consistencyWeight) ? Double.parseDouble(this.consistencyWeight.getText()) : BunwarpjGUI.MIN_TEN;
-            this.bunwarpJController.setParConsistencyWeigth(this.parConsistencyWeigth);
+            this.bunwarpJController.setParConsistencyWeight(this.parConsistencyWeigth);
         });
         this.thresholdWeight.addActionListener(e->{
             this.parThreshold = this.checkInput(this.thresholdWeight) ? Double.parseDouble(this.thresholdWeight.getText()) : BunwarpjGUI.MIN_ZERO_ONE;
