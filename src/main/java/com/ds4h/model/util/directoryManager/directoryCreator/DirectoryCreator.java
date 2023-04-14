@@ -1,6 +1,6 @@
 package com.ds4h.model.util.directoryManager.directoryCreator;
 
-import com.ds4h.model.util.DateTime;
+import com.ds4h.model.util.directoryManager.DateTime;
 
 import java.io.File;
 

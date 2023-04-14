@@ -35,7 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import static com.ds4h.model.util.AlignmentUtil.getEnumFromAlgorithm;
+import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {

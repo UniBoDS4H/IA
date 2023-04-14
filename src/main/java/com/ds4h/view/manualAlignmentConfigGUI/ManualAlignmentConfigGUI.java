@@ -8,7 +8,7 @@ import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import javax.swing.*;
 import java.awt.*;
-import static com.ds4h.model.util.AlignmentUtil.getEnumFromAlgorithm;
+import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 
 public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<AlignmentAlgorithmEnum> algorithm;
