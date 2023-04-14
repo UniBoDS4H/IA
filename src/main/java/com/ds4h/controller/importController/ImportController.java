@@ -15,11 +15,11 @@ public class ImportController {
     }
 
     /**
-     *
-     * @param directory a
-     * @param pointManager b
-     * @throws FileNotFoundException c
-     * @throws OutOfMemoryError d
+     * Import a project from the input path.
+     * @param directory directory where the project is imported.
+     * @param pointManager where the images will be put.
+     * @throws FileNotFoundException If the directory does not exist.
+     * @throws OutOfMemoryError If the project size is bigger than the free memory available.
      */
     public static void importProject(final File directory, final PointManager pointManager) throws FileNotFoundException, OutOfMemoryError {
         if(directory.isDirectory() && Objects.nonNull(pointManager)) {

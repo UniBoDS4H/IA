@@ -23,15 +23,20 @@ public class ImageController {
     private ImageEnum imageEnum = ImageEnum.ALIGNED;
 
     /**
-     *
-     * @param alignmentControllerInterface a
-     * @param bunwarpJController b
+     * Constructor for the ImageController object.
+     * @param alignmentControllerInterface the alignment controller (Manual or Automatic).
+     * @param bunwarpJController the bunwarpj controller, for the elastic transformation.
      */
     public ImageController(final AlignmentControllerInterface alignmentControllerInterface, final BunwarpJController bunwarpJController){
         this.alignmentControllerInterface = alignmentControllerInterface;
         this.bunwarpJController = bunwarpJController;
     }
 
+    /**
+     * Creates the Stack with all the output images from the alignment/deformation.
+     * @return Stack with all the images.
+     * @throws RuntimeException If there are no images for the stack.
+     */
     public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
         if(!this.getAlignedImages().isEmpty()){
             final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
@@ -60,8 +65,8 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
+     * Returns all the images got from the alignment/deformation.
+     * @return the images.
      */
     public List<AlignedImage> getAlignedImages(){
         switch (this.imageEnum){
@@ -75,23 +80,15 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
-     */
-    public ImageEnum type(){
-        return this.imageEnum;
-    }
-
-    /**
-     *
+     * Align the images.
      */
     public void align(){
         this.imageEnum = ImageEnum.ALIGNED;
     }
 
     /**
-     *
-     * @param alignedImages a
+     * Perform the Elastic Deformation.
+     * @param alignedImages all the images to deform.
      */
     public void elastic(final List<AlignedImage> alignedImages){
         if(Objects.nonNull(alignedImages) && !alignedImages.isEmpty()) {
@@ -101,16 +98,8 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
-     */
-    public boolean isAlive(){
-        return this.alignmentControllerInterface.isAlive();
-    }
-
-    /**
-     *
-     * @return a
+     * Returns the name of the controller.
+     * @return the name of the controller.
      */
     public String name(){
         switch (this.imageEnum){
@@ -124,8 +113,8 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
+     * Returns the status of the deformation.
+     * @return the status of the deformation.
      */
     public boolean deformationIsAlive(){
         return this.bunwarpJController.isAlive();
