@@ -14,7 +14,7 @@ public class PointManager {
     private ImagePoints targetImage;
 
     /**
-     * Creates the PointManager object.
+     * Constructor the PointManager object.
      */
     public PointManager(){
         this.targetImage = null;

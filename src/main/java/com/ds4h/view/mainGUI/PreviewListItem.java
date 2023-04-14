@@ -102,6 +102,6 @@ public class PreviewListItem extends JPanel {
         return b;
     }
     private void updateTargetView(){
-        this.targetButton.setBackground(this.controller.isSource(this.image)?new Color(0,153,0):Color.GRAY);
+        this.targetButton.setBackground(this.controller.isTarget(this.image)?new Color(0,153,0):Color.GRAY);
     }
 }

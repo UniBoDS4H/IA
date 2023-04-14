@@ -156,7 +156,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     }
     public void checkPointsForAlignment() {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-        if(this.pointControler.getCornerImagesImages().size() < 2){
+        if(this.pointControler.getPointImages().size() < 2){
             this.manualAlignment.setEnabled(false);
             this.automaticAlignment.setToolTipText("<html>" +
                     "You have to load at least 2 images</html>");
@@ -164,8 +164,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     "You have to load at least 2 images</html>");
         }else{
             int nPoints;
-            if (!this.pointControler.getCornerImagesImages().isEmpty()) {
-                nPoints = this.pointControler.getCornerImagesImages().get(0).getPoints().length;
+            if (!this.pointControler.getPointImages().isEmpty()) {
+                nPoints = this.pointControler.getPointImages().get(0).getPoints().length;
                 int lowerBound = 0;
                 if(this.manualAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
                     lowerBound = this.manualAlignmentController.getAlgorithm().getLowerBound();
@@ -175,14 +175,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     lowerBound = ProjectiveAlignment.LOWER_BOUND;
                 }
                 boolean ok = true;
-                for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
+                for (ImagePoints i : this.pointControler.getPointImages()) {
                     if (i.getPoints().length < lowerBound) {
                         ok = false;
                         break;
                     }
                 }
                 if(ok){
-                    for (ImagePoints i : this.pointControler.getCornerImagesImages()) {
+                    for (ImagePoints i : this.pointControler.getPointImages()) {
                         if (i.getPoints().length != nPoints) {
                             ok = false;
                             break;

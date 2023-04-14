@@ -14,9 +14,6 @@ import java.util.stream.Collectors;
  */
 public class ReuseSources {
 
-    /**
-     * Constructor of the ReuseSources object.
-     */
     private ReuseSources(){
 
     }

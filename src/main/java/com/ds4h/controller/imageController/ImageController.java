@@ -3,11 +3,13 @@ package com.ds4h.controller.imageController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.model.alignedImage.AlignedImage;
+import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
+import ij.process.LUT;
 
 import java.awt.image.ColorModel;
 import java.util.Collections;
@@ -36,26 +38,18 @@ public class ImageController {
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
             final List<AlignedImage> images = this.getAlignedImages();
-            //final LUT[] luts = new LUT[images.size()];
-            //int index = 0;
-            final int bitDepth = images.stream()
-                    .min(Comparator.comparingInt(img -> img.getAlignedImage().getBitDepth())).get().getAlignedImage().getBitDepth();
-            IJ.log("[ALIGNED STACK] Bit Depth: " + bitDepth);
+            final LUT[] luts = new LUT[images.size()];
+            int index = 0;
             for (final AlignedImage image : images) {
-                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)) {
-                    final ImageConverter imageConverter = new ImageConverter(image.getAlignedImage());
-                    imageConverter.convertToGray8();
-                    IJ.log("[STACK] " + (image.getAlignedImage().getProcessor() instanceof ByteProcessor));
-                }
-                //luts[index] = image.getAlignedImage().getProcessor().getLut();
+                luts[index] = image.getAlignedImage().getProcessor().getLut();
                 IJ.log("[NAME] " + image.getName());
                 stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
-                //index++;
+                index++;
             }
             try {
-                //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
-                //composite.setLuts(luts);
-                return new ImagePlus("Aligned Stack", stack);
+                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
+                composite.setLuts(luts);
+                return composite;
             }catch (Exception e){
                 throw new RuntimeException("Something went wrong with the creation of the stack.");
             }

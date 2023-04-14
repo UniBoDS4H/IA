@@ -1,7 +1,6 @@
-package com.ds4h.model.util.converter;
+package com.ds4h.model.util.imageManager;
 
 import ij.IJ;
-import ij.ImagePlus;
 import ij.process.*;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
