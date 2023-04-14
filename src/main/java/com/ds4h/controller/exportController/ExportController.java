@@ -12,10 +12,10 @@ public class ExportController {
     }
 
     /**
-     *
-     * @param pointManager a
-     * @param path b
-     * @throws IOException c
+     * Export the project in the selected path.
+     * @param pointManager where all the images are stored.
+     * @param path where the project should be exported.
+     * @throws IOException if the saving fails.
      */
     public static void exportProject(final PointManager pointManager, final String path) throws IOException {
         if(!pointManager.getPointImages().isEmpty()) {
