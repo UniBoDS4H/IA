@@ -4,7 +4,7 @@ import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.reuse.ReuseSources;
-import com.ds4h.model.util.converter.ImagingConversion;
+import com.ds4h.model.util.imageManager.ImagingConversion;
 import com.ds4h.model.util.MemoryController;
 import com.ds4h.view.pointSelectorGUI.MenuItem;
 import org.opencv.core.Point;
