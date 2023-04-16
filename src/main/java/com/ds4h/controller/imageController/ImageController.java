@@ -7,6 +7,8 @@ import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.process.ByteProcessor;
+import ij.process.ImageConverter;
 import ij.process.LUT;
 import java.awt.image.ColorModel;
 import java.util.Collections;
@@ -32,8 +34,9 @@ public class ImageController {
      * Creates the Stack with all the output images from the alignment/deformation.
      * @return Stack with all the images.
      * @throws RuntimeException If there are no images for the stack.
+     * @throws OutOfMemoryError If there is not enough space for the heap.
      */
-    public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
+    public ImagePlus getAlignedImagesAsStack() throws RuntimeException, OutOfMemoryError{
         if(!this.getAlignedImages().isEmpty()){
             final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
@@ -42,15 +45,21 @@ public class ImageController {
             final LUT[] luts = new LUT[images.size()];
             int index = 0;
             for (final AlignedImage image : images) {
-                luts[index] = image.getAlignedImage().getProcessor().getLut();
-                IJ.log("[NAME] " + image.getName());
-                stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
+                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)){
+                    final ImagePlus copy = new ImagePlus(image.getName(),
+                            image.getAlignedImage().getProcessor().convertToByteProcessor());
+                    stack.addSlice(image.getName(), copy.getProcessor());
+                }else {
+                    IJ.log("[NAME] " + image.getName());
+                    stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
+                }
+                //luts[index] = image.getAlignedImage().getProcessor().getLut();
                 index++;
             }
             try {
-                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
-                composite.setLuts(luts);
-                return composite;
+                //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
+                //composite.setLuts(luts);
+                return new ImagePlus("Aligned Stack", stack);
             }catch (Exception e){
                 throw new RuntimeException("Something went wrong with the creation of the stack.");
             }
