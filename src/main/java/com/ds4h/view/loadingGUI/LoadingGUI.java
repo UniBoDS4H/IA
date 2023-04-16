@@ -1,5 +1,6 @@
 package com.ds4h.view.loadingGUI;
 
+import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
 
@@ -22,15 +23,17 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.loadingType = loadingType;
         this.setTitle(loadingType.getTitle());
         this.loadingLabel = new JLabel(this.loadingGif);
-        this.loadingLabel.setSize(new Dimension(20, 20));
-        this.setLayout(new GridLayout(1, 2));
+        this.setLayout(new GridBagLayout());
         this.text = new JLabel();
         this.progressBar = new JProgressBar();
-        this.setSize(new Dimension(300, 200));
         this.progressBar.setValue(0);
         this.progressBar.setStringPainted(true);
+        Dimension dspSize = DisplayInfo.getDisplaySize();
+        this.loadingLabel.setPreferredSize(new Dimension((int)dspSize.getWidth()/2,(int)dspSize.getHeight()));
+        this.setSize((int)dspSize.getWidth()/4, (int)dspSize.getHeight()/4);
         this.addComponents();
         this.addListeners();
+        this.setResizable(false);
     }
 
     public void close(){
@@ -54,13 +57,26 @@ public class LoadingGUI extends JFrame implements StandardGUI {
 
     @Override
     public void addComponents() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
         this.text.setVerticalAlignment(JLabel.CENTER);
         this.text.setHorizontalAlignment(JLabel.CENTER);
         this.text.setText(this.loadingType.getDescription());
         IJ.log("[LOADING GUI] text: " + this.text.getText());
-        this.add(this.loadingLabel, FlowLayout.LEFT);
-        this.add(this.progressBar);
-        this.add(this.text);
+        if(this.loadingType == LoadingType.ALGORITHM){
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            this.add(this.progressBar, gbc);
+            gbc.gridy = 1;
+            this.add(this.text,gbc);
+        }else{
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            this.add(this.loadingLabel, gbc);
+            gbc.gridx = 1;
+            this.add(this.text,gbc);
+        }
     }
 
     public void updateProgress(int val) {
