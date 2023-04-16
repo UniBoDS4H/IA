@@ -13,7 +13,6 @@ import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JComboBox<Detectors> detectors;
     private final JSlider slider, sliderFactor;
-    private final GridBagLayout layout;
     private final JCheckBox translationCheckbox;
     private final JCheckBox rotationCheckbox;
     private final JCheckBox scalingCheckbox;
@@ -27,8 +26,8 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.setTitle("Automatic alignment algorithm");
         this.controller = automaticAlignmentController;
         this.container = container;
-        this.layout = new GridBagLayout();
-        this.getContentPane().setLayout(this.layout);
+        GridBagLayout layout = new GridBagLayout();
+        this.getContentPane().setLayout(layout);
         this.detectors = new JComboBox<>(Detectors.values());
         this.selectedDetector = Detectors.SURF;
         this.slider = new JSlider(0, 20);

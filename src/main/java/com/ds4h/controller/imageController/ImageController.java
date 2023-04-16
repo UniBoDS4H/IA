@@ -3,15 +3,15 @@ package com.ds4h.controller.imageController;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.model.alignedImage.AlignedImage;
+import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
-
+import ij.process.LUT;
 import java.awt.image.ColorModel;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,36 +21,40 @@ public class ImageController {
     private ImageEnum imageEnum = ImageEnum.ALIGNED;
 
     /**
-     *
-     * @param alignmentControllerInterface a
-     * @param bunwarpJController b
+     * Constructor for the ImageController object.
+     * @param alignmentControllerInterface the alignment controller (Manual or Automatic).
+     * @param bunwarpJController the bunwarpj controller, for the elastic transformation.
      */
     public ImageController(final AlignmentControllerInterface alignmentControllerInterface, final BunwarpJController bunwarpJController){
         this.alignmentControllerInterface = alignmentControllerInterface;
         this.bunwarpJController = bunwarpJController;
     }
 
-    public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
+    /**
+     * Creates the Stack with all the output images from the alignment/deformation.
+     * @return Stack with all the images.
+     * @throws RuntimeException If there are no images for the stack.
+     * @throws OutOfMemoryError If there is not enough space for the heap.
+     */
+    public ImagePlus getAlignedImagesAsStack() throws RuntimeException, OutOfMemoryError{
         if(!this.getAlignedImages().isEmpty()){
             final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
             final List<AlignedImage> images = this.getAlignedImages();
-            //final LUT[] luts = new LUT[images.size()];
-            //int index = 0;
-            final int bitDepth = images.stream()
-                    .min(Comparator.comparingInt(img -> img.getAlignedImage().getBitDepth())).get().getAlignedImage().getBitDepth();
-            IJ.log("[ALIGNED STACK] Bit Depth: " + bitDepth);
+            final LUT[] luts = new LUT[images.size()];
+            int index = 0;
             for (final AlignedImage image : images) {
-                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)) {
-                    final ImageConverter imageConverter = new ImageConverter(image.getAlignedImage());
-                    imageConverter.convertToGray8();
-                    IJ.log("[STACK] " + (image.getAlignedImage().getProcessor() instanceof ByteProcessor));
+                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)){
+                    final ImagePlus copy = new ImagePlus(image.getName(),
+                            image.getAlignedImage().getProcessor().convertToByteProcessor());
+                    stack.addSlice(image.getName(), copy.getProcessor());
+                }else {
+                    IJ.log("[NAME] " + image.getName());
+                    stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
                 }
                 //luts[index] = image.getAlignedImage().getProcessor().getLut();
-                IJ.log("[NAME] " + image.getName());
-                stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
-                //index++;
+                index++;
             }
             try {
                 //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
@@ -66,8 +70,8 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
+     * Returns all the images got from the alignment/deformation.
+     * @return the images.
      */
     public List<AlignedImage> getAlignedImages(){
         switch (this.imageEnum){
@@ -81,23 +85,15 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
-     */
-    public ImageEnum type(){
-        return this.imageEnum;
-    }
-
-    /**
-     *
+     * Align the images.
      */
     public void align(){
         this.imageEnum = ImageEnum.ALIGNED;
     }
 
     /**
-     *
-     * @param alignedImages a
+     * Perform the Elastic Deformation.
+     * @param alignedImages all the images to deform.
      */
     public void elastic(final List<AlignedImage> alignedImages){
         if(Objects.nonNull(alignedImages) && !alignedImages.isEmpty()) {
@@ -107,16 +103,8 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
-     */
-    public boolean isAlive(){
-        return this.alignmentControllerInterface.isAlive();
-    }
-
-    /**
-     *
-     * @return a
+     * Returns the name of the controller.
+     * @return the name of the controller.
      */
     public String name(){
         switch (this.imageEnum){
@@ -130,8 +118,8 @@ public class ImageController {
     }
 
     /**
-     *
-     * @return a
+     * Returns the status of the deformation.
+     * @return the status of the deformation.
      */
     public boolean deformationIsAlive(){
         return this.bunwarpJController.isAlive();

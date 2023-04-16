@@ -1,4 +1,4 @@
-package com.ds4h.model.util.converter;
+package com.ds4h.model.util.imageManager;
 
 import org.apache.commons.io.FilenameUtils;
 import java.io.File;

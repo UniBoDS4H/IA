@@ -1,7 +1,7 @@
 package com.ds4h.view.mainGUI;
 
 import com.ds4h.controller.pointController.PointController;
-import ij.IJ;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,8 +26,8 @@ public class PreviewImagesPane extends JPanel {
         this.innerPanel.removeAll();
         try {
             innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-            this.controller.getCornerImagesImages().forEach(image -> {
-                final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getCornerImagesImages().indexOf(image) + 1);
+            this.controller.getPointImages().forEach(image -> {
+                final PreviewListItem panel = new PreviewListItem(controller, image, this, this.controller.getPointImages().indexOf(image) + 1);
                 panel.setPreferredSize(this.getPreferredSize());
                 panel.setAlignmentX(Component.LEFT_ALIGNMENT);
                 panel.setPreferredSize(new Dimension(0, this.getHeight() / 6)); // Imposta la dimensione preferita del pannello di anteprima

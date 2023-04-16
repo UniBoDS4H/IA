@@ -13,14 +13,14 @@ public class OpencvController {
     }
 
     /**
-     *
+     * Load the OpenCV library inside the TMP folder.
      */
     public static void loadLibrary(){
         OpenCVLoader.loadOpenCV();
     }
 
     /**
-     *
+     * Remove the OpenCV library from the TMP folder.
      */
     public static void deleteLibrary(){
         OpencvDeleter.deleteOpenCV();

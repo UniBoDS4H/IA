@@ -50,12 +50,15 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     /**
-     *
-     * @param algorithm a
-     * @param detector b
-     * @param pointManager c
-     * @throws IllegalArgumentException d
-     * @throws RuntimeException e
+     * @see com.ds4h.model.alignment.automatic.pointDetector
+     * @see com.ds4h.model.alignment.alignmentAlgorithm
+     * Align all the input images using the "detector" selected from the input as Point Detector, the "algorithm" as alignment algorithm. The "pointManager"
+     * is where all the images are stored.
+     * @param algorithm the alignment algorithm to use.
+     * @param detector the Point Detector to use.
+     * @param pointManager where all the images are stored.
+     * @throws IllegalArgumentException if one of the input is not correct.
+     * @throws RuntimeException if during the alignment something happen.
      */
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws IllegalArgumentException, RuntimeException{
 
@@ -89,8 +92,8 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     /**
-     *
-     * @return a
+     * Returns the alignment name.
+     * @return the alignment name.
      */
     @Override
     public String name() {
@@ -98,9 +101,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     /**
-     *
-     * @return a
-     * @throws RuntimeException b
+     * Returns all the aligned images as stack.
+     * @return all the aligned images as stack.
+     * @throws RuntimeException if something goes wrong (there are no images, etc, etc..).
      */
     @Override
     public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
@@ -139,8 +142,8 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     /**
-     *
-     * @return a
+     * Returns the alignment status.
+     * @return the alignment status.
      */
     @Override
     public int getStatus() {
@@ -148,28 +151,30 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     }
 
     /**
-     *
-     * @return a
+     * Returns the algorithm.
+     * @return the algorithm
      */
     public AlignmentAlgorithm getAlgorithm() {
         return this.algorithm;
     }
 
     /**
-     *
-     * @param algorithm a
+     * Set the algorithm to use.
+     * @param algorithm the algorithm to use.
      */
     public void setAlgorithm(final AlignmentAlgorithm algorithm){
-        this.algorithm = algorithm;
+        if(Objects.nonNull(algorithm)) {
+            this.algorithm = algorithm;
+        }
     }
 
     /**
-     *
-     * @param e a
-     * @return b
+     * Returns the alignment algorithm.
+     * @param algorithmEnum the selected algorithm.
+     * @return the alignment algorithm.
      */
-    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum e){
-        switch (e){
+    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum algorithmEnum){
+        switch (algorithmEnum){
             case TRANSLATIONAL:
                 return this.translational;
             case PROJECTIVE:

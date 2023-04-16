@@ -6,16 +6,13 @@ import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
-
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileNotFoundException;
 
 public class ReuseGUI extends JFrame implements StandardGUI {
     private final JButton reuseButton;
     private final ReuseImagesPanel imagesPane;
     private final MainMenuGUI mainGUI;
-    private final ImageController controller;
     private final PointController pointController;
     private final AlignmentOutputGUI outputGUI;
 
@@ -25,10 +22,9 @@ public class ReuseGUI extends JFrame implements StandardGUI {
         this.mainGUI = mainGUI;
         this.outputGUI = alignmentOutputGUI;
         this.pointController = pointController;
-        this.controller = controller;
         this.setLayout(new BorderLayout());
         this.reuseButton = new JButton("Reuse");
-        this.imagesPane = new ReuseImagesPanel(this.controller);
+        this.imagesPane = new ReuseImagesPanel(controller);
         this.addComponents();
         this.addListeners();
     }
@@ -48,11 +44,6 @@ public class ReuseGUI extends JFrame implements StandardGUI {
                 this.outputGUI.clearStack();
                 this.outputGUI.dispose();
                 this.dispose();
-            } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(this,
-                        e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
             } catch (OutOfMemoryError e){
                 this.mainGUI.reloadImages();
                 this.outputGUI.dispose();

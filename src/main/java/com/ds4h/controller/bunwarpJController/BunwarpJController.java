@@ -4,10 +4,8 @@ import com.ds4h.model.deformation.BunwarpjDeformation;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
-import ij.ImagePlus;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Controller for the BunwarpJ elastic deformation
@@ -31,8 +29,8 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @return
+     * Returns all the deformed images.
+     * @return all the deformed images.
      */
     public List<AlignedImage> getImages(){
         if(!this.bunwarpjDeformation.isAlive()){
@@ -42,16 +40,16 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @return
+     * Returns the status thread.
+     * @return the status thread.
      */
     public boolean isAlive(){
         return this.bunwarpjDeformation.isAlive();
     }
 
     /**
-     *
-     * @param modeInput
+     * Set the "modeInput".
+     * @param modeInput for the deformation.
      */
     public void setModeInput(final BunwarpJMode modeInput) {
         if(Objects.nonNull(modeInput)) {
@@ -60,8 +58,8 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @param minScale
+     * Set the "minScale".
+     * @param minScale for the deformation.
      */
     public void setMinScale(final BunwarpJMinScale minScale) {
         if(Objects.nonNull(minScale)) {
@@ -70,8 +68,8 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @param maxScale
+     * Set the "maxScale".
+     * @param maxScale for the deformation.
      */
     public void setMaxScale(final BunwarpJMaxScale maxScale) {
         if(Objects.nonNull(maxScale)) {
@@ -80,8 +78,8 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @param sampleFactor
+     * Set the "sampleFactor".
+     * @param sampleFactor for the deformation.
      */
     public void setSampleFactor(final int sampleFactor) {
         if(sampleFactor >= 0 && sampleFactor <= 7) {
@@ -90,58 +88,58 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @param parDivWeigth
+     * Set the "parDivWeight".
+     * @param parDivWeight for the deformation.
      */
-    public void setParDivWeigth(final double parDivWeigth) {
-        if(parDivWeigth >= BunwarpjDeformation.MIN_ZERO) {
-            this.bunwarpjDeformation.setParDivWeigth(parDivWeigth);
+    public void setParDivWeight(final double parDivWeight) {
+        if(parDivWeight >= BunwarpjDeformation.MIN_ZERO) {
+            this.bunwarpjDeformation.setParDivWeight(parDivWeight);
         }
     }
 
     /**
-     *
-     * @param parCurlWeigth
+     * Set the "parCurlWeight".
+     * @param parCurlWeight for the deformation.
      */
-    public void setParCurlWeigth(final double parCurlWeigth) {
-        if(parCurlWeigth >= BunwarpjDeformation.MIN_ZERO) {
-            this.bunwarpjDeformation.setParCurlWeigth(parCurlWeigth);
+    public void setParCurlWeight(final double parCurlWeight) {
+        if(parCurlWeight >= BunwarpjDeformation.MIN_ZERO) {
+            this.bunwarpjDeformation.setParCurlWeight(parCurlWeight);
         }
     }
 
     /**
-     *
-     * @param parLandmarkWeigth
+     * Set the "parLandmarkWeight".
+     * @param parLandmarkWeight for the deformation.
      */
-    public void setParLandmarkWeigth(final double parLandmarkWeigth) {
-        if(parLandmarkWeigth >= BunwarpjDeformation.MIN_ZERO) {
-            this.bunwarpjDeformation.setParLandmarkWeigth(parLandmarkWeigth);
+    public void setParLandmarkWeight(final double parLandmarkWeight) {
+        if(parLandmarkWeight >= BunwarpjDeformation.MIN_ZERO) {
+            this.bunwarpjDeformation.setParLandmarkWeight(parLandmarkWeight);
         }
     }
 
     /**
-     *
-     * @param parImageWeigth
+     * Set the "parImageWeight".
+     * @param parImageWeight for the deformation.
      */
-    public void setParImageWeigth(final double parImageWeigth) {
-        if(parImageWeigth >= BunwarpjDeformation.MIN_ONE) {
-            this.bunwarpjDeformation.setParImageWeigth(parImageWeigth);
+    public void setParImageWeight(final double parImageWeight) {
+        if(parImageWeight >= BunwarpjDeformation.MIN_ONE) {
+            this.bunwarpjDeformation.setParImageWeight(parImageWeight);
         }
     }
 
     /**
-     *
-     * @param parConsistencyWeigth
+     * Set the "parConsistencyWeight".
+     * @param parConsistencyWeight for the deformation.
      */
-    public void setParConsistencyWeigth(final double parConsistencyWeigth) {
-        if(parConsistencyWeigth >= BunwarpjDeformation.MIN_TEN) {
-            this.bunwarpjDeformation.setParConsistencyWeigth(parConsistencyWeigth);
+    public void setParConsistencyWeight(final double parConsistencyWeight) {
+        if(parConsistencyWeight >= BunwarpjDeformation.MIN_TEN) {
+            this.bunwarpjDeformation.setParConsistencyWeight(parConsistencyWeight);
         }
     }
 
     /**
-     *
-     * @param parThreshold
+     * Set the "Threshold".
+     * @param parThreshold for the deformation.
      */
     public void setParThreshold(final double parThreshold) {
         if(parThreshold >= BunwarpjDeformation.MIN_ZERO_ONE) {
@@ -150,112 +148,112 @@ public class BunwarpJController {
     }
 
     /**
-     *
-     * @return
+     * Returns the "MIN_ZERO".
+     * @return the MIN_ZERO.
      */
     public double getMIN_ZERO(){
         return BunwarpjDeformation.MIN_ZERO;
     }
 
     /**
-     *
-     * @return
+     * Returns the "MIN_ONE".
+     * @return the MIN_ONE.
      */
     public double getMIN_ONE(){
         return BunwarpjDeformation.MIN_ONE;
     }
 
     /**
-     *
-     * @return
+     * Returns the "MIN_ZERO_ONE".
+     * @return the MIN_ZERO_ONE.
      */
     public double getMIN_ZERO_ONE(){
         return BunwarpjDeformation.MIN_ZERO_ONE;
     }
 
     /**
-     *
-     * @return
+     * Returns the "MIN_TEN".
+     * @return the MIN_TEN.
      */
     public double getMIN_TEN(){
         return BunwarpjDeformation.MIN_TEN;
     }
 
     /**
-     *
-     * @return
+     * Returns the "modeInput".
+     * @return the modeInput.
      */
     public BunwarpJMode getModeInput() {
         return this.bunwarpjDeformation.getModeInput();
     }
 
     /**
-     *
-     * @return
+     * Returns the "minScale".
+     * @return the minScale.
      */
     public BunwarpJMinScale getMinScale() {
         return this.bunwarpjDeformation.getMinScale();
     }
 
     /**
-     *
-     * @return
+     * Returns the "maxScale".
+     * @return the maxScale.
      */
     public BunwarpJMaxScale getMaxScale() {
         return this.bunwarpjDeformation.getMaxScale();
     }
 
     /**
-     *
-     * @return
+     * Retursn the "SampleFactor".
+     * @return the sampleFactor.
      */
     public int getSampleFactor() {
         return this.bunwarpjDeformation.getSampleFactor();
     }
 
     /**
-     *
-     * @return
+     * Returns the "divWeight".
+     * @return the divWeight.
      */
-    public double getParDivWeigth() {
-        return this.bunwarpjDeformation.getParDivWeigth();
+    public double getParDivWeight() {
+        return this.bunwarpjDeformation.getParDivWeight();
     }
 
     /**
-     *
-     * @return
+     * Returns the "curlWeight".
+     * @return the curlWeight.
      */
-    public double getParCurlWeigth() {
-        return this.bunwarpjDeformation.getParCurlWeigth();
+    public double getParCurlWeight() {
+        return this.bunwarpjDeformation.getParCurlWeight();
     }
 
     /**
-     *
-     * @return
+     * Returns the "landmarkWeight".
+     * @return the landmarkWeight.
      */
-    public double getParLandmarkWeigth() {
-        return this.bunwarpjDeformation.getParLandmarkWeigth();
+    public double getParLandmarkWeight() {
+        return this.bunwarpjDeformation.getParLandmarkWeight();
     }
 
     /**
-     *
-     * @return
+     * Returns the "imageWeight".
+     * @return the imageWeight.
      */
-    public double getParImageWeigth() {
-        return this.bunwarpjDeformation.getParImageWeigth();
+    public double getParImageWeight() {
+        return this.bunwarpjDeformation.getParImageWeight();
     }
 
     /**
-     *
-     * @return
+     * Returns the "consistencyWeight".
+     * @return the consistencyWeight.
      */
-    public double getParConsistencyWeigth() {
-        return this.bunwarpjDeformation.getParConsistencyWeigth();
+    public double getParConsistencyWeight() {
+        return this.bunwarpjDeformation.getParConsistencyWeight();
     }
 
     /**
-     *
-     * @return
+     * Returns the "Threshold".
+     * @return the Threshold.
      */
     public double getParThreshold() {
         return this.bunwarpjDeformation.getParThreshold();

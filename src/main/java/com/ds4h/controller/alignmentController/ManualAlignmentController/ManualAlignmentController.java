@@ -26,17 +26,18 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     private final AlignmentAlgorithm translational = new TranslationalAlignment();
     private final AlignmentAlgorithm projective = new ProjectiveAlignment();
     private final AlignmentAlgorithm affine = new AffineAlignment();
-    private final PointOverloadEnum overload;
 
+    /**
+     * Constructor for the ManualAlignmentController object.
+     */
     public ManualAlignmentController(){
         this.algorithm = this.translational;
         this.alignment = new Alignment();
-        this.overload = PointOverloadEnum.FIRST_AVAILABLE;
     }
 
     /**
-     *
-     * @return a
+     * Returns all the aligned images.
+     * @return all the aligned images.
      */
     @Override
     public List<AlignedImage> getAlignedImages(){
@@ -44,8 +45,8 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @return b
+     * Returns all the aligned images as stack.
+     * @return all the aligned images as stack.
      */
     public ImagePlus getAlignedImagesAsStack(){
         if(!this.getAlignedImages().isEmpty()){
@@ -74,8 +75,8 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @return a
+     * Returns the alignment status.
+     * @return the alignment status.
      */
     @Override
     public int getStatus() {
@@ -83,8 +84,8 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @return a
+     * Return the thread status.
+     * @return the thread status.
      */
     @Override
     public boolean isAlive() {
@@ -92,8 +93,8 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @return a
+     * Returns the algorithm name.
+     * @return the algorithm name.
      */
     @Override
     public String name() {
@@ -101,11 +102,13 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @param algorithm a
-     * @param pointManager b
+     * @see com.ds4h.model.alignment.alignmentAlgorithm
+     * Align all the images with the selected algorithm.
+     * @param algorithm the algorithm to use.
+     * @param pointManager where all the images are stored.
+     * @throws IllegalArgumentException if one of the parameters is not correct.
      */
-    public void align(final AlignmentAlgorithm algorithm, final PointController pointManager){
+    public void align(final AlignmentAlgorithm algorithm, final PointController pointManager) throws IllegalArgumentException{
         if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
             if(pointManager.getPointManager().getPointImages().size() > 1) {
                 this.alignment.alignImages(pointManager.getPointManager(), algorithm, AlignmentEnum.MANUAL);
@@ -116,28 +119,31 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @return a
+     * Returns the algorithm to use.
+     * @return the algorithm to use.
      */
     public AlignmentAlgorithm getAlgorithm() {
         return this.algorithm;
     }
 
     /**
-     *
-     * @param algorithm a
+     * Set the algorithm for the alignment.
+     * @param algorithm the algorithm for the alignment.
      */
-    public void setAlgorithm(AlignmentAlgorithm algorithm){
-        this.algorithm = algorithm;
+    public void setAlgorithm(final AlignmentAlgorithm algorithm){
+        if(Objects.nonNull(algorithm)) {
+            this.algorithm = algorithm;
+        }
     }
 
     /**
-     *
-     * @param e a
-     * @return b
+     * Returns the algorithm type.
+     * @param algorithmEnum selected algorithm.
+     * @return the algorithm type.
      */
-    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum e) {
-        switch (e){
+    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum algorithmEnum) {
+
+        switch (Objects.requireNonNull(algorithmEnum)){
             case TRANSLATIONAL:
                 return this.translational;
             case PROJECTIVE:
@@ -149,18 +155,20 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     }
 
     /**
-     *
-     * @return a
+     * Returns the point overload.
+     * @return the point overload.
      */
     public PointOverloadEnum getPointOverload() {
         return this.algorithm.getPointOverload();
     }
 
     /**
-     *
-     * @param overload a
+     * Set the point overload from the input value.
+     * @param overload the new overload that will be used.
      */
-    public void setPointOverload(PointOverloadEnum overload) {
-        this.algorithm.setPointOverload(overload);
+    public void setPointOverload(final PointOverloadEnum overload) {
+        if(Objects.nonNull(overload)) {
+            this.algorithm.setPointOverload(overload);
+        }
     }
 }
