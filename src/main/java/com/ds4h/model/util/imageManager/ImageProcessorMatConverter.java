@@ -50,11 +50,6 @@ public class ImageProcessorMatConverter {
         return  matrix;
     }
 
-    /**
-     *
-     * @param bp a
-     * @return b
-     */
     private static Mat toMat(final ByteProcessor bp){
         IJ.log("[TO MAT - BYTEPROCESSOR] From ByteProcessor");
         final Mat matrix = new Mat(bp.getHeight(), bp.getWidth(), CvType.CV_8U);
