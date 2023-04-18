@@ -29,7 +29,6 @@ public class Image_Alignment implements PlugIn {
 
 	@Override
 	public void run(String s) {
-
 		try {
 			OpencvController.loadLibrary();
 			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());

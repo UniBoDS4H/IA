@@ -26,6 +26,7 @@ public class AlignedImage {
         this.name = name;
         this.registrationMatrix = registrationMatrix;
     }
+
     /**
      * Constructor of the AlignedImage. An AlignedImage is the result of the Alignment Algorithm.
      * This constructor is used for the target image because there is no registration matrix
@@ -61,23 +62,35 @@ public class AlignedImage {
     public ImagePlus getAlignedImage(){
         return new ImagePlus(this.name,  this.alignedImage);
     }
+
+    /**
+     * Returns the toString of the object.
+     * @return the toString of the object.
+     */
     @Override
     public String toString() {
         return this.getName();
     }
 
+    /**
+     * Returns if two Aligned Images are equals.
+     * @param o the other AlignedImage .
+     * @return "True" if are equals.
+     */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AlignedImage that = (AlignedImage) o;
         return Objects.equals(alignedImage, that.alignedImage) && Objects.equals(registrationMatrix, that.registrationMatrix);
     }
 
+    /**
+     * Returns the hashCode.
+     * @return the hashCode.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(alignedImage, registrationMatrix);
     }
-
-
 }
