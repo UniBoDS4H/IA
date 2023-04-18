@@ -14,11 +14,6 @@ public class ImageProcessorMatConverter {
 
     }
 
-    /**
-     *
-     * @param sp a
-     * @return b
-     */
     private static Mat toMat(final ShortProcessor sp){
         IJ.log("[TO MAT - SHORTPROCESSOR] From ShortProcessor");
         final Mat matrix = new Mat(sp.getHeight(), sp.getWidth(), CvType.CV_16U);
@@ -28,11 +23,6 @@ public class ImageProcessorMatConverter {
         return  matrix;
     }
 
-    /**
-     *
-     * @param cp a
-     * @return b
-     */
     private static Mat toMat(final ColorProcessor cp){
         IJ.log("[TO MAT - COLORPROCESSOR] From ColorProcessor " + ((int[])cp.getPixels()).length ) ;
         final Mat matrix = new Mat(cp.getHeight(), cp.getWidth(), CvType.CV_8UC3);
@@ -51,11 +41,6 @@ public class ImageProcessorMatConverter {
         return  matrix;
     }
 
-    /**
-     *
-     * @param fp a
-     * @return b
-     */
     private static Mat toMat(final FloatProcessor fp){
         IJ.log("[TO MAT - FLOATPROCESSOR] From FloatProcessor");
         final Mat matrix = new Mat(fp.getHeight(), fp.getWidth(), CvType.CV_32FC1);
@@ -80,9 +65,10 @@ public class ImageProcessorMatConverter {
     }
 
     /**
-     *
-     * @param ip a
-     * @return b
+     * Convert the input "ImageProcessor" in to the corresponding Matrix.
+     * @param ip the input processor, It represents the original Image.
+     * @return the matrix with all the data of the image.
+     * @throws IllegalArgumentException if the "ImageProcessor" is null.
      */
     public static Mat convert(final ImageProcessor ip) throws IllegalArgumentException{
         IJ.log("[IMAGE PROCESSOR CONVERTER] Ip: " + ip);
@@ -97,19 +83,22 @@ public class ImageProcessorMatConverter {
                 return ImageProcessorMatConverter.toMat((ByteProcessor) ip);
             }
         }
-        throw new IllegalArgumentException("This ImageProcessor is not handled by this Software. Please contact Us, in order to " +
-                "improve this Software.");
+        throw new IllegalArgumentException("The type of your image processor is not handled.");
     }
 
     /**
-     *
-     * @param ip a
-     * @return b
+     * Convert the input "ImageProcessor" in to a gray scale matrix.
+     * @param ip the input "ImageProcessor".
+     * @return the gray scale matrix.
+     * @throws IllegalArgumentException if the input is null.
      */
-    public static Mat convertGray(final ImageProcessor ip){
-        final Mat matrix = ImageProcessorMatConverter.convert(ip);
-        Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
-        IJ.log("[TO MAT] Converted: " + matrix);
-        return matrix;
+    public static Mat convertGray(final ImageProcessor ip) throws IllegalArgumentException {
+        if(Objects.nonNull(ip)) {
+            final Mat matrix = ImageProcessorMatConverter.convert(ip);
+            Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+            IJ.log("[TO MAT] Converted: " + matrix);
+            return matrix;
+        }
+        throw new IllegalArgumentException("The image processor is null. The conversion to gray can not be done.");
     }
 }

@@ -9,24 +9,15 @@ import org.opencv.imgproc.Imgproc;
 import java.util.Objects;
 
 /**
- *
+ * With the using of this class we can create a new Image starting from a Mat object. The image that will be created It would be
+ * as the same type of the original image (ShortProcessor, ByteProcessor, ...).
  */
 public class MatImageProcessorConverter {
 
-    /**
-     *
-     */
     private MatImageProcessorConverter(){
 
     }
 
-    /**
-     *
-     * @param matrix a
-     * @param width b
-     * @param height c
-     * @return d
-     */
     private static ColorProcessor makeColorProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
         final ColorProcessor cp = new ColorProcessor(width, height);
@@ -47,16 +38,6 @@ public class MatImageProcessorConverter {
         return cp;
     }
 
-    /**
-     *
-     * @param matrix a
-     * @param width b
-     * @param height c
-     * @param lut d
-     * @param min e
-     * @param max f
-     * @return g
-     */
     private static ImageProcessor makeShortProcessor(Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
@@ -77,13 +58,6 @@ public class MatImageProcessorConverter {
         return shortProcessor;
     }
 
-    /**
-     *
-     * @param matrix a
-     * @param width b
-     * @param height c
-     * @return d
-     */
     private static ByteProcessor makeByteProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
         final ByteProcessor ip = new ByteProcessor(width, height);
@@ -99,13 +73,6 @@ public class MatImageProcessorConverter {
         return ip;
     }
 
-    /**
-     *
-     * @param matrix a
-     * @param width b
-     * @param height c
-     * @return d
-     */
     private static FloatProcessor makeFloatProcessor(Mat matrix, final int width, final int height){
         IJ.log("[MAKE FLOATPROCESSOR] Creating FloatProcessor");
         //final float[] pixels = new float[width*height];
@@ -122,13 +89,6 @@ public class MatImageProcessorConverter {
         return floatProcessor;
     }
 
-    /**
-     *
-     * @param matrix a
-     * @param width b
-     * @param height c
-     * @return d
-     */
     private static BinaryProcessor makeBinaryProcessor(final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BINARYPROCESSOR] Creating BinaryProcessor");
         final BinaryProcessor binaryProcessor = new BinaryProcessor(MatImageProcessorConverter.makeByteProcessor(matrix, width, height));
@@ -137,12 +97,13 @@ public class MatImageProcessorConverter {
     }
 
     /**
-     *
-     * @param matrix a
-     * @param ip b
-     * @return c
+     * Convert the input matrix in a "ImageProcessor" of the same type of "ip".
+     * @param matrix the input matrix, where all the values are stored.
+     * @param ip the original ImageProcessor.
+     * @return the final ImageProcessor with all the new data from the matrix.
+     * @throws IllegalArgumentException if one of the parameters are null.
      */
-    public static ImageProcessor convert(final Mat matrix, final ImageProcessor ip){
+    public static ImageProcessor convert(final Mat matrix, final ImageProcessor ip) throws IllegalArgumentException{
         if(Objects.nonNull(matrix) && Objects.nonNull(ip) && !matrix.empty()){
             if(ip instanceof ColorProcessor){
                 return MatImageProcessorConverter.makeColorProcessor(matrix, matrix.cols(), matrix.rows());
