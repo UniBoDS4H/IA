@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class MemoryController {
 
-    private final static double MEMORY_PERCENTAGE_LIMIT = 0.35;
+    private final static double MEMORY_PERCENTAGE_LIMIT = 0.30;
 
     private MemoryController(){
 

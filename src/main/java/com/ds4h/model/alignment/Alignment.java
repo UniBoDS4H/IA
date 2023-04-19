@@ -52,8 +52,7 @@ public class Alignment implements Runnable{
                     this.imagesToAlign.addAll(pointManager.getImagesToAlign());
                     this.thread.start();
                 } catch (Exception ex) {
-                    IJ.log("QUI");
-                    throw new RuntimeException("Error: " + ex.getMessage());
+                    throw new RuntimeException("Error: The alignment requires more memory than is available.");
                 }
             }
         } else {
@@ -63,15 +62,15 @@ public class Alignment implements Runnable{
     }
 
     /**
-     * Align images with the automatic algorithm
-     * @param pointManager a
-     * @param algorithm b
-     * @param type c
-     * @param pointDetector d
-     * @param factor e
-     * @param scalingFactor f
-     * @throws IllegalArgumentException g
-     * @throws RuntimeException h
+     * Align the input images with the chosen PointDetector and Alignment algorithm.
+     * @param pointManager where all the images to align are stored.
+     * @param algorithm the algorithm to use for the alignment.
+     * @param type the "AlignmentType". It can be "Automatic" or "Manual".
+     * @param pointDetector which point detector should be use for the detection.
+     * @param factor threshold factor for the point detector.
+     * @param scalingFactor scaling factor for the point detector.
+     * @throws IllegalArgumentException if one of the input parameters is not correct.
+     * @throws RuntimeException if during the alignment an error occur.
      */
     public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
                             final AlignmentEnum type,
@@ -224,11 +223,13 @@ public class Alignment implements Runnable{
                 this.thread = new Thread(this);
             } catch (final RuntimeException ex) {
                 this.thread = new Thread(this);
-                throw ex;
+                this.clearList();
+                throw new RuntimeException("Error: The alignment requires more memory than is available.");
             }
         }catch (OutOfMemoryError e){
+            this.thread = new Thread(this);
             this.clearList();
-            IJ.showMessage("Error", "Error: The alignment requires more memory than is available.");
+            throw new RuntimeException("Error: The alignment requires more memory than is available.");
         }
     }
 

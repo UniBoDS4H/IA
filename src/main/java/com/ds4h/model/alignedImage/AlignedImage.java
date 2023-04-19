@@ -106,6 +106,6 @@ public class AlignedImage {
         if(Objects.nonNull(this.registrationMatrix)){
             registrationMatrix.release();
         }
-        this.getAlignedImage().setProcessor(new ByteProcessor(0,0));
+        this.getAlignedImage().setProcessor(new ByteProcessor(1,1));
     }
 }

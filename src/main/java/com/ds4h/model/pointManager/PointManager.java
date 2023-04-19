@@ -48,6 +48,7 @@ public class PointManager {
      * Remove all the images inside "imagesWithPoints".
      */
     public void clearList(){
+        this.imagesWithPoints.forEach(ImagePoints::releaseImage);
         this.imagesWithPoints.clear();
     }
 

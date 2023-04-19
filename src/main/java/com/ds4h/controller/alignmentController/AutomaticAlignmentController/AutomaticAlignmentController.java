@@ -60,7 +60,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @throws IllegalArgumentException if one of the input is not correct.
      * @throws RuntimeException if during the alignment something happen.
      */
-    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws IllegalArgumentException, RuntimeException{
+    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws Exception{
 
         if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
             if (pointManager.getPointManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {
@@ -70,10 +70,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                             Objects.requireNonNull(detector.pointDetector()),
                             detector.getThresholdFactor(),
                             detector.getScaling());
-                }catch (Exception e){
-                    throw new RuntimeException(e);
+                }catch (final Exception e){
+                    throw e;
                 }
-
             } else {
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images and the SCALING FACTOR must be at least 1.");
             }

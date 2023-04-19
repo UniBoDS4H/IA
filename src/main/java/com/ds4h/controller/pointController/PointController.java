@@ -6,7 +6,6 @@ import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.model.reuse.ReuseSources;
 import com.ds4h.model.util.imageManager.ImagingConversion;
 import com.ds4h.model.util.MemoryController;
-import com.ds4h.view.pointSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +94,7 @@ public class PointController {
      */
     public void removeImage(final ImagePoints image){
         if(this.pointManager.getPointImages().contains(image)){
+            image.releaseImage();
             this.pointManager.removeImage(image);
         }
     }

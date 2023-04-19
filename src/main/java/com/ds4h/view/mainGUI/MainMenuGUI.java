@@ -23,6 +23,7 @@ import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import ij.IJ;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -408,6 +409,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     loadingGUI.updateProgress(alignmentControllerInterface.getStatus());
                     Thread.sleep(1000);
                 } catch (final InterruptedException e) {
+                    IJ.log("QUI 1");
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
                             "Error",
@@ -423,6 +425,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
                 }
             }catch (Exception e){
+                IJ.log("QUI 2");
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
                         "Error",
@@ -438,7 +441,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         if(!this.automaticAlignmentController.isAlive()) {
             try {
                 if(this.automaticAlignmentController.getAlgorithm() instanceof  TranslationalAlignment){
-                    TranslationalAlignment alg = (TranslationalAlignment) this.automaticAlignmentController.getAlgorithm();
+                    final TranslationalAlignment alg = (TranslationalAlignment) this.automaticAlignmentController.getAlgorithm();
                     alg.setTransformation(this.automaticConfigGUI.getTranslation(),this.automaticConfigGUI.getRotation(), this.automaticConfigGUI.getScaling());
                 }
                 this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),

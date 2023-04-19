@@ -37,7 +37,7 @@ public class PreviewImagesPane extends JPanel {
             this.add(scrollPane);
             this.revalidate();
             this.repaint();
-        }catch (Exception e){
+        }catch (NullPointerException e){
             throw new RuntimeException("The image(s) loaded are not correct.");
         }
     }
