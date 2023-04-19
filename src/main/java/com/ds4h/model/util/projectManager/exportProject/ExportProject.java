@@ -17,15 +17,13 @@ public class ExportProject {
 
     }
 
-    //TODO: add better doc
     /**
-     * Export the entire project
+     * Export the project with all the points in each image.
      * @param pointManager the corner manager of all the images.
      * @param path the path where store the project
-     * @throws IOException error in the saving s
      */
 
-    public static void exportProject(final PointManager pointManager, final String path) throws IOException {
+    public static void exportProject(final PointManager pointManager, final String path) {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);
         final List<ImagePoints> copy = new ArrayList<>(pointManager.getPointImages().size());

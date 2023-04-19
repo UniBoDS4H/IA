@@ -25,7 +25,7 @@ public class PointSelectorMenuGUI extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
         final MenuItem[] options = this.pointController.getPointImages().stream()
-                .filter(i -> !i.equals(this.image)).map(this.pointController::getMenuItem).toArray(MenuItem[]::new);
+                .filter(i -> !i.equals(this.image)).map(this::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
         if(pointController.getPointImages().size() > 1) {
@@ -54,6 +54,9 @@ public class PointSelectorMenuGUI extends JPanel {
         this.updateView();
     }
 
+    private MenuItem getMenuItem(final ImagePoints image){
+        return new MenuItem(this.pointController.getPointImages().indexOf(image)+1, image);
+    }
     private void setIconButtons(final JButton button){
         button.setBorder(null);
         button.setBorderPainted(false);

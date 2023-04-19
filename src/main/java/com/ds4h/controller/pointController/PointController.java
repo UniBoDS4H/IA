@@ -9,7 +9,6 @@ import com.ds4h.model.util.MemoryController;
 import com.ds4h.view.pointSelectorGUI.MenuItem;
 import org.opencv.core.Point;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -78,6 +77,7 @@ public class PointController {
      */
     public void reuseSource(final List<AlignedImage> alignedImages) throws OutOfMemoryError {
         ReuseSources.reuseSources(this.pointManager, alignedImages);
+        System.gc();
     }
 
     /**
@@ -114,34 +114,28 @@ public class PointController {
             if(this.insideImage(p,img)){
                 img.addPoint(p);
             }else{
-                return false;
-                //res = false;
+                res = false;
             }
         }
-        return true;
+        return res;
     }
 
-    /**
-     * Check if the input "point" is inside the input "img".
-     * @param p the point to check.
-     * @param img the image where the point should be.
-     * @return True if the image contains the input point.
-     */
     private boolean insideImage(final Point p, final ImagePoints img) {
         return img.getRows() >= p.y && img.getCols() >= p.x;
     }
 
-
+    /*
     public MenuItem getMenuItem(final ImagePoints image){
-        //TODO: non penso vada bene, non ci deve essere nulla della view per MVC
         return new MenuItem(this.getPointImages().indexOf(image)+1, image);
     }
+     */
 
     /**
      * Clear the entire project from all the images.
      */
     public void clearProject(){
         this.pointManager.getImagesToAlign().forEach(image -> image = null);
+        System.gc();
         this.pointManager.clearProject();
         System.gc();
     }

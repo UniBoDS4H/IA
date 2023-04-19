@@ -61,7 +61,7 @@ public class PointManager {
 
     /**
      * Returns all the images to align stored inside the PointManager object.
-     * @return all the iages to align stored inside the PointManager object.
+     * @return all the images to align stored inside the PointManager object.
      */
     public List<ImagePoints> getImagesToAlign(){
         return Optional.ofNullable(this.targetImage)

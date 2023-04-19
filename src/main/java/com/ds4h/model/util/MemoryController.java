@@ -19,17 +19,17 @@ public class MemoryController {
 
     /**
      * Control the memory after the "inputImages" are loaded.
-     * @param inputImaes the images loaded from the Plugin.
+     * @param imagePoints the images loaded from the Plugin.
      * @throws OutOfMemoryError if the 35% of the memory is used by the images.
      */
-    public static void controlMemory(final List<ImagePoints> inputImaes) throws OutOfMemoryError{
+    public static void controlMemory(final List<ImagePoints> imagePoints) throws OutOfMemoryError{
         long memorySize = 0;
         final long totalMemory = (IJ.maxMemory()/(1024*1024));
-        for(final ImagePoints img : inputImaes){
+        for(final ImagePoints img : imagePoints){
             final int width = img.getWidth();
             final int height = img.getHeight();
-            final int bitdepth = img.getBitDepth();
-            memorySize += (((long) width *height*bitdepth)/8);
+            final int depth = img.getBitDepth();
+            memorySize += (((long) width *height*depth)/8);
         }
         memorySize = memorySize/(1024*1024);
         IJ.log("[MEMORY SIZE IMAGE] TotalSize: " + memorySize);

@@ -42,8 +42,6 @@ public class ImageController {
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
             System.gc();
             final List<AlignedImage> images = this.getAlignedImages();
-            final LUT[] luts = new LUT[images.size()];
-            int index = 0;
             for (final AlignedImage image : images) {
                 if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)){
                     final ImagePlus copy = new ImagePlus(image.getName(),
@@ -53,12 +51,9 @@ public class ImageController {
                     IJ.log("[NAME] " + image.getName());
                     stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
                 }
-                //luts[index] = image.getAlignedImage().getProcessor().getLut();
-                index++;
             }
             try {
-                //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
-                //composite.setLuts(luts);
+                System.gc();
                 return new ImagePlus("Aligned Stack", stack);
             }catch (Exception e){
                 throw new RuntimeException("Something went wrong with the creation of the stack.");

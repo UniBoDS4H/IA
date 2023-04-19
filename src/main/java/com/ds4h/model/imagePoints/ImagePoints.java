@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- *
+ * The image used for the alignment. Inside this Class we have a list of all the points selected from the input. This points will be used for the alignment.
  */
 public class ImagePoints extends ImagePlus{
     private final List<Point> pointList;
@@ -111,26 +111,31 @@ public class ImagePoints extends ImagePlus{
 
     private void detectType(){
         final ImageProcessor ip = this.getProcessor();
-        if(ip instanceof ColorProcessor){
-            this.type = CvType.CV_8UC3;
-        }else if(ip instanceof FloatProcessor) {
-            this.type = ip.getBitDepth() == 3 ? CvType.CV_32FC3 : CvType.CV_32FC1;
-        }else if(ip instanceof ShortProcessor){
-            this.type = ip.getBitDepth() == 3 ? CvType.CV_16UC3 : CvType.CV_16UC1;
-        }else if(ip instanceof ByteProcessor){
-            this.type = ip.getBitDepth() == 3 ? CvType.CV_8UC3 : CvType.CV_8UC1;
+        if(Objects.nonNull(ip)) {
+            if (ip instanceof ColorProcessor) {
+                this.type = CvType.CV_8UC3;
+            } else if (ip instanceof FloatProcessor) {
+                this.type = ip.getBitDepth() == 3 ? CvType.CV_32FC3 : CvType.CV_32FC1;
+            } else if (ip instanceof ShortProcessor) {
+                this.type = ip.getBitDepth() == 3 ? CvType.CV_16UC3 : CvType.CV_16UC1;
+            } else if (ip instanceof ByteProcessor) {
+                this.type = ip.getBitDepth() == 3 ? CvType.CV_8UC3 : CvType.CV_8UC1;
+            }
+        }else{
+            this.type =  CvType.CV_8UC1;
         }
     }
 
     /**
-     *
+     * @see com.ds4h.model.alignment.automatic.pointDetector.PointDetector
+     * Sets the "improveMatrix" to True. During the detection of points, if the flag "improveMatrix" is true, the image will be submitted to "edgeDetection".
      */
     public void improve(){
         this.improveMatrix = true;
     }
 
     /**
-     * Sets the "improveMatrix" instance variable to true.
+     * Sets the "improveMatrix" instance variable to False.
      */
     public void useStock(){
         this.improveMatrix = false;

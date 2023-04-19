@@ -15,9 +15,9 @@ public class DirectoryDeleter {
     }
 
     /**
-     *
-     * @param path a
-     * @param directoryName b
+     * Delete the "directoryName" from the "path".
+     * @param path where the directory is.
+     * @param directoryName the name of the directory to be removed.
      */
     public static void delete(final String path, final String directoryName){
         final File directory = new File(path);
@@ -38,8 +38,8 @@ public class DirectoryDeleter {
     }
 
     /**
-     *
-     * @param directoryName a
+     * Delete a directory from the TMP OS directory.
+     * @param directoryName the name of the directory.
      */
     public static void deleteTMP(final String directoryName){
         DirectoryDeleter.delete(TEMPORARY_PATH, directoryName);
