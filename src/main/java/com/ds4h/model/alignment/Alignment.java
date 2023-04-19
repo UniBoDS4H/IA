@@ -224,12 +224,11 @@ public class Alignment implements Runnable{
                 this.thread = new Thread(this);
             } catch (final RuntimeException ex) {
                 this.thread = new Thread(this);
-                IJ.log("Inside RUN");
-                //TODO: understand how to throw this exception outside this method.
                 throw ex;
             }
         }catch (OutOfMemoryError e){
-            throw new RuntimeException("The alignment required more memory than is available.");
+            this.clearList();
+            IJ.showMessage("Error", "Error: The alignment requires more memory than is available.");
         }
     }
 

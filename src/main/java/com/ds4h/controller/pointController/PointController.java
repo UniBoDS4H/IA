@@ -134,7 +134,11 @@ public class PointController {
      * Clear the entire project from all the images.
      */
     public void clearProject(){
-        this.pointManager.getImagesToAlign().forEach(image -> image = null);
+        this.pointManager.getImagesToAlign()
+                .forEach(image -> {
+                    image.releaseImage();
+                    image = null;
+                });
         System.gc();
         this.pointManager.clearProject();
         System.gc();

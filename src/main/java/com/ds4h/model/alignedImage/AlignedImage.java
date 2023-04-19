@@ -1,6 +1,7 @@
 package com.ds4h.model.alignedImage;
 
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 import java.util.Objects;
@@ -44,6 +45,10 @@ public class AlignedImage {
      */
     public String getName(){
         return this.name;
+    }
+
+    public ImageProcessor getProcessor(){
+        return this.alignedImage;
     }
 
     /**
@@ -92,5 +97,15 @@ public class AlignedImage {
     @Override
     public int hashCode() {
         return Objects.hash(alignedImage, registrationMatrix);
+    }
+
+    /**
+     * Release the Matrix if is present. Remove the original ImageProcessor and remove all the points from the Image.
+     */
+    public void releaseImage(){
+        if(Objects.nonNull(this.registrationMatrix)){
+            registrationMatrix.release();
+        }
+        this.getAlignedImage().setProcessor(new ByteProcessor(0,0));
     }
 }

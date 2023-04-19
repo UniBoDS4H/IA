@@ -331,4 +331,15 @@ public class ImagePoints extends ImagePlus{
     public String toString() {
         return this.getTitle();
     }
+
+    /**
+     * Release the Matrix if is present. Remove the original ImageProcessor and remove all the points from the Image.
+     */
+    public void releaseImage(){
+        if(Objects.nonNull(this.matrix)){
+            matrix.release();
+        }
+        this.setProcessor(new ByteProcessor(0,0));
+        this.clearPoints();
+    }
 }
