@@ -1,15 +1,11 @@
 package com.ds4h.view.saveImagesGUI;
 
-import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.standardGUI.StandardGUI;
-import ij.IJ;
-import ij.gui.ImageWindow;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -18,15 +14,14 @@ import java.io.File;
     private final JButton saveButton;
     private final SaveImagesPanel imagesPane;
     private final JFileChooser fileChooser;
-    private final ImageController controller;
-    public SaveImagesGUI(final ImageController controller){
+
+        public SaveImagesGUI(final ImageController controller){
         this.setTitle("Save");
         this.setSize();
-        this.controller = controller;
-        this.fileChooser = new JFileChooser();
+            this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());
         this.saveButton = new JButton("Save");
-        this.imagesPane = new SaveImagesPanel(this.controller);
+        this.imagesPane = new SaveImagesPanel(controller);
         this.addComponents();
         this.addListeners();
     }

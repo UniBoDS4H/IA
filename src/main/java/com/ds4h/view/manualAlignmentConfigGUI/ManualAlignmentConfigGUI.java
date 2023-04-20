@@ -18,14 +18,14 @@ public class ManualAlignmentConfigGUI extends JFrame implements StandardGUI {
     private final JCheckBox scalingCheckbox;
     private final ManualAlignmentController controller;
     private final MainMenuGUI container;
-    private final JComboBox pointOverloadComboBox;
+    private final JComboBox<PointOverloadEnum> pointOverloadComboBox;
     public ManualAlignmentConfigGUI(MainMenuGUI container, ManualAlignmentController manualAlignmentController){
         this.setTitle("Manual alignment algorithm");
         this.controller = manualAlignmentController;
         this.container = container;
         this.getContentPane().setLayout(new GridBagLayout());
         this.algorithm = new JComboBox<>(AlignmentAlgorithmEnum.values());
-        pointOverloadComboBox = new JComboBox(PointOverloadEnum.values());
+        pointOverloadComboBox = new JComboBox<>(PointOverloadEnum.values());
         this.text = new JTextArea();
         this.translationCheckbox = new JCheckBox("Translation");
         this.rotationCheckbox = new JCheckBox("Rotation");

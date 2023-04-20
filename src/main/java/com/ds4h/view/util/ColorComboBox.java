@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ColorComboBox extends JComboBox<Color> {
-    private final List<Color> colorList = new LinkedList<>();
 
     public ColorComboBox() {
+        final List<Color> colorList = new LinkedList<>();
         colorList.add(Color.WHITE);
         colorList.add(Color.RED);
         colorList.add(Color.GREEN);
@@ -20,8 +20,8 @@ public class ColorComboBox extends JComboBox<Color> {
         colorList.add(Color.ORANGE);
         colorList.add(Color.DARK_GRAY);
         colorList.add(Color.BLACK);
-        final DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<Color>();
-        for(Color color : colorList){
+        final DefaultComboBoxModel<Color> colorModel = new DefaultComboBoxModel<>();
+        for(final Color color : colorList){
             colorModel.addElement(color);
         }
         this.setModel(colorModel);

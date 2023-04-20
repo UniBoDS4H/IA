@@ -48,9 +48,9 @@ public class ConfigureImagesGUI extends JFrame implements StandardGUI {
         });
 
         this.comboBox.addActionListener(event -> {
-            final int index = this.comboBox.getSelectedIndex();
+            //final int index = this.comboBox.getSelectedIndex();
         });
-        this.reset.addActionListener(evenet -> {
+        this.reset.addActionListener(event -> {
             ((CompositeImage)this.outputGUI.getImagePlus()).setLuts(this.outputGUI.getOriginalLuts());
             this.outputGUI.getImagePlus().setSlice(1);
         });

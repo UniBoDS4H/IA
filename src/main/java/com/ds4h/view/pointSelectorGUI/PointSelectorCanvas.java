@@ -21,7 +21,6 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
     private final Overlay overlay;
 
     private Point referencePoint;
-    int cl = 0;
     private List<Point> selectedPoints = new ArrayList<>();
     private Color pointerColor;
     private PointSelectorGUI container;
@@ -70,7 +69,7 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
                     } else {
                         //ADD new point
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                            //first i add the new point then i call the updatePointsForAlignment for checking if we can enable the manual alignment button
+                            //first I add the new point then I call the updatePointsForAlignment for checking if we can enable the manual alignment button
                             image.addPoint((point));
                         } else {
                             selectedPoints.clear();

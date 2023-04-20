@@ -14,46 +14,42 @@ import java.util.Objects;
 //TODO: Implement the StandardGUI interface
 
 public class PreviewListItem extends JPanel {
-    private final JButton targetButton, deleteButton;
-    private final JLabel idLabel;
-    private final JLabel nameLabel;
-    private final JLabel imageLabel;
+    private final JButton targetButton;
     private final PointController controller;
     private final ImagePoints image;
     private final PreviewImagesPane container;
     private PointSelectorGUI pointSelector;
-    private final JPanel centerPanel;
     private boolean firstOpening = true;
     PreviewListItem(final PointController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
         this.container = container;
         this.controller = controller;
-        this.centerPanel = new JPanel();
+        final JPanel centerPanel = new JPanel();
         this.image = image;
-        nameLabel = new JLabel(this.image.toString());
-        this.idLabel = new JLabel(Integer.toString(id));
-        this.idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
+        final JLabel nameLabel = new JLabel(this.image.toString());
+        final JLabel idLabel = new JLabel(Integer.toString(id));
+        idLabel.setFont(new Font("Serif", Font.BOLD, DisplayInfo.getTextSize(5)));
         this.targetButton = new JButton("TARGET");
-        ImageIcon deleteIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/remove.png")));
-        ImageIcon resized = new ImageIcon(deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-        this.deleteButton = new JButton(resized);
-        this.deleteButton.setBorder(null);
-        this.deleteButton.setBorderPainted(false);
-        this.deleteButton.setContentAreaFilled(false);
-        this.deleteButton.setOpaque(false);
-        this.deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        this.imageLabel = new JLabel(new ImageIcon(this.image.getProcessor().resize(40,40).getBufferedImage()));
+        final ImageIcon deleteIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/remove.png")));
+        final ImageIcon resized = new ImageIcon(deleteIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+        final JButton deleteButton = new JButton(resized);
+        deleteButton.setBorder(null);
+        deleteButton.setBorderPainted(false);
+        deleteButton.setContentAreaFilled(false);
+        deleteButton.setOpaque(false);
+        deleteButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        JLabel imageLabel = new JLabel(new ImageIcon(this.image.getProcessor().resize(40, 40).getBufferedImage()));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.centerPanel.setLayout(new BoxLayout(this.centerPanel, BoxLayout.X_AXIS));
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.X_AXIS));
         //we set the Target label visible only if this is the taret image
         this.updateTargetView();
 
-        this.centerPanel.add(this.idLabel);
-        this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.centerPanel.add(this.imageLabel);
-        this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.centerPanel.add(this.targetButton);
-        this.centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-        this.centerPanel.add(this.deleteButton);
+        centerPanel.add(idLabel);
+        centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        centerPanel.add(imageLabel);
+        centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        centerPanel.add(this.targetButton);
+        centerPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        centerPanel.add(deleteButton);
         this.setBorder( new MatteBorder(0, 0, 1, 0, Color.gray));
 
 
@@ -62,9 +58,9 @@ public class PreviewListItem extends JPanel {
         this.add(Box.createRigidArea(new Dimension(0, 5)));
         this.add(this.leftJustify(nameLabel));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
-        this.add(this.leftJustify(this.centerPanel));
+        this.add(this.leftJustify(centerPanel));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
-        this.deleteButton.addActionListener(event -> {
+        deleteButton.addActionListener(event -> {
             if(!this.controller.isTarget(image)) {
                 final int result = JOptionPane.showConfirmDialog(this,
                         "Are you sure to delete the selected image ?",

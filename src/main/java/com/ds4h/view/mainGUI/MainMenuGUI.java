@@ -44,7 +44,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JMenuBar menuBar;
     private final JMenu menu, project, settings, about;
     private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem, automaticItem;
-    private final JPanel panel;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
@@ -55,8 +54,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
     private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
     private final AutomaticAlignmentConfigGUI automaticConfigGUI;
-
-    private static final int MIN_IMAGES = 0, MAX_IMAGES = 3;
 
     /**
      * Constructor of the MainMenu GUI
@@ -72,8 +69,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.automaticAlignment = new JButton("Automatic Alignment");
         this.automaticAlignment.setEnabled(false);
         //Adding the Left Panel, where are stored the buttons for the transformations
-        this.panel = new JPanel();
-        this.panel.setLayout(new GridBagLayout());
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
         //Init of the previewList
         this.imagesPreview = new PreviewImagesPane(this.pointControler, this);
 
@@ -85,7 +82,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcPanel.fill = GridBagConstraints.BOTH;
         gbcPanel.weightx = 1;
         gbcPanel.weighty = 1;
-        this.panel.add(this.imagesPreview, gbcPanel);
+        panel.add(this.imagesPreview, gbcPanel);
 
         GridBagConstraints gbcAuto = new GridBagConstraints();
         gbcAuto.gridx = 0;
@@ -95,7 +92,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcAuto.fill = GridBagConstraints.BOTH;
         gbcAuto.weightx = 1;
         gbcAuto.weighty = 0;
-        this.panel.add(this.automaticAlignment, gbcAuto);
+        panel.add(this.automaticAlignment, gbcAuto);
         
         GridBagConstraints gbcManual = new GridBagConstraints();
         gbcManual.gridx = 0;
@@ -105,9 +102,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcManual.fill = GridBagConstraints.BOTH;
         gbcManual.weightx = 1;
         gbcManual.weighty = 0;
-        this.panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
+        panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
 
-        add(this.panel);
+        add(panel);
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
 
         this.aboutGUI = new AboutGUI();
@@ -273,25 +270,25 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
         });
 
-        this.loadImages.addActionListener(event ->{
-            this.pickImages();
-        });
+        this.loadImages.addActionListener(event ->
+            this.pickImages()
+        );
 
-        this.settingsItem.addActionListener(event ->{
-            this.settingsBunwarpj.showDialog();
-        });
+        this.settingsItem.addActionListener(event ->
+            this.settingsBunwarpj.showDialog()
+        );
 
-        this.manualAlignment.addActionListener(event -> {
-            this.pollingManualAlignment();
-        });
+        this.manualAlignment.addActionListener(event ->
+            this.pollingManualAlignment()
+        );
 
-        this.alignmentItem.addActionListener(event -> {
-            this.manualConfigGUI.showDialog();
-        });
+        this.alignmentItem.addActionListener(event ->
+            this.manualConfigGUI.showDialog()
+        );
 
-        this.automaticItem.addActionListener(event -> {
-            this.automaticConfigGUI.showDialog();
-        });
+        this.automaticItem.addActionListener(event ->
+            this.automaticConfigGUI.showDialog()
+        );
 
         this.exportItem.addActionListener(event -> {
             if(this.pointControler.getPointManager().getPointImages().size() > 0) {
@@ -369,9 +366,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
         });
 
-        this.automaticAlignment.addActionListener(event -> {
-            this.pollingAutomaticAlignment();
-        });
+        this.automaticAlignment.addActionListener(event ->
+            this.pollingAutomaticAlignment()
+        );
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -419,11 +416,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 }
             }
             try {
-                if (alignmentControllerInterface instanceof ManualAlignmentController) {
-                    new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
-                } else {
-                    new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
-                }
+                new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
             }catch (Exception e){
                 IJ.log("QUI 2");
                 JOptionPane.showMessageDialog(this,

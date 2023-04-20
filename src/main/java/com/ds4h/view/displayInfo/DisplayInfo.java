@@ -14,9 +14,11 @@ public final class DisplayInfo {
             throw new IllegalArgumentException("The given percentage was not between 0 and 100");
         }
         final Dimension oldDim = DisplayInfo.getDisplaySize();
-        final Dimension newDim = new Dimension((int)(percentage*oldDim.getWidth()/100),(int)(percentage*oldDim.getHeight()/100));
-        return newDim;
+        return new Dimension((int)(percentage*oldDim.getWidth()/100),(int)(percentage*oldDim.getHeight()/100));
+        //return newDim;
     }
+
+    /*
     public static Dimension getScaledImageDimension(Dimension imgDimension, Dimension containerDimension){
         Dimension dimension = new Dimension();
         if(DisplayInfo.isVertical(imgDimension)){
@@ -43,6 +45,7 @@ public final class DisplayInfo {
     public static boolean isVertical(Dimension dimension){
         return dimension.getHeight() > dimension.getWidth();
     }
+     */
 
     public static int getTextSize(int size){
         return (int)(size*DisplayInfo.getDisplaySize().getWidth()/400);

@@ -1,20 +1,14 @@
 package com.ds4h.view.outputGUI;
 
-import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
-import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.configureImageGUI.ConfigureImagesGUI;
-import com.ds4h.view.loadingGUI.LoadingGUI;
-import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
 import ij.CompositeImage;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
 import ij.process.LUT;
@@ -22,10 +16,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class AlignmentOutputGUI extends StackWindow {
     private static ImagePlus image;
-    private final String algorithm;
     private final BunwarpjGUI bunwarpjGUI;
     private final MenuBar menuBar;
     private final Menu settings;
@@ -57,7 +52,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
         this.configureImagesGUI = new ConfigureImagesGUI(this);
-        this.algorithm = controller.name();
+        final String algorithm = controller.name();
         this.bunwarpjGUI = settingsBunwarpj;
         this.saveGui = new SaveImagesGUI(controller);
         this.panel = new JPanel();
@@ -172,6 +167,46 @@ public class AlignmentOutputGUI extends StackWindow {
             });
             pollingElastic.start();
         });
+        this.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                controller.releaseImages();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent windowEvent) {
+
+            }
+        });
+    }
+
+    public void releaseImages(){
+        this.controller.releaseImages();
     }
 
     public LUT[] getOriginalLuts() {

@@ -42,6 +42,7 @@ public class ReuseGUI extends JFrame implements StandardGUI {
                 this.pointController.reuseSource(this.imagesPane.getImagesToReuse());
                 this.mainGUI.reloadImages();
                 this.outputGUI.clearStack();
+                this.outputGUI.releaseImages();
                 this.outputGUI.dispose();
                 this.dispose();
             } catch (OutOfMemoryError e){

@@ -84,9 +84,9 @@ public class PointSelectorMenuGUI extends JPanel {
                 container.checkPointsForAlignment();
             }
         });
-        this.cornerSetting.addActionListener(e->{
-            this.settings.showDialog();
-        });
+        this.cornerSetting.addActionListener(event ->
+            this.settings.showDialog()
+        );
 
         this.improveMatrix.addActionListener(event  -> {
             if (this.image.toImprove()) {

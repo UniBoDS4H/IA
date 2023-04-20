@@ -120,4 +120,10 @@ public class ImageController {
         return this.bunwarpJController.isAlive();
     }
 
+    public void releaseImages(){
+        IJ.log("QUI");
+        this.getAlignedImages().forEach(AlignedImage::releaseImage);
+        System.gc();
+    }
+
 }

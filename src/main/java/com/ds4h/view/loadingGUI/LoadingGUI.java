@@ -13,7 +13,6 @@ import java.util.Objects;
 public class LoadingGUI extends JFrame implements StandardGUI {
 
     private final static String GIF_PATH = "/icons/loading.gif";
-    private final Icon loadingGif = new ImageIcon(Objects.requireNonNull(LoadingGUI.class.getResource(GIF_PATH)));
     private final JLabel loadingLabel, text;
 
     private final LoadingType loadingType;
@@ -22,7 +21,8 @@ public class LoadingGUI extends JFrame implements StandardGUI {
     public LoadingGUI(final LoadingType loadingType){
         this.loadingType = loadingType;
         this.setTitle(loadingType.getTitle());
-        this.loadingLabel = new JLabel(this.loadingGif);
+        Icon loadingGif = new ImageIcon(Objects.requireNonNull(LoadingGUI.class.getResource(GIF_PATH)));
+        this.loadingLabel = new JLabel(loadingGif);
         this.setLayout(new GridBagLayout());
         this.text = new JLabel();
         this.progressBar = new JProgressBar();

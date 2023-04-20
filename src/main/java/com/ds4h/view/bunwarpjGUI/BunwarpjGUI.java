@@ -39,7 +39,6 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
             parImageWeigth = MIN_ONE,
             parConsistencyWeigth = MIN_TEN,
             parThreshold = MIN_ZERO_ONE;
-    private final static int WIDTH = 200, HEIGHT = 30;
     private final BunwarpJController bunwarpJController;
     public BunwarpjGUI(final BunwarpJController bunwarpJController){
         super("bUnwaprJ settings");
@@ -245,7 +244,7 @@ public class BunwarpjGUI extends Frame implements StandardGUI {
     private boolean checkInput(final JFormattedTextField field){
         try {
             if(!field.getText().isEmpty()){
-                double val = Double.parseDouble(field.getText());
+                Double.parseDouble(field.getText());
                 return true;
             }
         }catch (Exception e){

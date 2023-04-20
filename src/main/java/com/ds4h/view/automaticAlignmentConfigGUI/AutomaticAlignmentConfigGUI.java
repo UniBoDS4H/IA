@@ -79,9 +79,9 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
             assert this.selectedDetector != null;
             this.slider.setValue((int)(this.selectedDetector.getThresholdFactor()*10));
         });
-        this.slider.addChangeListener(event -> {
-            this.selectedDetector.setThresholdFactor(this.slider.getValue());
-        });
+        this.slider.addChangeListener(event ->
+            this.selectedDetector.setThresholdFactor(this.slider.getValue())
+        );
         this.rotationCheckbox.addActionListener(e->{
             if(this.controller.getAlgorithm() instanceof TranslationalAlignment){
                 TranslationalAlignment alg = ((TranslationalAlignment) this.controller.getAlgorithm());
@@ -108,9 +108,9 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
                 alg.setTransformation(this.translationCheckbox.isSelected(),alg.getRotate(),alg.getScale());
             }
         });
-        this.sliderFactor.addChangeListener(event -> {
-            this.selectedDetector.setScaling(this.sliderFactor.getValue());
-        });
+        this.sliderFactor.addChangeListener(event ->
+            this.selectedDetector.setScaling(this.sliderFactor.getValue())
+        );
     }
 
     private void updateCheckBoxes() {

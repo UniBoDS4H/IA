@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 
 public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
     private final ColorComboBox pointerColor;
@@ -82,21 +83,23 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
             Color selectedColor = textColor.getSelectedColor();
             this.container.getCanvas().setTextColor(selectedColor);
         });
-        this.pointerDimension.addChangeListener(e->{
-            this.container.getCanvas().setPointerDimension(pointerDimension.getValue());
-        });
+        this.pointerDimension.addChangeListener(event ->
+            this.container.getCanvas().setPointerDimension(pointerDimension.getValue())
+        );
         this.changeButton.addActionListener(e -> {
-            int from = (int)indexFrom.getSelectedItem();
-            int to = (int)indexTo.getSelectedItem();
-            this.container.getImage().editPointIndex(from-1, to-1);
-            this.container.updatePoints();
+            if(Objects.nonNull(indexFrom.getSelectedItem()) && Objects.nonNull(indexTo.getSelectedItem())) {
+                int from = (int) indexFrom.getSelectedItem();
+                int to = (int) indexTo.getSelectedItem();
+                this.container.getImage().editPointIndex(from - 1, to - 1);
+                this.container.updatePoints();
+            }
         });
-        this.indexFrom.addActionListener(e->{
-            this.updateChangeButton();
-        });
-        this.indexTo.addActionListener(e->{
-            this.updateChangeButton();
-        });
+        this.indexFrom.addActionListener(event ->
+            this.updateChangeButton()
+        );
+        this.indexTo.addActionListener(event ->
+            this.updateChangeButton()
+        );
     }
 
     @Override
@@ -140,7 +143,6 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
 
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;
         add(new JLabel("Corner dimension:"), gbc);
         gbc.gridx = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
