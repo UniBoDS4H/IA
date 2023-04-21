@@ -41,6 +41,7 @@ public class PointManager {
     public void removeImage(final ImagePoints image){
         if(Objects.nonNull(image) && Objects.nonNull(this.targetImage) && !this.targetImage.equals(image)) {
             this.imagesWithPoints.removeIf(img -> img.equals(image));
+            System.gc();
         }
     }
 

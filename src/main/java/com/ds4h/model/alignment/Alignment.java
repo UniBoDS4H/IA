@@ -6,7 +6,10 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.util.MemoryController;
 import ij.IJ;
+
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -234,10 +237,16 @@ public class Alignment implements Runnable{
     }
 
     /**
-     * a
+     * Release all the images and remove it from the heap.
      */
     public void clearList(){
+        IJ.log("[ALIGNMENT] Clear List");
+        this.alignedImages.forEach(image -> {
+            image.releaseImage();
+            image = null;
+        });
         this.alignedImages.clear();
+        System.gc();
     }
 
 
@@ -247,15 +256,14 @@ public class Alignment implements Runnable{
      * @return all the images aligned.
      */
     public List<AlignedImage> alignedImages(){
-        return this.isAlive() ? Collections.emptyList() : new LinkedList<>(this.alignedImages);
+        return this.isAlive() ? Collections.emptyList() : this.alignedImages;
     }
 
     /**
-     *
-     * @return a
+     * Returns the thread status.
+     * @return the thread status.
      */
     public boolean isAlive(){
         return this.thread.isAlive();
     }
-
 }

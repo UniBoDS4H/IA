@@ -171,4 +171,10 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
             this.algorithm.setPointOverload(overload);
         }
     }
+
+    @Override
+    public void releaseImages(){
+        this.alignment.clearList();
+        System.gc();
+    }
 }

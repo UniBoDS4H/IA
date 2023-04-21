@@ -339,7 +339,7 @@ public class ImagePoints extends ImagePlus{
         if(Objects.nonNull(this.matrix)){
             matrix.release();
         }
-        this.setProcessor(new ByteProcessor(0,0));
+        this.close();
         this.clearPoints();
     }
 }

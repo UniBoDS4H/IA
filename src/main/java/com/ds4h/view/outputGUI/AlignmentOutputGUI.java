@@ -74,7 +74,7 @@ public class AlignmentOutputGUI extends StackWindow {
     }
 
     public void clearStack(){
-        image = null;
+        image.close();
         System.gc();
     }
 
@@ -175,6 +175,8 @@ public class AlignmentOutputGUI extends StackWindow {
 
             @Override
             public void windowClosing(WindowEvent windowEvent) {
+
+                clearStack();
                 controller.releaseImages();
             }
 

@@ -41,4 +41,6 @@ public interface AlignmentControllerInterface {
      * @return the alignment status.
      */
     int getStatus();
+
+    void releaseImages();
 }

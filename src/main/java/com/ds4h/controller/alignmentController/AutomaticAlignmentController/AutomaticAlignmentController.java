@@ -46,7 +46,16 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     @Override
     public List<AlignedImage> getAlignedImages() {
-        return new LinkedList<>(alignment.alignedImages());
+        return alignment.alignedImages();
+    }
+
+    /**
+     * Release all the images from the heap.
+     */
+    @Override
+    public void releaseImages(){
+        this.alignment.clearList();
+        System.gc();
     }
 
     /**

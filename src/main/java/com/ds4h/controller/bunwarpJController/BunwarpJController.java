@@ -39,6 +39,15 @@ public class BunwarpJController {
         return Collections.emptyList();
     }
 
+    public void releaseImages(){
+        this.bunwarpjDeformation.getOutputList().forEach(image -> {
+            image.releaseImage();
+            image = null;
+        });
+        this.bunwarpjDeformation.getOutputList().clear();
+        System.gc();
+    }
+
     /**
      * Returns the status thread.
      * @return the status thread.
