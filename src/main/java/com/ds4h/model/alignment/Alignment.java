@@ -6,10 +6,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
-import com.ds4h.model.util.MemoryController;
 import ij.IJ;
-
-import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
