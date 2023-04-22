@@ -25,7 +25,7 @@ public class OpencvDeleter {
     }
 
     /**
-     *
+     * Remove the OpenCV library from the TMP directory.
      */
     public static void deleteOpenCV(){
         OpencvDeleter.delete();

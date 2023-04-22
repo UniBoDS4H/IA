@@ -40,7 +40,6 @@ public class SaveImages {
      * @param path the path where will be stored the images.
      */
     public static void save(final List<ImagePlus> images, final String path){
-        //TODO: The parallel can cause out of memory exception.
         images.parallelStream().forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
     }
 

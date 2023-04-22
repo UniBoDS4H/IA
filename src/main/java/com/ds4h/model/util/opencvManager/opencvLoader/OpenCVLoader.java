@@ -26,7 +26,7 @@ public class OpenCVLoader {
     }
 
     /**
-     *
+     * Load the OpenCV library inside the TMP folder. The library is selected from the current OS.
      */
     public static void loadOpenCV(){
         if(OS.contains(WINDOWS)){
@@ -76,6 +76,7 @@ public class OpenCVLoader {
             IJ.showMessage(e.getMessage());
         }
     }
+
     private static boolean alreadyLoaded(){
         final File tmpDirectory = new File(TEMPORARY_PATH);
         if(tmpDirectory.isDirectory()){

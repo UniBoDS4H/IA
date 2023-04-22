@@ -32,7 +32,6 @@ public class ImportProject {
         final List<File> tmpFiles = new LinkedList<>();
         final List<ImagePoints> images = new LinkedList<>();
         File jsonFile = null;
-        //TODO: add the check for the name of the Directory ?
         if(Objects.nonNull(directory) && directory.isDirectory()) {
             // If the directory exists I get all the files inside it
             for (final File file : Objects.requireNonNull(directory.listFiles())) {
@@ -45,7 +44,7 @@ public class ImportProject {
                 }
             }
             if(Objects.nonNull(jsonFile)){
-                //If we have found the configuration json, we read it and we assing for each image its points.
+                //If we have found the configuration json, we read it and we passing for each image its points.
                 JSONDeserializer.readImportProjectJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
                     if (file.getName().equals(key)) {
                         final ImagePoints imagePoints = new ImagePoints(file.getPath());
@@ -66,7 +65,7 @@ public class ImportProject {
             //If the file is not correct
             throw new FileNotFoundException("The File selected is not a directory. Please search for a DS4H_Project-X folder");
         }
-        //If the json file does not exists we return all the image without points
+        //If the json file does not exist we return all the image without points
         return images;
     }
 
@@ -79,6 +78,10 @@ public class ImportProject {
         return file.isFile() && file.getName().endsWith(JSON) && file.getName().equals(JSONFile.EXPORT_PROJECT_NAME);
     }
 
+    /**
+     * Returns the target image.
+     * @return the target image.
+     */
     public static Optional<ImagePoints> getTargetImage(){
         return Optional.ofNullable(target);
     }

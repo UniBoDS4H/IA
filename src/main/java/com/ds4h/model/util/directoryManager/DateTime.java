@@ -31,7 +31,7 @@ public class DateTime {
      * @return the current month.
      */
     public String month(){
-        return  today.getMonthValue() <= 9 ?  "0" + String.valueOf(today.getMonthValue()) : String.valueOf(today.getMonthValue());
+        return  today.getMonthValue() <= 9 ?  "0" + today.getMonthValue() : String.valueOf(today.getMonthValue());
     }
 
     /**
@@ -39,7 +39,7 @@ public class DateTime {
      * @return the current day.
      */
     public String day(){
-        return  today.getDayOfMonth() <= 9 ?  "0" + String.valueOf(today.getDayOfMonth()) : String.valueOf(today.getDayOfMonth());
+        return  today.getDayOfMonth() <= 9 ?  "0" + today.getDayOfMonth() : String.valueOf(today.getDayOfMonth());
     }
 
     /**
@@ -47,7 +47,7 @@ public class DateTime {
      * @return the current hour.
      */
     public String hour(){
-        return this.now.getHour() <= 9 ?  "0" + String.valueOf(this.now.getHour()) : String.valueOf(this.now.getHour());
+        return this.now.getHour() <= 9 ?  "0" + this.now.getHour() : String.valueOf(this.now.getHour());
     }
 
     /**
@@ -55,7 +55,7 @@ public class DateTime {
      * @return the current minute.
      */
     public String minute(){
-         return this.now.getMinute() <= 9 ?  "0" + String.valueOf(this.now.getMinute()) : String.valueOf(this.now.getMinute());
+         return this.now.getMinute() <= 9 ?  "0" + this.now.getMinute() : String.valueOf(this.now.getMinute());
     }
 
     /**
@@ -63,6 +63,6 @@ public class DateTime {
      * @return the current seconds.
      */
     public String seconds(){
-        return this.now.getSecond() <= 9 ? "0" + String.valueOf(this.now.getSecond()) : String.valueOf(this.now.getSecond());
+        return this.now.getSecond() <= 9 ? "0" + this.now.getSecond() : String.valueOf(this.now.getSecond());
     }
 }
