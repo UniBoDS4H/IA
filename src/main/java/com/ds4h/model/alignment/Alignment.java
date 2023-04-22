@@ -238,10 +238,7 @@ public class Alignment implements Runnable{
      */
     public void clearList(){
         IJ.log("[ALIGNMENT] Clear List");
-        this.alignedImages.forEach(image -> {
-            image.releaseImage();
-            image = null;
-        });
+        this.alignedImages.forEach(AlignedImage::releaseImage);
         this.alignedImages.clear();
         System.gc();
     }
