@@ -120,7 +120,7 @@ public class MatImageProcessorConverter {
                 return MatImageProcessorConverter.makeBinaryProcessor(matrix, matrix.cols(), matrix.rows());
             }
         }else{
-            throw new IllegalArgumentException("One of the argument is empty. Please check again the values");
+            throw new IllegalArgumentException("One of the argument is empty. Please check again the values.");
         }
     }
 }

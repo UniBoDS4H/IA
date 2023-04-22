@@ -17,25 +17,38 @@ public class JSONSerializer extends JSONFile {
     }
 
     /*
-        JSON FILE :
-        {
-            file_name : "image.tif",
-            points: [ XX:YY,
-                      XX,YY,
-                      .....
-                    ],
-              file_name : "image2.tif",
-              points: [ XX:YY,
-                        XX,YY,
-                        .....
-                       ],
-        }
+        [
+            {
+                "TARGET":true,
+                "POINTS":["{130.0, 99.0}"],
+                "FILE_NAME":"bridge.png"
+            },
+            {
+                "POINTS":["{447.0, 408.0}"],
+                "FILE_NAME":"deformed-bridge.png"
+            },
+            ...
+        ]
      */
 
     /**
-     *
-     * @param pointManager a
-     * @param path b
+     * Save all the image infos inside the JSON file, inside this file we have the name of the file and all the points stored in the image. The json file is saved inside the
+     * selected "path".
+     * Sample of the file:
+     *         [
+     *             {
+     *                 "TARGET":true,
+     *                 "POINTS":["{130.0, 99.0}"],
+     *                 "FILE_NAME":"napoli.png"
+     *             },
+     *             {
+     *                 "POINTS":["{447.0, 408.0}"],
+     *                 "FILE_NAME":"scudetto.png"
+     *             },
+     *             ...
+     *         ]
+     * @param pointManager where all the images are stored.
+     * @param path where to save the file with all the infos.
      */
     public static void createJSON(final PointManager pointManager, final String path){
         final JSONArray imageList = new JSONArray();

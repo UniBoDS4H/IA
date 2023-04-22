@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.*;
 
 public class JSONDeserializer extends JSONFile {
-    private static Optional<String> TARGET_IMAGE_NAME = Optional.empty();
+    private static String TARGET_IMAGE_NAME = null;
 
     private JSONDeserializer(){
         super();
@@ -43,7 +43,7 @@ public class JSONDeserializer extends JSONFile {
                     }
                     //Find the target image
                     if (!obj.isNull(TARGET_KEY)) {
-                        TARGET_IMAGE_NAME = Optional.of(fileName);
+                        TARGET_IMAGE_NAME = fileName;
                     }
                     values.putIfAbsent(fileName, listPoint); // Put the values inside the HashMap
                 }else{
@@ -88,18 +88,18 @@ public class JSONDeserializer extends JSONFile {
     }
 
     /**
-     *
-     * @return a
+     * Returns Target is set inside the json file.
+     * @return True if the target is present inside the file.
      */
     public static boolean isTargetPresent(){
-        return TARGET_IMAGE_NAME.isPresent();
+        return Objects.nonNull(TARGET_IMAGE_NAME);
     }
 
     /**
-     *
-     * @return a
+     * Returns the name of the Target.
+     * @return the name of the target, if it is not present the value is empty.
      */
     public static String targetName(){
-        return TARGET_IMAGE_NAME.orElse("");
+        return Objects.nonNull(TARGET_IMAGE_NAME) ? TARGET_IMAGE_NAME : "";
     }
 }
