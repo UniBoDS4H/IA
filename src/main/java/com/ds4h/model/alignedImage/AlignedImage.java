@@ -1,7 +1,6 @@
 package com.ds4h.model.alignedImage;
 
 import ij.ImagePlus;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 import java.util.Objects;
