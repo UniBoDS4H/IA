@@ -13,10 +13,18 @@ public enum BunwarpJMode {
         this.valMode = valMode;
     }
 
+    /**
+     * Returns the value mode.
+     * @return the value mode.
+     */
     public int getValue(){
         return this.valMode;
     }
 
+    /**
+     * Returns the mode name.
+     * @return the mode name.
+     */
     public String toString(){
         return this.mode;
     }

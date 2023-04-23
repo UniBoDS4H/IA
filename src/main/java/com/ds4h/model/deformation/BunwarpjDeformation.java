@@ -87,31 +87,35 @@ public class BunwarpjDeformation implements Runnable{
      */
     @Override
     public void run() {
-        if(Objects.nonNull(this.target)){
-            final ImagePlus sourceImage = this.target.getAlignedImage();
-            for(final AlignedImage alignedImage : this.alignedImages){
-                final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImage.getAlignedImage(),
-                        sourceImage,
-                        alignedImage.getAlignedImage().getProcessor(),
-                        sourceImage.getProcessor(),
-                        this.modeInput.getValue(),
-                        this.sampleFactor,
-                        this.minScale.getValue(),
-                        this.maxScale.getValue(),
-                        this.parDivWeight,
-                        this.parCurlWeight,
-                        this.parLandmarkWeight,
-                        this.parImageWeight,
-                        this.parConsistencyWeight,
-                        this.parThreshold);
-                final ImagePlus image = transformation.getDirectResults();
-                image.setTitle(alignedImage.getAlignedImage().getTitle());
-                this.outputList.add(alignedImage.getRegistrationMatrix().isPresent() ?
-                        new AlignedImage(alignedImage.getRegistrationMatrix().get(), image.getProcessor(), alignedImage.getName()) :
-                        new AlignedImage(image.getProcessor(), alignedImage.getName()));
+        try {
+            if (Objects.nonNull(this.target)) {
+                final ImagePlus sourceImage = this.target.getAlignedImage();
+                for (final AlignedImage alignedImage : this.alignedImages) {
+                    final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImage.getAlignedImage(),
+                            sourceImage,
+                            alignedImage.getAlignedImage().getProcessor(),
+                            sourceImage.getProcessor(),
+                            this.modeInput.getValue(),
+                            this.sampleFactor,
+                            this.minScale.getValue(),
+                            this.maxScale.getValue(),
+                            this.parDivWeight,
+                            this.parCurlWeight,
+                            this.parLandmarkWeight,
+                            this.parImageWeight,
+                            this.parConsistencyWeight,
+                            this.parThreshold);
+                    final ImagePlus image = transformation.getDirectResults();
+                    image.setTitle(alignedImage.getAlignedImage().getTitle());
+                    this.outputList.add(alignedImage.getRegistrationMatrix().isPresent() ?
+                            new AlignedImage(alignedImage.getRegistrationMatrix().get(), image.getProcessor(), alignedImage.getName()) :
+                            new AlignedImage(image.getProcessor(), alignedImage.getName()));
+                }
             }
+            this.thread = new Thread(this);
+        }catch (Exception ex) {
+            this.thread = new Thread(this);
         }
-        this.thread = new Thread(this);
     }
 
     /**

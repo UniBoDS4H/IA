@@ -26,7 +26,6 @@ public class Image_Alignment implements PlugIn {
 		new Image_Alignment().run(null);
 	}
 
-
 	@Override
 	public void run(String s) {
 		try {
