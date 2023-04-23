@@ -99,7 +99,7 @@ public class PointManager {
      */
     public void clearProject(){
         this.targetImage = null;
+        this.imagesWithPoints.forEach(ImagePoints::releaseImage);
         this.imagesWithPoints.clear();
-        System.gc();
     }
 }
