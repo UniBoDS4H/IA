@@ -46,6 +46,10 @@ public class AlignedImage {
         return this.name;
     }
 
+    /**
+     * Returns the ImageProcessor.
+     * @return the ImageProcessor.
+     */
     public ImageProcessor getProcessor(){
         return this.alignedImage;
     }

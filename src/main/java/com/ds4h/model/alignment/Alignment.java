@@ -26,6 +26,9 @@ public class Alignment implements Runnable{
     private double status = 0;
     private double total = 2; //Preprocess and Target image
 
+    /**
+     * Constructor for the Alignment object.
+     */
     public Alignment(){
         this.thread = new Thread(this);
         this.imagesToAlign = new LinkedList<>();
@@ -195,6 +198,10 @@ public class Alignment implements Runnable{
         }
     }
 
+    /**
+     * Returns the alignment status.
+     * @return the alignment status.
+     */
     public synchronized int getStatus(){
         return (int) (this.status*100/this.total);
     }
@@ -205,7 +212,7 @@ public class Alignment implements Runnable{
      * otherwise It will throw a 'NoSuchMethodException'. Each image is stored inside the 'alignedImages' collection.
      * In order to perform the alignment It is necessary that the targetImage is present.
      *
-     * @throws RuntimeException a
+     * @throws RuntimeException if there is a OutOfMemory exception or an error during the alignment.
      */
     @Override
     public void run() throws RuntimeException{
