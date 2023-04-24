@@ -18,14 +18,14 @@ public abstract class PointDetector {
     final MatCache matCache;
 
     /**
-     *
+     * Constructor for the PointDetector object.
      */
     public PointDetector(){
         this.matCache = new MatCache();
     }
 
     /**
-     *
+     * Returns the MatCache object.
      * @return
      */
     public MatCache getMatCache(){
@@ -33,21 +33,22 @@ public abstract class PointDetector {
     }
 
     /**
-     *
+     * Clear the cache from the Detector and MatOfKeyPoint.
      */
     public void clearCache(){
         this.matCache.releaseMatrix();
     }
 
     /**
-     * @param targetImage a
-     * @param imagePoint b
+     * Detect the key points inside the two images.
+     * @param targetImage the target image selected from the input, this image will be cached during the entire process of alignment.
+     * @param imagePoint the other image where the algorithm have to detect points.
      */
     public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
 
     /**
-     *
-     * @param factor a
+     * Set the threshold factor, in order to get more "dirty" points in the detection.
+     * @param factor how many "dirty" points we should get.
      */
     public void setFactor(final double factor){
         if(factor >= 0){
@@ -56,8 +57,8 @@ public abstract class PointDetector {
     }
 
     /**
-     *
-     * @param scaling a
+     * Set the scaling factor for the images.
+     * @param scaling how many times the images must be scaled.
      */
     public void setScalingFactor(final int scaling){
         if(scaling >= PointDetector.LOWER_BOUND && scaling <= PointDetector.UPPER_BOUND){
@@ -66,28 +67,30 @@ public abstract class PointDetector {
     }
 
     /**
-     *
-     * @return a
+     * Returns the scaling factor.
+     * @return the scaling factor.
      */
     public int getScalingFactor(){
         return this.scalingFactor;
     }
 
     /**
-     *
-     * @return a
+     * Returns the threshold factor.
+     * @return the threshold factor.
      */
     public double getFactor(){
         return this.factor;
     }
 
     /**
-     *
-     * @param matrix a
-     * @param levels b
-     * @return c
+     * Creates the Pyramid from the input matrix. The input matrix is resized by 2^(levels) times. This will be used when the images
+     * are too big for the detection, so we should scale the image, detect the all the possible points, and then rescale all the
+     * detected points in to the original image.
+     * @param matrix the image to be resized.
+     * @param levels the pyramids' depth.
+     * @return the new matrix, resized by 2^(levels) times.
      */
-    protected Mat createPyramid(Mat matrix, final int levels){
+    protected Mat createPyramid(final Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
         for(int i = 1; i < levels; i++) {
@@ -102,9 +105,9 @@ public abstract class PointDetector {
     }
 
     /**
-     *
-     * @param matrix a
-     * @return b
+     * This method can be used in order to improve the input matrix with the "Edge Detection".
+     * @param matrix the input matrix
+     * @return the improved matrix.
      */
     protected Mat improveMatrix(final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
@@ -129,7 +132,6 @@ public abstract class PointDetector {
             System.gc();
             return matrix;
         }else{
-
             final Mat blur = new Mat();
             Imgproc.medianBlur(matrix, blur, ksize);
             final Mat sobelx = new Mat();
@@ -140,37 +142,16 @@ public abstract class PointDetector {
             Core.normalize(blur, blur, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
             matrix.release();
             System.gc();
-
             return blur;
         }
     }
-        /*
 
-
-            final Mat sobelx = new Mat();
-            final Mat sobely = new Mat();
-            Imgproc.Sobel(matrix, sobelx, CvType.CV_32F, 1, 0, 3, 1, 0, Core.BORDER_DEFAULT);
-            Imgproc.Sobel(matrix, sobely, CvType.CV_32F, 0, 1, 3, 1, 0, Core.BORDER_DEFAULT);
-            Core.magnitude(sobelx, sobely, matrix);
-            Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
-
-
-        final Mat sharx = new Mat();
-        final Mat shary = new Mat();
-        Imgproc.Scharr(matrix, sharx, CvType.CV_64F, 1,0);
-        Imgproc.Scharr(matrix, shary, CvType.CV_64F, 0, 1);
-        Core.magnitude(sharx, shary, matrix);
-        Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
-
-
-
-
-         */
     /**
-     *
-     * @param image a
-     * @param levels b
-     * @return c
+     * Creates the pyramid for the input ImagePoints. We rescale the ImageProcessor in order to get a smaller image.
+     * The scaled image is used for the detection but the detected points are then rescaled to the original matrix.
+     * @param image the input image to rescale.
+     * @param levels how many levels we have to create. We rescale about 2^(levels) times.
+     * @return the scaled image.
      */
     protected ImageProcessor createPyramid(final ImagePoints image, final int levels){
         final ImageProcessor[] pyramid = new ImageProcessor[levels];

@@ -1,5 +1,8 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
+import com.ds4h.model.alignment.automatic.pointDetector.akazeDetector.AKAZEDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.briskDetector.BRISKDetector;
+import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.siftDetector.SIFTDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
@@ -11,9 +14,9 @@ import ij.IJ;
  */
 public enum Detectors {
 
-    //AKAZE("AKAZE", new AKAZEDetector(), 0),
-    //BRISK("BRISK", new BRISKDetector(), 0),
-    //KAZE("KAZE", new KAZEDetector(), 0),
+    AKAZE("AKAZE", new AKAZEDetector(), 0),
+    BRISK("BRISK", new BRISKDetector(), 0),
+    KAZE("KAZE", new KAZEDetector(), 0),
     ORB("ORB", new ORBDetector(), 0),
     SIFT("SIFT", new SIFTDetector(), 0),
     SURF("SURF", new SURFDetector(), 0);

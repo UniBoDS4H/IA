@@ -3,13 +3,9 @@ package com.ds4h.model.alignment.automatic.pointDetector.siftDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
-import org.bytedeco.opencv.opencv_stitching.FeaturesMatcher;
 import org.opencv.core.*;
-import org.opencv.features2d.BOWImgDescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.Feature2D;
 import org.opencv.features2d.SIFT;
-import org.opencv.xfeatures2d.StarDetector;
 
 import java.util.List;
 

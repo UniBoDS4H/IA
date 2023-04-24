@@ -78,5 +78,4 @@ public class SURFDetector extends PointDetector {
                     targetImage.addPoint(trainScaled);
                 });
     }
-
 }

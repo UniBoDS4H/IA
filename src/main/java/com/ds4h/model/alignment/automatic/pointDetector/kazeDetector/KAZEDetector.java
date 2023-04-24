@@ -12,7 +12,6 @@ public class KAZEDetector extends PointDetector {
 
     public KAZEDetector(){
         super();
-
     }
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
