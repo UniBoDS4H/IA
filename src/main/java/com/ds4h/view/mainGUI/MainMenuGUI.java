@@ -371,7 +371,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         );
 
         this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(final WindowEvent e) {
+                pointControler.clearProject();
                 DirectoryManager.deleteTMPDirectories();
                 OpencvController.deleteLibrary();
                 dispose();
