@@ -48,7 +48,6 @@ public class SIFTDetector extends PointDetector {
             grayTarget.release();
         }
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
-        System.gc();
 
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1,

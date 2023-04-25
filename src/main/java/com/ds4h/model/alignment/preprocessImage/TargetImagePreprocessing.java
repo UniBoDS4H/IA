@@ -61,16 +61,15 @@ public class TargetImagePreprocessing {
                 IJ.log("[AUTOMATIC PREPROCESS] Target ADDR: " + target.getMatImage().getNativeObjAddr());
                 target.addPoints(points);
                 points.clear();
-                System.gc();
                 s.set(j, new AbstractMap.SimpleEntry<>(s.get(j).getKey(), target));
             });
         });
         IJ.log("[AUTOMATIC PREPROCESS] Finish automatic preprocess");
         IJ.log("[AUTOMATIC PREPROCESS] Size: " + s.size());
-        System.gc();
         images.clear();
         s.forEach(e->images.put(e.getKey(),e.getValue()));
         IJ.log("[AUTOMATIC PREPROCESS] Final Size: " + s.get(s.size()-1).getValue().getMatSize());
+        System.gc();
         return MatImageProcessorConverter.convert(s.get(s.size()-1).getValue().getMatImage(), ip);
     }
 

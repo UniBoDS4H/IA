@@ -163,7 +163,6 @@ public class Alignment implements Runnable{
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
-        System.gc();
         if(images.size() == 0){
             this.status = total;
         }else {
@@ -190,10 +189,10 @@ public class Alignment implements Runnable{
                 key.getMatImage().release();
                 value.clearPoints();
                 key.clearPoints();
-                System.gc();
             });
             this.status+=1;
             images.clear();
+            System.gc();
             IJ.log("[AUTOMATIC] The alignment is done.");
         }
     }

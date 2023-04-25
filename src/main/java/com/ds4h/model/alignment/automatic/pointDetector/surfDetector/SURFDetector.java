@@ -17,12 +17,8 @@ public class SURFDetector extends PointDetector {
 
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
-        System.gc();
-
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
-
-
 
         grayImg = imagePoint.toImprove() ? super.improveMatrix(grayImg) : grayImg;
 

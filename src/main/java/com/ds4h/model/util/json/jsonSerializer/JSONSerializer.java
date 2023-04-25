@@ -16,21 +16,6 @@ public class JSONSerializer extends JSONFile {
         super();
     }
 
-    /*
-        [
-            {
-                "TARGET":true,
-                "POINTS":["{130.0, 99.0}"],
-                "FILE_NAME":"bridge.png"
-            },
-            {
-                "POINTS":["{447.0, 408.0}"],
-                "FILE_NAME":"deformed-bridge.png"
-            },
-            ...
-        ]
-     */
-
     /**
      * Save all the image infos inside the JSON file, inside this file we have the name of the file and all the points stored in the image. The json file is saved inside the
      * selected "path".
@@ -72,7 +57,7 @@ public class JSONSerializer extends JSONFile {
     /**
      * Write the JSONFile in the path. This is used inside the EXPORT of the project
      * @param array all the project information
-     * @param path where will be stored the inormation
+     * @param path where will be stored the information
      */
     public static void writeJSON(final JSONArray array, final String path){
         try (FileWriter file = new FileWriter(path+"/"+ EXPORT_PROJECT_NAME)) {

@@ -32,8 +32,6 @@ public class MatImageProcessorConverter {
             int blu = pixels[i * 3 + 2] & 0xff;
             iData[i] = (red << 16) | (grn << 8) | blu;
         }
-
-        System.gc();
         IJ.log("[MAKE COLORPROCESSOR] The creation is done");
         return cp;
     }
@@ -54,7 +52,6 @@ public class MatImageProcessorConverter {
         shortProcessor.setMinAndMax(min, max);
         IJ.log("[MAKE SHORTPROCESSOR] End of creation ShortProcessor");
         shortProcessor.setLut(lut);
-        System.gc();
         return shortProcessor;
     }
 
@@ -68,7 +65,6 @@ public class MatImageProcessorConverter {
         matrix.get(0,0, (byte[])ip.getPixels());
         matrix.release();
         matrix = null;
-        System.gc();
         IJ.log("[MAKE BYTEPROCESSOR] Finish creation ByteProcessor");
         return ip;
     }
@@ -84,7 +80,6 @@ public class MatImageProcessorConverter {
         matrix.get(0,0, (float[])floatProcessor.getPixels());
         matrix.release();
         matrix = null;
-        System.gc();
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return floatProcessor;
     }

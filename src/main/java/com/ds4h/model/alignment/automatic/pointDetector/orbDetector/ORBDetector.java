@@ -43,7 +43,6 @@ public class ORBDetector extends PointDetector {
             super.getMatCache().setDetection(descriptors2, keypoints2);
             grayTarget.release();
         }
-        System.gc();
         // End detection
 
         // Use the BFMatcher class to match the descriptors, BRUTE FORCE APPROACH:
@@ -51,7 +50,6 @@ public class ORBDetector extends PointDetector {
         this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches); // save all the matches from image1 and image2
         //matches.convertTo(matches_, CvType.CV_32F);  // changed the datatype of the matrix from 8 bit to 32 bit floating point
         descriptors1.release();
-        System.gc();
 
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         double max_dist = 0;

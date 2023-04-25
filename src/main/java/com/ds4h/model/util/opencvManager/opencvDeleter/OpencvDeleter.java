@@ -2,7 +2,6 @@ package com.ds4h.model.util.opencvManager.opencvDeleter;
 
 import com.ds4h.model.util.opencvManager.opencvLoader.OpenCVLoader;
 import ij.IJ;
-
 import java.io.File;
 import java.util.Objects;
 

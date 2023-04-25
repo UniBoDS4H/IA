@@ -41,7 +41,6 @@ public class BRISKDetector extends PointDetector {
             grayTarget.release();
         }
         grayImg.release();
-        System.gc();
 
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches); // save all the matches from image1 and image2
@@ -71,6 +70,6 @@ public class BRISKDetector extends PointDetector {
                     imagePoint.addPoint(queryScaled);
                     targetImage.addPoint(trainScaled);
                 });
-
+        matches.release();
     }
 }

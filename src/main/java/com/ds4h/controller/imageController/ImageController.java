@@ -41,7 +41,6 @@ public class ImageController {
         if(!this.getAlignedImages().isEmpty()){
             final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
                     this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
-            System.gc();
             final List<AlignedImage> images = this.getAlignedImages();
             final LUT[] luts = new LUT[images.size()];
             int index = 0;

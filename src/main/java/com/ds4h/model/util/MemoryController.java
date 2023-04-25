@@ -20,7 +20,7 @@ public class MemoryController {
     /**
      * Control the memory after the "inputImages" are loaded.
      * @param imagePoints the images loaded from the Plugin.
-     * @throws OutOfMemoryError if the 35% of the memory is used by the images.
+     * @throws OutOfMemoryError if the 30% of the memory is used by the images.
      */
     public static void controlMemory(final List<ImagePoints> imagePoints) throws OutOfMemoryError{
         long memorySize = 0;

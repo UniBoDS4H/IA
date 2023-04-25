@@ -40,8 +40,6 @@ public class KAZEDetector extends PointDetector {
             super.getMatCache().setDetection(descriptors2, keypoints2);
             grayTarget.release();
         }
-
-        System.gc();
         // Match keypoints between the two images using a BFMatcher
         final MatOfDMatch matches = new MatOfDMatch();
         this.matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches);
@@ -75,6 +73,7 @@ public class KAZEDetector extends PointDetector {
                     imagePoint.addPoint(queryScaled);
                     targetImage.addPoint(trainScaled);
                 });
+        matches.release();
     }
 
 }

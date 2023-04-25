@@ -39,7 +39,6 @@ public class AKAZEDetector extends PointDetector {
             super.getMatCache().setDetection(descriptors2, keypoints2);
             grayTarget.release();
         }
-        System.gc();
         grayImg.release();
 
 
@@ -75,5 +74,6 @@ public class AKAZEDetector extends PointDetector {
                     imagePoint.addPoint(queryScaled);
                     targetImage.addPoint(trainScaled);
                 });
+        matches.release();
     }
 }

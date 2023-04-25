@@ -40,7 +40,7 @@ public class SaveImages {
      * @param path the path where will be stored the images.
      */
     public static void save(final List<ImagePlus> images, final String path){
-        images.parallelStream().forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
+        images.forEach(image -> IJ.save(image, path+"/"+image.getTitle()));
     }
 
     /**

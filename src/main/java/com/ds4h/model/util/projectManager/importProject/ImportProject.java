@@ -21,7 +21,7 @@ public class ImportProject {
     }
 
     /**
-     * Import the DS4H Project.
+     * Import DS4H Project.
      * It is a Directory with a bunch of images and a JSON file with the configuration of the project. Inside the JSON file
      * there are all the points foreach image
      * @param directory the directory where is stored the project
