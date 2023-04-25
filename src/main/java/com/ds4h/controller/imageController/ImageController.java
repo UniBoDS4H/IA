@@ -54,8 +54,9 @@ public class ImageController {
                 final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
                 composite.setLuts(luts);
                 return composite;
-            }catch (Exception e){
-                throw new RuntimeException("Something went wrong with the creation of the stack.");
+            }catch (final Exception e){
+                throw new RuntimeException("Something went wrong with the creation of the stack.\n" +
+                        "Error: " + e.getMessage());
             }
         }
         throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
