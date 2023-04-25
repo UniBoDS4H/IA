@@ -35,5 +35,5 @@ jobs:
       - name: Upload JAR file
         uses: actions/upload-artifact@v2
         with:
-          name: DS4H_ImageAlignment-${{ github.ref }}.jar
-          path: target/my-project-${{ github.ref }}.jar
+          name: DS4H_ImageAlignment${{ github.ref }}.jar
+          path: target/DS4H_ImageAlignment${{ github.ref }}.jar
