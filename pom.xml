@@ -15,7 +15,7 @@
 	<artifactId>DS4H_ImageAlignment</artifactId>
 	<version>0.1.0</version>
 
-	<name>Data Science For Health Image Alignment</name>
+	<name>DS4H Image Alignment</name>
 	<description>
 		An ImageJ plugin for Image Alignment.
 		"Data Science for Health (DS4H) Image Alignment" is a user-friendly tool freely provided as an ImageJ/Fiji plugin.
@@ -64,6 +64,11 @@
 			</roles>
 		</developer>
 	</developers>
+	<contributors>
+		<contributor>
+			<name>None</name>
+		</contributor>
+	</contributors>
 
 	<mailingLists>
 		<mailingList>
