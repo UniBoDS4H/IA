@@ -30,7 +30,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.version }}
           release_name: Release ${{ steps.version.outputs.version }}
-          body: This is the release for version ${{ steps.version.outputs.version }} of my project!
+          body: This is the release for version ${{ steps.version.outputs.version }} of Data Science For Health Image Alignment!
           draft: false
           prerelease: false
         env:
