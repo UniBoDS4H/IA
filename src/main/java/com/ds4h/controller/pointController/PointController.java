@@ -33,7 +33,6 @@ public class PointController {
      */
     public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
-        System.gc();
         if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getPointImages().size() > 0)) {
             this.pointManager.addImages(imagePointsList);
             MemoryController.controlMemory(this.pointManager.getPointImages());
@@ -123,12 +122,6 @@ public class PointController {
     private boolean insideImage(final Point p, final ImagePoints img) {
         return img.getRows() >= p.y && img.getCols() >= p.x;
     }
-
-    /*
-    public MenuItem getMenuItem(final ImagePoints image){
-        return new MenuItem(this.getPointImages().indexOf(image)+1, image);
-    }
-     */
 
     /**
      * Clear the entire project from all the images.

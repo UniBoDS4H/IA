@@ -14,6 +14,9 @@ public class BunwarpJController {
 
     private final BunwarpjDeformation bunwarpjDeformation;
 
+    /**
+     * Constructr for the BunwarpJController object.
+     */
     public BunwarpJController(){
         this.bunwarpjDeformation = new BunwarpjDeformation();
     }
@@ -39,6 +42,9 @@ public class BunwarpJController {
         return Collections.emptyList();
     }
 
+    /**
+     * Release all the images from the memory.
+     */
     public void releaseImages(){
         this.bunwarpjDeformation.getOutputList().forEach(image -> {
             image.releaseImage();
