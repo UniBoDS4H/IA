@@ -11,8 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
 
-//TODO: Implement the StandardGUI interface
-
 public class PreviewListItem extends JPanel {
     private final JButton targetButton;
     private final PointController controller;

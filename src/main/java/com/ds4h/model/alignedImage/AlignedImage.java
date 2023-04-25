@@ -90,7 +90,7 @@ public class AlignedImage {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AlignedImage that = (AlignedImage) o;
+        final AlignedImage that = (AlignedImage) o;
         return Objects.equals(alignedImage, that.alignedImage) && Objects.equals(registrationMatrix, that.registrationMatrix);
     }
 

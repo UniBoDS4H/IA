@@ -52,7 +52,6 @@ public class AlignmentOutputGUI extends StackWindow {
         this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
         this.configureImagesGUI = new ConfigureImagesGUI(this);
-        final String algorithm = controller.name();
         this.bunwarpjGUI = settingsBunwarpj;
         this.saveGui = new SaveImagesGUI(controller);
         this.panel = new JPanel();
@@ -79,12 +78,9 @@ public class AlignmentOutputGUI extends StackWindow {
     }
 
     private void createOutputIcons() {
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.gc();
-                reuseItem.setEnabled(true);
-            }
+        Thread t1 = new Thread(() -> {
+            System.gc();
+            reuseItem.setEnabled(true);
         });
         t1.start();
     }
@@ -118,10 +114,9 @@ public class AlignmentOutputGUI extends StackWindow {
             }
         });
 
-        this.settingsImages.addActionListener(event -> {
-            this.configureImagesGUI.showDialog();
-
-        });
+        this.settingsImages.addActionListener(event ->
+            this.configureImagesGUI.showDialog()
+        );
 
         this.pack();
         /*this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -138,9 +133,9 @@ public class AlignmentOutputGUI extends StackWindow {
             this.settings.add(this.overlappedItem);
         });
 
-        this.saveItem.addActionListener(event -> {
-            this.saveGui.showDialog();
-        });
+        this.saveItem.addActionListener(event ->
+            this.saveGui.showDialog()
+        );
 
         this.reuseItem.addActionListener(event -> {
             final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI, this);

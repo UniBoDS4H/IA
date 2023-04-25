@@ -22,7 +22,6 @@ public class ExportProject {
      * @param pointManager the corner manager of all the images.
      * @param path the path where store the project
      */
-
     public static void exportProject(final PointManager pointManager, final String path) {
 
         final String directory = DirectoryCreator.createDirectory(path, PROJECT_FOLDER);

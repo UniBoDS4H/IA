@@ -11,21 +11,25 @@
 		<relativePath />
 	</parent>
 
-	<groupId>com.ds4h</groupId>        <!-- FIXME: Your organization groupId here -->
-	<artifactId>Image_Alignment</artifactId> <!-- FIXME: Your project artifactId here   -->
-	<version>0.1.0-SNAPSHOT</version>
+	<groupId>com.ds4h</groupId>
+	<artifactId>DS4H_ImageAlignment</artifactId>
+	<version>0.1.0</version>
 
-	<name>Image Alignment</name>                                                   <!-- FIXME: Your project name here          -->
-	<description>A Maven project implementing an ImageJ 1.x plugin.</description> <!-- FIXME: Your project description here   -->
-	<url>https://filippopiccinini.altervista.org/DS4H-IA.html</url>                       <!-- FIXME: Your project website here       -->
-	<inceptionYear>2023</inceptionYear>                                           <!-- FIXME: Your project starting year here -->
+	<name>DS4H Image Alignment</name>
+	<description>
+		An ImageJ plugin for Image Alignment.
+		"Data Science for Health (DS4H) Image Alignment" is a user-friendly tool freely provided as an ImageJ/Fiji plugin.
+		With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by defining with a few clicks some well visible reference marks, or by using automatic routines.
+	</description>
+	<url>https://filippopiccinini.altervista.org/DS4H-IA.html</url>
+	<inceptionYear>2023</inceptionYear>
 	<organization>
-		<name>DS4H</name>           <!-- FIXME: Your organization name here    -->
-		<url>https://mycompany.com/</url> <!-- FIXME: Your organization website here -->
+		<name>UNIBOData Science For Health</name>
+		<url>https://github.com/UniBoDS4H/</url>
 	</organization>
 	<licenses>
-		<license>                         <!-- FIXME: Your license here -->
-			<name>CC0</name>
+		<license>
+			<name>GPL 3.0 license, CC0</name>
 			<url>https://www.gnu.org/licenses/gpl-3.0.html</url>
 			<distribution>repo</distribution>
 		</license>
@@ -34,11 +38,10 @@
 	<developers>
 		<!-- See https://imagej.net/contribute/governance#scijava-team-roles -->
 		<developer>
-			<id>matteoiorio11</id>                                          <!-- FIXME: Your GitHub handle here -->
-			<name>Matteo Iorio</name>                            <!-- FIXME: Your name here          -->
-			<url>https://mycompany.com/people/noma-onomatopoeia</url> <!-- FIXME: Your website here       -->
+			<id>Matteoiorio11</id>
+			<name>Matteo Iorio</name>
+			<url>https://matteoiorio11.github.io/</url>
 			<roles>
-				<role>founder</role>
 				<role>lead</role>
 				<role>developer</role>
 				<role>debugger</role>
@@ -48,11 +51,10 @@
 			</roles>
 		</developer>
 		<developer>
-			<id>fabiovincenzi</id>                                          <!-- FIXME: Your GitHub handle here -->
-			<name>Fabio Vincenzi</name>                            <!-- FIXME: Your name here          -->
-			<url>https://mycompany.com/people/noma-onomatopoeia</url> <!-- FIXME: Your website here       -->
+			<id>fabiovincenzi</id>
+			<name>Fabio Vincenzi</name>
+			<url>https://github.com/fabiovincenzi/</url>
 			<roles>
-				<role>founder</role>
 				<role>lead</role>
 				<role>developer</role>
 				<role>debugger</role>
@@ -90,10 +92,10 @@
 	</ciManagement>
 
 	<properties>
-		<package-name>com.ds4h.imagej</package-name>                   <!-- FIXME: Your project package prefix here -->
-		<main-class>com.ds4h.imagej.Image_Alignment</main-class>        <!-- FIXME: Your project main class here, or delete for none -->
-		<license.licenseName>cc0</license.licenseName>                      <!-- FIXME: Your license-maven-plugin license code here -->
-		<license.copyrightOwners>My Company, Inc.</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
+		<package-name>com.ds4h.imagej</package-name>
+		<main-class>com.ds4h.imagej.Image_Alignment</main-class>
+		<license.licenseName>GPL 3.0, CC0</license.licenseName>
+		<license.copyrightOwners>UNIBO Data Science For Health (DS4H).</license.copyrightOwners>
 	</properties>
 
 	<repositories>
@@ -189,16 +191,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.1</version>
 		</dependency>
-
-		<!--
-		TODO: This lib does not work
-		<dependency>
-			<groupId>org.fusesource</groupId>
-			<artifactId>sigar</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-		-->
-
 	</dependencies>
 <!--
 	<build>
