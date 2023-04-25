@@ -10,9 +10,6 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
 import ij.plugin.PlugIn;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
 
 import java.awt.*;
 
