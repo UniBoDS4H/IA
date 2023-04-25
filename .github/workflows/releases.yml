@@ -1,4 +1,4 @@
-name: Release
+name: Create Release
 
 on:
   push:
@@ -9,31 +9,39 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
+
       - name: Set up JDK 8
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Install Maven
-        run: sudo apt-get install -y maven
-      - name: Build JAR file
+
+      - name: Build JAR
         run: make create_release
-      - name: Create release
+
+      - name: Get Version Number
+        id: version
+        run: echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_SECRET}}
         with:
-          tag_name: v${{ github.ref }}
-          release_name: Release v${{ github.ref }}
-          body: |
-            Changes in this release:
-            - Add new feature
-            - Fix issue
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          body: This is the release for version ${{ steps.version.outputs.version }} of my project!
           draft: false
           prerelease: false
-      - name: Upload JAR file
-        uses: actions/upload-artifact@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_SECRET }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
         with:
-          name: DS4H_ImageAlignment${{ github.ref }}.jar
-          path: target/DS4H_ImageAlignment${{ github.ref }}.jar
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/DS4H_ImageAlignment-${{ steps.version.outputs.version }}.jar
+          asset_name: DS4H_ImageAlignment-${{ steps.version.outputs.version }}.jar
+          asset_content_type: application/java-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_SECRET }}
