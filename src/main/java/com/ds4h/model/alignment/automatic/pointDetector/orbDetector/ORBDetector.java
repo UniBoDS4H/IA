@@ -11,7 +11,7 @@ import java.util.List;
 public class ORBDetector extends PointDetector {
 
     private final ORB detector = ORB.create();
-    private final BFMatcher matcher = BFMatcher.create();
+    private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE);
 
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
@@ -27,7 +27,7 @@ public class ORBDetector extends PointDetector {
 
         // Start detection
         this.detector.detectAndCompute(grayImg, new Mat(),  keypoints1, descriptors1);
-        IJ.log("[SIFT DETECTOR] Detected points for the first image.");
+        IJ.log("[ORB DETECTOR] Detected points for the first image.");
         grayImg.release();
 
         if(!super.getMatCache().isAlreadyDetected()) {
@@ -59,7 +59,7 @@ public class ORBDetector extends PointDetector {
             if (dist > max_dist) max_dist = dist;
         }
 
-        final double threshold = (2.0 + this.getFactor()) * min_dist;
+        final double threshold = (1.125 + this.getFactor()) * min_dist;
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
