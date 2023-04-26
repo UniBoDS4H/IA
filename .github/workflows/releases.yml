@@ -1,4 +1,4 @@
-name: Create Release
+name: Create DS4H-IA Release
 
 on:
   workflow_run:
