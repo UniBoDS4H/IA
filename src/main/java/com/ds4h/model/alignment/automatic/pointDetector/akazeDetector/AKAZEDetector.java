@@ -2,15 +2,19 @@ package com.ds4h.model.alignment.automatic.pointDetector.akazeDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.imagePoints.ImagePoints;
+import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.AKAZE;
 import org.opencv.features2d.BFMatcher;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FlannBasedMatcher;
+
 import java.util.List;
 
 public class AKAZEDetector extends PointDetector {
 
     private final AKAZE detector = AKAZE.create();
-    private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE_HAMMING);
+    private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
 
     @Override
     public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
@@ -26,6 +30,8 @@ public class AKAZEDetector extends PointDetector {
 
         final Mat descriptors1 = new Mat();
         detector.detectAndCompute(grayImg, new Mat(), keypoints1, descriptors1);
+        grayImg.release();
+
         if(!super.getMatCache().isAlreadyDetected()) {
 
             Mat grayTarget = super.getScalingFactor() > 1 ?
@@ -39,12 +45,14 @@ public class AKAZEDetector extends PointDetector {
             super.getMatCache().setDetection(descriptors2, keypoints2);
             grayTarget.release();
         }
-        grayImg.release();
 
 
 
         final MatOfDMatch matches = new MatOfDMatch();
-        matcher.match(descriptors1, super.getMatCache().getDescriptor(), matches);
+        IJ.log("[AKAZE DETECTOR] Before match.");
+        matcher.match(descriptors1,
+                super.getMatCache().getDescriptor(),
+                matches);
         descriptors1.release();
         // convert the matrix of matches in to a list of DMatches, which represent the match between keypoints.
         double max_dist = 0;
@@ -54,7 +62,8 @@ public class AKAZEDetector extends PointDetector {
             if (dist < min_dist) min_dist = dist;
             if (dist > max_dist) max_dist = dist;
         }
-        final double threshold = (0.8+this.getFactor()) * min_dist;
+
+        final double threshold = (0.8+this.getFactor()) * max_dist;
 
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();

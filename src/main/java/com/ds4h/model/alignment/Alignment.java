@@ -230,6 +230,7 @@ public class Alignment implements Runnable{
             } catch (final RuntimeException ex) {
                 this.thread = new Thread(this);
                 this.clearList();
+                IJ.log(ex.getMessage());
                 throw new RuntimeException("Error: The alignment requires more memory than is available.");
             }
         }catch (OutOfMemoryError e){
