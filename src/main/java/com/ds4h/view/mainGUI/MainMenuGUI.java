@@ -418,10 +418,17 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
             try {
                 new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
-            }catch (Exception e){
+            }catch (final Exception e){
                 IJ.log("QUI 2");
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                loadingGUI.close();
+            }catch (final OutOfMemoryError ex){
+                JOptionPane.showMessageDialog(this,
+                        "Out of Memory. To make more available, use the:\n" +
+                                "Edit > Options > Memory & Thread command",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 loadingGUI.close();
