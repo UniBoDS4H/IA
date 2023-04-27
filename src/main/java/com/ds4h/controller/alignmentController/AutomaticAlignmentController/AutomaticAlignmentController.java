@@ -55,7 +55,6 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     @Override
     public void releaseImages(){
         this.alignment.clearList();
-        System.gc();
     }
 
     /**

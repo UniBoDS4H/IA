@@ -175,6 +175,5 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
     @Override
     public void releaseImages(){
         this.alignment.clearList();
-        System.gc();
     }
 }
