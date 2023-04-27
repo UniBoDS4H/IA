@@ -4,6 +4,7 @@
 With DS4H Image Alignment, 2D images can be easily aligned (i.e. registered) by defining with a few clicks some well visible reference marks, or by using automatic routines.
 
 
+
 ## Implementation
 
 DS4H Image Alignment has been implemented in Java 8 as a plugin for ImageJ/Fiji. This plugin can run on MacOs, Windows and Linux.
