@@ -52,43 +52,54 @@ public class OpenCVLoader {
             }
 
         }else if(OS.contains(LINUX)){
-            OpenCVLoader.loadLinux();
+            try {
+                OpenCVLoader.loadLinux();
+            }catch (IOException a){
+                IJ.log("UEILA " + a.getMessage());
+            }
         }
     }
     private static void loadWindows(){
         OpenCVLoader.loadLib(WINDOWS_LIB, WINDOWS_FORMAT);
     }
     private static void loadMacIntel()  throws IOException{
-        String sourcePath = "/opencv/TestDir"; // La tua directory dove hai tutti i file .so per opencv
-        List<String> fileList = getResourceFiles(sourcePath);
-        Path tmpDir = Files.createTempDirectory("DS4HOpenCV_MAC"); // Il nome nella cartella TMP, ricordati che deve avere
-        //DS4H nel nome cosi dopo lo elimino in automatico
-
+                /*
+        String sourcePath = "/opencv/TestDir"; // La tua directory
+        List<String> fileList = new ArrayList<>();
+        //Purtroppo non riesco a capire perche non legga i file dal jar con il metodo qua sotto,
+        //per ora siamo costretti a forzare tutti i file a mano.
+        fileList.add("test1.txt");
+        fileList.add("test2.txt");
+        fileList.add("test3.txt");//OpenCVLoader.getResourceFiles(sourcePath);
+        Path tmpDir = Files.createTempDirectory("DS4HOpenCV_MAC");
+        IJ.log(fileList.toString());
         // Copy the files from the Resources directory to the TMP directory
-        for (String file : fileList) {
+        for (final String file : fileList) {
             try (InputStream inputStream = OpenCVLoader.class.getResourceAsStream(sourcePath + "/" + file)) {
+                IJ.log("file name: " + tmpDir.resolve(file));
                 Files.copy(inputStream, tmpDir.resolve(file), StandardCopyOption.REPLACE_EXISTING);
             }
         }
-
+         */
         OpenCVLoader.loadLib(MAC_LIB_INTEL, MAC_FORMAT);
     }
     private static void loadMacArm(){
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
     }
-    private static void loadLinux() {
+    private static void loadLinux() throws IOException {
         OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
     }
 
-    private static List<String> getResourceFiles(String path) throws IOException {
+    private static List<String> getResourceFiles(final String path) throws IOException {
         List<String> fileList = new ArrayList<>();
-        try (InputStream inputStream = OpenCVLoader.class.getResourceAsStream(path)) {
-            assert inputStream != null;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    fileList.add(line);
-                }
+        IJ.log("My Path: " + path);
+        try (InputStream inputStream = OpenCVLoader.class.getResourceAsStream(path);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            IJ.log("QUA DENTRO");
+            while ((line = reader.readLine()) != null) {
+                IJ.log(line);
+                fileList.add(line);
             }
         }
         return fileList;
