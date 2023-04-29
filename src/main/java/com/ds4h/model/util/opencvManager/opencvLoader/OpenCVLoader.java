@@ -63,7 +63,7 @@ public class OpenCVLoader {
     }
     private static void loadLinux() throws URISyntaxException {
         /*
-        String sourcePath = "/TestDir";
+        String sourcePath = "/opencv/TestDir";
         try {
             File originalDirectory = new File(OpenCVLoader.class.getResource(sourcePath).toURI());
             File destDir = new File(TEMPORARY_PATH);
@@ -74,7 +74,7 @@ public class OpenCVLoader {
         } catch (URISyntaxException a){
             IJ.log(a.getMessage());
         }
-        */
+         */
         OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
     }
 
