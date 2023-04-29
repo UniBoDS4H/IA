@@ -5,6 +5,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -40,7 +45,11 @@ public class OpenCVLoader {
             }
 
         }else if(OS.contains(LINUX)){
-            OpenCVLoader.loadLinux();
+            try {
+                OpenCVLoader.loadLinux();
+            }catch (URISyntaxException a){
+                IJ.log(a.getMessage());
+            }
         }
     }
     private static void loadWindows(){
@@ -52,8 +61,21 @@ public class OpenCVLoader {
     private static void loadMacArm(){
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
     }
-    private static void loadLinux(){
-       OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
+    private static void loadLinux() throws URISyntaxException {
+        /*
+        String sourcePath = "/TestDir";
+        try {
+            File originalDirectory = new File(OpenCVLoader.class.getResource(sourcePath).toURI());
+            File destDir = new File(TEMPORARY_PATH);
+            FileUtils.copyDirectoryToDirectory(originalDirectory, destDir);
+            System.out.println("Successfully copied folder " + sourcePath + " to " + "FINE");
+        } catch (IOException e) {
+            System.err.println("Failed to copy folder " + sourcePath + " to " + "FINE" + " due to " + e.getMessage());
+        } catch (URISyntaxException a){
+            IJ.log(a.getMessage());
+        }
+        */
+        OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
     }
 
     private static void loadLib(final String name, final String extension) {
