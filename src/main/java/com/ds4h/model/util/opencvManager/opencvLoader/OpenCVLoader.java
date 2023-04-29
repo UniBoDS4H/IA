@@ -62,19 +62,20 @@ public class OpenCVLoader {
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
     }
     private static void loadLinux() throws URISyntaxException {
-        /*
+
         String sourcePath = "/opencv/TestDir";
         try {
-            File originalDirectory = new File(OpenCVLoader.class.getResource(sourcePath).toURI());
-            File destDir = new File(TEMPORARY_PATH);
-            FileUtils.copyDirectoryToDirectory(originalDirectory, destDir);
+            InputStream resource = OpenCVLoader.class.getResourceAsStream(sourcePath);
+            File destDir = new File(TEMPORARY_PATH+"/TempDirUEILA");
+            File myDir = new File("/TestDirTMP");
+            FileUtils.copyInputStreamToFile(resource, destDir);
+            IJ.log(myDir.getPath());
+            //FileUtils.copyDirectoryToDirectory(myDir, destDir);
             System.out.println("Successfully copied folder " + sourcePath + " to " + "FINE");
         } catch (IOException e) {
             System.err.println("Failed to copy folder " + sourcePath + " to " + "FINE" + " due to " + e.getMessage());
-        } catch (URISyntaxException a){
-            IJ.log(a.getMessage());
         }
-         */
+
         OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
     }
 
