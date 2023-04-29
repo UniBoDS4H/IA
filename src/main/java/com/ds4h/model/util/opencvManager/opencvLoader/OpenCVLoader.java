@@ -10,6 +10,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,42 +44,54 @@ public class OpenCVLoader {
             if (arch.equals(ARM) || arch.startsWith(ARMV)) {
                 OpenCVLoader.loadMacArm();
             } else {
-                OpenCVLoader.loadMacIntel();
+                try {
+                    OpenCVLoader.loadMacIntel();
+                }catch (IOException a){
+
+                }
             }
 
         }else if(OS.contains(LINUX)){
-            try {
-                OpenCVLoader.loadLinux();
-            }catch (URISyntaxException a){
-                IJ.log(a.getMessage());
-            }
+            OpenCVLoader.loadLinux();
         }
     }
     private static void loadWindows(){
         OpenCVLoader.loadLib(WINDOWS_LIB, WINDOWS_FORMAT);
     }
-    private static void loadMacIntel(){
+    private static void loadMacIntel()  throws IOException{
+        String sourcePath = "/opencv/TestDir"; // La tua directory dove hai tutti i file .so per opencv
+        List<String> fileList = getResourceFiles(sourcePath);
+        Path tmpDir = Files.createTempDirectory("DS4HOpenCV_MAC"); // Il nome nella cartella TMP, ricordati che deve avere
+        //DS4H nel nome cosi dopo lo elimino in automatico
+
+        // Copy the files from the Resources directory to the TMP directory
+        for (String file : fileList) {
+            try (InputStream inputStream = OpenCVLoader.class.getResourceAsStream(sourcePath + "/" + file)) {
+                Files.copy(inputStream, tmpDir.resolve(file), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+
         OpenCVLoader.loadLib(MAC_LIB_INTEL, MAC_FORMAT);
     }
     private static void loadMacArm(){
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
     }
-    private static void loadLinux() throws URISyntaxException {
-
-        String sourcePath = "/opencv/TestDir";
-        try {
-            InputStream resource = OpenCVLoader.class.getResourceAsStream(sourcePath);
-            File destDir = new File(TEMPORARY_PATH+"/TempDirUEILA");
-            File myDir = new File("/TestDirTMP");
-            FileUtils.copyInputStreamToFile(resource, destDir);
-            IJ.log(myDir.getPath());
-            //FileUtils.copyDirectoryToDirectory(myDir, destDir);
-            System.out.println("Successfully copied folder " + sourcePath + " to " + "FINE");
-        } catch (IOException e) {
-            System.err.println("Failed to copy folder " + sourcePath + " to " + "FINE" + " due to " + e.getMessage());
-        }
-
+    private static void loadLinux() {
         OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
+    }
+
+    private static List<String> getResourceFiles(String path) throws IOException {
+        List<String> fileList = new ArrayList<>();
+        try (InputStream inputStream = OpenCVLoader.class.getResourceAsStream(path)) {
+            assert inputStream != null;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    fileList.add(line);
+                }
+            }
+        }
+        return fileList;
     }
 
     private static void loadLib(final String name, final String extension) {
