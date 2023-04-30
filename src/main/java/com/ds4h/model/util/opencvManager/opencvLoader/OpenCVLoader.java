@@ -3,6 +3,7 @@ package com.ds4h.model.util.opencvManager.opencvLoader;
 import ij.IJ;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.opencv.core.Core;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -63,14 +64,70 @@ public class OpenCVLoader {
         OpenCVLoader.loadLib(WINDOWS_LIB, WINDOWS_FORMAT);
     }
     private static void loadMacIntel()  throws IOException{
-                /*
-        String sourcePath = "/opencv/TestDir"; // La tua directory
+
+        String sourcePath = "/opencv/mac_lib"; // La tua directory
         List<String> fileList = new ArrayList<>();
         //Purtroppo non riesco a capire perche non legga i file dal jar con il metodo qua sotto,
         //per ora siamo costretti a forzare tutti i file a mano.
-        fileList.add("test1.txt");
-        fileList.add("test2.txt");
-        fileList.add("test3.txt");//OpenCVLoader.getResourceFiles(sourcePath);
+        fileList.add("libopencv_alphamat.4.7.0.dylib");
+        fileList.add("libopencv_aruco.4.7.0.dylib");
+        fileList.add("libopencv_barcode.4.7.0.dylib");
+        fileList.add("libopencv_bgsegm.4.7.0.dylib");
+        fileList.add("libopencv_bioinspired.4.7.0.dylib");
+        fileList.add("libopencv_calib3d.4.7.0.dylib");
+        fileList.add("libopencv_ccalib.4.7.0.dylib");
+        fileList.add("libopencv_core.4.7.0.dylib");
+        fileList.add("libopencv_datasets.4.7.0.dylib");
+        fileList.add("libopencv_dnn.4.7.0.dylib");
+        fileList.add("libopencv_dnn_objdetect.4.7.0.dylib");
+        fileList.add("libopencv_dnn_superres.4.7.0.dylib");
+        fileList.add("libopencv_dpm.4.7.0.dylib");
+        fileList.add("libopencv_face.4.7.0.dylib");
+        fileList.add("libopencv_features2d.4.7.0.dylib");
+        fileList.add("libopencv_flann.4.7.0.dylib");
+        fileList.add("libopencv_freetype.4.7.0.dylib");
+        fileList.add("libopencv_fuzzy.4.7.0.dylib");
+        fileList.add("libopencv_gapi.4.7.0.dylib");
+        fileList.add("libopencv_hfs.4.7.0.dylib");
+        fileList.add("libopencv_highgui.4.7.0.dylib");
+        fileList.add("libopencv_img_hash.4.7.0.dylib");
+        fileList.add("libopencv_imgcodecs.4.7.0.dylib");
+        fileList.add("libopencv_imgproc.4.7.0.dylib");
+        fileList.add("libopencv_intensity_transform.4.7.0.dylib");
+        fileList.add("libopencv_java470.dylib");
+        fileList.add("libopencv_line_descriptor.4.7.0.dylib");
+        fileList.add("libopencv_mcc.4.7.0.dylib");
+        fileList.add("libopencv_ml.4.7.0.dylib");
+        fileList.add("libopencv_objdetect.4.7.0.dylib");
+        fileList.add("libopencv_optflow.4.7.0.dylib");
+        fileList.add("libopencv_phase_unwrapping.4.7.0.dylib");
+        fileList.add("libopencv_photo.4.7.0.dylib");
+        fileList.add("libopencv_plot.4.7.0.dylib");
+        fileList.add("libopencv_quality.4.7.0.dylib");
+        fileList.add("libopencv_rapid.4.7.0.dylib");
+        fileList.add("libopencv_reg.4.7.0.dylib");
+        fileList.add("libopencv_rgbd.4.7.0.dylib");
+        fileList.add("libopencv_saliency.4.7.0.dylib");
+        fileList.add("libopencv_sfm.4.7.0.dylib");
+        fileList.add("libopencv_shape.4.7.0.dylib");
+        fileList.add("libopencv_stereo.4.7.0.dylib");
+        fileList.add("libopencv_stitching.4.7.0.dylib");
+        fileList.add("libopencv_structured_light.4.7.0.dylib");
+        fileList.add("libopencv_superres.4.7.0.dylib");
+        fileList.add("libopencv_surface_matching.4.7.0.dylib");
+        fileList.add("libopencv_text.4.7.0.dylib");
+        fileList.add("libopencv_tracking.4.7.0.dylib");
+        fileList.add("libopencv_video.4.7.0.dylib");
+        fileList.add("libopencv_videoio.4.7.0.dylib");
+        fileList.add("libopencv_videostab.4.7.0.dylib");
+        fileList.add("libopencv_viz.4.7.0.dylib");
+        fileList.add("libopencv_wechat_qrcode.4.7.0.dylib");
+        fileList.add("libopencv_xfeatures2d.4.7.0.dylib");
+        fileList.add("libopencv_ximgproc.4.7.0.dylib");
+        fileList.add("libopencv_xobjdetect.4.7.0.dylib");
+        fileList.add("libopencv_xphoto.4.7.0.dylib");
+
+
         Path tmpDir = Files.createTempDirectory("DS4HOpenCV_MAC");
         IJ.log(fileList.toString());
         // Copy the files from the Resources directory to the TMP directory
@@ -80,8 +137,11 @@ public class OpenCVLoader {
                 Files.copy(inputStream, tmpDir.resolve(file), StandardCopyOption.REPLACE_EXISTING);
             }
         }
-         */
-        OpenCVLoader.loadLib(MAC_LIB_INTEL, MAC_FORMAT);
+        System.setProperty("java.library.path", tmpDir.toString());
+        System.out.println(tmpDir.toString());
+        System.out.println(System.getProperty("java.library.path"));
+        //System.loadLibrary("libopencv_java470.dylib");
+        System.load(tmpDir.toString() + "/libopencv_java470.dylib");
     }
     private static void loadMacArm(){
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
