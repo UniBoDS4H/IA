@@ -21,7 +21,6 @@ public class AlignmentOutputGUI extends StackWindow {
     private static ImagePlus image;
     private final BunwarpjGUI bunwarpjGUI;
     private final MenuBar menuBar;
-    private final Menu settings;
     private final Menu reuse;
     private final Menu save;
     private final Menu elastic;
@@ -34,7 +33,6 @@ public class AlignmentOutputGUI extends StackWindow {
     private final ImageController controller;
     private final PointController pointController;
     private final MainMenuGUI mainGUI;
-    private final LUT[] originalLuts;
 
     public AlignmentOutputGUI(final ImageController controller, final BunwarpjGUI settingsBunwarpj, final PointController pointController, final MainMenuGUI mainMenuGUI) {
         super(image = controller.getAlignedImagesAsStack(), new StandardCanvas(image));
@@ -42,7 +40,6 @@ public class AlignmentOutputGUI extends StackWindow {
         this.removeAll();
         this.controller = controller;
         this.setLayout(new BorderLayout());
-        this.originalLuts = this.getImagePlus().getLuts();
         this.mainGUI = mainMenuGUI;
         this.pointController = pointController;
         this.bunwarpjGUI = settingsBunwarpj;
@@ -50,7 +47,6 @@ public class AlignmentOutputGUI extends StackWindow {
         this.panel = new JPanel();
         this.panel.setLayout(new BorderLayout());
         this.menuBar = new MenuBar();
-        this.settings = new Menu("Settings");
         this.elastic = new Menu("Elastic");
         this.reuse = new Menu("Reuse");
         this.save = new Menu("Save");
@@ -76,7 +72,6 @@ public class AlignmentOutputGUI extends StackWindow {
     }
 
     public void addComponents() {
-        this.menuBar.add(this.settings);
         this.menuBar.add(this.save);
         this.menuBar.add(this.reuse);
         this.menuBar.add(this.elastic);
@@ -178,9 +173,5 @@ public class AlignmentOutputGUI extends StackWindow {
 
     public void releaseImages(){
         this.controller.releaseImages();
-    }
-
-    public LUT[] getOriginalLuts() {
-        return this.originalLuts;
     }
 }
