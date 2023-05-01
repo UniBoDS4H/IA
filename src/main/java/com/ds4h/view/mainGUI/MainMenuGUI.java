@@ -31,6 +31,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -210,6 +211,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      */
     @Override
     public void addListeners() {
+
         // Add event listener to the menu items
         this.about.addMouseListener(new MouseInputListener() {
             @Override
@@ -247,6 +249,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
             }
         });
+
 
         this.clearItem.addActionListener(event -> {
             if(this.pointControler.getPointManager().getPointImages().size() > 0) {
@@ -372,6 +375,18 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(final WindowEvent e) {
+                pointControler.clearProject();
+                DirectoryManager.deleteTMPDirectories();
+                OpencvController.deleteLibrary();
+                dispose();
+            }
+        });
+
+
+        IJ.getInstance().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(final WindowEvent e) {
+                super.windowClosed(e);
                 pointControler.clearProject();
                 DirectoryManager.deleteTMPDirectories();
                 OpencvController.deleteLibrary();

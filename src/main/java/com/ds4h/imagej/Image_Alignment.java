@@ -12,6 +12,8 @@ import ij.IJ;
 import ij.plugin.PlugIn;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 /**
  * DS4H Team:
