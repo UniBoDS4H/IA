@@ -100,22 +100,33 @@ public class TargetImagePreprocessing {
                 throw new RuntimeException("Something went wrong in the alignment, the Core.hconcat can not work\n" +
                         "with different data types. Please check your images.");
             }
-            final Point pts_min = new Point(pts.toList().stream().map(p -> p.x).min(Double::compareTo).get(), pts.toList().stream().map(p -> p.y).min(Double::compareTo).get());
-            final Point pts_max = new Point(pts.toList().stream().map(p -> p.x).max(Double::compareTo).get(), pts.toList().stream().map(p -> p.y).max(Double::compareTo).get());
-            final int xmin = (int) Math.floor(pts_min.x - 0.5);
-            final int ymin = (int) Math.floor(pts_min.y - 0.5);
-            final int xmax = (int) Math.ceil(pts_max.x + 0.5);
-            final int ymax = (int) Math.ceil(pts_max.y + 0.5);
-            final double[] t = {-xmin, -ymin};
-            final Size s = new Size(xmax - xmin, ymax - ymin);
-            IJ.log("[PREPROCESS] Before copy: " + s);
-            IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
-            final Mat alignedImage = Mat.zeros(s, target.type());
-            IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
-            target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
-            IJ.log("[PREPROCESS] After copy: " + alignedImage);
-            System.gc();
-            return new Pair<>(alignedImage, new Point(t[0], t[1]));
+            final Optional<Double> minX = pts.toList().stream().map(p -> p.x).min(Double::compareTo);
+            final Optional<Double> minY = pts.toList().stream().map(p -> p.y).min(Double::compareTo);
+            final Optional<Double> maxX = pts.toList().stream().map(p -> p.x).max(Double::compareTo);
+            final Optional<Double> maxY = pts.toList().stream().map(p -> p.y).max(Double::compareTo);
+
+            if(minX.isPresent() && minY.isPresent() && maxX.isPresent() && maxY.isPresent()) {
+                final Point pts_min = new Point(minX.get(), minY.get());
+                final Point pts_max = new Point(maxX.get(), maxY.get());
+                final int xmin = (int) Math.floor(pts_min.x - 0.5);
+                final int ymin = (int) Math.floor(pts_min.y - 0.5);
+                final int xmax = (int) Math.ceil(pts_max.x + 0.5);
+                final int ymax = (int) Math.ceil(pts_max.y + 0.5);
+                final double[] t = {-xmin, -ymin};
+                final Size s = new Size(xmax - xmin, ymax - ymin);
+                IJ.log("[PREPROCESS] Before copy: " + s);
+                IJ.log("[PREPROCESS] Image Type: " + imagePoints.type());
+                final Mat alignedImage = Mat.zeros(s, target.type());
+                IJ.log("[PREPROCESS] Before copy:  " + target.getMatSize());
+                target.getMatImage().copyTo(alignedImage.submat(new Rect((int) t[0], (int) t[1], w1, h1)));
+                IJ.log("[PREPROCESS] After copy: " + alignedImage);
+                System.gc();
+                return new Pair<>(alignedImage, new Point(t[0], t[1]));
+            }else{
+                throw new RuntimeException("Something went wrong during inside the preprocess. " +
+                        "One of the images does not have points, please increase the \"Threshold Factor\" " +
+                        "and decrease the \"Scaling Factor\".");
+            }
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
