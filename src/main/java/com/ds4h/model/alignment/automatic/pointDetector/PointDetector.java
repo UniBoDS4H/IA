@@ -96,7 +96,7 @@ public abstract class PointDetector {
         for(int i = 1; i < levels; i++) {
             Imgproc.resize(matrix, matrix,
                     new Size(lastSize.width / 2, lastSize.height / 2),
-                    Imgproc.INTER_LINEAR);
+                    Imgproc.INTER_AREA);
             lastSize = matrix.size();
         }
         IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");

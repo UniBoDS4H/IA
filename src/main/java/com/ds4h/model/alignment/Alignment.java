@@ -128,7 +128,7 @@ public class Alignment implements Runnable{
     /**
      * Affine and Rigid accept more points than their limits
      * Perspective accept the exact number of points.
-     * @throws RuntimeException a
+     * @throws RuntimeException if something went wrong inside the Preprocess or during the Point detection.
      */
     private void auto() throws RuntimeException{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
@@ -165,6 +165,8 @@ public class Alignment implements Runnable{
         this.imagesToAlign.clear();
         if(images.size() == 0){
             this.status = total;
+            throw new RuntimeException("No points detected, please Increase the \"Threshold Factor\", " +
+                    "decrease the \"Scaling Factor\".");
         }else {
             //if we find at least 3 points in every image we can use ransac otherwise first available
             if(ransac){
@@ -231,7 +233,7 @@ public class Alignment implements Runnable{
                 this.thread = new Thread(this);
                 this.clearList();
                 IJ.log(ex.getMessage());
-                throw new RuntimeException("Error: The alignment requires more memory than is available.");
+                throw ex;
             }
         }catch (OutOfMemoryError e){
             this.thread = new Thread(this);

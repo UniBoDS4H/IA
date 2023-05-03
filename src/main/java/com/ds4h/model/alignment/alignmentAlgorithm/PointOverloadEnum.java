@@ -8,7 +8,7 @@ public enum PointOverloadEnum {
 
     /**
      *
-     * @param name a
+     * @param name point overload technique.
      */
     PointOverloadEnum(final String name) {
         this.name = name;
@@ -16,7 +16,7 @@ public enum PointOverloadEnum {
 
     /**
      *
-     * @return a
+     * @return the name of the point overload.
      */
     @Override
     public String toString() {

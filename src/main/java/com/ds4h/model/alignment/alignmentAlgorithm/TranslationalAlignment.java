@@ -9,10 +9,11 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
- * This class is used for the manual alignment using the Translative technique
+ * This class is used for the manual alignment using the Translation technique.
  */
 public class TranslationalAlignment implements AlignmentAlgorithm {
 
@@ -23,7 +24,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     private PointOverloadEnum overload;
 
     /**
-     *
+     * Constructor for the TranslationalAlignment object. All the flags are set to false except for the
+     * "translate" flag. The point overload is initialize with "FIRST_AVAILABLE"
      */
     public TranslationalAlignment(){
         this.setTransformation(true, false,false);
@@ -31,41 +33,43 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
     /**
-     *
-     * @return a
+     * Returns "True" if translate is selected, otherwise "False".
+     * @return if the translation flag is selected.
      */
     public boolean getTranslate(){
         return this.translate;
     }
 
     /**
-     *
-     * @return a
+     * Returns "True" if rotate is selected, otherwise "False".
+     * @return if the rotate flag is selected.
      */
     public boolean getRotate(){
         return this.rotate;
     }
 
     /**
-     *
-     * @return a
+     * Returns "True" if scale is selected otherwise "False".
+     * @return if the scale flag is selected.
      */
     public boolean getScale(){
         return this.scale;
     }
 
     /**
-     *
-     * @param overload a
+     * Set the point overload to "overload".
+     * @param overload the input value selected from the user.
      */
     @Override
-    public void setPointOverload(PointOverloadEnum overload){
-        this.overload = overload;
+    public void setPointOverload(final PointOverloadEnum overload){
+        if(Objects.nonNull(overload)) {
+            this.overload = overload;
+        }
     }
 
     /**
-     *
-     * @return b
+     * Returns the selected point overload.
+     * @return the selected point overload.
      */
     @Override
     public PointOverloadEnum getPointOverload() {
@@ -73,12 +77,13 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
     /**
-     *
-     * @param targetImage a
-     * @param imageToShift b
-     * @param ip c
-     * @return d
-     * @throws IllegalArgumentException e
+     * Aligns an input image to a target image, based on a set of corresponding points.
+     * The alignment can include translation, rotation, and scaling transformations, depending on the settings (Translational Alignment only).
+     * @param targetImage the target image with the desired alignment
+     * @param imageToShift the input image to be aligned
+     * @param ip the ImageProcessor of the input image
+     * @return an AlignedImage object containing the aligned image and transformation matrix
+     * @throws IllegalArgumentException if the number of points in the input images is incorrect or if the number of corners is different between images
      */
     @Override
     public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
@@ -115,11 +120,12 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         }
     }
 
+
     /**
-     *
-     * @param translate a
-     * @param rotate b
-     * @param scale c
+     * Sets the types of transformation to be applied during alignment.
+     * @param translate a boolean value indicating whether translation transformation is enabled or not
+     * @param rotate a boolean value indicating whether rotation transformation is enabled or not
+     * @param scale a boolean value indicating whether scaling transformation is enabled or not
      */
     public void setTransformation(boolean translate,boolean rotate, boolean scale){
         this.translate = translate;
@@ -128,10 +134,13 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
     /**
+     * Computes and returns the transformation matrix for the given source and destination points.
+     * The type of transformation performed depends on the point overload strategy chosen.
      *
-     * @param srcPoints a
-     * @param dstPoints b
-     * @return c
+     * @param srcPoints  the source points to transform
+     * @param dstPoints  the corresponding destination points
+     * @return           the transformation matrix computed for the given points
+     * @throws IllegalArgumentException  if an invalid point overload strategy is selected or if the number of points is incorrect
      */
     @Override
     public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
@@ -173,11 +182,6 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         throw new IllegalArgumentException("bad point overload selected");
     }
 
-    /**
-     *
-     * @param H a
-     * @return b
-     */
     private Mat getMatWithTransformation(Mat H) {
         IJ.log("[TRANSLATIONAL] Matrix: " + H);
         double a = H.get(0,0)[0];
@@ -233,10 +237,13 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
     /**
+     * Transforms the source matrix using the homography matrix H and stores the result in the destination matrix.
+     * If the number of rows in H is less than or equal to 2, the transformation is performed using affine transformation.
+     * Otherwise, the transformation is performed using perspective transformation.
      *
-     * @param source a
-     * @param destination b
-     * @param H c
+     * @param source       the source matrix to transform
+     * @param destination  the destination matrix to store the result
+     * @param H            the homography matrix to use for the transformation
      */
     @Override
     public void transform(final Mat source, final Mat destination, final Mat H){
@@ -248,8 +255,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
     /**
-     *
-     * @return a
+     * Returns the lower bound of the algorithm.
+     * @return the lower bound, this depends on scale, rotation and selected algorithm. .
      */
     @Override
     public int getLowerBound() {
