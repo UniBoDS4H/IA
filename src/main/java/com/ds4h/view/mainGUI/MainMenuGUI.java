@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 
@@ -380,17 +381,18 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             }
         });
 
-
-        IJ.getInstance().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(final WindowEvent e) {
-                super.windowClosed(e);
-                pointControler.clearProject();
-                DirectoryManager.deleteTMPDirectories();
-                OpencvController.deleteLibrary();
-                dispose();
-            }
-        });
+        if(Objects.nonNull(IJ.getInstance())) {
+            IJ.getInstance().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    super.windowClosed(e);
+                    pointControler.clearProject();
+                    DirectoryManager.deleteTMPDirectories();
+                    OpencvController.deleteLibrary();
+                    dispose();
+                }
+            });
+        }
     }
 
     private void pollingManualAlignment(){
