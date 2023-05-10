@@ -117,7 +117,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.project = new JMenu("Project");
         this.about = new JMenu("About");
         this.settings = new JMenu("Settings");
-        this.settingsItem = new JMenuItem("BunwarpJ");
+        this.settingsItem = new JMenuItem("bUnwarpJ");
         this.loadImages = new JMenuItem("Load Images");
         this.exportItem = new JMenuItem("Export");
         this.importItem = new JMenuItem("Import");
