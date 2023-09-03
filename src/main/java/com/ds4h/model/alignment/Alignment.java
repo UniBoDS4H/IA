@@ -7,6 +7,8 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
+import org.opencv.imgproc.Imgproc;
+
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -131,6 +133,7 @@ public class Alignment implements Runnable{
      * @throws RuntimeException if something went wrong inside the Preprocess or during the Point detection.
      */
     private void auto() throws RuntimeException{
+        final List<ImagePoints> sameImages = new ArrayList<>(5);
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
@@ -159,11 +162,13 @@ public class Alignment implements Runnable{
                 images.put(image, target);
                 this.total += 1;//this is for the warp;
 
+            }else if(target.equals(image)){
+                sameImages.add(image);
             }
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
-        if(images.size() == 0){
+        if(images.isEmpty() && sameImages.isEmpty()){
             this.status = total;
             throw new RuntimeException("No points detected, please Increase the \"Threshold Factor\", " +
                     "decrease the \"Scaling Factor\".");
@@ -175,9 +180,17 @@ public class Alignment implements Runnable{
                 this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
             }
             IJ.log("[AUTOMATIC] Starting preprocess");
-            this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
-                    images,
-                    this.algorithm), this.targetImage.getName()));
+            if(!sameImages.isEmpty()){
+                final AlignedImage target = new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
+                        images,
+                        this.algorithm), this.targetImage.getName());
+                this.alignedImages.addAll(Collections.nCopies(sameImages.size(), target));
+                this.alignedImages.add(target);
+            }else{
+                this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
+                        images,
+                        this.algorithm), this.targetImage.getName()));
+            }
             this.status+=1; //pre process
             IJ.log("[AUTOMATIC] End preprocess");
             IJ.log("[AUTOMATIC] Start aligning the images.");
