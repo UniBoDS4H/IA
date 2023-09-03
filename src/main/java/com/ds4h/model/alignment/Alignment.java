@@ -7,6 +7,8 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
@@ -162,8 +164,12 @@ public class Alignment implements Runnable{
                 images.put(image, target);
                 this.total += 1;//this is for the warp;
 
-            }else if(target.equals(image)){
-                sameImages.add(image);
+            }else{
+                final Mat diff = new Mat();
+                Core.compare(target.getMatImage(), image.getMatImage(), diff,Core.CMP_EQ);
+                if(diff.empty()) {
+                    sameImages.add(image);
+                }
             }
         }
         this.pointDetector.clearCache();
