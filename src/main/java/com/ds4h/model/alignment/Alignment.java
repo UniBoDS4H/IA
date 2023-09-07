@@ -165,8 +165,8 @@ public class Alignment implements Runnable{
                 this.total += 1;//this is for the warp;
 
             }else{
-                final Mat diff = new Mat();
                 if(target.getMatSize() == image.getMatSize()) {
+                    final Mat diff = new Mat();
                     Core.bitwise_xor(targetImage.getGrayScaleMat(), image.getGrayScaleMat(), diff);
                     // if all pixels are 0, it means the two images are the same.
                     if (Core.countNonZero(diff) == 0) {
