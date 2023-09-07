@@ -179,14 +179,15 @@ public class Alignment implements Runnable{
             throw new RuntimeException("No points detected, please Increase the \"Threshold Factor\", " +
                     "decrease the \"Scaling Factor\".");
         }else {
-            //if we find at least 3 points in every image we can use ransac otherwise first available
-            if(ransac){
-                this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
-            }else{
-                this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
-            }
+
             IJ.log("[AUTOMATIC] Starting preprocess");
             if(!sameImages.isEmpty() && !images.isEmpty()){
+                //if we find at least 3 points in every image we can use ransac otherwise first available
+                if(ransac){
+                    this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
+                }else{
+                    this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+                }
                 final AlignedImage target = new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                         images,
                         this.algorithm), this.targetImage.getName());
