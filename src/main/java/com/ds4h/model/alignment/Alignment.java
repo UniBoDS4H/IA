@@ -166,9 +166,12 @@ public class Alignment implements Runnable{
 
             }else{
                 final Mat diff = new Mat();
-                Core.compare(target.getMatImage(), image.getMatImage(), diff,Core.CMP_EQ);
-                if(diff.empty()) {
-                    sameImages.add(image);
+                if(target.getMatSize() == image.getMatSize()) {
+                    Core.bitwise_xor(targetImage.getGrayScaleMat(), image.getGrayScaleMat(), diff);
+                    // if all pixels are 0, it means the two images are the same.
+                    if (Core.countNonZero(diff) == 0) {
+                        sameImages.add(image);
+                    }
                 }
             }
         }
