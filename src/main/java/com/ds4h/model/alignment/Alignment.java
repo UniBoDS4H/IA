@@ -186,16 +186,17 @@ public class Alignment implements Runnable{
                 this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
             }
             IJ.log("[AUTOMATIC] Starting preprocess");
-            if(!sameImages.isEmpty()){
+            if(!sameImages.isEmpty() && !images.isEmpty()){
                 final AlignedImage target = new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                         images,
                         this.algorithm), this.targetImage.getName());
                 this.alignedImages.addAll(Collections.nCopies(sameImages.size(), target));
                 this.alignedImages.add(target);
             }else{
-                this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
-                        images,
-                        this.algorithm), this.targetImage.getName()));
+                final AlignedImage target = new AlignedImage(this.targetImage.getProcessor(), this.targetImage.getName());
+                this.alignedImages.add(target);
+                this.alignedImages.addAll(Collections.nCopies(sameImages.size(), target));
+
             }
             this.status+=1; //pre process
             IJ.log("[AUTOMATIC] End preprocess");
