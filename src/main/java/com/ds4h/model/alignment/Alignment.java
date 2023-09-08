@@ -139,7 +139,8 @@ public class Alignment implements Runnable{
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
-        boolean ransac = true;for(final ImagePoints image : this.imagesToAlign){
+        boolean ransac = true;
+        for(final ImagePoints image : this.imagesToAlign){
             final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
                     this.targetImage.toImprove(),
                     this.targetImage.getProcessor());
@@ -165,9 +166,9 @@ public class Alignment implements Runnable{
                 this.total += 1;//this is for the warp;
 
             }else{
-                if(target.getMatSize() == image.getMatSize()) {
-                    final Mat diff = new Mat();
-                    Core.bitwise_xor(targetImage.getGrayScaleMat(), image.getGrayScaleMat(), diff);
+                if(target.getMatSize().equals(image.getMatSize())) {
+                    final Mat diff = new Mat(image.getMatSize(),image.getType());
+                    Core.bitwise_xor(target.getGrayScaleMat(), image.getGrayScaleMat(), diff);
                     // if all pixels are 0, it means the two images are the same.
                     if (Core.countNonZero(diff) == 0) {
                         sameImages.add(image);
