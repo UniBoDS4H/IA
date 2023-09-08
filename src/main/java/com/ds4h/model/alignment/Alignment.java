@@ -135,7 +135,7 @@ public class Alignment implements Runnable{
      * @throws RuntimeException if something went wrong inside the Preprocess or during the Point detection.
      */
     private void auto() throws RuntimeException{
-        final List<ImagePoints> sameImages = new ArrayList<>(5);
+        int sameImages = 0;
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
@@ -171,21 +171,21 @@ public class Alignment implements Runnable{
                     Core.bitwise_xor(target.getGrayScaleMat(), image.getGrayScaleMat(), diff);
                     // if all pixels are 0, it means the two images are the same.
                     if (Core.countNonZero(diff) == 0) {
-                        sameImages.add(image);
+                        sameImages++;
                     }
                 }
             }
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
-        if(images.isEmpty() && sameImages.isEmpty()){
+        if(images.isEmpty() && sameImages == 0){
             this.status = total;
             throw new RuntimeException("No points detected, please Increase the \"Threshold Factor\", " +
                     "decrease the \"Scaling Factor\".");
         }else {
 
             IJ.log("[AUTOMATIC] Starting preprocess");
-            if(!sameImages.isEmpty() && !images.isEmpty()){
+            if(sameImages != 0 && !images.isEmpty()){
                 //if we find at least 3 points in every image we can use ransac otherwise first available
                 if(ransac){
                     this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
@@ -195,12 +195,12 @@ public class Alignment implements Runnable{
                 final AlignedImage target = new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
                         images,
                         this.algorithm), this.targetImage.getName());
-                this.alignedImages.addAll(Collections.nCopies(sameImages.size(), target));
+                this.alignedImages.addAll(Collections.nCopies(sameImages, target));
                 this.alignedImages.add(target);
             }else{
                 final AlignedImage target = new AlignedImage(this.targetImage.getProcessor(), this.targetImage.getName());
                 this.alignedImages.add(target);
-                this.alignedImages.addAll(Collections.nCopies(sameImages.size(), target));
+                this.alignedImages.addAll(Collections.nCopies(sameImages, target));
 
             }
             this.status+=1; //pre process
