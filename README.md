@@ -48,7 +48,7 @@ We thanks all the University Students that helped in this project. In particular
 
       email : fabio.vincenzi2001@gmail.com, 
 
-      Linkedin : 
+      Linkedin : https://www.linkedin.com/in/fabio-vincenzi-b53a5a1a1/
    * Matteo Iorio, Bachelor's Degree Student in Engineering and Computer Sciences, Alma Mater Studiorum University of Bologna, Italy
 
       email : matteo.iorio01@gmail.com, 
