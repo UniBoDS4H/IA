@@ -14,10 +14,8 @@ import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
 
 import java.awt.image.ColorModel;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is used in order to call all the Model methods of the SURF Alignment inside the view, without
@@ -190,5 +188,11 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
                 return this.affine;
         }
         throw new IllegalArgumentException("Algorithm not present");
+    }
+    public Detectors[] getDetectors(){
+        if(System.getProperty("os.name").toLowerCase().contains("mac")){
+            return Arrays.stream(Detectors.values()).filter(d -> d != Detectors.SIFT).collect(Collectors.toList()).toArray(new Detectors[0]);
+        }
+        return Detectors.values();
     }
 }

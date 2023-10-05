@@ -28,7 +28,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
         this.container = container;
         GridBagLayout layout = new GridBagLayout();
         this.getContentPane().setLayout(layout);
-        this.detectors = new JComboBox<>(Detectors.values());
+        this.detectors = new JComboBox<>(this.controller.getDetectors());
         this.selectedDetector = Detectors.SURF;
         this.slider = new JSlider(0, 20);
         this.sliderFactor = new JSlider(Detectors.LOWER_BOUND, Detectors.UPPER_BOUND);
