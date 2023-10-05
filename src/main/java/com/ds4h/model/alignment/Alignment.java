@@ -7,6 +7,10 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -128,13 +132,15 @@ public class Alignment implements Runnable{
     /**
      * Affine and Rigid accept more points than their limits
      * Perspective accept the exact number of points.
-     * @throws RuntimeException a
+     * @throws RuntimeException if something went wrong inside the Preprocess or during the Point detection.
      */
     private void auto() throws RuntimeException{
+        int sameImages = 0;
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
         this.targetImage.clearPoints();
-        boolean ransac = true;for(final ImagePoints image : this.imagesToAlign){
+        boolean ransac = true;
+        for(final ImagePoints image : this.imagesToAlign){
             final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
                     this.targetImage.toImprove(),
                     this.targetImage.getProcessor());
@@ -159,23 +165,44 @@ public class Alignment implements Runnable{
                 images.put(image, target);
                 this.total += 1;//this is for the warp;
 
+            }else{
+                if(target.getMatSize().equals(image.getMatSize())) {
+                    final Mat diff = new Mat(image.getMatSize(),image.getType());
+                    Core.bitwise_xor(target.getGrayScaleMat(), image.getGrayScaleMat(), diff);
+                    // if all pixels are 0, it means the two images are the same.
+                    if (Core.countNonZero(diff) == 0) {
+                        sameImages++;
+                    }
+                }
             }
         }
         this.pointDetector.clearCache();
         this.imagesToAlign.clear();
-        if(images.size() == 0){
+        if(images.isEmpty() && sameImages == 0){
             this.status = total;
+            throw new RuntimeException("No points detected, please Increase the \"Threshold Factor\", " +
+                    "decrease the \"Scaling Factor\".");
         }else {
-            //if we find at least 3 points in every image we can use ransac otherwise first available
-            if(ransac){
-                this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
-            }else{
-                this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
-            }
+
             IJ.log("[AUTOMATIC] Starting preprocess");
-            this.alignedImages.add(new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
-                    images,
-                    this.algorithm), this.targetImage.getName()));
+            if(sameImages != 0 && !images.isEmpty()){
+                //if we find at least 3 points in every image we can use ransac otherwise first available
+                if(ransac){
+                    this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
+                }else{
+                    this.algorithm.setPointOverload(PointOverloadEnum.FIRST_AVAILABLE);
+                }
+                final AlignedImage target = new AlignedImage(TargetImagePreprocessing.automaticProcess(this.targetImage.getProcessor(),
+                        images,
+                        this.algorithm), this.targetImage.getName());
+                this.alignedImages.addAll(Collections.nCopies(sameImages, target));
+                this.alignedImages.add(target);
+            }else{
+                final AlignedImage target = new AlignedImage(this.targetImage.getProcessor(), this.targetImage.getName());
+                this.alignedImages.add(target);
+                this.alignedImages.addAll(Collections.nCopies(sameImages, target));
+
+            }
             this.status+=1; //pre process
             IJ.log("[AUTOMATIC] End preprocess");
             IJ.log("[AUTOMATIC] Start aligning the images.");
@@ -231,7 +258,7 @@ public class Alignment implements Runnable{
                 this.thread = new Thread(this);
                 this.clearList();
                 IJ.log(ex.getMessage());
-                throw new RuntimeException("Error: The alignment requires more memory than is available.");
+                throw ex;
             }
         }catch (OutOfMemoryError e){
             this.thread = new Thread(this);

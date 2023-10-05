@@ -10,7 +10,6 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
 import ij.plugin.PlugIn;
-
 import java.awt.*;
 
 /**
@@ -19,12 +18,12 @@ import java.awt.*;
  * @author Vincenzi Fabio, fabio.vincenzi2001@gmail.com
  */
 public class Image_Alignment implements PlugIn {
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		new Image_Alignment().run(null);
 	}
 
 	@Override
-	public void run(String s) {
+	public void run(final String s) {
 		try {
 			OpencvController.loadLibrary();
 			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());

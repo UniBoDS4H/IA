@@ -29,12 +29,12 @@ public enum Detectors {
     public static final int UPPER_BOUND = PointDetector.UPPER_BOUND;
 
     /**
-     * @see com.ds4h.model.alignment.automatic.pointDetector.PointDetector
-     * @param name Name of the detector.
+     * @param name          Name of the detector.
      * @param pointDetector The class detector.
-     * @param factor The threshold factor, it is always initialized with 0.
+     * @param factor        The threshold factor, it is always initialized with 0.
+     * @see com.ds4h.model.alignment.automatic.pointDetector.PointDetector
      */
-    Detectors(final String name, final PointDetector pointDetector, final double factor){
+    Detectors(final String name, final PointDetector pointDetector, final double factor) {
         this.name = name;
         this.pointDetector = pointDetector;
         this.thresholdFactor = factor;
@@ -43,57 +43,54 @@ public enum Detectors {
 
     /**
      * Set the threshold factor for the point detector.
+     *
      * @param thresholdFactor how many "dirty" points the detector should take.
      */
-    public void setThresholdFactor(final double thresholdFactor){
-        if(thresholdFactor >= 0){
-            this.thresholdFactor = (thresholdFactor /10);
+    public void setThresholdFactor(final double thresholdFactor) {
+        if (thresholdFactor >= 0) {
+            this.thresholdFactor = (thresholdFactor / 10);
         }
     }
 
     /**
      * Set the scaling factor for the point detector. The scaling is exponential so if in the input we choose 4 the images
      * will be scaled 16 times.
+     *
      * @param scaling how many times the images should be scaled.
      */
-    public void setScaling(final int scaling){
-        if(scaling >= Detectors.LOWER_BOUND && scaling <= Detectors.UPPER_BOUND){
+    public void setScaling(final int scaling) {
+        if (scaling >= Detectors.LOWER_BOUND && scaling <= Detectors.UPPER_BOUND) {
             this.scaling = scaling;
             IJ.log("[DETECTORS] Set scaling: " + scaling);
         }
     }
 
     /**
-     *
      * @return The Threshold Factor
      */
-    public double getThresholdFactor(){
+    public double getThresholdFactor() {
         return this.thresholdFactor;
     }
 
     /**
-     *
      * @return The Scaling Factor
      */
-    public int getScaling(){
+    public int getScaling() {
         return this.scaling;
     }
 
     /**
-     *
      * @return The Point Detector
      */
-    public PointDetector pointDetector(){
+    public PointDetector pointDetector() {
         return this.pointDetector;
     }
 
     /**
-     *
      * @return The name of the point detector.
      */
     @Override
-    public String toString(){
+    public String toString() {
         return this.name;
     }
-
 }

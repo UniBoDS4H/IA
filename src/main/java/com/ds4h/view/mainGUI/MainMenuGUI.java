@@ -24,7 +24,6 @@ import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
-
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -35,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 
@@ -117,7 +117,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.project = new JMenu("Project");
         this.about = new JMenu("About");
         this.settings = new JMenu("Settings");
-        this.settingsItem = new JMenuItem("BunwarpJ");
+        this.settingsItem = new JMenuItem("bUnwarpJ");
         this.loadImages = new JMenuItem("Load Images");
         this.exportItem = new JMenuItem("Export");
         this.importItem = new JMenuItem("Import");
@@ -210,6 +210,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
      */
     @Override
     public void addListeners() {
+
         // Add event listener to the menu items
         this.about.addMouseListener(new MouseInputListener() {
             @Override
@@ -247,6 +248,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
             }
         });
+
 
         this.clearItem.addActionListener(event -> {
             if(this.pointControler.getPointManager().getPointImages().size() > 0) {
@@ -378,6 +380,19 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 dispose();
             }
         });
+
+        if(Objects.nonNull(IJ.getInstance())) {
+            IJ.getInstance().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    super.windowClosed(e);
+                    pointControler.clearProject();
+                    DirectoryManager.deleteTMPDirectories();
+                    OpencvController.deleteLibrary();
+                    dispose();
+                }
+            });
+        }
     }
 
     private void pollingManualAlignment(){

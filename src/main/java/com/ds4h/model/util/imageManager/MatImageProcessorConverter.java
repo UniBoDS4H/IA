@@ -69,7 +69,7 @@ public class MatImageProcessorConverter {
         return ip;
     }
 
-    private static FloatProcessor makeFloatProcessor(Mat matrix, final int width, final int height){
+    private static FloatProcessor makeFloatProcessor(Mat matrix, final int width, final int height, final LUT lut){
         IJ.log("[MAKE FLOATPROCESSOR] Creating FloatProcessor");
         //final float[] pixels = new float[width*height];
         final FloatProcessor floatProcessor = new FloatProcessor(width, height);
@@ -80,6 +80,9 @@ public class MatImageProcessorConverter {
         matrix.get(0,0, (float[])floatProcessor.getPixels());
         matrix.release();
         matrix = null;
+        if(Objects.nonNull(lut)){
+            floatProcessor.setLut(lut);
+        }
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
         return floatProcessor;
     }
@@ -108,7 +111,7 @@ public class MatImageProcessorConverter {
                                 ip.getMin(),
                                 ip.getMax());
             }else if(ip instanceof FloatProcessor){
-                return MatImageProcessorConverter.makeFloatProcessor(matrix, matrix.cols(), matrix.rows());
+                return MatImageProcessorConverter.makeFloatProcessor(matrix, matrix.cols(), matrix.rows(), ip.getLut());
             }else if(ip instanceof ByteProcessor){
                 return MatImageProcessorConverter.makeByteProcessor(matrix, matrix.cols(), matrix.rows());
             }else{
