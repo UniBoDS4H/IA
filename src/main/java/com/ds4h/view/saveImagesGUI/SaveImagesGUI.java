@@ -1,11 +1,14 @@
 package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.imageController.ImageController;
+import com.ds4h.controller.pointController.PointController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.loadingGUI.LoadingType;
 import com.ds4h.view.standardGUI.StandardGUI;
+import com.ds4h.view.util.SaveAsEnum;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -14,14 +17,19 @@ import java.io.File;
     private final JButton saveButton;
     private final SaveImagesPanel imagesPane;
     private final JFileChooser fileChooser;
+    private final PointController pointController;
+    private SaveAsEnum saveAsType;
+    private boolean isOrderAscending;
+    private boolean isTargetImageForeground;
 
-        public SaveImagesGUI(final ImageController controller){
+    public SaveImagesGUI(final ImageController controller, final PointController pointController){
         this.setTitle("Save");
         this.setSize();
             this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());
         this.saveButton = new JButton("Save");
         this.imagesPane = new SaveImagesPanel(controller);
+        this.pointController = pointController;
         this.addComponents();
         this.addListeners();
     }
@@ -43,7 +51,12 @@ import java.io.File;
                     final File selectedDirectory = this.fileChooser.getSelectedFile();
                     loadingGUI.showDialog();
                     try {
-                        SaveController.saveImages(this.imagesPane.getImagesToSave(), selectedDirectory.getPath());
+                        SaveController.saveImages(this.imagesPane.getImagesToSave(), selectedDirectory.getPath(),
+                                this.saveAsType, this.isOrderAscending, this.isTargetImageForeground);
+                        JOptionPane.showMessageDialog(this,
+                                "Aligned image saved in " + selectedDirectory.getPath(),
+                                "Successfully saved",
+                                JOptionPane.INFORMATION_MESSAGE);
                         this.dispose();
                         loadingGUI.close();
                     } catch (Exception e) {
@@ -75,5 +88,17 @@ import java.io.File;
         final int min_height =(screenSize.height/2);
         setSize(min_width, min_height);
         setMinimumSize(new Dimension(min_width,min_height));
+    }
+
+    public void setSaveAsType(final SaveAsEnum saveAsType) {
+            this.saveAsType = saveAsType;
+    }
+
+    public void setOrderAscending(final boolean isOrderAscending) {
+        this.isOrderAscending = isOrderAscending;
+    }
+
+    public void setTargetImageForeground(final boolean isTargetImageForeground) {
+        this.isTargetImageForeground = isTargetImageForeground;
     }
 }

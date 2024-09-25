@@ -12,7 +12,7 @@ public class CheckImage {
     private static final double UPPER_LIMIT = 4; // Max dimension of an image in Java is 4GB
     private static final String TIF = "tif", TIFF = "tiff";
 
-    private static final String EXTENSIONS ="jpg, jpeg, png, tiff, tif, webp, heif," +
+    private static final String EXTENSIONS ="jpg, jpeg, png, tiff, tif, webp, heif, bmp" +
             "raw, arw, cr2, nef, orf, " +
             "rw2, dng, psd, xbm, xpm, pict, jp2, jpx, pcd";
 

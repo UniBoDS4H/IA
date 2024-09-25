@@ -136,7 +136,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
             try {
                 //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
                 //composite.setLuts(luts);
-                return new ImagePlus("Aligned Stack", stack);
+                return new ImagePlus("AlignedStack", stack);
             }catch (Exception e){
                 throw new RuntimeException("Something went wrong with the creation of the stack.");
             }

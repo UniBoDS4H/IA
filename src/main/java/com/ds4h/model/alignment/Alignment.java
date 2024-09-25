@@ -7,6 +7,8 @@ import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
 import com.ds4h.model.imagePoints.ImagePoints;
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ImageConverter;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -113,6 +115,11 @@ public class Alignment implements Runnable{
                 .map(ImagePoints::numberOfPoints)
                 .anyMatch(n -> (n >= this.algorithm.getLowerBound()))) {
 
+            if (!this.isOnly8Bit())
+                new ImageConverter(this.targetImage).convertToRGB();
+            else
+                new ImageConverter(this.targetImage).convertToGray8();
+
             final ImagePoints target = TargetImagePreprocessing.manualProcess(this.targetImage,
                     this.imagesToAlign,
                     this.algorithm,
@@ -141,6 +148,11 @@ public class Alignment implements Runnable{
         this.targetImage.clearPoints();
         boolean ransac = true;
         for(final ImagePoints image : this.imagesToAlign){
+            if (!this.isOnly8Bit())
+                new ImageConverter(this.targetImage).convertToRGB();
+            else
+                new ImageConverter(this.targetImage).convertToGray8();
+
             final ImagePoints target = new ImagePoints(this.targetImage.getPath(),
                     this.targetImage.toImprove(),
                     this.targetImage.getProcessor());
@@ -185,7 +197,7 @@ public class Alignment implements Runnable{
         }else {
 
             IJ.log("[AUTOMATIC] Starting preprocess");
-            if(sameImages != 0 && !images.isEmpty()){
+            if(sameImages == 0 && !images.isEmpty()){
                 //if we find at least 3 points in every image we can use ransac otherwise first available
                 if(ransac){
                     this.algorithm.setPointOverload(PointOverloadEnum.RANSAC);
@@ -197,11 +209,10 @@ public class Alignment implements Runnable{
                         this.algorithm), this.targetImage.getName());
                 this.alignedImages.addAll(Collections.nCopies(sameImages, target));
                 this.alignedImages.add(target);
-            }else{
+            }else {
                 final AlignedImage target = new AlignedImage(this.targetImage.getProcessor(), this.targetImage.getName());
                 this.alignedImages.add(target);
                 this.alignedImages.addAll(Collections.nCopies(sameImages, target));
-
             }
             this.status+=1; //pre process
             IJ.log("[AUTOMATIC] End preprocess");
@@ -293,5 +304,22 @@ public class Alignment implements Runnable{
      */
     public boolean isAlive(){
         return this.thread.isAlive();
+    }
+
+    /**
+     * This method checks if there are almost one RGB image in the images to align.
+     * @return true if there is almost one RGB image, false otherwise
+     */
+    private boolean isOnly8Bit() {
+        boolean isOnly8Bit = true;
+
+        for (final ImagePoints img : this.imagesToAlign) {
+            if (img.getImagePlus().getType() == ImagePlus.COLOR_RGB) {
+                isOnly8Bit = false;
+                break;
+            }
+        }
+
+        return isOnly8Bit;
     }
 }

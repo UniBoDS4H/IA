@@ -1,6 +1,9 @@
 package com.ds4h.model.pointManager;
 
+import com.ds4h.controller.pointController.ConvertLutImageEnum;
 import com.ds4h.model.imagePoints.ImagePoints;
+import ij.IJ;
+import ij.process.ImageConverter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,6 +15,7 @@ import java.util.stream.Collectors;
 public class PointManager {
     private final List<ImagePoints> imagesWithPoints;
     private ImagePoints targetImage;
+    private ConvertLutImageEnum convertType;
 
     /**
      * Constructor the PointManager object.
@@ -27,9 +31,43 @@ public class PointManager {
      */
     public void addImages(final List<ImagePoints> images){
         if(Objects.nonNull(images) && images.size() > 0) {
-            images.stream()
+            /*images.stream()
                     .filter(img -> !this.imagesWithPoints.contains(img))
                     .forEach(this.imagesWithPoints::add);
+            this.setAsTarget(images.get(0));*/
+            for (final ImagePoints img : images) {
+                if (!this.imagesWithPoints.contains(img)) {
+                    if (img.getLuts().length > 0 && (
+                            img.getLuts()[0].getRed(255) != 255 ||
+                            img.getLuts()[0].getGreen(255) != 255 ||
+                            img.getLuts()[0].getBlue(255) != 255
+                            )) {
+                        switch (this.convertType) {
+                            case CONVERT_TO_RGB:
+                                new ImageConverter(img).convertToRGB();
+                                break;
+                            case CONVERT_TO_EIGHT_BIT:
+                                new ImageConverter(img).convertToGray8();
+                                break;
+                        }
+                    }
+                    this.imagesWithPoints.add(img);
+                }
+            }
+            if (images.get(0).getLuts().length > 0 && (
+                    images.get(0).getLuts()[0].getRed(255) != 255 ||
+                    images.get(0).getLuts()[0].getGreen(255) != 255 ||
+                    images.get(0).getLuts()[0].getBlue(255) != 255
+            )) {
+                switch (this.convertType) {
+                    case CONVERT_TO_RGB:
+                        new ImageConverter(images.get(0)).convertToRGB();
+                        break;
+                    case CONVERT_TO_EIGHT_BIT:
+                        new ImageConverter(images.get(0)).convertToGray8();
+                        break;
+                }
+            }
             this.setAsTarget(images.get(0));
         }
     }
@@ -101,5 +139,9 @@ public class PointManager {
         this.targetImage = null;
         this.clearList();
         System.gc();
+    }
+
+    public void setConvertType(final ConvertLutImageEnum convertType) {
+        this.convertType = convertType;
     }
 }

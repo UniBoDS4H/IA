@@ -12,13 +12,14 @@ public class AboutGUI extends Frame implements StandardGUI {
     private final Panel panel;
     private final JTextArea area;
 
-    private static final String INFORMATIONS = "DS4H Image Alignment Tool\n" +
+    private static final String INFORMATIONS = "DS4H Image Alignment Tool version 1.1\n" +
             "Head of the Project:\n" +
             "Prof.ssa Antonella Carbonaro - antonella.carbonaro@unibo.it\n" +
             "Prof. Filippo Piccinini - f.piccinini@unibo.it\n" +
             "Made By:\n" +
             "Matteo Iorio: matteo.iorio01@gmail.com\n" +
             "Fabio Vincenzi: fabio.vincenzi2001@gmail.com\n" +
+            "Lorenzo Rigoni: rigoni.lorenzo.21@gmail.com\n" +
             "Contributors:\n" +
             "Matteo Belletti\n" +
             "Stefano Belli\n" +

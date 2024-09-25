@@ -9,7 +9,9 @@ import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
+import com.ds4h.controller.pointController.ConvertLutImageEnum;
 import com.ds4h.controller.pointController.PointController;
+import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.AffineAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.ProjectiveAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
@@ -20,10 +22,14 @@ import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
 import com.ds4h.view.loadingGUI.LoadingType;
+import com.ds4h.view.lutSettingsGUI.LutSettingsGUI;
 import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
+import com.ds4h.view.mosaicSettingsGUI.MosaicSettingsGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
+import ij.ImagePlus;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -42,8 +48,9 @@ import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JButton manualAlignment, automaticAlignment;
     private final JMenuBar menuBar;
-    private final JMenu menu, project, settings, about;
-    private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem, automaticItem;
+    private final JMenu menu, project, settings, about, general;
+    private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem, automaticItem,
+            lutSettings, mosaicSettings;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
@@ -54,6 +61,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
     private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
     private final AutomaticAlignmentConfigGUI automaticConfigGUI;
+    private final LutSettingsGUI lutSettingsGUI;
+    private final MosaicSettingsGUI mosaicSettingsGUI;
 
     /**
      * Constructor of the MainMenu GUI
@@ -64,6 +73,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.bunwarpJController = new BunwarpJController();
         this.fileChooser = new JFileChooser();
         this.pointControler = new PointController();
+        this.lutSettingsGUI = new LutSettingsGUI();
+        this.mosaicSettingsGUI = new MosaicSettingsGUI();
         //Init of the two buttons
         this.manualAlignment = new JButton("Manual Alignment");
         this.automaticAlignment = new JButton("Automatic Alignment");
@@ -117,6 +128,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.project = new JMenu("Project");
         this.about = new JMenu("About");
         this.settings = new JMenu("Settings");
+        this.general = new JMenu("General");
         this.settingsItem = new JMenuItem("bUnwarpJ");
         this.loadImages = new JMenuItem("Load Images");
         this.exportItem = new JMenuItem("Export");
@@ -124,6 +136,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.clearItem = new JMenuItem("Clear");
         this.alignmentItem = new JMenuItem("Manual");
         this.automaticItem = new JMenuItem("Automatic");
+        this.lutSettings = new JMenuItem("LUT Settings");
+        this.mosaicSettings = new JMenuItem("Mosaic Settings");
         this.addComponents();
         this.addListeners();
         this.checkPointsForAlignment();
@@ -143,6 +157,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.menuBar.add(this.project);
         this.menuBar.add(this.settings);
         this.menuBar.add(this.about);
+        this.menuBar.add(this.general);
         // Create menu items and add them to the menu
         this.menu.add(this.loadImages);
         this.settings.add(this.alignmentItem);
@@ -151,6 +166,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.project.add(this.exportItem);
         this.project.add(this.importItem);
         this.project.add(this.clearItem);
+        this.general.add(this.lutSettings);
+        this.general.add(this.mosaicSettings);
     }
     public void checkPointsForAlignment() {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -280,6 +297,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             this.settingsBunwarpj.showDialog()
         );
 
+        this.lutSettings.addActionListener(event ->
+                this.lutSettingsGUI.showDialog()
+        );
+
+        this.mosaicSettings.addActionListener(event ->
+            this.mosaicSettingsGUI.showDialog()
+        );
+
         this.manualAlignment.addActionListener(event ->
             this.pollingManualAlignment()
         );
@@ -396,18 +421,30 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     }
 
     private void pollingManualAlignment(){
-        if(!this.manualAlignmentController.isAlive()) {
-            try {
-                if(this.manualAlignmentController.getAlgorithm() instanceof  TranslationalAlignment){
-                    ((TranslationalAlignment) this.manualAlignmentController.getAlgorithm()).setTransformation(this.manualConfigGUI.getTranslation(),this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
+        boolean okAlign = true;
+        if (!haveImagesEqualSize() && isTargetImageLarger()) {
+            final int choice = JOptionPane.showConfirmDialog(this,
+                    "ATTENTION: the target image is larger than the other images." +
+                            "\nThis could lead to the generation of invented data. Continue anyway?",
+                    "Target image size is larger",
+                    JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.NO_OPTION)
+                okAlign = false;
+        }
+        if (okAlign) {
+            if (!this.manualAlignmentController.isAlive()) {
+                try {
+                    if (this.manualAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
+                        ((TranslationalAlignment) this.manualAlignmentController.getAlgorithm()).setTransformation(this.manualConfigGUI.getTranslation(), this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
+                    }
+                    this.manualAlignmentController.align(this.manualAlignmentController.getAlgorithm(), this.pointControler);
+                    this.startPollingThread(this.manualAlignmentController, new ImageController(manualAlignmentController, bunwarpJController));
+                } catch (final Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-                this.manualAlignmentController.align(this.manualAlignmentController.getAlgorithm(), this.pointControler);
-                this.startPollingThread(this.manualAlignmentController, new ImageController(manualAlignmentController, bunwarpJController));
-            }catch(final Exception e){
-                JOptionPane.showMessageDialog(this,
-                        e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -432,7 +469,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 }
             }
             try {
-                new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this);
+                new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this,
+                        this.mosaicSettingsGUI.isAlignmentOrderAscending(), this.mosaicSettingsGUI.isTargetImageForeground());
             }catch (final Exception e){
                 IJ.log("QUI 2");
                 JOptionPane.showMessageDialog(this,
@@ -454,20 +492,32 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     }
 
     private void pollingAutomaticAlignment(){
-        if(!this.automaticAlignmentController.isAlive()) {
-            try {
-                if(this.automaticAlignmentController.getAlgorithm() instanceof  TranslationalAlignment){
-                    final TranslationalAlignment alg = (TranslationalAlignment) this.automaticAlignmentController.getAlgorithm();
-                    alg.setTransformation(this.automaticConfigGUI.getTranslation(),this.automaticConfigGUI.getRotation(), this.automaticConfigGUI.getScaling());
+        boolean okAlign = true;
+        if (!haveImagesEqualSize() && isTargetImageLarger()) {
+            final int choice = JOptionPane.showConfirmDialog(this,
+                    "ATTENTION: the target image is larger than the other images." +
+                            "\nThis could lead to the generation of invented data. Continue anyway?",
+                    "Target image size is larger",
+                    JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.NO_OPTION)
+                okAlign = false;
+        }
+        if (okAlign) {
+            if (!this.automaticAlignmentController.isAlive()) {
+                try {
+                    if (this.automaticAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
+                        final TranslationalAlignment alg = (TranslationalAlignment) this.automaticAlignmentController.getAlgorithm();
+                        alg.setTransformation(this.automaticConfigGUI.getTranslation(), this.automaticConfigGUI.getRotation(), this.automaticConfigGUI.getScaling());
+                    }
+                    this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),
+                            this.pointControler);
+                    this.startPollingThread(this.automaticAlignmentController, new ImageController(automaticAlignmentController, bunwarpJController));
+                } catch (final Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-                this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),
-                        this.pointControler);
-                this.startPollingThread(this.automaticAlignmentController, new ImageController(automaticAlignmentController, bunwarpJController));
-            }catch (final Exception e){
-                JOptionPane.showMessageDialog(this,
-                        e.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -485,6 +535,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     fileDialog.setVisible(true);
                     loadingGUI.showDialog();
                     try {
+                        switch (this.lutSettingsGUI.getConvertType()) {
+                            case CONVERT_TO_RGB:
+                                this.pointControler.setConvertType(ConvertLutImageEnum.CONVERT_TO_RGB);
+                                break;
+                            case CONVERT_TO_EIGHT_BIT:
+                                this.pointControler.setConvertType(ConvertLutImageEnum.CONVERT_TO_EIGHT_BIT);
+                                break;
+                        }
                         this.pointControler.loadImages(Arrays.stream(fileDialog.getFiles()).collect(Collectors.toList()));
                         this.checkPointsForAlignment();
                         this.automaticAlignment.setEnabled(true);
@@ -522,7 +580,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private void setFrameSize(){
         // Get the screen size
         final Dimension screenSize = DisplayInfo.getDisplaySize(80);
-        final int min_width = (screenSize.width/5);
+        final int min_width = (screenSize.width/2);
         final int min_height =(screenSize.height);
         // Set the size of the frame to be half of the screen width and height
         setSize(min_width, min_height);
@@ -535,4 +593,27 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.repaint();
     }
 
+    private boolean haveImagesEqualSize()  {
+        final int firstHeight = this.pointControler.getPointImages().get(0).getHeight();
+        final int firstWidth = this.pointControler.getPointImages().get(0).getWidth();
+        for (ImagePoints image : this.pointControler.getPointImages()) {
+            if (image.getHeight() != firstHeight || image.getWidth() != firstWidth)
+                return false;
+        }
+        return true;
+    }
+
+    private boolean isTargetImageLarger() {
+        if (this.pointControler.getPointManager().getTargetImage().isPresent()) {
+            final int targetHeight = this.pointControler.getPointManager().getTargetImage().get().getHeight();
+            final int targetWidth = this.pointControler.getPointManager().getTargetImage().get().getWidth();
+            for (ImagePoints image: this.pointControler.getPointImages()) {
+                if (targetHeight < image.getHeight() || targetWidth < image.getWidth())
+                    return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -70,6 +70,7 @@ public class AutomaticAlignmentConfigGUI extends JFrame implements StandardGUI {
             AlignmentAlgorithmEnum selected = (AlignmentAlgorithmEnum) this.algorithm.getSelectedItem();
             assert selected != null;
             this.text.setText(selected.getDocumentation());
+            this.text.setEditable(false);
             this.controller.setAlgorithm(this.controller.getAlgorithmFromEnum(selected));
             this.container.checkPointsForAlignment();
             this.updateCheckBoxes();

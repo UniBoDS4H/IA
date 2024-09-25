@@ -48,9 +48,10 @@ public class ImageController {
                 index++;
             }
             try {
-                final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
+                /*final CompositeImage composite = new CompositeImage(new ImagePlus("AlignedStack", stack));
                 composite.setLuts(luts);
-                return composite;
+                return composite;*/
+                return new ImagePlus("AlignedStack", stack);
             }catch (final Exception e){
                 throw new RuntimeException("Something went wrong with the creation of the stack.\n" +
                         "Error: " + e.getMessage());

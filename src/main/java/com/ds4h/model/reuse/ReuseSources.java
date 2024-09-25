@@ -36,7 +36,7 @@ public class ReuseSources {
     private static List<ImagePoints> convertImages(final List<AlignedImage> images){
         return images.stream()
                 .map(imagePlus -> {
-                    final ImagePoints image = new ImagePoints(imagePlus.getName(), imagePlus.getProcessor());
+                    final ImagePoints image = new ImagePoints(imagePlus.getAlignedImage().getFileInfo().getFilePath(), imagePlus.getProcessor());
                     image.setTitle(imagePlus.getName());
                     imagePlus.releaseImage();
                     imagePlus = null;

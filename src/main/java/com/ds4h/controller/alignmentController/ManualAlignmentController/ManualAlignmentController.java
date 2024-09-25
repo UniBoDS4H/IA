@@ -67,7 +67,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
             }
             //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned_Stack", stack));
             //composite.setLuts(luts);
-            return new ImagePlus("Aligned Stack", stack);
+            return new ImagePlus("AlignedStack", stack);
         }
         throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
                 "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +

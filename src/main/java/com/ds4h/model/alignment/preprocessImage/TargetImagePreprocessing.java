@@ -22,7 +22,7 @@ public class TargetImagePreprocessing {
     static public ImagePoints manualProcess(final ImagePoints targetImage, final List<ImagePoints> imagesToAlign, final AlignmentAlgorithm algorithm, final ImageProcessor ip) throws IllegalArgumentException{
         //ImagePoints target = new ImagePoints(targetImage.getMatImage(), targetImage.getName(), targetImage.getMatOfPoint());
         IJ.log("[MANUAL PREPROCESS] Starting manual process.");
-        ImagePoints target = new ImagePoints(targetImage.getPath());
+        ImagePoints target = new ImagePoints(targetImage.getPath(), targetImage.getMatImage());
         final String title = targetImage.getTitle().isEmpty() ? "AlignedImage.tif" : target.getTitle();
         target.addPoints(targetImage.getListPoints());
         for (final ImagePoints image : imagesToAlign) {
@@ -31,7 +31,7 @@ public class TargetImagePreprocessing {
                     .stream()
                     .map(p-> new Point(p.x+res.getSecond().x, p.y+res.getSecond().y))
                     .collect(Collectors.toList()));
-            target = new ImagePoints(title, res.getFirst());
+            target = new ImagePoints(target.getPath(), res.getFirst());
             target.addPoints(points);
         }
         IJ.log("[MANUAL PREPROCESS] Finish manual process.");

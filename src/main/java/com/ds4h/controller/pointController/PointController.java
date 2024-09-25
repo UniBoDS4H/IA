@@ -17,6 +17,7 @@ import java.util.Objects;
  */
 public class PointController {
     private final PointManager pointManager;
+    private ConvertLutImageEnum convertType;
 
     /**
      * Constructor for the PointController object.
@@ -34,6 +35,7 @@ public class PointController {
     public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
         if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getPointImages().size() > 0)) {
+            this.pointManager.setConvertType(this.convertType);
             this.pointManager.addImages(imagePointsList);
             MemoryController.controlMemory(this.pointManager.getPointImages());
         }else {
@@ -129,5 +131,9 @@ public class PointController {
     public void clearProject(){
         this.pointManager.clearProject();
         System.gc();
+    }
+
+    public void setConvertType(final ConvertLutImageEnum convertType) {
+        this.convertType = convertType;
     }
 }

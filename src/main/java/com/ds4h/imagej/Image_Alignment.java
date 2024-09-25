@@ -16,6 +16,7 @@ import java.awt.*;
  * DS4H Team:
  * @author Iorio Matteo, matteo.iorio01@gmail.com
  * @author Vincenzi Fabio, fabio.vincenzi2001@gmail.com
+ * @author Rigoni Lorenzo, rigoni.lorenzo.21@gmail.com
  */
 public class Image_Alignment implements PlugIn {
 	public static void main(final String[] args) {
