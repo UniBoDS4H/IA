@@ -13,7 +13,7 @@
 
 	<groupId>com.ds4h</groupId>
 	<artifactId>DS4H_ImageAlignment</artifactId>
-	<version>0.1.0</version>
+	<version>1.1.0</version>
 
 	<name>DS4H Image Alignment</name>
 	<description>
@@ -54,6 +54,19 @@
 			<id>fabiovincenzi</id>
 			<name>Fabio Vincenzi</name>
 			<url>https://github.com/fabiovincenzi/</url>
+			<roles>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>lorenzorigoni</id>
+			<name>Lorenzo Rigoni</name>
+			<url>https://github.com/LorenzoRigoni/</url>
 			<roles>
 				<role>lead</role>
 				<role>developer</role>
