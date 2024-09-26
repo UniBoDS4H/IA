@@ -56,7 +56,7 @@ We thanks all the University Students that helped in this project. In particular
       Linkedin : https://www.linkedin.com/in/matteo-iorio-1257621b4/
    * Lorenzo Rigoni, Bachelor's Degree Student in Engineering and Computer Sciences, Alma Mater Studiorum University of Bologna, Italy
 
-      email : rigoni.lorenzo.21@gmail.com
+     email : rigoni.lorenzo.21@gmail.com
 
 
 ## Contact Us
