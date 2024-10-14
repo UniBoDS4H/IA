@@ -3,6 +3,7 @@ package com.ds4h.model.util.opencvManager.opencvLoader;
 import ij.IJ;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.bytedeco.javacpp.Loader;
 import org.opencv.core.Core;
 
 import java.io.*;
@@ -65,7 +66,7 @@ public class OpenCVLoader {
     }
     private static void loadMacIntel()  throws IOException{
 
-        String sourcePath = "/opencv/mac_lib"; // La tua directory
+        /*String sourcePath = "/opencv/mac_lib"; // La tua directory
         List<String> fileList = new ArrayList<>();
         //Purtroppo non riesco a capire perche non legga i file dal jar con il metodo qua sotto,
         //per ora siamo costretti a forzare tutti i file a mano.
@@ -141,7 +142,8 @@ public class OpenCVLoader {
         System.out.println(tmpDir.toString());
         System.out.println(System.getProperty("java.library.path"));
         //System.loadLibrary("libopencv_java470.dylib");
-        System.load(tmpDir.toString() + "/libopencv_java470.dylib");
+        System.load(tmpDir.toString() + "/libopencv_java470.dylib");*/
+        OpenCVLoader.loadLib(MAC_LIB_INTEL, MAC_FORMAT);
     }
     private static void loadMacArm(){
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
