@@ -190,9 +190,6 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         throw new IllegalArgumentException("Algorithm not present");
     }
     public Detectors[] getDetectors(){
-        if(System.getProperty("os.name").toLowerCase().contains("mac")){
-            return Arrays.stream(Detectors.values()).filter(d -> d != Detectors.SIFT).collect(Collectors.toList()).toArray(new Detectors[0]);
-        }
         return Detectors.values();
     }
 }
