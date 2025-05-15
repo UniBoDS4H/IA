@@ -2,7 +2,11 @@ package com.ds4h.view.pointSelectorGUI;
 
 import com.ds4h.model.imagePoints.ImagePoints;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MenuItem {
+    public static Map<ImagePoints, PointSelectorCanvas> references = new HashMap<>();
     private final int index;
     private final ImagePoints image;
     public MenuItem(int index, ImagePoints image){
