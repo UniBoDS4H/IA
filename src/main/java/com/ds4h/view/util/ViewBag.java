@@ -8,5 +8,5 @@ import java.util.Map;
 
 public class ViewBag {
     public static Map<ImagePoints, PointSelectorCanvas> references = new HashMap<>();
-    
+    private ViewBag() {}
 }
