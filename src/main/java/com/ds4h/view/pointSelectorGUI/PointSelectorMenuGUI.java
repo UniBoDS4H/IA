@@ -72,7 +72,7 @@ public class PointSelectorMenuGUI extends JPanel {
         this.deleteButton.addActionListener(e->{
             container.getSelectedPoints().forEach(image::removePoint);
 //            container.updatePointsForAlignment();
-//            container.clearSelectedPoints(); There is no point in clearing all the selected points
+            container.clearSelectedPoints();
             container.repaintPoints();
         });
         this.copyButton.addActionListener(e->{
