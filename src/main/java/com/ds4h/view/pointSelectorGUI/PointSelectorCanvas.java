@@ -185,6 +185,10 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
         return this.pointerDimension;
     }
 
+    public Overlay getOverlay() {
+        return this.overlay;
+    }
+
     public void setContainer(PointSelectorGUI pointSelectorGUI) {
         this.container = pointSelectorGUI;
     }
