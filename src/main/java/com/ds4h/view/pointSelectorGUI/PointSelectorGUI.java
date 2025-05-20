@@ -66,6 +66,11 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     }
 
     public void repaintPoints() {
+        if (this.canvas.getSelectedPoints().isEmpty()) {
+            this.canvas.getOverlay().clear();
+            this.canvas.repaint();
+            return;
+        }
         this.canvas.drawPoints();
     }
     public ImagePoints getImage(){
