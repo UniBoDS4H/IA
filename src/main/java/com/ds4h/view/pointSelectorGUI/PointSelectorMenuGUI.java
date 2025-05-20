@@ -1,6 +1,7 @@
 package com.ds4h.view.pointSelectorGUI;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.view.util.ViewBag;
 import ij.IJ;
 
 import javax.swing.*;
@@ -83,7 +84,7 @@ public class PointSelectorMenuGUI extends JPanel {
             }else{
                 JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
                 container.checkPointsForAlignment();
-                MenuItem.references.get(item.getImage()).drawPoints();
+                ViewBag.references.get(item.getImage()).drawPoints();
             }
         });
         this.cornerSetting.addActionListener(event ->
