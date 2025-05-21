@@ -1,6 +1,8 @@
 package com.ds4h.view.pointSelectorGUI;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.view.util.ViewBag;
+import ij.IJ;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,10 +71,9 @@ public class PointSelectorMenuGUI extends JPanel {
     public void addListeners() {
         this.deleteButton.addActionListener(e->{
             container.getSelectedPoints().forEach(image::removePoint);
-            //container.updatePointsForAlignment();
+//            container.updatePointsForAlignment();
             container.clearSelectedPoints();
             container.repaintPoints();
-
         });
         this.copyButton.addActionListener(e->{
             final MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
@@ -82,6 +83,7 @@ public class PointSelectorMenuGUI extends JPanel {
             }else{
                 JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
                 container.checkPointsForAlignment();
+                ViewBag.references.get(item.getImage()).drawPoints();
             }
         });
         this.cornerSetting.addActionListener(event ->
@@ -116,9 +118,9 @@ public class PointSelectorMenuGUI extends JPanel {
         this.add(Box.createRigidArea(new Dimension(5, 0)));
     }
     public void updateView(){
-        this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
-        this.copyToCombo.setEnabled(this.container.getSelectedPoints().size()!=0);
-        this.deleteButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+        this.copyButton.setEnabled(!this.container.getSelectedPoints().isEmpty());
+        this.copyToCombo.setEnabled(!this.container.getSelectedPoints().isEmpty());
+        this.deleteButton.setEnabled(!this.container.getSelectedPoints().isEmpty());
 
     }
 

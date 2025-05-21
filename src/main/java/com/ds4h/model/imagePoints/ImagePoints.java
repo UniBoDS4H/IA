@@ -332,6 +332,19 @@ public class ImagePoints extends ImagePlus{
         return this.getTitle();
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null) {return false;}
+        if (!(o instanceof ImagePoints)) {return false;}
+        final ImagePoints other = (ImagePoints) o;
+        return other.getTitle().equals(this.getTitle());
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     /**
      * Release the Matrix if is present. Remove the original ImageProcessor and remove all the points from the Image.
      */

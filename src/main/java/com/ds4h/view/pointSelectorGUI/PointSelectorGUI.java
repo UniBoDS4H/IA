@@ -3,6 +3,7 @@ package com.ds4h.view.pointSelectorGUI;
 import com.ds4h.controller.pointController.PointController;
 import com.ds4h.model.imagePoints.ImagePoints;
 import com.ds4h.view.mainGUI.MainMenuGUI;
+import com.ds4h.view.util.ViewBag;
 import ij.gui.ImageWindow;
 import ij.gui.Toolbar;
 import ij.plugin.tool.PlugInTool;
@@ -25,6 +26,7 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
         panel.setLayout(new BorderLayout());
         this.canvas = (PointSelectorCanvas) this.getCanvas();
         this.canvas.setContainer(this);
+        ViewBag.references.put(image, this.canvas);
         this.removeAll();
         Toolbar.addPlugInTool(new PlugInTool() {
             @Override
@@ -64,6 +66,11 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
     }
 
     public void repaintPoints() {
+        if (this.image.getListPoints().isEmpty()) {
+            this.canvas.getOverlay().clear();
+            this.canvas.repaint();
+            return;
+        }
         this.canvas.drawPoints();
     }
     public ImagePoints getImage(){
