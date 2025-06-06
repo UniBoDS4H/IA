@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector.siftDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
@@ -17,7 +17,7 @@ public class SIFTDetector extends PointDetector {
     }
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();
 
@@ -77,8 +77,8 @@ public class SIFTDetector extends PointDetector {
                     final Point trainScaled = new Point(
                             keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
                             keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
+                    imagePoint.add(queryScaled);
+                    targetImage.add(trainScaled);
                 });
         IJ.log("[SIFT DETECTOR] End Detection.");
         matches.release();

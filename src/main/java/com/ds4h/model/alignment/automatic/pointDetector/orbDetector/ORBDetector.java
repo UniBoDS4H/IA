@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector.orbDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
@@ -14,7 +14,7 @@ public class ORBDetector extends PointDetector {
     private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE);
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();

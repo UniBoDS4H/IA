@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
+import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.process.ImageProcessor;
@@ -44,7 +45,7 @@ public abstract class PointDetector {
      * @param targetImage the target image selected from the input, this image will be cached during the entire process of alignment.
      * @param imagePoint the other image where the algorithm have to detect points.
      */
-    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
+    public abstract void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint);
 
     /**
      * Set the threshold factor, in order to get more "dirty" points in the detection.

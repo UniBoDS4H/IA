@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
@@ -16,7 +16,7 @@ public class SURFDetector extends PointDetector {
     }
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint) {
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 

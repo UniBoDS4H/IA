@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector.akazeDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.AKAZE;
@@ -16,7 +16,7 @@ public class AKAZEDetector extends PointDetector {
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
 
