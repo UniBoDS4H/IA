@@ -113,7 +113,7 @@ public class PointController {
         }
         for (final Point p:selectedPoints) {
             if(this.insideImage(p,img)){
-                img.addPoint(p);
+                img.add(p);
             }else{
                 res = false;
             }
