@@ -16,4 +16,10 @@ public interface PointRepository {
      */
     @NotNull
     Iterable<Point> getPoints();
+
+    /**
+     * Return the total amount of point that are stored inside the repository.
+     * @return the amount of points stored.
+     */
+    Integer totalPoints();
 }
