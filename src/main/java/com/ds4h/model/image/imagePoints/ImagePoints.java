@@ -174,6 +174,11 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
         return this.pointList;
     }
 
+    @Override
+    public Integer totalPoints() {
+        return this.pointList.size();
+    }
+
     /**
      * Returns the index of the specified point in the "pointList" ArrayList, plus one.
      * @param point the point to search for.

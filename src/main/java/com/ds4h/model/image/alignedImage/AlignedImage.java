@@ -146,4 +146,9 @@ public class AlignedImage implements AnalyzableImage {
     public Iterable<Point> getPoints() {
         return this.points;
     }
+
+    @Override
+    public Integer totalPoints() {
+        return this.points.size();
+    }
 }
