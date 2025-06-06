@@ -1,5 +1,6 @@
 package com.ds4h.model.image;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
@@ -8,6 +9,7 @@ public interface DataImage extends PointRepository {
      * Get from the current image, its gray scale matrix.
      * @return Gray scale matrix
      */
+    @NotNull
     Mat getGrayScaleMat();
 
     /**
