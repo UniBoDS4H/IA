@@ -8,7 +8,10 @@ import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.Collections;
 
 public class ProjectiveAlignment implements AlignmentAlgorithm{
     public static int LOWER_BOUND = 4;
@@ -32,7 +35,7 @@ public class ProjectiveAlignment implements AlignmentAlgorithm{
      */
     @Override
     public AlignedImage align(ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException {
-        if(targetImage.getPoints().length >= LOWER_BOUND && imageToShift.getPoints().length >= LOWER_BOUND){
+        if(targetImage.totalPoints() >= LOWER_BOUND && imageToShift.totalPoints() >= LOWER_BOUND){
             final Mat imageToShiftMat = imageToShift.getMatImage();
             final Mat alignedImage = new Mat();
             final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());

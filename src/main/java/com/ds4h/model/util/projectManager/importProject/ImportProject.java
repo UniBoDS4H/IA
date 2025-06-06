@@ -48,7 +48,7 @@ public class ImportProject {
                 JSONDeserializer.readImportProjectJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
                     if (file.getName().equals(key)) {
                         final ImagePoints imagePoints = new ImagePoints(file.getPath());
-                        value.forEach(imagePoints::addPoint);
+                        value.forEach(imagePoints::add);
                         images.add(imagePoints);
                         if(JSONDeserializer.isTargetPresent() && JSONDeserializer.targetName().equals(file.getName())){
                             target = imagePoints;

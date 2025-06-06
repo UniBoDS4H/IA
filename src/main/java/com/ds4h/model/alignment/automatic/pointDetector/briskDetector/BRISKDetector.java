@@ -67,8 +67,8 @@ public class BRISKDetector extends PointDetector {
                     final Point trainScaled = new Point(
                             keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
                             keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
+                    imagePoint.add(queryScaled);
+                    targetImage.add(trainScaled);
                 });
         matches.release();
     }
