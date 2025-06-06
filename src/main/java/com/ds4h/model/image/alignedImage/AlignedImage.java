@@ -1,5 +1,6 @@
 package com.ds4h.model.image.alignedImage;
 
+import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.DataImage;
 import com.ds4h.model.image.PointRepository;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
@@ -20,7 +21,7 @@ import java.util.Optional;
  * (the warped matrix) and the registrationMatrix (H). This class is used after the process of alignment. The registration matrix
  * is an Optional because for the target image we do not calculate the registration matrix.
  */
-public class AlignedImage implements PointRepository, DataImage {
+public class AlignedImage implements AnalyzableImage {
     private final List<Point> points;
     private final ImageProcessor alignedImage;
     private final String name;

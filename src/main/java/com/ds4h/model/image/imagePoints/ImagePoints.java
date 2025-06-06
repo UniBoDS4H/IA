@@ -1,4 +1,5 @@
 package com.ds4h.model.image.imagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.DataImage;
 import com.ds4h.model.image.PointRepository;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * The image used for the alignment. Inside this Class we have a list of all the points selected from the input. This points will be used for the alignment.
  */
-public class ImagePoints extends ImagePlus implements PointRepository, DataImage {
+public class ImagePoints extends ImagePlus implements AnalyzableImage {
     private final List<Point> pointList;
     private final String path;
     private final int rows, cols;
