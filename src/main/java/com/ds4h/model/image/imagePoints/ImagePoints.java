@@ -1,8 +1,11 @@
 package com.ds4h.model.image.imagePoints;
+import com.ds4h.model.image.DataImage;
+import com.ds4h.model.image.PointRepository;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.*;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import java.util.*;
@@ -11,7 +14,7 @@ import java.util.List;
 /**
  * The image used for the alignment. Inside this Class we have a list of all the points selected from the input. This points will be used for the alignment.
  */
-public class ImagePoints extends ImagePlus{
+public class ImagePoints extends ImagePlus implements PointRepository, DataImage {
     private final List<Point> pointList;
     private final String path;
     private final int rows, cols;
@@ -130,6 +133,7 @@ public class ImagePoints extends ImagePlus{
      * @see com.ds4h.model.alignment.automatic.pointDetector.PointDetector
      * Sets the "improveMatrix" to True. During the detection of points, if the flag "improveMatrix" is true, the image will be submitted to "edgeDetection".
      */
+    @Override
     public void improve(){
         this.improveMatrix = true;
     }
@@ -145,6 +149,7 @@ public class ImagePoints extends ImagePlus{
      * Returns the value of the "improveMatrix" instance variable.
      * @return the value of the "improveMatrix" instance variable.
      */
+    @Override
     public boolean toImprove(){
         return this.improveMatrix;
     }
@@ -157,12 +162,15 @@ public class ImagePoints extends ImagePlus{
         return this.type;
     }
 
-    /**
-     * Returns all the points saved inside the ImagePoint object.
-     * @return all the points saved inside the ImagePoint object.
-     */
-    public Point[] getPoints(){
-        return this.pointList.toArray(new Point[0]);
+    @Override
+    public void add(@NotNull Point point) {
+        this.pointList.add(point);
+    }
+
+    @NotNull
+    @Override
+    public Iterable<Point> getPoints(){
+        return this.pointList;
     }
 
     /**
@@ -172,14 +180,6 @@ public class ImagePoints extends ImagePlus{
      */
     public int getIndexOfPoint(final Point point){
         return this.pointList.indexOf(point) + 1;
-    }
-
-    /**
-     * Add a new point inside the "pointList" ArrayList.
-     * @param point the new point to add inside the "pointList".
-     */
-    public void addPoint(final Point point){
-        this.pointList.add(point);
     }
 
     /**
@@ -230,6 +230,7 @@ public class ImagePoints extends ImagePlus{
      * Returns a grayscale Mat object converted from the ImageProcessor of the ImagePoints object.
      * @return a grayscale Mat object converted from the ImageProcessor of the ImagePoints object.
      */
+    @NotNull
     public Mat getGrayScaleMat(){
         return ImageProcessorMatConverter.convertGray(this.getProcessor());
     }
