@@ -6,6 +6,7 @@ import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
@@ -124,6 +125,7 @@ public class AlignedImage implements PointRepository, DataImage {
         this.getAlignedImage().close();
     }
 
+    @NotNull
     @Override
     public Mat getGrayScaleMat() {return ImageProcessorMatConverter.convertGray(this.getProcessor());}
 
@@ -134,10 +136,11 @@ public class AlignedImage implements PointRepository, DataImage {
     public boolean toImprove() {return false;}
 
     @Override
-    public void add(Point point) {
+    public void add(@NotNull Point point) {
         this.points.add(point);
     }
 
+    @NotNull
     @Override
     public Iterable<Point> getPoints() {
         return this.points;
