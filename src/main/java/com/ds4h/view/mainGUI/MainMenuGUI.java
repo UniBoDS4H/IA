@@ -178,7 +178,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         }else{
             int nPoints;
             if (!this.pointControler.getPointImages().isEmpty()) {
-                nPoints = this.pointControler.getPointImages().get(0).getPoints().length;
+                nPoints = this.pointControler.getPointImages().get(0).totalPoints();
                 int lowerBound = 0;
                 if(this.manualAlignmentController.getAlgorithm() instanceof TranslationalAlignment) {
                     lowerBound = this.manualAlignmentController.getAlgorithm().getLowerBound();
@@ -189,14 +189,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 }
                 boolean ok = true;
                 for (ImagePoints i : this.pointControler.getPointImages()) {
-                    if (i.getPoints().length < lowerBound) {
+                    if (i.totalPoints() < lowerBound) {
                         ok = false;
                         break;
                     }
                 }
                 if(ok){
                     for (ImagePoints i : this.pointControler.getPointImages()) {
-                        if (i.getPoints().length != nPoints) {
+                        if (i.totalPoints() != nPoints) {
                             ok = false;
                             break;
                         }

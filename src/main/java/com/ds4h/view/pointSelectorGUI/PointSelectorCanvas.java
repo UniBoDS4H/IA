@@ -70,7 +70,7 @@ public class PointSelectorCanvas extends StandardCanvas implements MouseListener
                         //ADD new point
                         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                             //first I add the new point then I call the updatePointsForAlignment for checking if we can enable the manual alignment button
-                            image.addPoint((point));
+                            image.add((point));
                         } else {
                             selectedPoints.clear();
                         }
