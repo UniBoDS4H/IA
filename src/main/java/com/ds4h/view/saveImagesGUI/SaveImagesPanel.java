@@ -1,7 +1,7 @@
 package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.view.displayInfo.DisplayInfo;
 
 import javax.swing.*;

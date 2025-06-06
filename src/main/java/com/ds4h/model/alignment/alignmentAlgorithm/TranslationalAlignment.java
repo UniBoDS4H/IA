@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.alignmentAlgorithm;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.imageManager.MatImageProcessorConverter;
 import ij.IJ;
 import ij.process.ImageProcessor;

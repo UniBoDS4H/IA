@@ -1,5 +1,5 @@
 package com.ds4h.controller.bunwarpJController;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.deformation.BunwarpjDeformation;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;

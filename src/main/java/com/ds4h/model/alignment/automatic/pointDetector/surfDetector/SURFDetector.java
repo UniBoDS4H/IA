@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;

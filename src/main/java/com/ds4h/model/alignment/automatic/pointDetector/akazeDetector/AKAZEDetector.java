@@ -1,14 +1,11 @@
 package com.ds4h.model.alignment.automatic.pointDetector.akazeDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.AKAZE;
-import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.FlannBasedMatcher;
-import org.opencv.xfeatures2d.FREAK;
 
 import java.util.List;
 

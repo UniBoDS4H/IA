@@ -1,14 +1,11 @@
 package com.ds4h.model.alignment.automatic.pointDetector.freakDetector;
 
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
-import ij.IJ;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import org.opencv.core.*;
-import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.SIFT;
 import org.opencv.xfeatures2d.FREAK;
-import org.opencv.xfeatures2d.SURF;
 
 import java.util.List;
 

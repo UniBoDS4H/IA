@@ -1,7 +1,7 @@
 package com.ds4h.model.util.imageManager;
 
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import org.apache.commons.io.FilenameUtils;

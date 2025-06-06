@@ -1,6 +1,6 @@
 package com.ds4h.view.util;
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.view.pointSelectorGUI.PointSelectorCanvas;
 
 import java.util.HashMap;

@@ -1,8 +1,7 @@
 package com.ds4h.view.pointSelectorGUI;
 import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.view.util.ViewBag;
-import ij.IJ;
 
 import javax.swing.*;
 import java.awt.*;

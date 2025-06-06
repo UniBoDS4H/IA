@@ -1,6 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;

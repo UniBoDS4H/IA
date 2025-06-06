@@ -2,8 +2,7 @@ package com.ds4h.controller.imageController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
-import com.ds4h.model.alignedImage.AlignedImage;
-import ij.CompositeImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;

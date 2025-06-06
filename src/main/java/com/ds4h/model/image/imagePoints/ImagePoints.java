@@ -1,4 +1,4 @@
-package com.ds4h.model.imagePoints;
+package com.ds4h.model.image.imagePoints;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
 import ij.IJ;
 import ij.ImagePlus;

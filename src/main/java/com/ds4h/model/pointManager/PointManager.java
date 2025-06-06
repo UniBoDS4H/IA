@@ -1,8 +1,7 @@
 package com.ds4h.model.pointManager;
 
 import com.ds4h.controller.pointController.ConvertLutImageEnum;
-import com.ds4h.model.imagePoints.ImagePoints;
-import ij.IJ;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.process.ImageConverter;
 
 import java.util.*;

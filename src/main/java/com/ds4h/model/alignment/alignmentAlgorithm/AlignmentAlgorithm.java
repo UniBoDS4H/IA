@@ -1,7 +1,7 @@
 package com.ds4h.model.alignment.alignmentAlgorithm;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.process.ImageProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;

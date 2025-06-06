@@ -2,7 +2,7 @@ package com.ds4h.controller.alignmentController.ManualAlignmentController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;

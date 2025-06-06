@@ -1,8 +1,8 @@
 package com.ds4h.model.reuse;
 
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.MemoryController;
 import java.util.List;
 import java.util.stream.Collectors;

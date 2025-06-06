@@ -1,17 +1,16 @@
 package com.ds4h.model.alignment;
 
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;

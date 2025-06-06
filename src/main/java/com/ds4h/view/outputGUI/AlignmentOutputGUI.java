@@ -2,31 +2,21 @@ package com.ds4h.view.outputGUI;
 
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.alignedImage.AlignedImage;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
 import com.ds4h.view.util.SaveAsEnum;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
-import ij.io.FileSaver;
-import ij.plugin.RGBStackMerge;
-import ij.process.ColorProcessor;
-import ij.process.ImageConverter;
-import ij.process.ImageProcessor;
-import ij.process.LUT;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AlignmentOutputGUI extends StackWindow {
     private static ImagePlus image;

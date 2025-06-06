@@ -1,9 +1,8 @@
 package com.ds4h.model.util;
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.sun.management.OperatingSystemMXBean;
 import ij.IJ;
-import ij.ImagePlus;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;

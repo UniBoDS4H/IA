@@ -1,4 +1,4 @@
-package com.ds4h.model.alignedImage;
+package com.ds4h.model.image.alignedImage;
 
 import ij.ImagePlus;
 import ij.process.ByteProcessor;

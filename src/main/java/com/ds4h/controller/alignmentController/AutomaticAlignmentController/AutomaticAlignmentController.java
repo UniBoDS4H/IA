@@ -2,7 +2,7 @@ package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
@@ -15,7 +15,6 @@ import ij.process.ImageConverter;
 
 import java.awt.image.ColorModel;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class is used in order to call all the Model methods of the SURF Alignment inside the view, without

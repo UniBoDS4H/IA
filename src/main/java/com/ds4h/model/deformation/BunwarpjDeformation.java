@@ -1,7 +1,7 @@
 package com.ds4h.model.deformation;
 
 import bunwarpj.bUnwarpJ_;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;

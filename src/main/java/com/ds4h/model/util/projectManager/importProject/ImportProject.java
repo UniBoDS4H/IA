@@ -1,6 +1,6 @@
 package com.ds4h.model.util.projectManager.importProject;
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.imageManager.CheckImage;
 import com.ds4h.model.util.json.JSONFile;
 import com.ds4h.model.util.json.jsonDeserializer.JSONDeserializer;

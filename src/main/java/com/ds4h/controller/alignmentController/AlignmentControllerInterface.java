@@ -1,10 +1,8 @@
 package com.ds4h.controller.alignmentController;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import ij.CompositeImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import ij.ImagePlus;
 
-import java.awt.*;
 import java.util.List;
 
 /**

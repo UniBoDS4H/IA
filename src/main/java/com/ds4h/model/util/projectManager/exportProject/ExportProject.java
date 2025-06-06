@@ -1,11 +1,11 @@
 package com.ds4h.model.util.projectManager.exportProject;
 
 import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.json.jsonSerializer.JSONSerializer;
 import com.ds4h.model.util.saveProject.SaveImages;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
