@@ -12,5 +12,6 @@ public interface ElasticRegistration {
      * @param targetImage target image, this will be fixed.
      * @return A future containing the transformed image.
      */
+    @NotNull
     Future<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage);
 }
