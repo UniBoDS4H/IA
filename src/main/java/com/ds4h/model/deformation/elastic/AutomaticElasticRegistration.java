@@ -12,9 +12,11 @@ import ij.ImagePlus;
 import net.imglib2.realtransform.BoundingBoxEstimation;
 import net.imglib2.realtransform.InvertibleRealTransform;
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Point;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -32,6 +34,8 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
             return null;
         });
     }
+
+    @NotNull
     private List<ImagePlus> applyElasticRegistration(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
         final BigWarpData<?> bigwarpData = BigWarpInit.createBigWarpDataFromImages(movingImage.getAlignedImage(), targetImage.getAlignedImage());
         bigwarpData.wrapMovingSources();
@@ -55,5 +59,17 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
                 true,
                 null, // writeOpts
                 false);
+    }
+
+    private void addLandmarks(@NotNull final LandmarkTableModel landmarkTableModel,
+                              @NotNull final AlignedImage movingImage,
+                              @NotNull final AlignedImage targetImage) {
+        final Iterator<Point> movingPointsIterator = movingImage.getPoints().iterator();
+        final Iterator<Point> targetPointsIterator = targetImage.getPoints().iterator();
+        while (movingPointsIterator.hasNext()) {
+            final Point movingPoint = movingPointsIterator.next();
+            final Point targetPoint = targetPointsIterator.next();
+            landmarkTableModel.add(new double[]{movingPoint.x, movingPoint.y}, new double[]{targetPoint.x, targetPoint.y});
+        }
     }
 }
