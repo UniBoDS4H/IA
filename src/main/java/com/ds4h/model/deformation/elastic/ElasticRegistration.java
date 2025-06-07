@@ -3,6 +3,7 @@ package com.ds4h.model.deformation.elastic;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public interface ElasticRegistration {
@@ -13,5 +14,5 @@ public interface ElasticRegistration {
      * @return A future containing the transformed image.
      */
     @NotNull
-    Future<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage);
+    CompletableFuture<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage);
 }
