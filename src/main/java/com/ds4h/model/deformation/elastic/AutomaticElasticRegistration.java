@@ -33,7 +33,12 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
         return CompletableFuture.supplyAsync(() -> {
             this.detector.detectPoint(targetImage, movingImage);
             this.initilizeSources(movingImage, targetImage);
-            return null;
+            final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
+            final List<ImagePlus> deformedImages = this.applyElasticRegistration(movingImage, targetImage, landmarkTableModel);
+            final ImagePlus deformedImage = deformedImages.get(0);
+            return movingImage.getRegistrationMatrix()
+                    .map(matrix -> new AlignedImage(matrix, deformedImage.getProcessor(), movingImage.getName()))
+                    .orElse(new AlignedImage(deformedImage.getProcessor(), movingImage.getName()));
         });
     }
 
