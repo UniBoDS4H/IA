@@ -11,6 +11,7 @@ import com.ds4h.model.image.alignedImage.AlignedImage;
 import ij.ImagePlus;
 import net.imglib2.realtransform.BoundingBoxEstimation;
 import net.imglib2.realtransform.InvertibleRealTransform;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 
@@ -30,9 +31,19 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
     @Override
     public CompletableFuture<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage) {
         return CompletableFuture.supplyAsync(() -> {
-
+            this.detector.detectPoint(targetImage, movingImage);
+            this.initilizeSources(movingImage, targetImage);
             return null;
         });
+    }
+
+    private void initilizeSources(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage) {
+        final ImagePlus movingImg = movingImage.getAlignedImage();
+        final ImagePlus targetImg = targetImage.getAlignedImage();
+        final BigWarpData<UnsignedByteType> bigWarpData = BigWarpInit.initData();
+        BigWarpInit.add(bigWarpData, BigWarpInit.createSources(bigWarpData, movingImg, 0, 0, true));
+        BigWarpInit.add(bigWarpData, BigWarpInit.createSources(bigWarpData, targetImg, 1, 0, false));
+        bigWarpData.wrapMovingSources();
     }
 
     @NotNull
