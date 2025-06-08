@@ -22,4 +22,9 @@ public interface PointRepository {
      * @return the amount of points stored.
      */
     Integer totalPoints();
+
+    /**
+     *
+     */
+    void clear();
 }

@@ -151,4 +151,9 @@ public class AlignedImage implements AnalyzableImage {
     public Integer totalPoints() {
         return this.points.size();
     }
+
+    @Override
+    public void clear() {
+        this.points.clear();
+    }
 }
