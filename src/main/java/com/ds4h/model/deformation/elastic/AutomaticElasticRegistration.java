@@ -25,10 +25,14 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
     }
 
     public CompletableFuture<List<AlignedImage>> transformImages(@NotNull final AlignedImage targetImage, @NotNull final List<AlignedImage> movingImages) {
-        final List<AlignedImage> output = new LinkedList<>();
-
-        movingImages.stream().filter(Objects::nonNull).forEach(image -> {
-            output.add(this.tr)
+        return CompletableFuture.supplyAsync(() -> {
+            final List<AlignedImage> output = new LinkedList<>();
+            movingImages.stream().filter(Objects::nonNull).forEach(image -> {
+                this.transform(image, targetImage).whenComplete((transformedImage, e) -> {
+                    output.add(transformedImage);
+                });
+            });
+            return output;
         });
     }
 
