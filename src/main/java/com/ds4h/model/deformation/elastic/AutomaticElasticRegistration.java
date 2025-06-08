@@ -15,10 +15,7 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class AutomaticElasticRegistration implements ElasticRegistration {
@@ -27,21 +24,29 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
         this.detector = detector;
     }
 
-    @NotNull
-    @Override
-    public CompletableFuture<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage) {
-        return CompletableFuture.supplyAsync(() -> {
-            this.detector.detectPoint(targetImage, movingImage);
-            this.initilizeSources(movingImage, targetImage);
-            final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
-            final List<ImagePlus> deformedImages = this.applyElasticRegistration(movingImage, targetImage, landmarkTableModel);
-            final ImagePlus deformedImage = deformedImages.get(0);
-            return movingImage.getRegistrationMatrix()
-                    .map(matrix -> new AlignedImage(matrix, deformedImage.getProcessor(), movingImage.getName()))
-                    .orElse(new AlignedImage(deformedImage.getProcessor(), movingImage.getName()));
+    public CompletableFuture<List<AlignedImage>> transformImages(@NotNull final AlignedImage targetImage, @NotNull final List<AlignedImage> movingImages) {
+        final List<AlignedImage> output = new LinkedList<>();
+
+        movingImages.stream().filter(Objects::nonNull).forEach(image -> {
+            output.add(this.tr)
         });
     }
 
+    @NotNull
+    @Override
+    public CompletableFuture<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage) {
+        this.detector.detectPoint(targetImage, movingImage);
+        this.initilizeSources(movingImage, targetImage);
+        final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
+        this.addLandmarks(landmarkTableModel, movingImage, targetImage);
+        return this.applyElasticRegistration(movingImage, targetImage, landmarkTableModel);
+    }
+
+    /**
+     * TODO
+     * @param movingImage
+     * @param targetImage
+     */
     private void initilizeSources(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage) {
         final ImagePlus movingImg = movingImage.getAlignedImage();
         final ImagePlus targetImg = targetImage.getAlignedImage();
@@ -51,38 +56,56 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
         bigWarpData.wrapMovingSources();
     }
 
+    /**
+     * TODO
+     * @param movingImage
+     * @param targetImage
+     * @param landmarkTableModel
+     * @return
+     */
     @NotNull
-    private List<ImagePlus> applyElasticRegistration(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
+    private CompletableFuture<AlignedImage> applyElasticRegistration(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
         final BigWarpData<?> bigwarpData = BigWarpInit.createBigWarpDataFromImages(movingImage.getAlignedImage(), targetImage.getAlignedImage());
         bigwarpData.wrapMovingSources();
         final BoundingBoxEstimation boundingBoxEstimation = new BoundingBoxEstimation(BoundingBoxEstimation.Method.CORNERS);
         final InvertibleRealTransform invertibleRealTransform = new BigWarpTransform(landmarkTableModel, BigWarpTransform.AFFINE).getTransformation();
-        return ApplyBigwarpPlugin.apply(
-                bigwarpData,
-                landmarkTableModel,
-                invertibleRealTransform,
-                BigWarpTransform.AFFINE, // tform type
-                ApplyBigwarpPlugin.TARGET, // fov option
-                null,
-                boundingBoxEstimation,
-                ApplyBigwarpPlugin.TARGET,
-                null,
-                null,
-                null,
-                Interpolation.NEARESTNEIGHBOR,
-                false, // virtual
-                1, // nThreads
-                true,
-                null, // writeOpts
-                false);
+        return CompletableFuture.supplyAsync(() -> {
+            final ImagePlus deformedImage = ApplyBigwarpPlugin.apply(
+                    bigwarpData,
+                    landmarkTableModel,
+                    invertibleRealTransform,
+                    BigWarpTransform.AFFINE, // tform type
+                    ApplyBigwarpPlugin.TARGET, // fov option
+                    null,
+                    boundingBoxEstimation,
+                    ApplyBigwarpPlugin.TARGET,
+                    null,
+                    null,
+                    null,
+                    Interpolation.NEARESTNEIGHBOR,
+                    false, // virtual
+                    1, // nThreads
+                    true,
+                    null, // writeOpts
+                    false).get(0);
+            return movingImage.getRegistrationMatrix()
+                    .map(matrix -> new AlignedImage(matrix, deformedImage.getProcessor(), movingImage.getName()))
+                    .orElse(new AlignedImage(deformedImage.getProcessor(), movingImage.getName()));
+        });
     }
 
+    /**
+     * TODO
+     * @param landmarkTableModel
+     * @param movingImage
+     * @param targetImage
+     */
     private void addLandmarks(@NotNull final LandmarkTableModel landmarkTableModel,
                               @NotNull final AlignedImage movingImage,
                               @NotNull final AlignedImage targetImage) {
         final Iterator<Point> movingPointsIterator = movingImage.getPoints().iterator();
         final Iterator<Point> targetPointsIterator = targetImage.getPoints().iterator();
-        while (movingPointsIterator.hasNext()) {
+        while (movingPointsIterator.hasNext() && targetPointsIterator.hasNext()) {
             final Point movingPoint = movingPointsIterator.next();
             final Point targetPoint = targetPointsIterator.next();
             landmarkTableModel.add(new double[]{movingPoint.x, movingPoint.y}, new double[]{targetPoint.x, targetPoint.y});
