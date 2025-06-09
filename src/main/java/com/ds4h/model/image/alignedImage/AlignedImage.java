@@ -51,10 +51,18 @@ public class AlignedImage implements AnalyzableImage {
         this.points = new LinkedList<>();
     }
 
+    @NotNull
+    @Override
+    public ImagePlus getImagePlus() {
+        return new ImagePlus(name, alignedImage);
+    }
+
     /**
      * This method returns the name of the aligned image
      * @return the name of the image
      */
+    @NotNull
+    @Override
     public String getName(){
         return this.name;
     }
