@@ -7,12 +7,16 @@ import bigwarp.BigWarpInit;
 import bigwarp.landmarks.LandmarkTableModel;
 import bigwarp.transforms.BigWarpTransform;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import ij.ImagePlus;
 import net.imglib2.realtransform.BoundingBoxEstimation;
 import net.imglib2.realtransform.InvertibleRealTransform;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.opencv.opencv_shape.ThinPlateSplineShapeTransformer;
 import org.jetbrains.annotations.NotNull;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Point;
 
 import java.util.*;
@@ -24,9 +28,9 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
         this.detector = detector;
     }
 
-    public CompletableFuture<List<AlignedImage>> transformImages(@NotNull final AlignedImage targetImage, @NotNull final List<AlignedImage> movingImages) {
+    public CompletableFuture<List<AnalyzableImage>> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages) {
         return CompletableFuture.supplyAsync(() -> {
-            final List<AlignedImage> output = new LinkedList<>();
+            final List<AnalyzableImage> output = new LinkedList<>();
             movingImages.stream().filter(Objects::nonNull).forEach(image -> {
                 this.transform(image, targetImage).whenComplete((transformedImage, e) -> {
                     output.add(transformedImage);
@@ -38,8 +42,7 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
 
     @NotNull
     @Override
-    public CompletableFuture<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage) {
-        this.detector.detectPoint(targetImage, movingImage);
+    public CompletableFuture<AlignedImage> transform(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
         this.initilizeSources(movingImage, targetImage);
         final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
         this.addLandmarks(landmarkTableModel, movingImage, targetImage);
@@ -51,9 +54,9 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
      * @param movingImage
      * @param targetImage
      */
-    private void initilizeSources(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage) {
-        final ImagePlus movingImg = movingImage.getAlignedImage();
-        final ImagePlus targetImg = targetImage.getAlignedImage();
+    private void initilizeSources(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage) {
+        final ImagePlus movingImg = movingImage.getImagePlus();
+        final ImagePlus targetImg = targetImage.getImagePlus();
         final BigWarpData<UnsignedByteType> bigWarpData = BigWarpInit.initData();
         BigWarpInit.add(bigWarpData, BigWarpInit.createSources(bigWarpData, movingImg, 0, 0, true));
         BigWarpInit.add(bigWarpData, BigWarpInit.createSources(bigWarpData, targetImg, 1, 0, false));
@@ -68,17 +71,17 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
      * @return
      */
     @NotNull
-    private CompletableFuture<AlignedImage> applyElasticRegistration(@NotNull final AlignedImage movingImage, @NotNull final AlignedImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
-        final BigWarpData<?> bigwarpData = BigWarpInit.createBigWarpDataFromImages(movingImage.getAlignedImage(), targetImage.getAlignedImage());
+    private CompletableFuture<AlignedImage> applyElasticRegistration(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
+        final BigWarpData<?> bigwarpData = BigWarpInit.createBigWarpDataFromImages(movingImage.getImagePlus(), targetImage.getImagePlus());
         bigwarpData.wrapMovingSources();
-        final BoundingBoxEstimation boundingBoxEstimation = new BoundingBoxEstimation(BoundingBoxEstimation.Method.CORNERS);
-        final InvertibleRealTransform invertibleRealTransform = new BigWarpTransform(landmarkTableModel, BigWarpTransform.AFFINE).getTransformation();
+        final BoundingBoxEstimation boundingBoxEstimation = new BoundingBoxEstimation(BoundingBoxEstimation.Method.VOLUME);
+        final InvertibleRealTransform invertibleRealTransform = new BigWarpTransform(landmarkTableModel, BigWarpTransform.TPS).getTransformation();
         return CompletableFuture.supplyAsync(() -> {
             final ImagePlus deformedImage = ApplyBigwarpPlugin.apply(
                     bigwarpData,
                     landmarkTableModel,
                     invertibleRealTransform,
-                    BigWarpTransform.AFFINE, // tform type
+                    BigWarpTransform.TPS, // tform type
                     ApplyBigwarpPlugin.TARGET, // fov option
                     null,
                     boundingBoxEstimation,
@@ -92,9 +95,12 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
                     true,
                     null, // writeOpts
                     false).get(0);
-            return movingImage.getRegistrationMatrix()
-                    .map(matrix -> new AlignedImage(matrix, deformedImage.getProcessor(), movingImage.getName()))
-                    .orElse(new AlignedImage(deformedImage.getProcessor(), movingImage.getName()));
+            if (movingImage instanceof AlignedImage) {
+                return ((AlignedImage) movingImage).getRegistrationMatrix()
+                        .map(matrix -> new AlignedImage(matrix, deformedImage.getProcessor(), movingImage.getName()))
+                        .orElse(new AlignedImage(deformedImage.getProcessor(), movingImage.getName()));
+            }
+            return new AlignedImage(deformedImage.getProcessor(), movingImage.getName());
         });
     }
 
@@ -105,8 +111,8 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
      * @param targetImage
      */
     private void addLandmarks(@NotNull final LandmarkTableModel landmarkTableModel,
-                              @NotNull final AlignedImage movingImage,
-                              @NotNull final AlignedImage targetImage) {
+                              @NotNull final AnalyzableImage movingImage,
+                              @NotNull final AnalyzableImage targetImage) {
         final Iterator<Point> movingPointsIterator = movingImage.getPoints().iterator();
         final Iterator<Point> targetPointsIterator = targetImage.getPoints().iterator();
         while (movingPointsIterator.hasNext() && targetPointsIterator.hasNext()) {
