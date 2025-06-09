@@ -1,5 +1,6 @@
 package com.ds4h.model.deformation.elastic;
 
+import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,5 +15,5 @@ public interface ElasticRegistration {
      * @return A future containing the transformed image.
      */
     @NotNull
-    CompletableFuture<AlignedImage> transform(@NotNull AlignedImage movingImage, @NotNull AlignedImage targetImage);
+    CompletableFuture<AlignedImage> transform(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage);
 }
