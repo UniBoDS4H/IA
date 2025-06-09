@@ -44,6 +44,7 @@ import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
+    private static final String MANUAL_TOOLTIP_MESSAGE = "The number of points inside the images is not the same in all of them.";
     private final JButton manualAlignment, automaticAlignment, manualElasticReigstration, automaticElasticReigstration;
     private final JMenuBar menuBar;
     private final JMenu menu, project, settings, about, general;
@@ -231,7 +232,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         }
                     }
                     this.manualAlignment.setEnabled(ok);
-                    this.manualAlignment.setToolTipText(ok?"":"The number of points inside the images is not the same in all of them.");
+                    this.manualElasticReigstration.setEnabled(ok);
+                    this.manualAlignment.setToolTipText(ok?"":MANUAL_TOOLTIP_MESSAGE);
+                    this.manualElasticReigstration.setToolTipText(ok?"":MANUAL_TOOLTIP_MESSAGE);
                 }else{
                     this.manualAlignment.setEnabled(false);
                     this.manualAlignment.setToolTipText("<html>"
