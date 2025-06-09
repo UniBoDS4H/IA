@@ -233,6 +233,8 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * Returns the ImagePlus.
      * @return the ImagePlus.
      */
+    @NotNull
+    @Override
     public ImagePlus getImagePlus(){
         return this;
     }
@@ -331,6 +333,8 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * Returns the file name.
      * @return the file name.
      */
+    @Override
+    @NotNull
     public String getName() {
         return super.getTitle();
     }
