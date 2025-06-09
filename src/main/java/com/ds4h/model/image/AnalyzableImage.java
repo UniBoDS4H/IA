@@ -9,7 +9,7 @@ public interface AnalyzableImage extends PointRepository, DataImage{
      * @return
      */
     @NotNull
-    ImagePlus getImage();
+    ImagePlus getImagePlus();
 
     /**
      * TODO
