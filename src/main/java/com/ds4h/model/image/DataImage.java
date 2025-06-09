@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
-public interface DataImage extends PointRepository {
+public interface DataImage {
     /**
      * Get from the current image, its gray scale matrix.
      * @return Gray scale matrix
