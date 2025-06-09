@@ -44,7 +44,7 @@ import static com.ds4h.model.alignment.AlignmentUtil.getEnumFromAlgorithm;
 
 
 public class MainMenuGUI extends JFrame implements StandardGUI {
-    private final JButton manualAlignment, automaticAlignment;
+    private final JButton manualAlignment, automaticAlignment, manualElasticReigstration, automaticElasticReigstration;
     private final JMenuBar menuBar;
     private final JMenu menu, project, settings, about, general;
     private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem, automaticItem,
@@ -73,10 +73,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.pointControler = new PointController();
         this.lutSettingsGUI = new LutSettingsGUI();
         this.mosaicSettingsGUI = new MosaicSettingsGUI();
-        //Init of the two buttons
-        this.manualAlignment = new JButton("Manual Alignment");
-        this.automaticAlignment = new JButton("Automatic Alignment");
+        //Init buttons
+        this.manualAlignment = new JButton("Manual Rigid Alignment");
+        this.automaticAlignment = new JButton("Automatic Rigid Alignment");
+        this.manualElasticReigstration = new JButton("Manual Elastic Reigstration");
+        this.automaticElasticReigstration = new JButton("Automatic Elastic Reigstration");
         this.automaticAlignment.setEnabled(false);
+        this.manualElasticReigstration.setEnabled(false);
+        this.automaticElasticReigstration.setEnabled(false);
         //Adding the Left Panel, where are stored the buttons for the transformations
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -112,6 +116,31 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         gbcManual.weightx = 1;
         gbcManual.weighty = 0;
         panel.add(this.manualAlignment, gbcManual); // aggiungo il secondo bottone al JFrame con il GridBagLayout
+
+        GridBagConstraints gbcAutoElastic = new GridBagConstraints();
+        gbcAutoElastic.gridx = 0;
+        gbcAutoElastic.gridy = 12;
+        gbcAutoElastic.gridwidth = 1;
+        gbcAutoElastic.gridheight = 1;
+        gbcAutoElastic.fill = GridBagConstraints.BOTH;
+        gbcAutoElastic.weightx = 1;
+        gbcAutoElastic.weighty = 0;
+        panel.add(this.automaticElasticReigstration, gbcAutoElastic);
+
+        GridBagConstraints gbcManualElastic = new GridBagConstraints();
+        gbcManualElastic.gridx = 0;
+        gbcManualElastic.gridy = 13;
+        gbcManualElastic.gridwidth = 1;
+        gbcManualElastic.gridheight = 1;
+        gbcManualElastic.fill = GridBagConstraints.BOTH;
+        gbcManualElastic.weightx = 1;
+        gbcManualElastic.weighty = 0;
+        panel.add(this.manualElasticReigstration, gbcManualElastic);
+
+
+
+
+
 
         add(panel);
         //this.canvas = new ImageCanvas(new ImagePlus("my stack", this.stack));
@@ -457,7 +486,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     loadingGUI.updateProgress(alignmentControllerInterface.getStatus());
                     Thread.sleep(1000);
                 } catch (final InterruptedException e) {
-                    IJ.log("QUI 1");
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
                             "Error",
@@ -470,7 +498,6 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this,
                         this.mosaicSettingsGUI.isAlignmentOrderAscending(), this.mosaicSettingsGUI.isTargetImageForeground());
             }catch (final Exception e){
-                IJ.log("QUI 2");
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
                         "Error",
