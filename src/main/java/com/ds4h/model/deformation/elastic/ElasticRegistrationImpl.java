@@ -23,6 +23,8 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     public ElasticRegistrationImpl() {
     }
 
+    @NotNull
+    @Override
     public CompletableFuture<List<AnalyzableImage>> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages) {
         return CompletableFuture.supplyAsync(() -> {
             final List<AnalyzableImage> output = new LinkedList<>();
@@ -36,8 +38,7 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     }
 
     @NotNull
-    @Override
-    public CompletableFuture<AlignedImage> transform(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
+    private CompletableFuture<AlignedImage> transform(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
         if (movingImage.totalPoints() == targetImage.totalPoints() && movingImage.totalPoints() > 0) {
             this.initilizeSources(movingImage, targetImage);
             final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
