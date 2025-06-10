@@ -40,7 +40,7 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     @NotNull
     @Override
     public CompletableFuture<AlignedImage> transformImage(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
-        if (movingImage.totalPoints() == targetImage.totalPoints() && movingImage.totalPoints() > 0) {
+        if (movingImage.totalPoints() > 0 && targetImage.totalPoints() > 0) {
             this.initilizeSources(movingImage, targetImage);
             final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
             this.addLandmarks(landmarkTableModel, movingImage, targetImage);
@@ -95,11 +95,6 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
                     true,
                     null, // writeOpts
                     false).get(0);
-            if (movingImage instanceof AlignedImage) {
-                return ((AlignedImage) movingImage).getRegistrationMatrix()
-                        .map(matrix -> new AlignedImage(matrix, deformedImage.getProcessor(), movingImage.getName()))
-                        .orElse(new AlignedImage(deformedImage.getProcessor(), movingImage.getName()));
-            }
             return new AlignedImage(deformedImage.getProcessor(), movingImage.getName());
         });
     }
