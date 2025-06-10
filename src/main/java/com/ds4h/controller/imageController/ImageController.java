@@ -1,8 +1,10 @@
 package com.ds4h.controller.imageController;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.view.util.ImageStackCreator;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -33,32 +35,19 @@ public class ImageController {
      * @throws RuntimeException If there are no images for the stack.
      * @throws OutOfMemoryError If there is not enough space for the heap.
      */
+    @NotNull
     public ImagePlus getAlignedImagesAsStack() throws RuntimeException, OutOfMemoryError{
         if(!this.getAlignedImages().isEmpty()){
-            final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
-                    this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
-            final List<AlignedImage> images = this.getAlignedImages();
-            final LUT[] luts = new LUT[images.size()];
-            int index = 0;
-            for (final AlignedImage image : images) {
-                luts[index] = image.getAlignedImage().getProcessor().getLut();
-                IJ.log("[NAME] " + image.getName());
-                stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
-                index++;
-            }
-            try {
-                /*final CompositeImage composite = new CompositeImage(new ImagePlus("AlignedStack", stack));
-                composite.setLuts(luts);
-                return composite;*/
-                return new ImagePlus("AlignedStack", stack);
-            }catch (final Exception e){
-                throw new RuntimeException("Something went wrong with the creation of the stack.\n" +
-                        "Error: " + e.getMessage());
-            }
+            return ImageStackCreator.createImageStack(this.getAlignedImages());
         }
         throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
                 "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +
                 "increase the Threshold Factor and change the \"Algorithm\".");
+    }
+
+    @NotNull
+    public ImagePlus getAlignedImageAsStack(@NotNull final List<AlignedImage> alignedImageList) {
+        return ImageStackCreator.createImageStack(alignedImageList);
     }
 
     /**
