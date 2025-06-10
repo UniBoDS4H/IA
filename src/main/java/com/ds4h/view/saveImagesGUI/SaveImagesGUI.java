@@ -1,7 +1,7 @@
 package com.ds4h.view.saveImagesGUI;
 
 import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.controller.pointController.PointController;
+import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.controller.savingController.SaveController;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
@@ -17,19 +17,19 @@ import java.io.File;
     private final JButton saveButton;
     private final SaveImagesPanel imagesPane;
     private final JFileChooser fileChooser;
-    private final PointController pointController;
+    private final ImageManagerController imageManagerController;
     private SaveAsEnum saveAsType;
     private boolean isOrderAscending;
     private boolean isTargetImageForeground;
 
-    public SaveImagesGUI(final ImageController controller, final PointController pointController){
+    public SaveImagesGUI(final ImageController controller, final ImageManagerController imageManagerController){
         this.setTitle("Save");
         this.setSize();
             this.fileChooser = new JFileChooser();
         this.setLayout(new BorderLayout());
         this.saveButton = new JButton("Save");
         this.imagesPane = new SaveImagesPanel(controller);
-        this.pointController = pointController;
+        this.imageManagerController = imageManagerController;
         this.addComponents();
         this.addListeners();
     }

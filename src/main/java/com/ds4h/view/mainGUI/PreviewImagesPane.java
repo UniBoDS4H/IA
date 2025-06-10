@@ -1,16 +1,16 @@
 package com.ds4h.view.mainGUI;
 
-import com.ds4h.controller.pointController.PointController;
+import com.ds4h.controller.pointController.ImageManagerController;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class PreviewImagesPane extends JPanel {
-    private final PointController controller;
+    private final ImageManagerController controller;
     private final JScrollPane scrollPane;
     private final MainMenuGUI mainGUI;
     JPanel innerPanel;
-    public PreviewImagesPane(final PointController controller, MainMenuGUI mainGUI){
+    public PreviewImagesPane(final ImageManagerController controller, MainMenuGUI mainGUI){
         this.mainGUI = mainGUI;
         this.controller = controller;
         this.scrollPane = new JScrollPane();

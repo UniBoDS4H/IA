@@ -1,7 +1,7 @@
 package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.pointController.PointController;
+import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
@@ -65,7 +65,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @throws IllegalArgumentException if one of the input is not correct.
      * @throws RuntimeException if during the alignment something happen.
      */
-    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final PointController pointManager) throws Exception{
+    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final ImageManagerController pointManager) throws Exception{
 
         if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
             if (pointManager.getPointManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {

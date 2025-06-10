@@ -1,7 +1,7 @@
 package com.ds4h.view.outputGUI;
 
 import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.controller.pointController.PointController;
+import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
@@ -35,13 +35,13 @@ public class AlignmentOutputGUI extends StackWindow {
     private final StandardCanvas canvas;
     private final SaveImagesGUI saveGui;
     private final ImageController controller;
-    private final PointController pointController;
+    private final ImageManagerController imageManagerController;
     private final MainMenuGUI mainGUI;
     private final boolean isOrderAscending;
     private final boolean isTargetImageForeground;
 
     public AlignmentOutputGUI(final ImageController controller, final BunwarpjGUI settingsBunwarpj,
-                              final PointController pointController, final MainMenuGUI mainMenuGUI,
+                              final ImageManagerController imageManagerController, final MainMenuGUI mainMenuGUI,
                               final boolean isAlignmentOrderAscending, final boolean isTargetImageForeground) {
         super(image = controller.getAlignedImagesAsStack(), new StandardCanvas(image));
         this.canvas = (StandardCanvas)this.getCanvas();
@@ -49,9 +49,9 @@ public class AlignmentOutputGUI extends StackWindow {
         this.controller = controller;
         this.setLayout(new BorderLayout());
         this.mainGUI = mainMenuGUI;
-        this.pointController = pointController;
+        this.imageManagerController = imageManagerController;
         this.bunwarpjGUI = settingsBunwarpj;
-        this.saveGui = new SaveImagesGUI(controller, this.pointController);
+        this.saveGui = new SaveImagesGUI(controller, this.imageManagerController);
         this.panel = new JPanel();
         this.panel.removeAll();
         this.panel.revalidate();
@@ -145,7 +145,7 @@ public class AlignmentOutputGUI extends StackWindow {
         this.saveItem.addActionListener(event -> this.saveGui.showDialog());
 
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI, this);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.imageManagerController, this.controller, this.mainGUI, this);
             reuseGUI.showDialog();
         });
 
@@ -157,7 +157,7 @@ public class AlignmentOutputGUI extends StackWindow {
                         Thread.sleep(1000);
                     }
                     if(this.controller.getAlignedImages().size() > 0) {
-                        new AlignmentOutputGUI(this.controller, this.bunwarpjGUI, this.pointController, this.mainGUI,
+                        new AlignmentOutputGUI(this.controller, this.bunwarpjGUI, this.imageManagerController, this.mainGUI,
                                 this.isOrderAscending, this.isTargetImageForeground);
                         this.dispose();
                     }

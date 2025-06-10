@@ -5,12 +5,13 @@ import com.ds4h.controller.alignmentController.AutomaticAlignmentController.Auto
 import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualAlignmentController;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
+import com.ds4h.controller.elastic.ElasticController;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
 import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.controller.pointController.ConvertLutImageEnum;
-import com.ds4h.controller.pointController.PointController;
+import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.model.alignment.alignmentAlgorithm.AffineAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.ProjectiveAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
@@ -53,12 +54,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
     private final BunwarpjGUI settingsBunwarpj;
-    private final PointController pointControler;
+    private final ImageManagerController pointControler;
     private final PreviewImagesPane imagesPreview;
     private final ManualAlignmentConfigGUI manualConfigGUI;
     private final BunwarpJController bunwarpJController;
     private final AutomaticAlignmentController automaticAlignmentController = new AutomaticAlignmentController();
     private final ManualAlignmentController manualAlignmentController = new ManualAlignmentController();
+    private final ElasticController elasticController = new ElasticController();
     private final AutomaticAlignmentConfigGUI automaticConfigGUI;
     private final LutSettingsGUI lutSettingsGUI;
     private final MosaicSettingsGUI mosaicSettingsGUI;
@@ -71,7 +73,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.setFrameSize();
         this.bunwarpJController = new BunwarpJController();
         this.fileChooser = new JFileChooser();
-        this.pointControler = new PointController();
+        this.pointControler = new ImageManagerController();
         this.lutSettingsGUI = new LutSettingsGUI();
         this.mosaicSettingsGUI = new MosaicSettingsGUI();
         //Init buttons
@@ -426,6 +428,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
         this.automaticAlignment.addActionListener(event ->
             this.pollingAutomaticAlignment()
+        );
+
+        this.automaticElasticReigstration.addActionListener(event ->
+                this.elasticController.automaticElasticRegistration()
         );
 
         this.addWindowListener(new WindowAdapter() {
