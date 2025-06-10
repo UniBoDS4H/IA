@@ -43,10 +43,13 @@ public class AutomaticElasticRegistration implements ElasticRegistration {
     @NotNull
     @Override
     public CompletableFuture<AlignedImage> transform(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
-        this.initilizeSources(movingImage, targetImage);
-        final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
-        this.addLandmarks(landmarkTableModel, movingImage, targetImage);
-        return this.applyElasticRegistration(movingImage, targetImage, landmarkTableModel);
+        if (movingImage.totalPoints() == targetImage.totalPoints() && movingImage.totalPoints() > 0) {
+            this.initilizeSources(movingImage, targetImage);
+            final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
+            this.addLandmarks(landmarkTableModel, movingImage, targetImage);
+            return this.applyElasticRegistration(movingImage, targetImage, landmarkTableModel);
+        }
+        throw new IllegalArgumentException("Cannot transform the image " + movingImage);
     }
 
     /**
