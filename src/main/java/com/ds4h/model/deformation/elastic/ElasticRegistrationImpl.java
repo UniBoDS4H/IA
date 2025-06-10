@@ -13,18 +13,15 @@ import ij.ImagePlus;
 import net.imglib2.realtransform.BoundingBoxEstimation;
 import net.imglib2.realtransform.InvertibleRealTransform;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
-import org.bytedeco.javacpp.Pointer;
-import org.bytedeco.opencv.opencv_shape.ThinPlateSplineShapeTransformer;
 import org.jetbrains.annotations.NotNull;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Point;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-public class AutomaticElasticRegistration implements ElasticRegistration {
+public class ElasticRegistrationImpl implements ElasticRegistration {
     final PointDetector detector;
-    public AutomaticElasticRegistration(@NotNull final PointDetector detector) {
+    public ElasticRegistrationImpl(@NotNull final PointDetector detector) {
         this.detector = detector;
     }
 
