@@ -16,5 +16,8 @@ public interface ElasticRegistration {
      * @return A future containing the transformed image.
      */
     @NotNull
-    CompletableFuture<List<AnalyzableImage>> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages);
+    CompletableFuture<List<AlignedImage>> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages);
+
+    @NotNull
+    CompletableFuture<AlignedImage> transformImage(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage movingImage);
 }
