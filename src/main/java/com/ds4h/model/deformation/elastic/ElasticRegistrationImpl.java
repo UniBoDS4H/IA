@@ -20,9 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class ElasticRegistrationImpl implements ElasticRegistration {
-    final PointDetector detector;
-    public ElasticRegistrationImpl(@NotNull final PointDetector detector) {
-        this.detector = detector;
+    public ElasticRegistrationImpl() {
     }
 
     public CompletableFuture<List<AnalyzableImage>> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages) {
