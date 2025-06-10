@@ -9,6 +9,7 @@ import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.ImageManager;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -37,8 +38,15 @@ public class ElasticController {
         });
     }
 
-    public CompletableFuture<List<AlignedImage>> manualElasticRegistration(@NotNull final AnalyzableImage targetImage,
-                                                                           @NotNull final List<AnalyzableImage> movingImages) {
-        return null;
+    public CompletableFuture<List<AlignedImage>> manualElasticRegistration(@NotNull final ImageManager imageManager) {
+        final List<AlignedImage> outputImages = new LinkedList<>();
+        return CompletableFuture.supplyAsync(() -> {
+            imageManager.getTargetImage().ifPresent(targetImage -> {
+                imageManager.getImagesToAlign().forEach(image -> {
+                    this.elasticRegistration.transformImage(targetImage, image).whenComplete((transformedImage, e) -> outputImages.add(transformedImage));
+                });
+            });
+            return outputImages;
+        });
     }
 }
