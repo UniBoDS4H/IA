@@ -6,6 +6,7 @@ import com.ds4h.controller.alignmentController.ManualAlignmentController.ManualA
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.controller.directoryManager.DirectoryManager;
 import com.ds4h.controller.elastic.ElasticController;
+import com.ds4h.controller.elastic.ElasticOutputImageController;
 import com.ds4h.controller.exportController.ExportController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.importController.ImportController;
@@ -311,6 +312,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     this.imagesPreview.clearPanels();
                     this.imagesPreview.showPreviewImages();
                     this.automaticAlignment.setEnabled(false);
+                    this.automaticElasticReigstration.setEnabled(false);
                 }
             }else{
                 JOptionPane.showMessageDialog(this,
@@ -431,7 +433,17 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         );
 
         this.automaticElasticReigstration.addActionListener(event ->
-                this.elasticController.automaticElasticRegistration(pointControler.getImageManager(), automaticConfigGUI.getSelectedDetector());
+                this.elasticController.automaticElasticRegistration(pointControler.getImageManager(), automaticConfigGUI.getSelectedDetector())
+                        .whenComplete((alignedImages, ex) -> {
+                            final ElasticOutputImageController elasticOutputImageController = new ElasticOutputImageController(alignedImages);
+                            final ImageController imageController = new ImageController(elasticOutputImageController, bunwarpJController);
+                            new AlignmentOutputGUI(imageController,
+                                    this.settingsBunwarpj,
+                                    this.pointControler,
+                                    this,
+                                    this.mosaicSettingsGUI.isAlignmentOrderAscending(),
+                                    this.mosaicSettingsGUI.isTargetImageForeground());
+                })
         );
 
         this.addWindowListener(new WindowAdapter() {
@@ -581,11 +593,13 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         this.pointControler.loadImages(Arrays.stream(fileDialog.getFiles()).collect(Collectors.toList()));
                         this.checkPointsForAlignment();
                         this.automaticAlignment.setEnabled(true);
+                        this.automaticElasticReigstration.setEnabled(true);
                         this.imagesPreview.showPreviewImages();
                         loadingGUI.close();
                     }catch (OutOfMemoryError ex){
                         loadingGUI.close();
                         this.automaticAlignment.setEnabled(true);
+                        this.automaticElasticReigstration.setEnabled(true);
                         this.imagesPreview.showPreviewImages();
                         JOptionPane.showMessageDialog(this,
                                 ex.getMessage(),
