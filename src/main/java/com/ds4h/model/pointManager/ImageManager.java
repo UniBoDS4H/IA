@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * This class has all the images to be aligned stored inside "imagesWithPoints". With the using of this class we can manage all the images
  * stored inside the Plugin, add new images, remove images and so on.
  */
-public class PointManager {
+public class ImageManager {
     private final List<ImagePoints> imagesWithPoints;
     private ImagePoints targetImage;
     private ConvertLutImageEnum convertType;
@@ -19,7 +19,7 @@ public class PointManager {
     /**
      * Constructor the PointManager object.
      */
-    public PointManager(){
+    public ImageManager(){
         this.targetImage = null;
         this.imagesWithPoints = new ArrayList<>();
     }
