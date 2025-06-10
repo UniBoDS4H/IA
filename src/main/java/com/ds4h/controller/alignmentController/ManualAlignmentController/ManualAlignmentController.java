@@ -109,9 +109,9 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * @throws IllegalArgumentException if one of the parameters is not correct.
      */
     public void align(final AlignmentAlgorithm algorithm, final ImageManagerController pointManager) throws IllegalArgumentException{
-        if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
-            if(pointManager.getPointManager().getPointImages().size() > 1) {
-                this.alignment.alignImages(pointManager.getPointManager(), algorithm, AlignmentEnum.MANUAL);
+        if(!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getImageManager())) {
+            if(pointManager.getImageManager().getPointImages().size() > 1) {
+                this.alignment.alignImages(pointManager.getImageManager(), algorithm, AlignmentEnum.MANUAL);
             }else{
                 throw new IllegalArgumentException("For the alignment are needed at least TWO images.");
             }

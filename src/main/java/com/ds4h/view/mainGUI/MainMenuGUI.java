@@ -300,7 +300,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
 
         this.clearItem.addActionListener(event -> {
-            if(this.pointControler.getPointManager().getPointImages().size() > 0) {
+            if(this.pointControler.getImageManager().getPointImages().size() > 0) {
                 final int result = JOptionPane.showConfirmDialog(this,
                         "Are you sure to clear the entire project ?",
                         "Confirm operation",
@@ -350,7 +350,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         );
 
         this.exportItem.addActionListener(event -> {
-            if(this.pointControler.getPointManager().getPointImages().size() > 0) {
+            if(!this.pointControler.getImageManager().getPointImages().isEmpty()) {
                 this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 final int result = this.fileChooser.showOpenDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -359,7 +359,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     final Thread exportThread = new Thread(() -> {
                         final File file = this.fileChooser.getSelectedFile();
                         try {
-                            ExportController.exportProject(this.pointControler.getPointManager(), file.getPath());
+                            ExportController.exportProject(this.pointControler.getImageManager(), file.getPath());
                             loadingGUI.close();
                             JOptionPane.showMessageDialog(this,
                                     "The export is done.",
@@ -393,7 +393,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 loadingGUI.showDialog();
                 final Thread importThread = new Thread(() -> {
                     try {
-                        ImportController.importProject(file, this.pointControler.getPointManager());
+                        ImportController.importProject(file, this.pointControler.getImageManager());
                         this.imagesPreview.clearPanels();
                         this.imagesPreview.showPreviewImages();
                         this.checkPointsForAlignment();
@@ -431,7 +431,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         );
 
         this.automaticElasticReigstration.addActionListener(event ->
-                this.elasticController.automaticElasticRegistration()
+                this.elasticController.automaticElasticRegistration(pointControler.getImageManager(), automaticConfigGUI.getSelectedDetector());
         );
 
         this.addWindowListener(new WindowAdapter() {
@@ -639,9 +639,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     }
 
     private boolean isTargetImageLarger() {
-        if (this.pointControler.getPointManager().getTargetImage().isPresent()) {
-            final int targetHeight = this.pointControler.getPointManager().getTargetImage().get().getHeight();
-            final int targetWidth = this.pointControler.getPointManager().getTargetImage().get().getWidth();
+        if (this.pointControler.getImageManager().getTargetImage().isPresent()) {
+            final int targetHeight = this.pointControler.getImageManager().getTargetImage().get().getHeight();
+            final int targetWidth = this.pointControler.getImageManager().getTargetImage().get().getWidth();
             for (ImagePoints image: this.pointControler.getPointImages()) {
                 if (targetHeight < image.getHeight() || targetWidth < image.getWidth())
                     return false;

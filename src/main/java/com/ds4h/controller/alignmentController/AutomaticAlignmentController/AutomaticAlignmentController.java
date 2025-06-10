@@ -67,10 +67,10 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      */
     public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final ImageManagerController pointManager) throws Exception{
 
-        if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getPointManager())) {
-            if (pointManager.getPointManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {
+        if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getImageManager())) {
+            if (pointManager.getImageManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {
                 try{
-                    this.alignment.alignImages(pointManager.getPointManager(), algorithm,
+                    this.alignment.alignImages(pointManager.getImageManager(), algorithm,
                             AlignmentEnum.AUTOMATIC,
                             Objects.requireNonNull(detector.pointDetector()),
                             detector.getThresholdFactor(),

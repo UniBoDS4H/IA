@@ -48,7 +48,7 @@ public class ImageManagerController {
      * Returns the "pointManager".
      * @return the pointManager.
      */
-    public ImageManager getPointManager(){
+    public ImageManager getImageManager(){
         return this.imageManager;
     }
 
