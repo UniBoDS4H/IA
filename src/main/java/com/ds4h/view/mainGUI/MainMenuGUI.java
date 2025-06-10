@@ -401,6 +401,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 "Import Project",
                                 JOptionPane.INFORMATION_MESSAGE);
                         this.automaticAlignment.setEnabled(true);
+                        this.automaticElasticReigstration.setEnabled(true);
                     } catch (FileNotFoundException e) {
                         loadingGUI.close();
                         JOptionPane.showMessageDialog(this,
