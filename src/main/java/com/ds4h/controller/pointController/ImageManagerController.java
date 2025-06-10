@@ -15,14 +15,14 @@ import java.util.Objects;
 /**
  *
  */
-public class PointController {
+public class ImageManagerController {
     private final ImageManager imageManager;
     private ConvertLutImageEnum convertType;
 
     /**
      * Constructor for the PointController object.
      */
-    public PointController(){
+    public ImageManagerController(){
         this.imageManager = new ImageManager();
     }
 
