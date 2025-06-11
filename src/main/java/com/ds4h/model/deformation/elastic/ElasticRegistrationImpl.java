@@ -25,21 +25,18 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
 
     @NotNull
     @Override
-    public CompletableFuture<List<AlignedImage>> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages) {
-        return CompletableFuture.supplyAsync(() -> {
-            final List<AlignedImage> output = new LinkedList<>();
-            movingImages.stream().filter(Objects::nonNull).forEach(image -> {
-                this.transformImage(image, targetImage).whenComplete((transformedImage, e) -> {
-                    output.add(transformedImage);
-                });
-            });
-            return output;
+    public List<AlignedImage> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages) {
+        final List<AlignedImage> output = new LinkedList<>();
+        movingImages.stream().filter(Objects::nonNull).forEach(image -> {
+            final AlignedImage transformedImage = this.transformImage(image, targetImage);
+            output.add(transformedImage);
         });
+        return output;
     }
 
     @NotNull
     @Override
-    public CompletableFuture<AlignedImage> transformImage(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
+    public AlignedImage transformImage(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
         if (movingImage.totalPoints() > 0 && targetImage.totalPoints() > 0) {
             this.initilizeSources(movingImage, targetImage);
             final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
@@ -71,32 +68,30 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
      * @return
      */
     @NotNull
-    private CompletableFuture<AlignedImage> applyElasticRegistration(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
+    private AlignedImage applyElasticRegistration(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
         final BigWarpData<?> bigwarpData = BigWarpInit.createBigWarpDataFromImages(movingImage.getImagePlus(), targetImage.getImagePlus());
         bigwarpData.wrapMovingSources();
         final BoundingBoxEstimation boundingBoxEstimation = new BoundingBoxEstimation(BoundingBoxEstimation.Method.VOLUME);
         final InvertibleRealTransform invertibleRealTransform = new BigWarpTransform(landmarkTableModel, BigWarpTransform.TPS).getTransformation();
-        return CompletableFuture.supplyAsync(() -> {
-            final ImagePlus deformedImage = ApplyBigwarpPlugin.apply(
-                    bigwarpData,
-                    landmarkTableModel,
-                    invertibleRealTransform,
-                    BigWarpTransform.TPS, // tform type
-                    ApplyBigwarpPlugin.TARGET, // fov option
-                    null,
-                    boundingBoxEstimation,
-                    ApplyBigwarpPlugin.TARGET,
-                    null,
-                    null,
-                    null,
-                    Interpolation.NEARESTNEIGHBOR,
-                    false, // virtual
-                    1, // nThreads
-                    true,
-                    null, // writeOpts
-                    false).get(0);
-            return new AlignedImage(deformedImage.getProcessor(), movingImage.getName());
-        });
+        final ImagePlus deformedImage = ApplyBigwarpPlugin.apply(
+                bigwarpData,
+                landmarkTableModel,
+                invertibleRealTransform,
+                BigWarpTransform.TPS, // tform type
+                ApplyBigwarpPlugin.TARGET, // fov option
+                null,
+                boundingBoxEstimation,
+                ApplyBigwarpPlugin.TARGET,
+                null,
+                null,
+                null,
+                Interpolation.NEARESTNEIGHBOR,
+                false, // virtual
+                1, // nThreads
+                true,
+                null, // writeOpts
+                false).get(0);
+        return new AlignedImage(deformedImage.getProcessor(), movingImage.getName());
     }
 
     /**
