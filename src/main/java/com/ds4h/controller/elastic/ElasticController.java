@@ -34,8 +34,7 @@ public class ElasticController {
             imageManager.getTargetImage().ifPresent(targetImage -> {
                 imageManager.getImagesToAlign().forEach(image -> {
                     pointDetector.detectPoint(targetImage, image);
-                    System.out.println(image.totalPoints());
-                    final AlignedImage transformedImage = this.elasticRegistration.transformImage(targetImage, image);
+                    final AlignedImage transformedImage = this.elasticRegistration.transformImage(image, targetImage);
                     outputImages.add(transformedImage);
                     targetImage.clear();
                 });
@@ -51,8 +50,10 @@ public class ElasticController {
         return CompletableFuture.supplyAsync(() -> {
             imageManager.getTargetImage().ifPresent(targetImage -> {
                 imageManager.getImagesToAlign().forEach(image -> {
-//                    this.elasticRegistration.transformImage(targetImage, image).whenComplete((transformedImage, e) -> outputImages.add(transformedImage));
+                    final AlignedImage alignedImage = this.elasticRegistration.transformImage(image, targetImage);
+                    outputImages.add(alignedImage);
                 });
+                outputImages.add(new AlignedImage(targetImage.getImagePlus().getProcessor(), targetImage.getName()));
             });
             return outputImages;
         });
