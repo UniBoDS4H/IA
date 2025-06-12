@@ -3,10 +3,16 @@ package com.ds4h.model.alignment.automatic.pointDetector.siftDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
 import ij.IJ;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.Feature2D;
+import org.opencv.features2d.Features2d;
 import org.opencv.features2d.SIFT;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class SIFTDetector extends PointDetector {
@@ -49,38 +55,24 @@ public class SIFTDetector extends PointDetector {
         }
         IJ.log("[SIFT DETECTOR] Detected points for the target image.");
 
-        final MatOfDMatch matches = new MatOfDMatch();
-        this.matcher.match(descriptors1,
-                super.getMatCache().getDescriptor(),
-                matches); // save all the matches from image1 and image2
-        descriptors1.release();
-        double max_dist = 0;
-        double min_dist = Double.MAX_VALUE;
+        List<MatOfDMatch> knnMatches = new LinkedList<>();
+        this.matcher.knnMatch(descriptors1, super.getMatCache().getDescriptor(), knnMatches, 2);
 
-        for(final DMatch match : matches.toList()){
-            final double dist = match.distance;
-            if (dist < min_dist) min_dist = dist;
-            if (dist > max_dist) max_dist = dist;
+        List<KeyPoint> keypoints1List = keypoints1.toList();
+        List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
+        final double scale = Math.pow(2, super.getScalingFactor()-1);
+        List<DMatch> goodMatches = new LinkedList<>();
+
+        for (MatOfDMatch matOfDMatch : knnMatches) {
+            DMatch[] matches = matOfDMatch.toArray();
+            if (matches.length >= 2 && matches[0].distance < 0.7 * matches[1].distance) {
+                goodMatches.add(matches[0]);
+            }
         }
 
-        final double threshold = (1.8 + this.getFactor()) * min_dist;
-        final List<KeyPoint> keypoints1List = keypoints1.toList();
-        final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
-        keypoints1.release();
-        final double scale = Math.pow(2, super.getScalingFactor()-1);
-        matches.toList().stream()
-                .filter(match -> match.distance < threshold)
-                .forEach(goodMatch -> {
-                    final Point queryScaled = new Point(
-                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
-                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
-                    final Point trainScaled = new Point(
-                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
-                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.add(queryScaled);
-                    targetImage.add(trainScaled);
-                });
+        this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, goodMatches);
+
         IJ.log("[SIFT DETECTOR] End Detection.");
-        matches.release();
+        knnMatches.clear();
     }
 }

@@ -61,17 +61,6 @@ public class FREAKDetector extends PointDetector {
         keypoints1.release();
         final double scale = Math.pow(2, super.getScalingFactor()-1);
 
-        matches.toList().stream()
-                .filter(match -> match.distance < threshold)
-                .forEach(goodMatch -> {
-                    final Point queryScaled = new Point(
-                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
-                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
-                    final Point trainScaled = new Point(
-                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
-                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.add(queryScaled);
-                    targetImage.add(trainScaled);
-                });
+        this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, matches.toList());
     }
 }
