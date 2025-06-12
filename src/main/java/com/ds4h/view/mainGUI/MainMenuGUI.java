@@ -16,6 +16,7 @@ import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.model.alignment.alignmentAlgorithm.AffineAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.ProjectiveAlignment;
 import com.ds4h.model.alignment.alignmentAlgorithm.TranslationalAlignment;
+import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.automaticAlignmentConfigGUI.AutomaticAlignmentConfigGUI;
@@ -342,6 +343,20 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.manualAlignment.addActionListener(event ->
             this.pollingManualAlignment()
         );
+
+        this.manualElasticReigstration.addActionListener(event -> {
+            this.elasticController.manualElasticRegistration(pointControler.getImageManager())
+                    .whenComplete((alignedImages, ex) -> {
+                        final ElasticOutputImageController elasticOutputImageController = new ElasticOutputImageController(alignedImages);
+                        final ImageController imageController = new ImageController(elasticOutputImageController, bunwarpJController);
+                        new AlignmentOutputGUI(imageController,
+                                this.settingsBunwarpj,
+                                this.pointControler,
+                                this,
+                                this.mosaicSettingsGUI.isAlignmentOrderAscending(),
+                                this.mosaicSettingsGUI.isTargetImageForeground());
+                    });
+        });
 
         this.alignmentItem.addActionListener(event ->
             this.manualConfigGUI.showDialog()
