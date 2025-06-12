@@ -1,11 +1,14 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.List;
 
 /**
  *
@@ -165,5 +168,25 @@ public abstract class PointDetector {
             pyramid[i] = ipDownsampled;
         }
         return pyramid[levels-1];
+    }
+
+    protected void addKeyPoints(@NotNull final AnalyzableImage movingImage,
+                                @NotNull final AnalyzableImage targetImage,
+                                @NotNull final List<KeyPoint> movingKeyPoints,
+                                @NotNull final List<KeyPoint> targetKeyPoints,
+                                @NotNull final List<DMatch> matches) {
+        final double scale = Math.pow(2, this.scalingFactor -1);
+        matches.stream()
+                .sorted((m1, m2) -> Float.compare(m1.distance, m2.distance))
+                .forEach(match -> {
+                    Point movingPt = movingKeyPoints.get(match.queryIdx).pt;
+                    Point targetPt = targetKeyPoints.get(match.trainIdx).pt;
+
+                    movingPt = new Point(movingPt.x * scale, movingPt.y * scale);
+                    targetPt = new Point(targetPt.x * scale, targetPt.y * scale);
+
+                    movingImage.add(movingPt);
+                    targetImage.add(targetPt);
+                });
     }
 }
