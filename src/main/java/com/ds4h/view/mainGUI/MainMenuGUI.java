@@ -205,6 +205,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         if(this.pointControler.getPointImages().size() < 2){
             this.manualAlignment.setEnabled(false);
+            this.manualElasticReigstration.setEnabled(false);
             this.automaticAlignment.setToolTipText("<html>" +
                     "You have to load at least 2 images</html>");
             this.manualAlignment.setToolTipText("<html>" +
@@ -241,6 +242,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     this.manualElasticReigstration.setToolTipText(ok?"":MANUAL_TOOLTIP_MESSAGE);
                 }else{
                     this.manualAlignment.setEnabled(false);
+                    this.manualElasticReigstration.setEnabled(false);
                     this.manualAlignment.setToolTipText("<html>"
                             + "The number of points inside the images is not correct."
                             + "<br>"
