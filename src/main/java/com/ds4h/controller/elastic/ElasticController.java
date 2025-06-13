@@ -36,7 +36,8 @@ public class ElasticController {
                     pointDetector.detectPoint(targetImage, image);
                     final AlignedImage transformedImage = this.elasticRegistration.transformImage(image, targetImage);
                     outputImages.add(transformedImage);
-                    targetImage.clear();
+                    targetImage.clearPoints();
+                    image.clearPoints();
                 });
                 outputImages.add(new AlignedImage(targetImage.getImagePlus().getProcessor(), targetImage.getName()));
             });
