@@ -176,6 +176,7 @@ public abstract class PointDetector {
                                 @NotNull final List<KeyPoint> targetKeyPoints,
                                 @NotNull final List<DMatch> matches) {
         final double scale = Math.pow(2, this.scalingFactor -1);
+        IJ.log("[POINT DETECTOR] The total amount of matches are: " + matches.size());
         matches.stream()
                 .sorted((m1, m2) -> Float.compare(m1.distance, m2.distance))
                 .forEach(match -> {
