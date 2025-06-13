@@ -302,7 +302,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
 
 
         this.clearItem.addActionListener(event -> {
-            if(this.pointControler.getImageManager().getPointImages().size() > 0) {
+            if(!this.pointControler.getImageManager().getPointImages().isEmpty()) {
                 final int result = JOptionPane.showConfirmDialog(this,
                         "Are you sure to clear the entire project ?",
                         "Confirm operation",
