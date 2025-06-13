@@ -1,13 +1,9 @@
-package com.ds4h.view.util;
+package com.ds4h.model.util;
 
-import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
-import com.jgoodies.common.base.Objects;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.process.ImageProcessor;
-import ij.process.LUT;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.ColorModel;

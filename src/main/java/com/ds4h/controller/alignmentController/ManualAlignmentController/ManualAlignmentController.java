@@ -6,14 +6,9 @@ import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
-import com.ds4h.view.util.ImageStackCreator;
-import ij.IJ;
+import com.ds4h.model.util.ImageStackCreator;
 import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.ByteProcessor;
-import ij.process.ImageConverter;
 
-import java.awt.image.ColorModel;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;

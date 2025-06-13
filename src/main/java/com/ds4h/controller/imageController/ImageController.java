@@ -4,12 +4,9 @@ import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.bunwarpJController.BunwarpJController;
 import com.ds4h.model.image.alignedImage.AlignedImage;
-import com.ds4h.view.util.ImageStackCreator;
-import ij.IJ;
+import com.ds4h.model.util.ImageStackCreator;
 import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.LUT;
-import java.awt.image.ColorModel;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

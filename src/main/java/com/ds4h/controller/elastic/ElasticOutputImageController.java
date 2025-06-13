@@ -3,7 +3,7 @@ package com.ds4h.controller.elastic;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.model.image.alignedImage.AlignedImage;
-import com.ds4h.view.util.ImageStackCreator;
+import com.ds4h.model.util.ImageStackCreator;
 import ij.ImagePlus;
 
 import java.util.List;
