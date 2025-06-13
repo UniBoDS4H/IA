@@ -7,11 +7,13 @@ import com.ds4h.model.alignment.Alignment;
 import com.ds4h.model.alignment.AlignmentEnum;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
+import com.ds4h.view.util.ImageStackCreator;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
+import ij.process.ImageProcessor;
 
 import java.awt.image.ColorModel;
 import java.util.*;
@@ -112,33 +114,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
     @Override
     public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
         if(!this.getAlignedImages().isEmpty()){
-            final ImageStack stack = new ImageStack(this.getAlignedImages().get(0).getAlignedImage().getWidth(),
-                    this.getAlignedImages().get(0).getAlignedImage().getHeight(), ColorModel.getRGBdefault());
-            System.gc();
-            final List<AlignedImage> images = this.getAlignedImages();
-            //final LUT[] luts = new LUT[images.size()];
-            //int index = 0;
-            final int bitDepth = images.stream()
-                    .min(Comparator.comparingInt(img -> img.getAlignedImage().getBitDepth())).get().getAlignedImage().getBitDepth();
-            IJ.log("[ALIGNED STACK] Bit Depth: " + bitDepth);
-            for (final AlignedImage image : images) {
-                if(!(image.getAlignedImage().getProcessor() instanceof ByteProcessor)) {
-                    final ImageConverter imageConverter = new ImageConverter(image.getAlignedImage());
-                    imageConverter.convertToGray8();
-                    IJ.log("[STACK] " + (image.getAlignedImage().getProcessor() instanceof ByteProcessor));
-                }
-                //luts[index] = image.getAlignedImage().getProcessor().getLut();
-                IJ.log("[NAME] " + image.getName());
-                stack.addSlice(image.getName(), image.getAlignedImage().getProcessor());
-                //index++;
-            }
-            try {
-                //final CompositeImage composite = new CompositeImage(new ImagePlus("Aligned Stack", stack));
-                //composite.setLuts(luts);
-                return new ImagePlus("AlignedStack", stack);
-            }catch (Exception e){
-                throw new RuntimeException("Something went wrong with the creation of the stack.");
-            }
+            return ImageStackCreator.createImageStack(this.getAlignedImages());
         }
         throw new RuntimeException("The detection has failed, the number of points found can not be used with the selected \"Algorithm\".\n" +
                 "Please consider to expand the memory (by going to Edit > Options > Memory & Threads)\n" +
