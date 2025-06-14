@@ -6,7 +6,6 @@ import bigwarp.BigWarpData;
 import bigwarp.BigWarpInit;
 import bigwarp.landmarks.LandmarkTableModel;
 import bigwarp.transforms.BigWarpTransform;
-import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import ij.IJ;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 public class ElasticRegistrationImpl implements ElasticRegistration {
     public ElasticRegistrationImpl() {
@@ -50,9 +48,9 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     }
 
     /**
-     * TODO
-     * @param movingImage
-     * @param targetImage
+     * Create the BigWarp sources, that will be later on used for the elastic registration.
+     * @param movingImage: the image that will be deformed in order to make it like the target image.
+     * @param targetImage: the fixed image used for the comparison.
      */
     private void initilizeSources(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage) {
         final ImagePlus movingImg = movingImage.getImagePlus();
@@ -64,11 +62,12 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     }
 
     /**
-     * TODO
-     * @param movingImage
-     * @param targetImage
-     * @param landmarkTableModel
-     * @return
+     * Real logic for the elastic registration, this method applies the BigWarp logic on the input images. The output returned from this method is a new version of the
+     * moving image.
+     * @param movingImage: the image that will be deformed during the registration.
+     * @param targetImage: the fixed image.
+     * @param landmarkTableModel: collection of all landmarks both from moving image and target image.
+     * @return a deformed image.
      */
     @NotNull
     private AlignedImage applyElasticRegistration(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
@@ -98,10 +97,11 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     }
 
     /**
-     * TODO
-     * @param landmarkTableModel
-     * @param movingImage
-     * @param targetImage
+     * This method adds all the detected points inside the LandmarkTableModel. All this points will then be used by the
+     * BigWarp logic for the elastic registration.
+     * @param landmarkTableModel: collector of points.
+     * @param movingImage: the moving image that will be deformed.
+     * @param targetImage: the fixed image.
      */
     private void addLandmarks(@NotNull final LandmarkTableModel landmarkTableModel,
                               @NotNull final AnalyzableImage movingImage,
