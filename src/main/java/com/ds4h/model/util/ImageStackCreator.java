@@ -17,7 +17,7 @@ public class ImageStackCreator {
         final ImagePlus alignedImage = alignedImageList.get(0).getAlignedImage();
         final ImageStack stack = new ImageStack(alignedImage.getWidth(), alignedImage.getHeight(), ColorModel.getRGBdefault());
         for (final AlignedImage image : alignedImageList) {
-            IJ.log("[NAME] " + image.getName());
+            IJ.log("[STACK CREATION] Current image: " + image.getName());
             stack.addSlice(image.getName(), image.getProcessor());
         }
         try {
