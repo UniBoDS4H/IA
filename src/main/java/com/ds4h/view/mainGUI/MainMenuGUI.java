@@ -20,6 +20,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.view.aboutGUI.AboutGUI;
 import com.ds4h.view.automaticAlignmentConfigGUI.AutomaticAlignmentConfigGUI;
+import com.ds4h.view.automaticElasticConfigGUI.AutomaticElasticConfigGUI;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.loadingGUI.LoadingGUI;
@@ -67,6 +68,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final AutomaticAlignmentConfigGUI automaticConfigGUI;
     private final LutSettingsGUI lutSettingsGUI;
     private final MosaicSettingsGUI mosaicSettingsGUI;
+    private final AutomaticElasticConfigGUI automaticElasticConfigGUI;
 
     /**
      * Constructor of the MainMenu GUI
@@ -79,6 +81,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.pointControler = new ImageManagerController();
         this.lutSettingsGUI = new LutSettingsGUI();
         this.mosaicSettingsGUI = new MosaicSettingsGUI();
+        this.automaticElasticConfigGUI = new AutomaticElasticConfigGUI();
         //Init buttons
         this.manualAlignment = new JButton("Manual Rigid Alignment");
         this.automaticAlignment = new JButton("Automatic Rigid Alignment");
@@ -371,7 +374,9 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             this.automaticConfigGUI.showDialog()
         );
 
-        this.elasticItem.addActionListener(event -> {});
+        this.elasticItem.addActionListener(event ->
+                this.automaticElasticConfigGUI.showDialog()
+        );
 
         this.exportItem.addActionListener(event -> {
             if(!this.pointControler.getImageManager().getPointImages().isEmpty()) {
