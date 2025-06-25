@@ -15,9 +15,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ElasticController {
+    private ElasticAlgorithms currentAlgorithm;
     private final ElasticRegistration elasticRegistration;
     public ElasticController() {
         this.elasticRegistration = new ElasticRegistrationImpl();
+        this.currentAlgorithm = ElasticAlgorithms.BIGWARP;
     }
 
     /**
@@ -68,5 +70,9 @@ public class ElasticController {
 
     public ElasticAlgorithms[] getAlgorithms() {
         return ElasticAlgorithms.values();
+    }
+
+    public void setAlgorithms(@NotNull ElasticAlgorithms algorithm) {
+        this.currentAlgorithm = algorithm;
     }
 }
