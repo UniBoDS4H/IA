@@ -52,6 +52,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
     private final JMenuBar menuBar;
     private final JMenu menu, project, settings, about, general;
     private final JMenuItem settingsItem, loadImages, exportItem, importItem, clearItem, alignmentItem, automaticItem,
+            elasticItem,
             lutSettings, mosaicSettings;
     private final AboutGUI aboutGUI;
     private final JFileChooser fileChooser;
@@ -168,6 +169,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.clearItem = new JMenuItem("Clear");
         this.alignmentItem = new JMenuItem("Manual");
         this.automaticItem = new JMenuItem("Automatic");
+        this.elasticItem = new JMenuItem("Elastic");
         this.lutSettings = new JMenuItem("LUT Settings");
         this.mosaicSettings = new JMenuItem("Mosaic Settings");
         this.addComponents();
@@ -195,6 +197,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.settings.add(this.alignmentItem);
         this.settings.add(this.automaticItem);
         this.settings.add(this.settingsItem);
+        this.settings.add(this.elasticItem);
         this.project.add(this.exportItem);
         this.project.add(this.importItem);
         this.project.add(this.clearItem);
@@ -367,6 +370,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.automaticItem.addActionListener(event ->
             this.automaticConfigGUI.showDialog()
         );
+
+        this.elasticItem.addActionListener(event -> {});
 
         this.exportItem.addActionListener(event -> {
             if(!this.pointControler.getImageManager().getPointImages().isEmpty()) {
