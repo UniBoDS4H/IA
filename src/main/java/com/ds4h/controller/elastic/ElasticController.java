@@ -3,11 +3,13 @@ package com.ds4h.controller.elastic;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
+import com.ds4h.model.deformation.ElasticAlgorithms;
 import com.ds4h.model.deformation.elastic.ElasticRegistration;
 import com.ds4h.model.deformation.elastic.ElasticRegistrationImpl;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.ImageManager;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +20,12 @@ public class ElasticController {
         this.elasticRegistration = new ElasticRegistrationImpl();
     }
 
+    /**
+     *
+     * @param imageManager
+     * @param detector
+     * @return
+     */
     @NotNull
     public CompletableFuture<List<AlignedImage>> automaticElasticRegistration(@NotNull final ImageManager imageManager,
                                                                               @NotNull final Detectors detector) {
@@ -38,6 +46,11 @@ public class ElasticController {
         });
     }
 
+    /**
+     *
+     * @param imageManager
+     * @return
+     */
     @NotNull
     public CompletableFuture<List<AlignedImage>> manualElasticRegistration(@NotNull final ImageManager imageManager) {
         final List<AlignedImage> outputImages = new LinkedList<>();
@@ -51,5 +64,9 @@ public class ElasticController {
             });
             return outputImages;
         });
+    }
+
+    public ElasticAlgorithms[] getAlgorithms() {
+        return ElasticAlgorithms.values();
     }
 }
