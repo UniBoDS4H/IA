@@ -81,7 +81,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.pointControler = new ImageManagerController();
         this.lutSettingsGUI = new LutSettingsGUI();
         this.mosaicSettingsGUI = new MosaicSettingsGUI();
-        this.automaticElasticConfigGUI = new AutomaticElasticConfigGUI();
+        this.automaticElasticConfigGUI = new AutomaticElasticConfigGUI(elasticController);
         //Init buttons
         this.manualAlignment = new JButton("Manual Rigid Alignment");
         this.automaticAlignment = new JButton("Automatic Rigid Alignment");
