@@ -2,7 +2,7 @@ package com.ds4h.controller.imageController;
 
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
-import com.ds4h.controller.bunwarpJController.BunwarpJController;
+import com.ds4h.controller.elastic.bunwarpJController.BunwarpJController;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.util.ImageStackCreator;
 import ij.ImagePlus;
