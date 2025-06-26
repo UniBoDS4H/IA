@@ -2,28 +2,32 @@ package com.ds4h.controller.imageController;
 
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
+import com.ds4h.controller.elastic.ElasticController;
 import com.ds4h.controller.elastic.bunwarpJController.BunwarpJController;
+import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.pointManager.ImageManager;
 import com.ds4h.model.util.ImageStackCreator;
 import ij.ImagePlus;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class ImageController {
     private final AlignmentControllerInterface alignmentControllerInterface;
-    private final BunwarpJController bunwarpJController;
+    private final ElasticController elasticController;
     private ImageEnum imageEnum = ImageEnum.ALIGNED;
 
     /**
      * Constructor for the ImageController object.
      * @param alignmentControllerInterface the alignment controller (Manual or Automatic).
-     * @param bunwarpJController the bunwarpj controller, for the elastic transformation.
+     * @param elasticController: TODO
      */
-    public ImageController(final AlignmentControllerInterface alignmentControllerInterface, final BunwarpJController bunwarpJController){
+    public ImageController(final AlignmentControllerInterface alignmentControllerInterface, final ElasticController elasticController) {
         this.alignmentControllerInterface = alignmentControllerInterface;
-        this.bunwarpJController = bunwarpJController;
+        this.elasticController = elasticController;
     }
 
     /**
@@ -55,8 +59,6 @@ public class ImageController {
         switch (this.imageEnum){
             case ALIGNED:
                 return this.alignmentControllerInterface.getAlignedImages();
-            case ELASTIC:
-                return this.bunwarpJController.getImages();
             default:
                 return Collections.emptyList();
         }
@@ -69,15 +71,9 @@ public class ImageController {
         this.imageEnum = ImageEnum.ALIGNED;
     }
 
-    /**
-     * Perform the Elastic Deformation.
-     * @param alignedImages all the images to deform.
-     */
-    public void elastic(final List<AlignedImage> alignedImages){
-        if(Objects.nonNull(alignedImages) && !alignedImages.isEmpty()) {
-            this.bunwarpJController.transformation(alignedImages);
-            this.imageEnum = ImageEnum.ELASTIC;
-        }
+    public CompletableFuture<List<AlignedImage>> elastic(@NotNull final ImageManager imageManager, @NotNull Detectors detector){
+        this.imageEnum = ImageEnum.ELASTIC;
+        return this.elasticController.automaticElasticRegistration(imageManager, detector);
     }
 
     /**
@@ -96,14 +92,6 @@ public class ImageController {
     }
 
     /**
-     * Returns the status of the deformation.
-     * @return the status of the deformation.
-     */
-    public boolean deformationIsAlive(){
-        return this.bunwarpJController.isAlive();
-    }
-
-    /**
      * Release all the images from the heap.
      */
     public void releaseImages(){
@@ -111,10 +99,12 @@ public class ImageController {
             case ALIGNED:
                 this.alignmentControllerInterface.releaseImages();
                 break;
-            case ELASTIC:
-                this.bunwarpJController.releaseImages();
-                break;
         }
         System.gc();
+    }
+
+    @NotNull
+    public ElasticController getElasticController() {
+        return elasticController;
     }
 }
