@@ -355,7 +355,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
             this.elasticController.manualElasticRegistration(pointControler.getImageManager())
                     .whenComplete((alignedImages, ex) -> {
                         final ElasticOutputImageController elasticOutputImageController = new ElasticOutputImageController(alignedImages);
-                        final ImageController imageController = new ImageController(elasticOutputImageController, bunwarpJController);
+                        final ImageController imageController = new ImageController(elasticOutputImageController, elasticController);
                         new AlignmentOutputGUI(imageController,
                                 this.settingsBunwarpj,
                                 this.pointControler,
@@ -462,7 +462,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 this.elasticController.automaticElasticRegistration(pointControler.getImageManager(), automaticConfigGUI.getSelectedDetector())
                         .whenComplete((alignedImages, ex) -> {
                             final ElasticOutputImageController elasticOutputImageController = new ElasticOutputImageController(alignedImages);
-                            final ImageController imageController = new ImageController(elasticOutputImageController, bunwarpJController);
+                            final ImageController imageController = new ImageController(elasticOutputImageController, elasticController);
                             new AlignmentOutputGUI(imageController,
                                     this.settingsBunwarpj,
                                     this.pointControler,
@@ -513,7 +513,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                         ((TranslationalAlignment) this.manualAlignmentController.getAlgorithm()).setTransformation(this.manualConfigGUI.getTranslation(), this.manualConfigGUI.getRotation(), this.manualConfigGUI.getScaling());
                     }
                     this.manualAlignmentController.align(this.manualAlignmentController.getAlgorithm(), this.pointControler);
-                    this.startPollingThread(this.manualAlignmentController, new ImageController(manualAlignmentController, bunwarpJController));
+                    this.startPollingThread(this.manualAlignmentController, new ImageController(manualAlignmentController, elasticController));
                 } catch (final Exception e) {
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
@@ -584,7 +584,7 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                     }
                     this.automaticAlignmentController.align(this.automaticAlignmentController.getAlgorithm(), this.automaticConfigGUI.getSelectedDetector(),
                             this.pointControler);
-                    this.startPollingThread(this.automaticAlignmentController, new ImageController(automaticAlignmentController, bunwarpJController));
+                    this.startPollingThread(this.automaticAlignmentController, new ImageController(automaticAlignmentController, elasticController));
                 } catch (final Exception e) {
                     JOptionPane.showMessageDialog(this,
                             e.getMessage(),
