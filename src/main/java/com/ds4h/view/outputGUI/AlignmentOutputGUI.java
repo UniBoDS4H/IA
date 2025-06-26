@@ -1,7 +1,9 @@
 package com.ds4h.view.outputGUI;
 
+import com.ds4h.controller.elastic.ElasticOutputImageController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.controller.pointController.ImageManagerController;
+import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
@@ -150,26 +152,20 @@ public class AlignmentOutputGUI extends StackWindow {
         });
 
         this.elasticItem.addActionListener(event -> {
-            this.controller.elastic(this.controller.getAlignedImages());
-            final Thread pollingElastic = new Thread(() -> {
-                try {
-                    while (this.controller.deformationIsAlive()){
-                        Thread.sleep(1000);
-                    }
-                    if(this.controller.getAlignedImages().size() > 0) {
-                        new AlignmentOutputGUI(this.controller, this.bunwarpjGUI, this.imageManagerController, this.mainGUI,
-                                this.isOrderAscending, this.isTargetImageForeground);
+            this.controller.elastic(imageManagerController.getImageManager(), Detectors.SIFT)
+                    .whenComplete((images, ex) -> {
+                        final ElasticOutputImageController elasticOutputImageController = new ElasticOutputImageController(images);
+                        final ImageController imageController = new ImageController(elasticOutputImageController, this.controller.getElasticController());
+                        new AlignmentOutputGUI(imageController,
+                                this.bunwarpjGUI,
+                                this.imageManagerController,
+                                this.mainGUI,
+                                this.isOrderAscending,
+                                this.isTargetImageForeground);
                         this.dispose();
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this,
-                            e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            });
-            pollingElastic.start();
+                    });
         });
+
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent windowEvent) {
