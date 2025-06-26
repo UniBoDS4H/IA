@@ -1,5 +1,4 @@
-package com.ds4h.controller.bunwarpJController;
-import com.ds4h.model.image.alignedImage.AlignedImage;
+package com.ds4h.controller.elastic.bunwarpJController;
 import com.ds4h.model.deformation.BunwarpjDeformation;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
@@ -21,46 +20,6 @@ public class BunwarpJController {
         this.bunwarpjDeformation = new BunwarpjDeformation();
     }
 
-    /**
-     * Use BunwarpJ in order to apply the elastic transformation using the Class Model.
-     * @param images : the list of images to deform
-     */
-    public void transformation(final List<AlignedImage> images){
-        if(!this.bunwarpjDeformation.isAlive()) {
-            this.bunwarpjDeformation.deformList(images);
-        }
-    }
-
-    /**
-     * Returns all the deformed images.
-     * @return all the deformed images.
-     */
-    public List<AlignedImage> getImages(){
-        if(!this.bunwarpjDeformation.isAlive()){
-            return this.bunwarpjDeformation.getOutputList();
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Release all the images from the memory.
-     */
-    public void releaseImages(){
-        this.bunwarpjDeformation.getOutputList().forEach(image -> {
-            image.releaseImage();
-            image = null;
-        });
-        this.bunwarpjDeformation.getOutputList().clear();
-        System.gc();
-    }
-
-    /**
-     * Returns the status thread.
-     * @return the status thread.
-     */
-    public boolean isAlive(){
-        return this.bunwarpjDeformation.isAlive();
-    }
 
     /**
      * Set the "modeInput".

@@ -1,6 +1,6 @@
 package com.ds4h.view.bunwarpjGUI;
 
-import com.ds4h.controller.bunwarpJController.BunwarpJController;
+import com.ds4h.controller.elastic.bunwarpJController.BunwarpJController;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
