@@ -1,5 +1,6 @@
 package com.ds4h.controller.elastic.bunwarpJController;
 import com.ds4h.model.deformation.BunwarpjDeformation;
+import com.ds4h.model.deformation.ElasticAlgorithms;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
@@ -17,7 +18,7 @@ public class BunwarpJController {
      * Constructr for the BunwarpJController object.
      */
     public BunwarpJController(){
-        this.bunwarpjDeformation = new BunwarpjDeformation();
+        this.bunwarpjDeformation = (BunwarpjDeformation) ElasticAlgorithms.BUNWARPJ.getAlgorithm();
     }
 
 
