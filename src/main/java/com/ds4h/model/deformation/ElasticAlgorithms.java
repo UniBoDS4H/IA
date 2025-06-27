@@ -23,4 +23,10 @@ public enum ElasticAlgorithms {
     public ElasticRegistration getAlgorithm() {
         return this.algorithm;
     }
+
+    @Override
+    @NotNull
+    public String toString() {
+        return this.name;
+    }
 }
