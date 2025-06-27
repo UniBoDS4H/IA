@@ -6,6 +6,7 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.deformation.ElasticAlgorithms;
 import com.ds4h.model.deformation.elastic.ElasticRegistration;
 import com.ds4h.model.deformation.elastic.ElasticRegistrationImpl;
+import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.ImageManager;
 
@@ -34,7 +35,7 @@ public class ElasticController {
         return CompletableFuture.supplyAsync(() -> {
             imageManager.getTargetImage().ifPresent(targetImage -> {
                 imageManager.getImagesToAlign().forEach(image -> {
-                    pointDetector.detectPoint(targetImage, image);
+                    this.detectPoints(targetImage, image, pointDetector);
                     final AlignedImage transformedImage = registration.transformImage(image, targetImage);
                     outputImages.add(transformedImage);
                     targetImage.clearPoints();
@@ -44,6 +45,14 @@ public class ElasticController {
             });
            return outputImages;
         });
+    }
+
+    private void detectPoints(@NotNull final AnalyzableImage targetImage,
+                              @NotNull final AnalyzableImage movingImage,
+                              @NotNull final PointDetector pointDetector) {
+        if (currentAlgorithm.equals(ElasticAlgorithms.BIGWARP)) {
+            pointDetector.detectPoint(targetImage, movingImage);
+        }
     }
 
     /**
