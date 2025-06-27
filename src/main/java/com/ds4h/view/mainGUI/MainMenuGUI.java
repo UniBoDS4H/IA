@@ -361,7 +361,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                 this.pointControler,
                                 this,
                                 this.mosaicSettingsGUI.isAlignmentOrderAscending(),
-                                this.mosaicSettingsGUI.isTargetImageForeground());
+                                this.mosaicSettingsGUI.isTargetImageForeground(),
+                                this.automaticConfigGUI.getSelectedDetector());
                     });
         });
 
@@ -468,7 +469,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                                     this.pointControler,
                                     this,
                                     this.mosaicSettingsGUI.isAlignmentOrderAscending(),
-                                    this.mosaicSettingsGUI.isTargetImageForeground());
+                                    this.mosaicSettingsGUI.isTargetImageForeground(),
+                                    this.automaticConfigGUI.getSelectedDetector());
                 })
         );
 
@@ -543,8 +545,11 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
                 }
             }
             try {
-                new AlignmentOutputGUI(imageController, this.settingsBunwarpj, this.pointControler, this,
-                        this.mosaicSettingsGUI.isAlignmentOrderAscending(), this.mosaicSettingsGUI.isTargetImageForeground());
+                new AlignmentOutputGUI(imageController, this.settingsBunwarpj,
+                        this.pointControler, this,
+                        this.mosaicSettingsGUI.isAlignmentOrderAscending(),
+                        this.mosaicSettingsGUI.isTargetImageForeground(),
+                        this.automaticConfigGUI.getSelectedDetector());
             }catch (final Exception e){
                 JOptionPane.showMessageDialog(this,
                         e.getMessage(),
