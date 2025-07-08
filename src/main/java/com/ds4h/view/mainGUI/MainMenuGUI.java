@@ -29,6 +29,7 @@ import com.ds4h.view.manualAlignmentConfigGUI.ManualAlignmentConfigGUI;
 import com.ds4h.view.mosaicSettingsGUI.MosaicSettingsGUI;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.standardGUI.StandardGUI;
+import com.ds4h.view.util.Constants;
 import ij.IJ;
 
 import javax.swing.*;
@@ -164,14 +165,14 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.about = new JMenu("About");
         this.settings = new JMenu("Settings");
         this.general = new JMenu("General");
-        this.settingsItem = new JMenuItem("bUnwarpJ");
+        this.settingsItem = new JMenuItem("bUnwarpJ Settings");
         this.loadImages = new JMenuItem("Load Images");
         this.exportItem = new JMenuItem("Export");
         this.importItem = new JMenuItem("Import");
         this.clearItem = new JMenuItem("Clear");
-        this.alignmentItem = new JMenuItem("Manual");
-        this.automaticItem = new JMenuItem("Automatic");
-        this.elasticItem = new JMenuItem("Elastic");
+        this.alignmentItem = new JMenuItem("Manual Rigid Alignment");
+        this.automaticItem = new JMenuItem("Automatic Rigid Alignment");
+        this.elasticItem = new JMenuItem("Elastic Algorithm Definition");
         this.lutSettings = new JMenuItem("LUT Settings");
         this.mosaicSettings = new JMenuItem("Mosaic Settings");
         this.addComponents();
@@ -192,8 +193,8 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         this.menuBar.add(this.menu);
         this.menuBar.add(this.project);
         this.menuBar.add(this.settings);
-        this.menuBar.add(this.about);
         this.menuBar.add(this.general);
+        this.menuBar.add(this.about);
         // Create menu items and add them to the menu
         this.menu.add(this.loadImages);
         this.settings.add(this.alignmentItem);
@@ -211,10 +212,10 @@ public class MainMenuGUI extends JFrame implements StandardGUI {
         if(this.pointControler.getPointImages().size() < 2){
             this.manualAlignment.setEnabled(false);
             this.manualElasticReigstration.setEnabled(false);
-            this.automaticAlignment.setToolTipText("<html>" +
-                    "You have to load at least 2 images</html>");
-            this.manualAlignment.setToolTipText("<html>" +
-                    "You have to load at least 2 images</html>");
+            this.automaticAlignment.setToolTipText(Constants.TOOLTIP_EMPTY_CONTAINER);
+            this.manualAlignment.setToolTipText(Constants.TOOLTIP_EMPTY_CONTAINER);
+            this.automaticElasticReigstration.setToolTipText(Constants.TOOLTIP_EMPTY_CONTAINER);
+            this.manualElasticReigstration.setToolTipText(Constants.TOOLTIP_EMPTY_CONTAINER);
         }else{
             int nPoints;
             if (!this.pointControler.getPointImages().isEmpty()) {
