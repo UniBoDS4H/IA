@@ -19,7 +19,15 @@ import org.opencv.core.Point;
 import java.util.*;
 
 public class ElasticRegistrationImpl implements ElasticRegistration {
+    private int max_points;
     public ElasticRegistrationImpl() {
+        this.max_points = 4;
+    }
+
+    public void setMaxPoints(int max_points) {
+        if (max_points > 0 && max_points <= 100) {
+            this.max_points = max_points;
+        }
     }
 
     @NotNull
@@ -108,10 +116,12 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
                               @NotNull final AnalyzableImage targetImage) {
         final Iterator<Point> movingPointsIterator = movingImage.getPoints().iterator();
         final Iterator<Point> targetPointsIterator = targetImage.getPoints().iterator();
-        while (movingPointsIterator.hasNext() && targetPointsIterator.hasNext()) {
+        int currentSize = 0;
+        while (movingPointsIterator.hasNext() && targetPointsIterator.hasNext() && currentSize < this.max_points) {
             final Point movingPoint = movingPointsIterator.next();
             final Point targetPoint = targetPointsIterator.next();
             landmarkTableModel.add(new double[]{movingPoint.x, movingPoint.y}, new double[]{targetPoint.x, targetPoint.y});
+            currentSize++;
         }
     }
 }
