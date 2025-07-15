@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ElasticController {
     private ElasticAlgorithms currentAlgorithm;
+
     public ElasticController() {
         this.currentAlgorithm = ElasticAlgorithms.BIGWARP;
     }
@@ -45,6 +46,12 @@ public class ElasticController {
             });
            return outputImages;
         });
+    }
+
+    public void setNumberOfLandmarks(int numberOfLandmarks) {
+        if (numberOfLandmarks > 0 && numberOfLandmarks <= 100) {
+            ((ElasticRegistrationImpl) ElasticAlgorithms.BIGWARP.getAlgorithm()).setMaxPoints(numberOfLandmarks);
+        }
     }
 
     private void detectPoints(@NotNull final AnalyzableImage targetImage,
