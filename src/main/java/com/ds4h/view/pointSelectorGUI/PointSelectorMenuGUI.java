@@ -82,7 +82,10 @@ public class PointSelectorMenuGUI extends JPanel {
             }else{
                 JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
                 container.checkPointsForAlignment();
-                ViewBag.references.get(item.getImage()).drawPoints();
+                PointSelectorCanvas canvas = ViewBag.references.get(item.getImage());
+                if (canvas != null) {
+                    canvas.drawPoints();
+                }
             }
         });
         this.cornerSetting.addActionListener(event ->

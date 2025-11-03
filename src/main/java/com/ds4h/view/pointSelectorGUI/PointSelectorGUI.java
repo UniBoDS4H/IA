@@ -24,7 +24,7 @@ public class PointSelectorGUI extends ImageWindow implements WindowListener {
         Panel panel = new Panel();
         this.setLayout(new BorderLayout());
         panel.setLayout(new BorderLayout());
-        this.canvas = (PointSelectorCanvas) this.getCanvas();
+        this.canvas = this.getCanvas();
         this.canvas.setContainer(this);
         ViewBag.references.put(image, this.canvas);
         this.removeAll();
