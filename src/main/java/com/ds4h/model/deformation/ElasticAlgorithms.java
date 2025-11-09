@@ -5,7 +5,7 @@ import com.ds4h.model.deformation.elastic.ElasticRegistration;
 import com.ds4h.model.deformation.elastic.ElasticRegistrationImpl;
 
 public enum ElasticAlgorithms {
-    BUNWARPJ("BunwarpJ", new BunwarpjDeformation()),
+    BUNWARPJ("bUnwarpJ", new BunwarpjDeformation()),
     BIGWARP("BigWarp", new ElasticRegistrationImpl());
     private final String name;
     private final ElasticRegistration algorithm;
