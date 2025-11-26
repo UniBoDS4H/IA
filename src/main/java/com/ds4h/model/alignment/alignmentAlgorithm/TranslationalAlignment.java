@@ -62,7 +62,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      * @param overload the input value selected from the user.
      */
     @Override
-    public void setPointOverload(final PointOverloadEnum overload){
+    public void setPointOverload(@NotNull final PointOverloadEnum overload){
         if(Objects.nonNull(overload)) {
             this.overload = overload;
         }
@@ -72,6 +72,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      * Returns the selected point overload.
      * @return the selected point overload.
      */
+    @NotNull
     @Override
     public PointOverloadEnum getPointOverload() {
         return this.overload;
