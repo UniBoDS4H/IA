@@ -1,5 +1,6 @@
 package com.ds4h.controller.alignmentController.AutomaticAlignmentController;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.model.image.alignedImage.AlignedImage;
@@ -37,6 +38,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * the collection can be empty if the alignment algorithm is not done.
      * @return the list with all the images aligned.
      */
+    @NotNull
     @Override
     public List<AlignedImage> getAlignedImages() {
         return alignment.alignedImages();
@@ -61,7 +63,9 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @throws IllegalArgumentException if one of the input is not correct.
      * @throws RuntimeException if during the alignment something happen.
      */
-    public void align(final AlignmentAlgorithm algorithm, final Detectors detector, final ImageManagerController pointManager) throws Exception{
+    public void align(@NotNull final AlignmentAlgorithm algorithm,
+                      @NotNull final Detectors detector,
+                      @NotNull final ImageManagerController pointManager) throws Exception{
 
         if (!this.alignment.isAlive() && Objects.nonNull(pointManager) && Objects.nonNull(pointManager.getImageManager())) {
             if (pointManager.getImageManager().getPointImages().size() > 1 && detector.getScaling() >= 1) {
@@ -95,6 +99,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * Returns the alignment name.
      * @return the alignment name.
      */
+    @NotNull
     @Override
     public String name() {
         return "AUTOMATIC";
@@ -105,6 +110,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @return all the aligned images as stack.
      * @throws RuntimeException if something goes wrong (there are no images, etc, etc..).
      */
+    @NotNull
     @Override
     public ImagePlus getAlignedImagesAsStack() throws RuntimeException{
         if(!this.getAlignedImages().isEmpty()){
@@ -128,6 +134,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * Returns the algorithm.
      * @return the algorithm
      */
+    @NotNull
     public AlignmentAlgorithm getAlgorithm() {
         return this.algorithm;
     }
@@ -136,10 +143,8 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * Set the algorithm to use.
      * @param algorithm the algorithm to use.
      */
-    public void setAlgorithm(final AlignmentAlgorithm algorithm){
-        if(Objects.nonNull(algorithm)) {
-            this.algorithm = algorithm;
-        }
+    public void setAlgorithm(@NotNull final AlignmentAlgorithm algorithm){
+        this.algorithm = algorithm;
     }
 
     /**
@@ -147,7 +152,8 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
      * @param algorithmEnum the selected algorithm.
      * @return the alignment algorithm.
      */
-    public AlignmentAlgorithm getAlgorithmFromEnum(final AlignmentAlgorithmEnum algorithmEnum){
+    @NotNull
+    public AlignmentAlgorithm getAlgorithmFromEnum(@NotNull final AlignmentAlgorithmEnum algorithmEnum){
         switch (algorithmEnum){
             case TRANSLATIONAL:
                 return this.translational;
@@ -158,6 +164,7 @@ public class AutomaticAlignmentController implements AlignmentControllerInterfac
         }
         throw new IllegalArgumentException("Algorithm not present");
     }
+    @NotNull
     public Detectors[] getDetectors(){
         return Detectors.values();
     }

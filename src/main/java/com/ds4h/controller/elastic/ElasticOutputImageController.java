@@ -15,6 +15,7 @@ public class ElasticOutputImageController implements AlignmentControllerInterfac
         this.alignedImageList = alignedImageList;
     }
 
+    @NotNull
     @Override
     public List<AlignedImage> getAlignedImages() {
         return this.alignedImageList;
@@ -25,11 +26,13 @@ public class ElasticOutputImageController implements AlignmentControllerInterfac
         return false;
     }
 
+    @NotNull
     @Override
     public String name() {
         return "ELASTIC";
     }
 
+    @NotNull
     @Override
     public ImagePlus getAlignedImagesAsStack() {
         return ImageStackCreator.createImageStack(alignedImageList);

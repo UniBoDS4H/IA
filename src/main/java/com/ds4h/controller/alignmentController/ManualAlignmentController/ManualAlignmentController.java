@@ -1,5 +1,6 @@
 package com.ds4h.controller.alignmentController.ManualAlignmentController;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.controller.alignmentController.AlignmentControllerInterface;
 import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.model.image.alignedImage.AlignedImage;
@@ -35,6 +36,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * Returns all the aligned images.
      * @return all the aligned images.
      */
+    @NotNull
     @Override
     public List<AlignedImage> getAlignedImages(){
         return new LinkedList<>(alignment.alignedImages());
@@ -44,6 +46,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * Returns all the aligned images as stack.
      * @return all the aligned images as stack.
      */
+    @NotNull
     public ImagePlus getAlignedImagesAsStack(){
         if(!this.getAlignedImages().isEmpty()){
             return ImageStackCreator.createImageStack(this.getAlignedImages());
@@ -75,6 +78,7 @@ public class ManualAlignmentController implements AlignmentControllerInterface {
      * Returns the algorithm name.
      * @return the algorithm name.
      */
+    @NotNull
     @Override
     public String name() {
         return "MANUAL";
