@@ -4,6 +4,7 @@ import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.imageManager.MatImageProcessorConverter;
 import ij.process.ImageProcessor;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -24,14 +25,15 @@ public class AffineAlignment implements AlignmentAlgorithm{
     /**
      * Aligns an input image to a target image, based on a set of corresponding points.
      * The alignment can include translation, rotation, and scaling transformations, depending on the settings (Translational Alignment only).
-     * @param targetImage the target image with the desired alignment
+     *
+     * @param targetImage  the target image with the desired alignment
      * @param imageToShift the input image to be aligned
-     * @param ip the ImageProcessor of the input image
+     * @param ip           the ImageProcessor of the input image
      * @return an AlignedImage object containing the aligned image and transformation matrix
      * @throws IllegalArgumentException if the number of points in the input images is incorrect or if the number of corners is different between images
      */
     @Override
-    public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, final ImageProcessor ip) throws IllegalArgumentException {
+    public @NotNull AlignedImage align(final @NotNull ImagePoints targetImage, final @NotNull ImagePoints imageToShift, final @NotNull ImageProcessor ip) throws IllegalArgumentException {
         if(targetImage.numberOfPoints() >= LOWER_BOUND && imageToShift.numberOfPoints() >= LOWER_BOUND) {
             final Mat imageToShiftMat = imageToShift.getMatImage();
                 final Mat alignedImage = new Mat();
@@ -53,8 +55,9 @@ public class AffineAlignment implements AlignmentAlgorithm{
      * @return           the transformation matrix computed for the given points
      * @throws IllegalArgumentException  if an invalid point overload strategy is selected or if the number of points is incorrect
      */
+    @NotNull
     @Override
-    public Mat getTransformationMatrix(MatOfPoint2f srcPoints, MatOfPoint2f dstPoints) {
+    public Mat getTransformationMatrix(@NotNull MatOfPoint2f srcPoints, @NotNull MatOfPoint2f dstPoints) {
         switch (this.getPointOverload()) {
             case FIRST_AVAILABLE:
                 MatOfPoint2f newSrcPoints = new MatOfPoint2f();
@@ -85,7 +88,7 @@ public class AffineAlignment implements AlignmentAlgorithm{
      * @param H            the homography matrix to use for the transformation
      */
     @Override
-    public void transform(final Mat source, final Mat destination, final Mat H) {
+    public void transform(final @NotNull Mat source, final @NotNull Mat destination, final @NotNull Mat H) {
         /*
         if(H.rows() <=2){
             Core.transform(source,destination,H);
