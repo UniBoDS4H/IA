@@ -23,7 +23,7 @@ public class ImageController {
     /**
      * Constructor for the ImageController object.
      * @param alignmentControllerInterface the alignment controller (Manual or Automatic).
-     * @param elasticController: TODO
+     * @param elasticController: elastic controller class.
      */
     public ImageController(final AlignmentControllerInterface alignmentControllerInterface, final ElasticController elasticController) {
         this.alignmentControllerInterface = alignmentControllerInterface;
