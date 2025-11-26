@@ -3,6 +3,8 @@ package com.ds4h.model.pointManager;
 import com.ds4h.controller.pointController.ConvertLutImageEnum;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.process.ImageConverter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public class ImageManager {
     private final List<ImagePoints> imagesWithPoints;
-    private ImagePoints targetImage;
+    @Nullable private ImagePoints targetImage;
     private ConvertLutImageEnum convertType;
 
     /**
@@ -28,12 +30,8 @@ public class ImageManager {
      * Add the images inside "imageWithPoints" ArrayList.
      * @param images the images to be added inside "imageWithPoints".
      */
-    public void addImages(final List<ImagePoints> images){
-        if(Objects.nonNull(images) && images.size() > 0) {
-            /*images.stream()
-                    .filter(img -> !this.imagesWithPoints.contains(img))
-                    .forEach(this.imagesWithPoints::add);
-            this.setAsTarget(images.get(0));*/
+    public void addImages(@NotNull final List<ImagePoints> images){
+        if(!images.isEmpty()) {
             for (final ImagePoints img : images) {
                 if (!this.imagesWithPoints.contains(img)) {
                     if (img.getLuts().length > 0 && (
@@ -75,8 +73,8 @@ public class ImageManager {
      * Remove the image from the "imagesWithPoint".
      * @param image the image to remove.
      */
-    public void removeImage(final ImagePoints image){
-        if(Objects.nonNull(image) && Objects.nonNull(this.targetImage) && !this.targetImage.equals(image)) {
+    public void removeImage(@NotNull final ImagePoints image){
+        if(Objects.nonNull(this.targetImage) && !this.targetImage.equals(image)) {
             this.imagesWithPoints.removeIf(img -> img.equals(image));
             image.close();
             System.gc();
@@ -95,6 +93,7 @@ public class ImageManager {
      * Returns the list of all the images stored inside the PointManager object.
      * @return the list of all the images.
      */
+    @NotNull
     public List<ImagePoints> getPointImages(){
         return new ArrayList<>(this.imagesWithPoints);
     }
@@ -103,6 +102,7 @@ public class ImageManager {
      * Returns all the images to align stored inside the PointManager object.
      * @return all the images to align stored inside the PointManager object.
      */
+    @NotNull
     public List<ImagePoints> getImagesToAlign(){
         return Optional.ofNullable(this.targetImage)
                 .map(imageCorners -> this.imagesWithPoints.stream()
@@ -115,6 +115,7 @@ public class ImageManager {
      * Returns the targetImage.
      * @return the targetImage.
      */
+    @NotNull
     public Optional<ImagePoints> getTargetImage(){
         return Optional.ofNullable(this.targetImage);
     }
@@ -123,8 +124,8 @@ public class ImageManager {
      * Set the new target inside the PointManager.
      * @param image the new target to be added.
      */
-    public void setAsTarget(final ImagePoints image){
-        if(Objects.nonNull(image) && this.imagesWithPoints.contains(image)){
+    public void setAsTarget(@NotNull final ImagePoints image){
+        if(this.imagesWithPoints.contains(image)){
             this.targetImage = image;
         }else{
             throw new IllegalArgumentException("The given image was not fount among the loaded or the image input is NULL.");
@@ -137,10 +138,9 @@ public class ImageManager {
     public void clearProject(){
         this.targetImage = null;
         this.clearList();
-        System.gc();
     }
 
-    public void setConvertType(final ConvertLutImageEnum convertType) {
+    public void setConvertType(@NotNull final ConvertLutImageEnum convertType) {
         this.convertType = convertType;
     }
 }
