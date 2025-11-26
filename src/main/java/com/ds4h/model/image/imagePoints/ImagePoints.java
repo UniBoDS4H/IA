@@ -28,7 +28,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * Creates a new ImagePoints object with the specified path.
      * @param path the path of the image file.
      */
-    public ImagePoints(final String path){
+    public ImagePoints(@NotNull final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
         this.address = -1;
@@ -46,7 +46,9 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * @param improve a boolean flag indicating whether to improve the matrix or not.
      * @param ip the ImageProcessor object to use for the image.
      */
-    public ImagePoints(final String path, final boolean improve, final ImageProcessor ip){
+    public ImagePoints(@NotNull final String path,
+                       final boolean improve,
+                       @NotNull final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
         IJ.log("[IMAGE POINT] Processor: " + ip);
@@ -65,7 +67,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * @param path the path to the image file.
      * @param matAddress the address to the image matrix.
      */
-    public ImagePoints(final String path, final long matAddress) {
+    public ImagePoints(@NotNull final String path, final long matAddress) {
         super(Objects.requireNonNull(path));
         this.path = path;
         this.address = matAddress;
@@ -82,7 +84,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * @param path the path to the image file.
      * @param mat the image matrix.
      */
-    public ImagePoints(final String path, final Mat mat){
+    public ImagePoints(@NotNull final String path, @NotNull final Mat mat){
         super(Objects.requireNonNull(path));
         this.address = -1;
         this.path = path;
@@ -100,7 +102,8 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * @param path the path to the image file.
      * @param ip the ImageProcessor of the image.
      */
-    public ImagePoints(final String path, final ImageProcessor ip){
+    public ImagePoints(@NotNull final String path,
+                       @NotNull final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
         this.address = -1;
@@ -164,7 +167,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
     }
 
     @Override
-    public void add(@NotNull Point point) {
+    public void add(@NotNull final Point point) {
         this.pointList.add(point);
     }
 
@@ -259,6 +262,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * Returns a Mat object of the ImagePoints object.
      * @return a Mat object of the ImagePoints object.
      */
+    @NotNull
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
                 this.address > 0 ? new Mat(this.address) :
@@ -285,6 +289,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * Returns the Mat Size.
      * @return the Mat Size.
      */
+    @NotNull
     public Size getMatSize(){
         return this.matSize;
     }
@@ -325,6 +330,7 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
      * Returns the ImagePoint file path.
      * @return the ImagePoint file path.
      */
+    @NotNull
     public String getPath(){
         return this.path;
     }
