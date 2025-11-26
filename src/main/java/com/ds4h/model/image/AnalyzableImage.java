@@ -5,15 +5,15 @@ import org.jetbrains.annotations.NotNull;
 
 public interface AnalyzableImage extends PointRepository, DataImage{
     /**
-     * TODO
-     * @return
+     * This method returns the corresponding {@link ImagePlus} linked to this class.
+     * @return see above.
      */
     @NotNull
     ImagePlus getImagePlus();
 
     /**
-     * TODO
-     * @return
+     * This method returns the image name.
+     * @return see above.
      */
     @NotNull
     String getName();
