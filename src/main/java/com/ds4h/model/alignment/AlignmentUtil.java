@@ -29,5 +29,6 @@ public class AlignmentUtil {
         } else if (alg instanceof AffineAlignment) {
             return AlignmentAlgorithmEnum.AFFINE;
         }
+        throw new IllegalArgumentException("Unknown algorithm type.");
     }
 }
