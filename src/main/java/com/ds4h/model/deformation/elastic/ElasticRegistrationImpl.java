@@ -78,7 +78,9 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
      * @return a deformed image.
      */
     @NotNull
-    private AlignedImage applyElasticRegistration(@NotNull final AnalyzableImage movingImage, @NotNull final AnalyzableImage targetImage, @NotNull final LandmarkTableModel landmarkTableModel) {
+    private AlignedImage applyElasticRegistration(@NotNull final AnalyzableImage movingImage,
+                                                  @NotNull final AnalyzableImage targetImage,
+                                                  @NotNull final LandmarkTableModel landmarkTableModel) {
         final BigWarpData<?> bigwarpData = BigWarpInit.createBigWarpDataFromImages(movingImage.getImagePlus(), targetImage.getImagePlus());
         bigwarpData.wrapMovingSources();
         final BoundingBoxEstimation boundingBoxEstimation = new BoundingBoxEstimation(BoundingBoxEstimation.Method.VOLUME);
