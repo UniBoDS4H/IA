@@ -9,6 +9,7 @@ import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -48,8 +49,10 @@ public class Alignment implements Runnable{
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    public void alignImages(final ImageManager imageManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws RuntimeException {
-        if (Objects.nonNull(imageManager) && imageManager.getTargetImage().isPresent()) {
+    public void alignImages(@NotNull final ImageManager imageManager,
+                            @NotNull final AlignmentAlgorithm algorithm,
+                            @NotNull final AlignmentEnum type) throws RuntimeException {
+        if (imageManager.getTargetImage().isPresent()) {
             if (!this.isAlive()) {
                 this.targetImage = imageManager.getTargetImage().get();
                 this.alignedImages.clear();
@@ -80,17 +83,13 @@ public class Alignment implements Runnable{
      * @throws IllegalArgumentException if one of the input parameters is not correct.
      * @throws RuntimeException if during the alignment an error occur.
      */
-    public void alignImages(final ImageManager imageManager, final AlignmentAlgorithm algorithm,
-                            final AlignmentEnum type,
-                            final PointDetector pointDetector,
+    public void alignImages(@NotNull final ImageManager imageManager,
+                            @NotNull final AlignmentAlgorithm algorithm,
+                            @NotNull final AlignmentEnum type,
+                            @NotNull final PointDetector pointDetector,
                             final double factor,
                             final int scalingFactor) throws IllegalArgumentException, RuntimeException{
-        if(Objects.nonNull(imageManager) &&
-                Objects.nonNull(algorithm) &&
-                Objects.nonNull(type) &&
-                Objects.nonNull(pointDetector) &&
-                factor >= 0 &&
-                scalingFactor >= 1) {
+        if(factor >= 0 && scalingFactor >= 1) {
             this.pointDetector = (pointDetector);
             this.pointDetector.setFactor(factor);
             this.pointDetector.setScalingFactor(scalingFactor);
@@ -293,6 +292,7 @@ public class Alignment implements Runnable{
      * this method returns all the images.
      * @return all the images aligned.
      */
+    @NotNull
     public List<AlignedImage> alignedImages(){
         return this.isAlive() ? Collections.emptyList() : this.alignedImages;
     }
