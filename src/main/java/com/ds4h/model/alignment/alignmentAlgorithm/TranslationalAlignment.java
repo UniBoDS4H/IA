@@ -63,9 +63,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      */
     @Override
     public void setPointOverload(@NotNull final PointOverloadEnum overload){
-        if(Objects.nonNull(overload)) {
-            this.overload = overload;
-        }
+        this.overload = overload;
     }
 
     /**
@@ -186,7 +184,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         throw new IllegalArgumentException("bad point overload selected");
     }
 
-    private Mat getMatWithTransformation(Mat H) {
+    @NotNull
+    private Mat getMatWithTransformation(@NotNull Mat H) {
         IJ.log("[TRANSLATIONAL] Matrix: " + H);
         double a = H.get(0,0)[0];
         double b = H.get(1,0)[0];
@@ -226,7 +225,9 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
 
-    private Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
+    @NotNull
+    private Point minimumLeastSquare(@NotNull final Point[] srcArray,
+                                     @NotNull final Point[] dstArray){
         final double[] deltaX = new double[srcArray.length];
         final double[] deltaY = new double[srcArray.length];
 
