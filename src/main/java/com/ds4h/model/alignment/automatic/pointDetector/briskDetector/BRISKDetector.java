@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector.briskDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
@@ -15,7 +16,7 @@ public class BRISKDetector extends PointDetector {
         super();
     }
     @Override
-    public void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint) {
+    public void detectPoint(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();

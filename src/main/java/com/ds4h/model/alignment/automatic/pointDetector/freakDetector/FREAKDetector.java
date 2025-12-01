@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector.freakDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
@@ -15,7 +16,7 @@ public class FREAKDetector extends PointDetector {
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
 
     @Override
-    public void detectPoint(AnalyzableImage targetImage, AnalyzableImage imagePoint) {
+    public void detectPoint(@NotNull AnalyzableImage targetImage, @NotNull AnalyzableImage imagePoint) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points

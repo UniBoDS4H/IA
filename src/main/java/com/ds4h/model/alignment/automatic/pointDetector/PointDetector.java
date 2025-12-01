@@ -30,8 +30,9 @@ public abstract class PointDetector {
 
     /**
      * Returns the MatCache object.
-     * @return
+     * @return see above
      */
+    @NotNull
     public MatCache getMatCache(){
         return this.matCache;
     }
@@ -48,7 +49,8 @@ public abstract class PointDetector {
      * @param targetImage the target image selected from the input, this image will be cached during the entire process of alignment.
      * @param imagePoint the other image where the algorithm have to detect points.
      */
-    public abstract void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint);
+    public abstract void detectPoint(@NotNull final AnalyzableImage targetImage,
+                                     @NotNull final AnalyzableImage imagePoint);
 
     /**
      * Set the threshold factor, in order to get more "dirty" points in the detection.
@@ -94,7 +96,8 @@ public abstract class PointDetector {
      * @param levels the pyramids' depth.
      * @return the new matrix, resized by 2^(levels) times.
      */
-    protected Mat createPyramid(final Mat matrix, final int levels){
+    @NotNull
+    protected Mat createPyramid(@NotNull final Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
         for(int i = 1; i < levels; i++) {
@@ -113,7 +116,8 @@ public abstract class PointDetector {
      * @param matrix the input matrix
      * @return the improved matrix.
      */
-    protected Mat improveMatrix(final Mat matrix){
+    @NotNull
+    protected Mat improveMatrix(@NotNull final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
         IJ.log("[MEAN] Percentage: " + percentage);
@@ -157,7 +161,8 @@ public abstract class PointDetector {
      * @param levels how many levels we have to create. We rescale about 2^(levels) times.
      * @return the scaled image.
      */
-    protected ImageProcessor createPyramid(final ImagePoints image, final int levels){
+    @NotNull
+    protected ImageProcessor createPyramid(@NotNull final ImagePoints image, final int levels){
         final ImageProcessor[] pyramid = new ImageProcessor[levels];
         pyramid[0] = image.getProcessor();
         IJ.log("[POINT DETECTOR] Resize original ImageProcessor by: " + levels + " times");

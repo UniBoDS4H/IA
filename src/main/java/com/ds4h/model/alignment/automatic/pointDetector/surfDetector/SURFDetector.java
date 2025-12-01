@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
@@ -16,7 +17,7 @@ public class SURFDetector extends PointDetector {
     }
 
     @Override
-    public void detectPoint(final AnalyzableImage targetImage, final AnalyzableImage imagePoint) {
+    public void detectPoint(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage imagePoint) {
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
