@@ -5,8 +5,6 @@ import com.ds4h.model.image.alignedImage.AlignedImage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 public interface ElasticRegistration {
     /**
