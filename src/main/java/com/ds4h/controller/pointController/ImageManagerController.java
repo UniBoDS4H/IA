@@ -1,8 +1,8 @@
 package com.ds4h.controller.pointController;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.pointManager.ImageManager;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.reuse.ReuseSources;
 import com.ds4h.model.util.imageManager.ImagingConversion;
 import com.ds4h.model.util.MemoryController;
@@ -15,15 +15,15 @@ import java.util.Objects;
 /**
  *
  */
-public class PointController {
-    private final PointManager pointManager;
+public class ImageManagerController {
+    private final ImageManager imageManager;
     private ConvertLutImageEnum convertType;
 
     /**
      * Constructor for the PointController object.
      */
-    public PointController(){
-        this.pointManager = new PointManager();
+    public ImageManagerController(){
+        this.imageManager = new ImageManager();
     }
 
     /**
@@ -34,10 +34,10 @@ public class PointController {
      */
     public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
-        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.pointManager.getPointImages().size() > 0)) {
-            this.pointManager.setConvertType(this.convertType);
-            this.pointManager.addImages(imagePointsList);
-            MemoryController.controlMemory(this.pointManager.getPointImages());
+        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.imageManager.getPointImages().size() > 0)) {
+            this.imageManager.setConvertType(this.convertType);
+            this.imageManager.addImages(imagePointsList);
+            MemoryController.controlMemory(this.imageManager.getPointImages());
         }else {
             throw new IllegalArgumentException("You can not upload one single photo or less.\n" +
                     "Or maybe what you chose is not a image.");
@@ -48,8 +48,8 @@ public class PointController {
      * Returns the "pointManager".
      * @return the pointManager.
      */
-    public PointManager getPointManager(){
-        return this.pointManager;
+    public ImageManager getImageManager(){
+        return this.imageManager;
     }
 
     /**
@@ -57,7 +57,7 @@ public class PointController {
      * @return the pointImages.
      */
     public List<ImagePoints> getPointImages() {
-        return this.pointManager.getPointImages();
+        return this.imageManager.getPointImages();
     }
 
     /**
@@ -66,7 +66,7 @@ public class PointController {
      */
     public void changeTarget(final ImagePoints newTarget){
         if(Objects.nonNull(newTarget)) {
-            this.pointManager.setAsTarget(newTarget);
+            this.imageManager.setAsTarget(newTarget);
         }
     }
 
@@ -76,7 +76,7 @@ public class PointController {
      * @throws OutOfMemoryError if the project is bigger than the free memory.
      */
     public void reuseSource(final List<AlignedImage> alignedImages) throws OutOfMemoryError {
-        ReuseSources.reuseSources(this.pointManager, alignedImages);
+        ReuseSources.reuseSources(this.imageManager, alignedImages);
         System.gc();
     }
 
@@ -86,7 +86,7 @@ public class PointController {
      * @return true if the input image is the target.
      */
     public boolean isTarget(final ImagePoints image){
-        return this.pointManager.getTargetImage().isPresent() && this.pointManager.getTargetImage().get().equals(image);
+        return this.imageManager.getTargetImage().isPresent() && this.imageManager.getTargetImage().get().equals(image);
     }
 
     /**
@@ -94,9 +94,9 @@ public class PointController {
      * @param image the image to be removed from the point controller.
      */
     public void removeImage(final ImagePoints image){
-        if(this.pointManager.getPointImages().contains(image)){
+        if(this.imageManager.getPointImages().contains(image)){
             image.releaseImage();
-            this.pointManager.removeImage(image);
+            this.imageManager.removeImage(image);
         }
     }
 
@@ -113,7 +113,7 @@ public class PointController {
         }
         for (final Point p:selectedPoints) {
             if(this.insideImage(p,img)){
-                img.addPoint(p);
+                img.add(p);
             }else{
                 res = false;
             }
@@ -129,7 +129,7 @@ public class PointController {
      * Clear the entire project from all the images.
      */
     public void clearProject(){
-        this.pointManager.clearProject();
+        this.imageManager.clearProject();
         System.gc();
     }
 

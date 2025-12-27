@@ -1,8 +1,9 @@
 package com.ds4h.model.reuse;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.drew.lang.annotations.NotNull;
+import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.pointManager.ImageManager;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.MemoryController;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,20 +21,21 @@ public class ReuseSources {
 
     /**
      * Method used in order to create a new project with the selected images from the input.
-     * @param pointManager : Inside the corner manager we will be going to store the now images
+     * @param imageManager : Inside the corner manager we will be going to store the now images
      * @param images : The list of images that we want to use
      */
-    public static void reuseSources(final PointManager pointManager, final List<AlignedImage> images) throws OutOfMemoryError{
+    public static void reuseSources(@NotNull final ImageManager imageManager,
+                                    @NotNull final List<AlignedImage> images) throws OutOfMemoryError{
         if(!images.isEmpty()) {
-            pointManager.clearList();
-            pointManager.clearProject();
-            pointManager.addImages(ReuseSources.convertImages(images));
-            MemoryController.controlMemory(pointManager.getPointImages());
-            System.gc();
+            imageManager.clearList();
+            imageManager.clearProject();
+            imageManager.addImages(ReuseSources.convertImages(images));
+            MemoryController.controlMemory(imageManager.getPointImages());
         }
     }
 
-    private static List<ImagePoints> convertImages(final List<AlignedImage> images){
+    @NotNull
+    private static List<ImagePoints> convertImages(@NotNull final List<AlignedImage> images){
         return images.stream()
                 .map(imagePlus -> {
                     final ImagePoints image = new ImagePoints(imagePlus.getAlignedImage().getFileInfo().getFilePath(), imagePlus.getProcessor());

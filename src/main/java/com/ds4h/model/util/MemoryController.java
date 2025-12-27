@@ -1,8 +1,9 @@
 package com.ds4h.model.util;
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.sun.management.OperatingSystemMXBean;
 import ij.IJ;
+
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class MemoryController {
 
-    private final static double MEMORY_PERCENTAGE_LIMIT = 0.30;
+    private final static double MEMORY_PERCENTAGE_LIMIT = 30.0;
 
     private MemoryController(){
 
@@ -25,18 +26,12 @@ public class MemoryController {
     public static void controlMemory(final List<ImagePoints> imagePoints) throws OutOfMemoryError{
         long memorySize = 0;
         final long totalMemory = (IJ.maxMemory()/(1024*1024));
-        for(final ImagePoints img : imagePoints){
-            final int width = img.getWidth();
-            final int height = img.getHeight();
-            final int depth = img.getBitDepth();
-            memorySize += (((long) width *height*depth)/8);
-        }
-        memorySize = memorySize/(1024*1024);
-        IJ.log("[MEMORY SIZE IMAGE] TotalSize: " + memorySize);
-        IJ.log("[MEMORY SIZE IMAGE] Total Memory: " + totalMemory);
-        IJ.log("[MEMORY SIZE IMAGE] Percentage: " + (memorySize/(double)totalMemory));
-
-        if(memorySize/(double)totalMemory >= MEMORY_PERCENTAGE_LIMIT){
+        final long currentMemory = (IJ.currentMemory() / (1024 * 1024));
+        final double usedMemory = ((double) currentMemory / totalMemory) * 100;
+        IJ.log("[MEMORY SIZE IMAGE] TotalSize: " + currentMemory + " MB");
+        IJ.log("[MEMORY SIZE IMAGE] Total Memory: " + totalMemory + " MB");
+        IJ.log("[MEMORY SIZE IMAGE] Percentage: " + usedMemory + " %");
+        if(usedMemory >= MEMORY_PERCENTAGE_LIMIT){
             throw new OutOfMemoryError(MemoryController.getError());
         }
     }

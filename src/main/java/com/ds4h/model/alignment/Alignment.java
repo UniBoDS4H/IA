@@ -1,17 +1,17 @@
 package com.ds4h.model.alignment;
 
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.alignment.alignmentAlgorithm.*;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
-import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.pointManager.ImageManager;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 import java.util.List;
@@ -45,20 +45,22 @@ public class Alignment implements Runnable{
      * When this method is called we start the real process of image alignment. If the thread is not alive and the
      * target image is present we can start the operation. Take in mind that the alignment is done inside a separate Thread,
      * so if you need the images you have to wait until the alignment is not done.
-     * @param pointManager  container where all the images are stored with their points
+     * @param imageManager  container where all the images are stored with their points
      * @throws IllegalArgumentException If the targetImage is not present or if the cornerManager is null, an exception
      * is thrown.
      */
-    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm, final AlignmentEnum type) throws RuntimeException {
-        if (Objects.nonNull(pointManager) && pointManager.getTargetImage().isPresent()) {
+    public void alignImages(@NotNull final ImageManager imageManager,
+                            @NotNull final AlignmentAlgorithm algorithm,
+                            @NotNull final AlignmentEnum type) throws RuntimeException {
+        if (imageManager.getTargetImage().isPresent()) {
             if (!this.isAlive()) {
-                this.targetImage = pointManager.getTargetImage().get();
+                this.targetImage = imageManager.getTargetImage().get();
                 this.alignedImages.clear();
                 this.imagesToAlign.clear();
                 this.type = type;
                 this.algorithm = algorithm;
                 try {
-                    this.imagesToAlign.addAll(pointManager.getImagesToAlign());
+                    this.imagesToAlign.addAll(imageManager.getImagesToAlign());
                     this.thread.start();
                 } catch (Exception ex) {
                     throw new RuntimeException("Error: The alignment requires more memory than is available.");
@@ -72,7 +74,7 @@ public class Alignment implements Runnable{
 
     /**
      * Align the input images with the chosen PointDetector and Alignment algorithm.
-     * @param pointManager where all the images to align are stored.
+     * @param imageManager where all the images to align are stored.
      * @param algorithm the algorithm to use for the alignment.
      * @param type the "AlignmentType". It can be "Automatic" or "Manual".
      * @param pointDetector which point detector should be use for the detection.
@@ -81,21 +83,17 @@ public class Alignment implements Runnable{
      * @throws IllegalArgumentException if one of the input parameters is not correct.
      * @throws RuntimeException if during the alignment an error occur.
      */
-    public void alignImages(final PointManager pointManager, final AlignmentAlgorithm algorithm,
-                            final AlignmentEnum type,
-                            final PointDetector pointDetector,
+    public void alignImages(@NotNull final ImageManager imageManager,
+                            @NotNull final AlignmentAlgorithm algorithm,
+                            @NotNull final AlignmentEnum type,
+                            @NotNull final PointDetector pointDetector,
                             final double factor,
                             final int scalingFactor) throws IllegalArgumentException, RuntimeException{
-        if(Objects.nonNull(pointManager) &&
-                Objects.nonNull(algorithm) &&
-                Objects.nonNull(type) &&
-                Objects.nonNull(pointDetector) &&
-                factor >= 0 &&
-                scalingFactor >= 1) {
+        if(factor >= 0 && scalingFactor >= 1) {
             this.pointDetector = (pointDetector);
             this.pointDetector.setFactor(factor);
             this.pointDetector.setScalingFactor(scalingFactor);
-            this.alignImages(pointManager, algorithm, type);
+            this.alignImages(imageManager, algorithm, type);
         }else{
             throw new IllegalArgumentException("One of the argument for the alignment are not correct.\n" +
                     " Please, take a look to: Alignment Algorithm, the factor must be greater than 0 and the scaling factor\n" +
@@ -294,6 +292,7 @@ public class Alignment implements Runnable{
      * this method returns all the images.
      * @return all the images aligned.
      */
+    @NotNull
     public List<AlignedImage> alignedImages(){
         return this.isAlive() ? Collections.emptyList() : this.alignedImages;
     }

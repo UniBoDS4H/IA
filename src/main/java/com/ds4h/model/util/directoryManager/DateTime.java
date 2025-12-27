@@ -1,5 +1,7 @@
 package com.ds4h.model.util.directoryManager;
 
+import com.drew.lang.annotations.NotNull;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -22,6 +24,7 @@ public class DateTime {
      * Returns the current year.
      * @return the current year.
      */
+    @NotNull
     public String year(){
         return String.valueOf(today.getYear());
     }
@@ -30,6 +33,7 @@ public class DateTime {
      * Returns the current month.
      * @return the current month.
      */
+    @NotNull
     public String month(){
         return  today.getMonthValue() <= 9 ?  "0" + today.getMonthValue() : String.valueOf(today.getMonthValue());
     }
@@ -38,6 +42,7 @@ public class DateTime {
      * Returns the current day.
      * @return the current day.
      */
+    @NotNull
     public String day(){
         return  today.getDayOfMonth() <= 9 ?  "0" + today.getDayOfMonth() : String.valueOf(today.getDayOfMonth());
     }
@@ -46,6 +51,7 @@ public class DateTime {
      * Returns the current hour.
      * @return the current hour.
      */
+    @NotNull
     public String hour(){
         return this.now.getHour() <= 9 ?  "0" + this.now.getHour() : String.valueOf(this.now.getHour());
     }
@@ -54,6 +60,7 @@ public class DateTime {
      * Returns the current minute.
      * @return the current minute.
      */
+    @NotNull
     public String minute(){
          return this.now.getMinute() <= 9 ?  "0" + this.now.getMinute() : String.valueOf(this.now.getMinute());
     }
@@ -62,6 +69,7 @@ public class DateTime {
      * Returns the current seconds.
      * @return the current seconds.
      */
+    @NotNull
     public String seconds(){
         return this.now.getSecond() <= 9 ? "0" + this.now.getSecond() : String.valueOf(this.now.getSecond());
     }

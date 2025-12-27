@@ -1,10 +1,14 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.drew.lang.annotations.NotNull;
+import com.ds4h.model.image.AnalyzableImage;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.List;
 
 /**
  *
@@ -26,8 +30,9 @@ public abstract class PointDetector {
 
     /**
      * Returns the MatCache object.
-     * @return
+     * @return see above
      */
+    @NotNull
     public MatCache getMatCache(){
         return this.matCache;
     }
@@ -44,7 +49,8 @@ public abstract class PointDetector {
      * @param targetImage the target image selected from the input, this image will be cached during the entire process of alignment.
      * @param imagePoint the other image where the algorithm have to detect points.
      */
-    public abstract void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint);
+    public abstract void detectPoint(@NotNull final AnalyzableImage targetImage,
+                                     @NotNull final AnalyzableImage imagePoint);
 
     /**
      * Set the threshold factor, in order to get more "dirty" points in the detection.
@@ -90,7 +96,8 @@ public abstract class PointDetector {
      * @param levels the pyramids' depth.
      * @return the new matrix, resized by 2^(levels) times.
      */
-    protected Mat createPyramid(final Mat matrix, final int levels){
+    @NotNull
+    protected Mat createPyramid(@NotNull final Mat matrix, final int levels){
         Size lastSize = matrix.size();
         IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
         for(int i = 1; i < levels; i++) {
@@ -109,7 +116,8 @@ public abstract class PointDetector {
      * @param matrix the input matrix
      * @return the improved matrix.
      */
-    protected Mat improveMatrix(final Mat matrix){
+    @NotNull
+    protected Mat improveMatrix(@NotNull final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
         IJ.log("[MEAN] Percentage: " + percentage);
@@ -153,7 +161,8 @@ public abstract class PointDetector {
      * @param levels how many levels we have to create. We rescale about 2^(levels) times.
      * @return the scaled image.
      */
-    protected ImageProcessor createPyramid(final ImagePoints image, final int levels){
+    @NotNull
+    protected ImageProcessor createPyramid(@NotNull final ImagePoints image, final int levels){
         final ImageProcessor[] pyramid = new ImageProcessor[levels];
         pyramid[0] = image.getProcessor();
         IJ.log("[POINT DETECTOR] Resize original ImageProcessor by: " + levels + " times");
@@ -164,5 +173,26 @@ public abstract class PointDetector {
             pyramid[i] = ipDownsampled;
         }
         return pyramid[levels-1];
+    }
+
+    protected void addKeyPoints(@NotNull final AnalyzableImage movingImage,
+                                @NotNull final AnalyzableImage targetImage,
+                                @NotNull final List<KeyPoint> movingKeyPoints,
+                                @NotNull final List<KeyPoint> targetKeyPoints,
+                                @NotNull final List<DMatch> matches) {
+        final double scale = Math.pow(2, this.scalingFactor -1);
+        IJ.log("[POINT DETECTOR] The total amount of matches are: " + matches.size());
+        matches.stream()
+                .sorted((m1, m2) -> Float.compare(m1.distance, m2.distance))
+                .forEach(match -> {
+                    Point movingPt = movingKeyPoints.get(match.queryIdx).pt;
+                    Point targetPt = targetKeyPoints.get(match.trainIdx).pt;
+
+                    movingPt = new Point(movingPt.x * scale, movingPt.y * scale);
+                    targetPt = new Point(targetPt.x * scale, targetPt.y * scale);
+
+                    movingImage.add(movingPt);
+                    targetImage.add(targetPt);
+                });
     }
 }

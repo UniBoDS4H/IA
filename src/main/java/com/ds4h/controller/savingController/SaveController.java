@@ -1,14 +1,10 @@
 package com.ds4h.controller.savingController;
 
-import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.util.saveProject.SaveImages;
-import com.ds4h.model.util.saveProject.saveReferenceMatrix.SaveMatrix;
 import com.ds4h.view.util.SaveAsEnum;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Save Controller in order to call the Save method from the Model.

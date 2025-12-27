@@ -1,7 +1,8 @@
 package com.ds4h.model.alignment.automatic.pointDetector.kazeDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
 import java.util.List;
@@ -14,7 +15,7 @@ public class KAZEDetector extends PointDetector {
         super();
     }
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage imagePoint) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();
 
@@ -60,19 +61,7 @@ public class KAZEDetector extends PointDetector {
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();//targetKeyPoints.toList();
         keypoints1.release();
 
-        final double scale = super.getScalingFactor() > 1 ?  Math.pow(2, super.getScalingFactor()-1) : 1;
-
-        matches.toList().stream().filter(match -> match.distance < threshold)
-                .forEach(goodMatch -> {
-                    final Point queryScaled = new Point(
-                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
-                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
-                    final Point trainScaled = new Point(
-                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
-                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
-                });
+        this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, matches.toList());
         matches.release();
     }
 

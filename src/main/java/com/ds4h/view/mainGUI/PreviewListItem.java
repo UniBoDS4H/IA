@@ -1,9 +1,11 @@
 package com.ds4h.view.mainGUI;
 
-import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.controller.pointController.ImageManagerController;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.pointSelectorGUI.PointSelectorGUI;
+import com.ds4h.view.util.ViewBag;
+
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
@@ -13,12 +15,12 @@ import java.util.Objects;
 
 public class PreviewListItem extends JPanel {
     private final JButton targetButton;
-    private final PointController controller;
+    private final ImageManagerController controller;
     private final ImagePoints image;
     private final PreviewImagesPane container;
     private PointSelectorGUI pointSelector;
     private boolean firstOpening = true;
-    PreviewListItem(final PointController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
+    PreviewListItem(final ImageManagerController controller, final ImagePoints image, final PreviewImagesPane container, final int id){
         this.container = container;
         this.controller = controller;
         final JPanel centerPanel = new JPanel();
@@ -65,8 +67,10 @@ public class PreviewListItem extends JPanel {
                         "Confirm operation",
                         JOptionPane.YES_NO_OPTION);
                 if(result == JOptionPane.YES_OPTION) {
+                    ViewBag.references.remove(image);
                     this.controller.removeImage(image);
                     this.container.updateList();
+
                 }
             }
         });

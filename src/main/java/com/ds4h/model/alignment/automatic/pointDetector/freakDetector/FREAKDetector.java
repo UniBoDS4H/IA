@@ -1,14 +1,12 @@
 package com.ds4h.model.alignment.automatic.pointDetector.freakDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
-import ij.IJ;
+import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
-import org.opencv.features2d.BFMatcher;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.SIFT;
 import org.opencv.xfeatures2d.FREAK;
-import org.opencv.xfeatures2d.SURF;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ public class FREAKDetector extends PointDetector {
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
 
     @Override
-    public void detectPoint(ImagePoints targetImage, ImagePoints imagePoint) {
+    public void detectPoint(@NotNull AnalyzableImage targetImage, @NotNull AnalyzableImage imagePoint) {
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint(); // Matrix where are stored all the key points
         final Mat descriptors1 = new Mat();
         final MatOfKeyPoint keypoints2 = new MatOfKeyPoint(); //  Matrix where are stored all the key points
@@ -64,17 +62,6 @@ public class FREAKDetector extends PointDetector {
         keypoints1.release();
         final double scale = Math.pow(2, super.getScalingFactor()-1);
 
-        matches.toList().stream()
-                .filter(match -> match.distance < threshold)
-                .forEach(goodMatch -> {
-                    final Point queryScaled = new Point(
-                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
-                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
-                    final Point trainScaled = new Point(
-                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
-                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
-                });
+        this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, matches.toList());
     }
 }

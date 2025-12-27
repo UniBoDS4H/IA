@@ -1,10 +1,11 @@
 package com.ds4h.model.alignment.alignmentAlgorithm;
 
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.imageManager.MatImageProcessorConverter;
 import ij.IJ;
 import ij.process.ImageProcessor;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
@@ -61,16 +62,15 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      * @param overload the input value selected from the user.
      */
     @Override
-    public void setPointOverload(final PointOverloadEnum overload){
-        if(Objects.nonNull(overload)) {
-            this.overload = overload;
-        }
+    public void setPointOverload(@NotNull final PointOverloadEnum overload){
+        this.overload = overload;
     }
 
     /**
      * Returns the selected point overload.
      * @return the selected point overload.
      */
+    @NotNull
     @Override
     public PointOverloadEnum getPointOverload() {
         return this.overload;
@@ -79,14 +79,15 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     /**
      * Aligns an input image to a target image, based on a set of corresponding points.
      * The alignment can include translation, rotation, and scaling transformations, depending on the settings (Translational Alignment only).
-     * @param targetImage the target image with the desired alignment
+     *
+     * @param targetImage  the target image with the desired alignment
      * @param imageToShift the input image to be aligned
-     * @param ip the ImageProcessor of the input image
+     * @param ip           the ImageProcessor of the input image
      * @return an AlignedImage object containing the aligned image and transformation matrix
      * @throws IllegalArgumentException if the number of points in the input images is incorrect or if the number of corners is different between images
      */
     @Override
-    public AlignedImage align(final ImagePoints targetImage, final ImagePoints imageToShift, ImageProcessor ip) throws IllegalArgumentException{
+    public @NotNull AlignedImage align(final @NotNull ImagePoints targetImage, final @NotNull ImagePoints imageToShift, @NotNull ImageProcessor ip) throws IllegalArgumentException{
         if(targetImage.numberOfPoints() >= this.getLowerBound() && imageToShift.numberOfPoints() >= this.getLowerBound()) {
             if(imageToShift.numberOfPoints() == targetImage.numberOfPoints()) {
                 final Mat alignedImage = new Mat();
@@ -142,8 +143,9 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      * @return           the transformation matrix computed for the given points
      * @throws IllegalArgumentException  if an invalid point overload strategy is selected or if the number of points is incorrect
      */
+    @NotNull
     @Override
-    public Mat getTransformationMatrix(final MatOfPoint2f srcPoints, final MatOfPoint2f dstPoints){
+    public Mat getTransformationMatrix(@NotNull final MatOfPoint2f srcPoints, @NotNull final MatOfPoint2f dstPoints){
         switch (this.getPointOverload()) {
             case FIRST_AVAILABLE:
                 MatOfPoint2f newSrcPoints = new MatOfPoint2f();
@@ -182,7 +184,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
         throw new IllegalArgumentException("bad point overload selected");
     }
 
-    private Mat getMatWithTransformation(Mat H) {
+    @NotNull
+    private Mat getMatWithTransformation(@NotNull Mat H) {
         IJ.log("[TRANSLATIONAL] Matrix: " + H);
         double a = H.get(0,0)[0];
         double b = H.get(1,0)[0];
@@ -222,7 +225,9 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     }
 
 
-    private Point minimumLeastSquare(final Point[] srcArray, final Point[] dstArray){
+    @NotNull
+    private Point minimumLeastSquare(@NotNull final Point[] srcArray,
+                                     @NotNull final Point[] dstArray){
         final double[] deltaX = new double[srcArray.length];
         final double[] deltaY = new double[srcArray.length];
 
@@ -246,7 +251,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
      * @param H            the homography matrix to use for the transformation
      */
     @Override
-    public void transform(final Mat source, final Mat destination, final Mat H){
+    public void transform(final @NotNull Mat source, final @NotNull Mat destination, final @NotNull Mat H){
         if(H.rows() <=2){
             Core.transform(source,destination,H);
         }else{

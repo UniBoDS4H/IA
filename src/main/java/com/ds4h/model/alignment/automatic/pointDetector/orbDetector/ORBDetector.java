@@ -1,7 +1,8 @@
 package com.ds4h.model.alignment.automatic.pointDetector.orbDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
@@ -14,7 +15,7 @@ public class ORBDetector extends PointDetector {
     private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE);
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage imagePoint) {
 
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
         final Mat descriptors1 = new Mat();
@@ -64,19 +65,7 @@ public class ORBDetector extends PointDetector {
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
 
-        final double scale = Math.pow(2, super.getScalingFactor()-1);
-        matches.toList().stream()
-                .filter(match -> match.distance < threshold)
-                .forEach(goodMatch -> {
-                    final Point queryScaled = new Point(
-                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
-                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
-                    final Point trainScaled = new Point(
-                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
-                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
-                });
+        this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, matches.toList());
         matches.release();
     }
 }

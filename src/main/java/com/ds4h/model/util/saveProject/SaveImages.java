@@ -1,25 +1,14 @@
 package com.ds4h.model.util.saveProject;
 
 import com.ds4h.controller.savingController.SaveAsEnum;
-import com.ds4h.model.alignedImage.AlignedImage;
-import com.ds4h.model.pointManager.PointManager;
-import com.ds4h.model.util.Pair;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.ds4h.model.util.saveProject.saveReferenceMatrix.SaveMatrix;
-import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
-import ij.ImageStack;
-import ij.plugin.Colors;
-import ij.plugin.Concatenator;
-import ij.plugin.MontageMaker;
 import ij.plugin.RGBStackMerge;
 import ij.process.*;
-import org.opencv.core.Mat;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;

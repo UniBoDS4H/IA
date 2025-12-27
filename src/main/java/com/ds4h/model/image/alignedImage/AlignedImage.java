@@ -1,9 +1,18 @@
-package com.ds4h.model.alignedImage;
+package com.ds4h.model.image.alignedImage;
 
+import com.ds4h.model.image.AnalyzableImage;
+import com.ds4h.model.image.DataImage;
+import com.ds4h.model.image.PointRepository;
+import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -12,7 +21,8 @@ import java.util.Optional;
  * (the warped matrix) and the registrationMatrix (H). This class is used after the process of alignment. The registration matrix
  * is an Optional because for the target image we do not calculate the registration matrix.
  */
-public class AlignedImage {
+public class AlignedImage implements AnalyzableImage {
+    private final List<Point> points;
     private final ImageProcessor alignedImage;
     private final String name;
     private final Mat registrationMatrix;
@@ -26,6 +36,7 @@ public class AlignedImage {
         this.alignedImage = image;
         this.name = name;
         this.registrationMatrix = registrationMatrix;
+        this.points = new LinkedList<>();
     }
 
     /**
@@ -37,12 +48,21 @@ public class AlignedImage {
         this.registrationMatrix = null;
         this.alignedImage = image;
         this.name = name;
+        this.points = new LinkedList<>();
+    }
+
+    @NotNull
+    @Override
+    public ImagePlus getImagePlus() {
+        return new ImagePlus(name, alignedImage);
     }
 
     /**
      * This method returns the name of the aligned image
      * @return the name of the image
      */
+    @NotNull
+    @Override
     public String getName(){
         return this.name;
     }
@@ -112,5 +132,36 @@ public class AlignedImage {
         }
         this.getAlignedImage().setProcessor(new ByteProcessor(1,1));
         this.getAlignedImage().close();
+    }
+
+    @NotNull
+    @Override
+    public Mat getGrayScaleMat() {return ImageProcessorMatConverter.convertGray(this.getProcessor());}
+
+    @Override
+    public void improve() {}
+
+    @Override
+    public boolean toImprove() {return false;}
+
+    @Override
+    public void add(@NotNull Point point) {
+        this.points.add(point);
+    }
+
+    @NotNull
+    @Override
+    public Iterable<Point> getPoints() {
+        return this.points;
+    }
+
+    @Override
+    public Integer totalPoints() {
+        return this.points.size();
+    }
+
+    @Override
+    public void clear() {
+        this.points.clear();
     }
 }

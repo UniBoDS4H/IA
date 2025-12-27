@@ -1,8 +1,12 @@
-package com.ds4h.model.imagePoints;
+package com.ds4h.model.image.imagePoints;
+import com.ds4h.model.image.AnalyzableImage;
+import com.ds4h.model.image.DataImage;
+import com.ds4h.model.image.PointRepository;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.*;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import java.util.*;
@@ -11,7 +15,7 @@ import java.util.List;
 /**
  * The image used for the alignment. Inside this Class we have a list of all the points selected from the input. This points will be used for the alignment.
  */
-public class ImagePoints extends ImagePlus{
+public class ImagePoints extends ImagePlus implements AnalyzableImage {
     private final List<Point> pointList;
     private final String path;
     private final int rows, cols;
@@ -24,7 +28,7 @@ public class ImagePoints extends ImagePlus{
      * Creates a new ImagePoints object with the specified path.
      * @param path the path of the image file.
      */
-    public ImagePoints(final String path){
+    public ImagePoints(@NotNull final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
         this.address = -1;
@@ -42,7 +46,9 @@ public class ImagePoints extends ImagePlus{
      * @param improve a boolean flag indicating whether to improve the matrix or not.
      * @param ip the ImageProcessor object to use for the image.
      */
-    public ImagePoints(final String path, final boolean improve, final ImageProcessor ip){
+    public ImagePoints(@NotNull final String path,
+                       final boolean improve,
+                       @NotNull final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
         IJ.log("[IMAGE POINT] Processor: " + ip);
@@ -61,7 +67,7 @@ public class ImagePoints extends ImagePlus{
      * @param path the path to the image file.
      * @param matAddress the address to the image matrix.
      */
-    public ImagePoints(final String path, final long matAddress) {
+    public ImagePoints(@NotNull final String path, final long matAddress) {
         super(Objects.requireNonNull(path));
         this.path = path;
         this.address = matAddress;
@@ -78,7 +84,7 @@ public class ImagePoints extends ImagePlus{
      * @param path the path to the image file.
      * @param mat the image matrix.
      */
-    public ImagePoints(final String path, final Mat mat){
+    public ImagePoints(@NotNull final String path, @NotNull final Mat mat){
         super(Objects.requireNonNull(path));
         this.address = -1;
         this.path = path;
@@ -96,7 +102,8 @@ public class ImagePoints extends ImagePlus{
      * @param path the path to the image file.
      * @param ip the ImageProcessor of the image.
      */
-    public ImagePoints(final String path, final ImageProcessor ip){
+    public ImagePoints(@NotNull final String path,
+                       @NotNull final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
         this.address = -1;
@@ -130,6 +137,7 @@ public class ImagePoints extends ImagePlus{
      * @see com.ds4h.model.alignment.automatic.pointDetector.PointDetector
      * Sets the "improveMatrix" to True. During the detection of points, if the flag "improveMatrix" is true, the image will be submitted to "edgeDetection".
      */
+    @Override
     public void improve(){
         this.improveMatrix = true;
     }
@@ -145,6 +153,7 @@ public class ImagePoints extends ImagePlus{
      * Returns the value of the "improveMatrix" instance variable.
      * @return the value of the "improveMatrix" instance variable.
      */
+    @Override
     public boolean toImprove(){
         return this.improveMatrix;
     }
@@ -157,12 +166,25 @@ public class ImagePoints extends ImagePlus{
         return this.type;
     }
 
-    /**
-     * Returns all the points saved inside the ImagePoint object.
-     * @return all the points saved inside the ImagePoint object.
-     */
-    public Point[] getPoints(){
-        return this.pointList.toArray(new Point[0]);
+    @Override
+    public void add(@NotNull final Point point) {
+        this.pointList.add(point);
+    }
+
+    @NotNull
+    @Override
+    public Iterable<Point> getPoints(){
+        return this.pointList;
+    }
+
+    @Override
+    public Integer totalPoints() {
+        return this.pointList.size();
+    }
+
+    @Override
+    public void clear() {
+        this.pointList.clear();
     }
 
     /**
@@ -172,14 +194,6 @@ public class ImagePoints extends ImagePlus{
      */
     public int getIndexOfPoint(final Point point){
         return this.pointList.indexOf(point) + 1;
-    }
-
-    /**
-     * Add a new point inside the "pointList" ArrayList.
-     * @param point the new point to add inside the "pointList".
-     */
-    public void addPoint(final Point point){
-        this.pointList.add(point);
     }
 
     /**
@@ -222,6 +236,8 @@ public class ImagePoints extends ImagePlus{
      * Returns the ImagePlus.
      * @return the ImagePlus.
      */
+    @NotNull
+    @Override
     public ImagePlus getImagePlus(){
         return this;
     }
@@ -230,6 +246,7 @@ public class ImagePoints extends ImagePlus{
      * Returns a grayscale Mat object converted from the ImageProcessor of the ImagePoints object.
      * @return a grayscale Mat object converted from the ImageProcessor of the ImagePoints object.
      */
+    @NotNull
     public Mat getGrayScaleMat(){
         return ImageProcessorMatConverter.convertGray(this.getProcessor());
     }
@@ -245,6 +262,7 @@ public class ImagePoints extends ImagePlus{
      * Returns a Mat object of the ImagePoints object.
      * @return a Mat object of the ImagePoints object.
      */
+    @NotNull
     public Mat getMatImage(){
         return Objects.nonNull(this.matrix) ? this.matrix :
                 this.address > 0 ? new Mat(this.address) :
@@ -271,6 +289,7 @@ public class ImagePoints extends ImagePlus{
      * Returns the Mat Size.
      * @return the Mat Size.
      */
+    @NotNull
     public Size getMatSize(){
         return this.matSize;
     }
@@ -311,6 +330,7 @@ public class ImagePoints extends ImagePlus{
      * Returns the ImagePoint file path.
      * @return the ImagePoint file path.
      */
+    @NotNull
     public String getPath(){
         return this.path;
     }
@@ -319,6 +339,8 @@ public class ImagePoints extends ImagePlus{
      * Returns the file name.
      * @return the file name.
      */
+    @Override
+    @NotNull
     public String getName() {
         return super.getTitle();
     }
@@ -330,6 +352,19 @@ public class ImagePoints extends ImagePlus{
     @Override
     public String toString() {
         return this.getTitle();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null) {return false;}
+        if (!(o instanceof ImagePoints)) {return false;}
+        final ImagePoints other = (ImagePoints) o;
+        return other.getTitle().equals(this.getTitle());
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     /**

@@ -1,13 +1,14 @@
 package com.ds4h.view.pointSelectorGUI;
-import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.controller.pointController.ImageManagerController;
+import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.view.util.ViewBag;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
 public class PointSelectorMenuGUI extends JPanel {
-    private final PointController pointController;
+    private final ImageManagerController imageManagerController;
     private final ImagePoints image;
     private final JButton deleteButton;
     private final JLabel copyToLabel;
@@ -18,17 +19,17 @@ public class PointSelectorMenuGUI extends JPanel {
     private final PointSelectorGUI container;
     private final PointSelectorSettingsGUI settings;
     private final ImageIcon resizedImproveCR, resizedImproveBW;
-    public PointSelectorMenuGUI(PointController controller, ImagePoints image, PointSelectorGUI container){
+    public PointSelectorMenuGUI(ImageManagerController controller, ImagePoints image, PointSelectorGUI container){
         this.container = container;
         this.image = image;
-        this.pointController = controller;
+        this.imageManagerController = controller;
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-        final MenuItem[] options = this.pointController.getPointImages().stream()
+        final MenuItem[] options = this.imageManagerController.getPointImages().stream()
                 .filter(i -> !i.equals(this.image)).map(this::getMenuItem).toArray(MenuItem[]::new);
         this.copyToCombo = new JComboBox<>(options);
         this.copyToCombo.setEditable(false);
-        if(pointController.getPointImages().size() > 1) {
+        if(imageManagerController.getPointImages().size() > 1) {
             this.copyToCombo.setSelectedIndex(0);
         }
         this.copyToLabel = new JLabel("Copy to");
@@ -55,7 +56,7 @@ public class PointSelectorMenuGUI extends JPanel {
     }
 
     private MenuItem getMenuItem(final ImagePoints image){
-        return new MenuItem(this.pointController.getPointImages().indexOf(image)+1, image);
+        return new MenuItem(this.imageManagerController.getPointImages().indexOf(image)+1, image);
     }
     private void setIconButtons(final JButton button){
         button.setBorder(null);
@@ -69,19 +70,22 @@ public class PointSelectorMenuGUI extends JPanel {
     public void addListeners() {
         this.deleteButton.addActionListener(e->{
             container.getSelectedPoints().forEach(image::removePoint);
-            //container.updatePointsForAlignment();
+//            container.updatePointsForAlignment();
             container.clearSelectedPoints();
             container.repaintPoints();
-
         });
         this.copyButton.addActionListener(e->{
             final MenuItem item = (MenuItem) copyToCombo.getSelectedItem();
             assert item != null;
-            if(!pointController.copyPoints(container.getSelectedPoints(), item.getImage())){
+            if(!imageManagerController.copyPoints(container.getSelectedPoints(), item.getImage())){
                 JOptionPane.showMessageDialog(this, "Some of the points are out of the selected image, they have not been copied");
             }else{
                 JOptionPane.showMessageDialog(this, "Successfully copied " + container.getSelectedPoints().size() + " points.");
                 container.checkPointsForAlignment();
+                PointSelectorCanvas canvas = ViewBag.references.get(item.getImage());
+                if (canvas != null) {
+                    canvas.drawPoints();
+                }
             }
         });
         this.cornerSetting.addActionListener(event ->
@@ -116,9 +120,9 @@ public class PointSelectorMenuGUI extends JPanel {
         this.add(Box.createRigidArea(new Dimension(5, 0)));
     }
     public void updateView(){
-        this.copyButton.setEnabled(this.container.getSelectedPoints().size()!=0);
-        this.copyToCombo.setEnabled(this.container.getSelectedPoints().size()!=0);
-        this.deleteButton.setEnabled(this.container.getSelectedPoints().size()!=0);
+        this.copyButton.setEnabled(!this.container.getSelectedPoints().isEmpty());
+        this.copyToCombo.setEnabled(!this.container.getSelectedPoints().isEmpty());
+        this.deleteButton.setEnabled(!this.container.getSelectedPoints().isEmpty());
 
     }
 
