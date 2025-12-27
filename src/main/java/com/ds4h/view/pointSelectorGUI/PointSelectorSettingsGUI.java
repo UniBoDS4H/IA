@@ -45,7 +45,7 @@ public class PointSelectorSettingsGUI extends Frame implements StandardGUI {
         this.indexFrom.removeAllItems();
         this.indexTo.removeAllItems();
 
-        for(int i = 1; i <=this.container.getImage().getPoints().length; i++){
+        for(int i = 1; i <=this.container.getImage().totalPoints(); i++){
             this.indexFrom.addItem(i);
             this.indexTo.addItem(i);
         }

@@ -1,6 +1,7 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
 import ij.IJ;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,8 @@ public class MatCache {
      * @param descriptor Mat descriptor detected with the selected Point Detector.
      * @param keyPoints All the KeyPoints detected with the selected Point Detector.
      */
-    public void setDetection(final Mat descriptor, final MatOfKeyPoint keyPoints){
+    public void setDetection(@NotNull final Mat descriptor,
+                             @NotNull final MatOfKeyPoint keyPoints){
         this.descriptor = Objects.requireNonNull(descriptor);
         this.keyPointList.addAll(Objects.requireNonNull(keyPoints).toList());
     }
@@ -39,6 +41,7 @@ public class MatCache {
      *
      * @return The Mat Descriptor
      */
+    @NotNull
     public Mat getDescriptor(){
         return this.descriptor;
     }
@@ -47,6 +50,7 @@ public class MatCache {
      *
      * @return The List of all KeyPoints.
      */
+    @NotNull
     public List<KeyPoint> getKeyPoints(){
         return this.keyPointList;
     }

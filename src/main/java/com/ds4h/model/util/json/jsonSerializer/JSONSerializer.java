@@ -1,6 +1,6 @@
 package com.ds4h.model.util.json.jsonSerializer;
 
-import com.ds4h.model.pointManager.PointManager;
+import com.ds4h.model.pointManager.ImageManager;
 import com.ds4h.model.util.json.JSONFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,20 +32,20 @@ public class JSONSerializer extends JSONFile {
      *             },
      *             ...
      *         ]
-     * @param pointManager where all the images are stored.
+     * @param imageManager where all the images are stored.
      * @param path where to save the file with all the infos.
      */
-    public static void createJSON(final PointManager pointManager, final String path){
+    public static void createJSON(final ImageManager imageManager, final String path){
         final JSONArray imageList = new JSONArray();
         //Create the json
-        pointManager.getPointImages().forEach(imageCorners -> {
+        imageManager.getPointImages().forEach(imageCorners -> {
             final JSONObject obj = new JSONObject();
             final JSONArray array = new JSONArray();
             for(Point point : imageCorners.getPoints()){
                 array.put(point.toString());
             }
             obj.put(FILE_KEY, imageCorners.getTitle());
-            if(pointManager.getTargetImage().isPresent() && pointManager.getTargetImage().get().equals(imageCorners)){
+            if(imageManager.getTargetImage().isPresent() && imageManager.getTargetImage().get().equals(imageCorners)){
                 obj.put(TARGET_KEY, true);
             }
             obj.put(POINTS_KEY, array);

@@ -1,5 +1,6 @@
 package com.ds4h.model.util.imageManager;
 
+import com.drew.lang.annotations.NotNull;
 import ij.IJ;
 import ij.process.*;
 import org.opencv.core.CvType;
@@ -18,7 +19,8 @@ public class MatImageProcessorConverter {
 
     }
 
-    private static ColorProcessor makeColorProcessor(Mat matrix, final int width, final int height){
+    @NotNull
+    private static ColorProcessor makeColorProcessor(@NotNull Mat matrix, final int width, final int height){
         IJ.log("[MAKE COLORPROCESSOR] Creating the ColorProcessor using the LUT");
         final ColorProcessor cp = new ColorProcessor(width, height);
         byte[] pixels = new byte[width * height * matrix.channels()];
@@ -36,7 +38,8 @@ public class MatImageProcessorConverter {
         return cp;
     }
 
-    private static ImageProcessor makeShortProcessor(Mat matrix, final int width, final int height, final LUT lut, final double min, final double max){
+    @NotNull
+    private static ImageProcessor makeShortProcessor(@NotNull Mat matrix, final int width, final int height, @NotNull final LUT lut, final double min, final double max){
         IJ.log("[MAKE SHORTPROCESSOR] Creating the ShortProcessor using the LUT");
         // final Mat newMatrix = new Mat(matrix.size(), CvType.CV_16U);
         IJ.log("[MAKE SHORTPROCESSOR] From: " + matrix);
@@ -55,7 +58,8 @@ public class MatImageProcessorConverter {
         return shortProcessor;
     }
 
-    private static ByteProcessor makeByteProcessor(Mat matrix, final int width, final int height){
+    @NotNull
+    private static ByteProcessor makeByteProcessor(@NotNull Mat matrix, final int width, final int height){
         IJ.log("[MAKE BYTEPROCESSOR] Creating ByteProcessor");
         final ByteProcessor ip = new ByteProcessor(width, height);
         if(matrix.channels() > 1) {
@@ -69,7 +73,8 @@ public class MatImageProcessorConverter {
         return ip;
     }
 
-    private static FloatProcessor makeFloatProcessor(Mat matrix, final int width, final int height, final LUT lut){
+    @NotNull
+    private static FloatProcessor makeFloatProcessor(@NotNull Mat matrix, final int width, final int height, @NotNull final LUT lut){
         IJ.log("[MAKE FLOATPROCESSOR] Creating FloatProcessor");
         //final float[] pixels = new float[width*height];
         final FloatProcessor floatProcessor = new FloatProcessor(width, height);
@@ -87,7 +92,8 @@ public class MatImageProcessorConverter {
         return floatProcessor;
     }
 
-    private static BinaryProcessor makeBinaryProcessor(final Mat matrix, final int width, final int height){
+    @NotNull
+    private static BinaryProcessor makeBinaryProcessor(@NotNull final Mat matrix, final int width, final int height){
         IJ.log("[MAKE BINARYPROCESSOR] Creating BinaryProcessor");
         final BinaryProcessor binaryProcessor = new BinaryProcessor(MatImageProcessorConverter.makeByteProcessor(matrix, width, height));
         IJ.log("[MAKE FLOATPROCESSOR] Finish creation FloatProcessor");
@@ -101,7 +107,8 @@ public class MatImageProcessorConverter {
      * @return the final ImageProcessor with all the new data from the matrix.
      * @throws IllegalArgumentException if one of the parameters are null.
      */
-    public static ImageProcessor convert(final Mat matrix, final ImageProcessor ip) throws IllegalArgumentException{
+    @NotNull
+    public static ImageProcessor convert(@NotNull final Mat matrix, @NotNull final ImageProcessor ip) throws IllegalArgumentException{
         if(Objects.nonNull(matrix) && Objects.nonNull(ip) && !matrix.empty()){
             if(ip instanceof ColorProcessor){
                 return MatImageProcessorConverter.makeColorProcessor(matrix, matrix.cols(), matrix.rows());

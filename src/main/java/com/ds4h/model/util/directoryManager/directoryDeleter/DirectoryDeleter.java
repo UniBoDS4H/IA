@@ -1,5 +1,6 @@
 package com.ds4h.model.util.directoryManager.directoryDeleter;
 
+import com.drew.lang.annotations.NotNull;
 import ij.IJ;
 
 import java.io.File;
@@ -19,7 +20,8 @@ public class DirectoryDeleter {
      * @param path where the directory is.
      * @param directoryName the name of the directory to be removed.
      */
-    public static void delete(final String path, final String directoryName){
+    public static void delete(@NotNull final String path,
+                              @NotNull final String directoryName){
         final File directory = new File(path);
         if(directory.isDirectory()) {
             for (final File file : Objects.requireNonNull(directory.listFiles())) {
@@ -41,7 +43,7 @@ public class DirectoryDeleter {
      * Delete a directory from the TMP OS directory.
      * @param directoryName the name of the directory.
      */
-    public static void deleteTMP(final String directoryName){
+    public static void deleteTMP(@NotNull final String directoryName){
         DirectoryDeleter.delete(TEMPORARY_PATH, directoryName);
     }
 }

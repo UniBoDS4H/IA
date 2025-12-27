@@ -1,32 +1,25 @@
 package com.ds4h.view.outputGUI;
 
+import com.drew.lang.annotations.NotNull;
+import com.ds4h.controller.elastic.ElasticOutputImageController;
 import com.ds4h.controller.imageController.ImageController;
-import com.ds4h.controller.pointController.PointController;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.controller.pointController.ImageManagerController;
+import com.ds4h.model.alignment.automatic.pointDetector.Detectors;
 import com.ds4h.view.bunwarpjGUI.BunwarpjGUI;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import com.ds4h.view.reuseGUI.ReuseGUI;
 import com.ds4h.view.saveImagesGUI.SaveImagesGUI;
 import com.ds4h.view.standardGUI.StandardCanvas;
 import com.ds4h.view.util.SaveAsEnum;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.StackWindow;
-import ij.io.FileSaver;
-import ij.plugin.RGBStackMerge;
-import ij.process.ColorProcessor;
-import ij.process.ImageConverter;
-import ij.process.ImageProcessor;
-import ij.process.LUT;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AlignmentOutputGUI extends StackWindow {
     private static ImagePlus image;
@@ -45,23 +38,26 @@ public class AlignmentOutputGUI extends StackWindow {
     private final StandardCanvas canvas;
     private final SaveImagesGUI saveGui;
     private final ImageController controller;
-    private final PointController pointController;
+    private final ImageManagerController imageManagerController;
     private final MainMenuGUI mainGUI;
     private final boolean isOrderAscending;
     private final boolean isTargetImageForeground;
+    private final Detectors selectedDetector;
 
     public AlignmentOutputGUI(final ImageController controller, final BunwarpjGUI settingsBunwarpj,
-                              final PointController pointController, final MainMenuGUI mainMenuGUI,
-                              final boolean isAlignmentOrderAscending, final boolean isTargetImageForeground) {
+                              final ImageManagerController imageManagerController, final MainMenuGUI mainMenuGUI,
+                              final boolean isAlignmentOrderAscending, final boolean isTargetImageForeground,
+                              @NotNull Detectors selectedDetector) {
         super(image = controller.getAlignedImagesAsStack(), new StandardCanvas(image));
+        this.selectedDetector = selectedDetector;
         this.canvas = (StandardCanvas)this.getCanvas();
         this.removeAll();
         this.controller = controller;
         this.setLayout(new BorderLayout());
         this.mainGUI = mainMenuGUI;
-        this.pointController = pointController;
+        this.imageManagerController = imageManagerController;
         this.bunwarpjGUI = settingsBunwarpj;
-        this.saveGui = new SaveImagesGUI(controller, this.pointController);
+        this.saveGui = new SaveImagesGUI(controller, this.imageManagerController);
         this.panel = new JPanel();
         this.panel.removeAll();
         this.panel.revalidate();
@@ -155,31 +151,26 @@ public class AlignmentOutputGUI extends StackWindow {
         this.saveItem.addActionListener(event -> this.saveGui.showDialog());
 
         this.reuseItem.addActionListener(event -> {
-            final ReuseGUI reuseGUI = new ReuseGUI(this.pointController, this.controller, this.mainGUI, this);
+            final ReuseGUI reuseGUI = new ReuseGUI(this.imageManagerController, this.controller, this.mainGUI, this);
             reuseGUI.showDialog();
         });
 
         this.elasticItem.addActionListener(event -> {
-            this.controller.elastic(this.controller.getAlignedImages());
-            final Thread pollingElastic = new Thread(() -> {
-                try {
-                    while (this.controller.deformationIsAlive()){
-                        Thread.sleep(1000);
-                    }
-                    if(this.controller.getAlignedImages().size() > 0) {
-                        new AlignmentOutputGUI(this.controller, this.bunwarpjGUI, this.pointController, this.mainGUI,
-                                this.isOrderAscending, this.isTargetImageForeground);
+            this.controller.elastic(imageManagerController.getImageManager(), this.selectedDetector)
+                    .whenComplete((images, ex) -> {
+                        final ElasticOutputImageController elasticOutputImageController = new ElasticOutputImageController(images);
+                        final ImageController imageController = new ImageController(elasticOutputImageController, this.controller.getElasticController());
+                        new AlignmentOutputGUI(imageController,
+                                this.bunwarpjGUI,
+                                this.imageManagerController,
+                                this.mainGUI,
+                                this.isOrderAscending,
+                                this.isTargetImageForeground,
+                                this.selectedDetector);
                         this.dispose();
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this,
-                            e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            });
-            pollingElastic.start();
+                    });
         });
+
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent windowEvent) {

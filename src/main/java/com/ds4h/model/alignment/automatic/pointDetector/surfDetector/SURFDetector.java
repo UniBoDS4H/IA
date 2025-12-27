@@ -1,7 +1,8 @@
 package com.ds4h.model.alignment.automatic.pointDetector.surfDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.ds4h.model.image.AnalyzableImage;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.xfeatures2d.SURF;
@@ -16,7 +17,7 @@ public class SURFDetector extends PointDetector {
     }
 
     @Override
-    public void detectPoint(final ImagePoints targetImage, final ImagePoints imagePoint) {
+    public void detectPoint(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage imagePoint) {
         Mat grayImg = super.getScalingFactor() > 1 ?  this.createPyramid(imagePoint.getGrayScaleMat(), super.getScalingFactor()) :
                 imagePoint.getGrayScaleMat();
 
@@ -59,19 +60,8 @@ public class SURFDetector extends PointDetector {
         final List<KeyPoint> keypoints1List = keypoints1.toList();
         final List<KeyPoint> keypoints2List = super.getMatCache().getKeyPoints();
         keypoints1.release();
-        final double scale = Math.pow(2, super.getScalingFactor()-1);
 
-        matches.toList().stream()
-                .filter(match -> match.distance < threshold)
-                .forEach(goodMatch -> {
-                    final Point queryScaled = new Point(
-                            keypoints1List.get(goodMatch.queryIdx).pt.x * (scale),
-                            keypoints1List.get(goodMatch.queryIdx).pt.y * (scale));
-                    final Point trainScaled = new Point(
-                            keypoints2List.get(goodMatch.trainIdx).pt.x * (scale),
-                            keypoints2List.get(goodMatch.trainIdx).pt.y * (scale));
-                    imagePoint.addPoint(queryScaled);
-                    targetImage.addPoint(trainScaled);
-                });
+        this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, matches.toList());
+        matches.release();
     }
 }

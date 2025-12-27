@@ -1,29 +1,30 @@
 package com.ds4h.model.deformation;
 
 import bunwarpj.bUnwarpJ_;
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.deformation.elastic.ElasticRegistration;
+import com.ds4h.model.image.AnalyzableImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.deformation.scales.BunwarpJMaxScale;
 import com.ds4h.model.deformation.scales.BunwarpJMinScale;
 import com.ds4h.model.deformation.scales.BunwarpJMode;
 import ij.ImagePlus;
 import bunwarpj.Transformation;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This class is used in order to apply an elastic transformation using the BUnwarpJ Library.
  */
-public class BunwarpjDeformation implements Runnable{
+public class BunwarpjDeformation implements ElasticRegistration {
     private BunwarpJMode modeInput;
     private BunwarpJMinScale minScale;
     private BunwarpJMaxScale maxScale;
     private int sampleFactor;
 
-    private final List<AlignedImage> outputList;
-    private final List<AlignedImage> alignedImages;
-    private AlignedImage target;
-    private Thread thread;
     public final static double MIN_ZERO = 0.0,
             MIN_ZERO_ONE = 0.01,
             MIN_ONE = 0.1,
@@ -40,82 +41,30 @@ public class BunwarpjDeformation implements Runnable{
      * Constructor for the BunwarpJ object.
      */
     public BunwarpjDeformation(){
-        this.outputList = new CopyOnWriteArrayList<>();
-        this.alignedImages = new CopyOnWriteArrayList<>();
-        this.target = null;
-        this.thread = new Thread(this);
         this.modeInput = BunwarpJMode.FAST_MODE;
         this.minScale = BunwarpJMinScale.VERY_COARSE;
         this.maxScale = BunwarpJMaxScale.VERY_COARSE;
 
     }
 
-    /**
-     * Perform an Elastic Deformation of all the input images.
-     * @param images all the images to deform.
-     */
-    public void deformList(final List<AlignedImage> images){
-        final Optional<AlignedImage> targetImage = images.stream().filter(alignedImage -> !alignedImage.getRegistrationMatrix().isPresent()).findFirst();
-        if(targetImage.isPresent()  && !this.thread.isAlive()) {
-            this.target = targetImage.get();
-            this.outputList.clear();
-            this.alignedImages.clear();
-            this.alignedImages.addAll(images);
-            this.thread.start();
-        }
-    }
-
-    /**
-     *
-     * @return a
-     */
-    public boolean isAlive(){
-        return this.thread.isAlive();
-    }
-
-    /**
-     *
-     * @return a
-     */
-    public List<AlignedImage> getOutputList(){
-        return new LinkedList<>(this.outputList);
-    }
-
-    /**
-     * Open a new thread for the deformation operation. After the deformation is done, all the images are
-     * stored inside the output list.
-     */
-    @Override
-    public void run() {
-        try {
-            if (Objects.nonNull(this.target)) {
-                final ImagePlus sourceImage = this.target.getAlignedImage();
-                for (final AlignedImage alignedImage : this.alignedImages) {
-                    final Transformation transformation = bUnwarpJ_.computeTransformationBatch(alignedImage.getAlignedImage(),
-                            sourceImage,
-                            alignedImage.getAlignedImage().getProcessor(),
-                            sourceImage.getProcessor(),
-                            this.modeInput.getValue(),
-                            this.sampleFactor,
-                            this.minScale.getValue(),
-                            this.maxScale.getValue(),
-                            this.parDivWeight,
-                            this.parCurlWeight,
-                            this.parLandmarkWeight,
-                            this.parImageWeight,
-                            this.parConsistencyWeight,
-                            this.parThreshold);
-                    final ImagePlus image = transformation.getDirectResults();
-                    image.setTitle(alignedImage.getAlignedImage().getTitle());
-                    this.outputList.add(alignedImage.getRegistrationMatrix().isPresent() ?
-                            new AlignedImage(alignedImage.getRegistrationMatrix().get(), image.getProcessor(), alignedImage.getName()) :
-                            new AlignedImage(image.getProcessor(), alignedImage.getName()));
-                }
-            }
-            this.thread = new Thread(this);
-        }catch (Exception ex) {
-            this.thread = new Thread(this);
-        }
+    private AlignedImage computeTransformation(final AnalyzableImage targetImage, final AnalyzableImage movingImage) {
+        final ImagePlus sourceImage = targetImage.getImagePlus();
+        final Transformation transformation = bUnwarpJ_.computeTransformationBatch(movingImage.getImagePlus(),
+                sourceImage,
+                movingImage.getImagePlus().getProcessor(),
+                sourceImage.getProcessor(),
+                this.modeInput.getValue(),
+                this.sampleFactor,
+                this.minScale.getValue(),
+                this.maxScale.getValue(),
+                this.parDivWeight,
+                this.parCurlWeight,
+                this.parLandmarkWeight,
+                this.parImageWeight,
+                this.parConsistencyWeight,
+                this.parThreshold);
+        final ImagePlus image = transformation.getDirectResults();
+        return new AlignedImage(image.getProcessor(), movingImage.getName());
     }
 
     /**
@@ -299,4 +248,17 @@ public class BunwarpjDeformation implements Runnable{
     }
 
 
+    @NotNull
+    @Override
+    public List<AlignedImage> transformImages(@NotNull AnalyzableImage targetImage, @NotNull List<AnalyzableImage> movingImages) {
+        return movingImages.stream()
+                .map(movingImage -> this.computeTransformation(targetImage, movingImage))
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    @Override
+    public AlignedImage transformImage(@NotNull AnalyzableImage targetImage, @NotNull AnalyzableImage movingImage) {
+        return this.computeTransformation(targetImage, movingImage);
+    }
 }

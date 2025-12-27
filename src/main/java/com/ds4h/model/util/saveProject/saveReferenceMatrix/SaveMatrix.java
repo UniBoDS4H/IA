@@ -1,6 +1,6 @@
 package com.ds4h.model.util.saveProject.saveReferenceMatrix;
 
-import com.ds4h.model.alignedImage.AlignedImage;
+import com.ds4h.model.image.alignedImage.AlignedImage;
 import org.opencv.core.Mat;
 import java.io.FileWriter;
 import java.io.IOException;

@@ -1,5 +1,6 @@
 package com.ds4h.model.util.imageManager;
 
+import com.drew.lang.annotations.NotNull;
 import ij.IJ;
 import ij.process.*;
 import org.opencv.core.Core;
@@ -14,7 +15,8 @@ public class ImageProcessorMatConverter {
 
     }
 
-    private static Mat toMat(final ShortProcessor sp){
+    @NotNull
+    private static Mat toMat(@NotNull final ShortProcessor sp){
         IJ.log("[TO MAT - SHORTPROCESSOR] From ShortProcessor");
         final Mat matrix = new Mat(sp.getHeight(), sp.getWidth(), CvType.CV_16U);
         IJ.log("[TO MAT - SHORTPROCESSOR] Matrix: " + matrix);
@@ -23,7 +25,8 @@ public class ImageProcessorMatConverter {
         return  matrix;
     }
 
-    private static Mat toMat(final ColorProcessor cp){
+    @NotNull
+    private static Mat toMat(@NotNull final ColorProcessor cp){
         IJ.log("[TO MAT - COLORPROCESSOR] From ColorProcessor " + ((int[])cp.getPixels()).length ) ;
         final Mat matrix = new Mat(cp.getHeight(), cp.getWidth(), CvType.CV_8UC3);
         final int[] pixels = (int[]) cp.getPixels();
@@ -41,7 +44,8 @@ public class ImageProcessorMatConverter {
         return  matrix;
     }
 
-    private static Mat toMat(final FloatProcessor fp){
+    @NotNull
+    private static Mat toMat(@NotNull final FloatProcessor fp){
         IJ.log("[TO MAT - FLOATPROCESSOR] From FloatProcessor");
         final Mat matrix = new Mat(fp.getHeight(), fp.getWidth(), CvType.CV_32FC1);
         IJ.log("[TO MAT - FLOATPROCESSOR] Matrix: " + matrix);
@@ -50,7 +54,8 @@ public class ImageProcessorMatConverter {
         return  matrix;
     }
 
-    private static Mat toMat(final ByteProcessor bp){
+    @NotNull
+    private static Mat toMat(@NotNull final ByteProcessor bp){
         IJ.log("[TO MAT - BYTEPROCESSOR] From ByteProcessor");
         final Mat matrix = new Mat(bp.getHeight(), bp.getWidth(), CvType.CV_8U);
         IJ.log("[TO MAT - BYTEPROCESSOR] Matrix: " + matrix);
@@ -65,7 +70,8 @@ public class ImageProcessorMatConverter {
      * @return the matrix with all the data of the image.
      * @throws IllegalArgumentException if the "ImageProcessor" is null.
      */
-    public static Mat convert(final ImageProcessor ip) throws IllegalArgumentException{
+    @NotNull
+    public static Mat convert(@NotNull final ImageProcessor ip) throws IllegalArgumentException{
         IJ.log("[IMAGE PROCESSOR CONVERTER] Ip: " + ip);
         if(Objects.nonNull(ip)){
             if(ip instanceof ColorProcessor){
@@ -87,7 +93,8 @@ public class ImageProcessorMatConverter {
      * @return the gray scale matrix.
      * @throws IllegalArgumentException if the input is null.
      */
-    public static Mat convertGray(final ImageProcessor ip) throws IllegalArgumentException {
+    @NotNull
+    public static Mat convertGray(@NotNull final ImageProcessor ip) throws IllegalArgumentException {
         if(Objects.nonNull(ip)) {
             final Mat matrix = ImageProcessorMatConverter.convert(ip);
             Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);

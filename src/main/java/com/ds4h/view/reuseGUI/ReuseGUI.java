@@ -1,6 +1,6 @@
 package com.ds4h.view.reuseGUI;
 
-import com.ds4h.controller.pointController.PointController;
+import com.ds4h.controller.pointController.ImageManagerController;
 import com.ds4h.controller.imageController.ImageController;
 import com.ds4h.view.outputGUI.AlignmentOutputGUI;
 import com.ds4h.view.displayInfo.DisplayInfo;
@@ -13,15 +13,15 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     private final JButton reuseButton;
     private final ReuseImagesPanel imagesPane;
     private final MainMenuGUI mainGUI;
-    private final PointController pointController;
+    private final ImageManagerController imageManagerController;
     private final AlignmentOutputGUI outputGUI;
 
-    public ReuseGUI(final PointController pointController, final ImageController controller, final MainMenuGUI mainGUI, final AlignmentOutputGUI alignmentOutputGUI){
+    public ReuseGUI(final ImageManagerController imageManagerController, final ImageController controller, final MainMenuGUI mainGUI, final AlignmentOutputGUI alignmentOutputGUI){
         this.setTitle("Reuse");
         this.setSize();
         this.mainGUI = mainGUI;
         this.outputGUI = alignmentOutputGUI;
-        this.pointController = pointController;
+        this.imageManagerController = imageManagerController;
         this.setLayout(new BorderLayout());
         this.reuseButton = new JButton("Reuse");
         this.imagesPane = new ReuseImagesPanel(controller);
@@ -39,7 +39,7 @@ public class ReuseGUI extends JFrame implements StandardGUI {
     public void addListeners() {
         this.reuseButton.addActionListener(event -> {
             try {
-                this.pointController.reuseSource(this.imagesPane.getImagesToReuse());
+                this.imageManagerController.reuseSource(this.imagesPane.getImagesToReuse());
                 this.mainGUI.reloadImages();
                 this.outputGUI.clearStack();
                 this.outputGUI.releaseImages();

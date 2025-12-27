@@ -1,7 +1,8 @@
 package com.ds4h.model.util.imageManager;
 
 
-import com.ds4h.model.imagePoints.ImagePoints;
+import com.drew.lang.annotations.NotNull;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import org.apache.commons.io.FilenameUtils;
@@ -22,7 +23,6 @@ import java.util.stream.Stream;
 public class ImagingConversion {
 
     private static final String TMP_DIRECTORY_NAME = "DS4H_Images";
-    private static final String TMP_DIRECTORY_NAME_MAT = "DS4H_ImagesMat";
     private static final String TMP_DIRECTORY = System.getProperty("java.io.tmpdir");
 
     /**
@@ -35,7 +35,8 @@ public class ImagingConversion {
      * @param paths the input list of the images.
      * @return the list of ImagePoints.
      */
-    public static List<ImagePoints> fromPath(final List<File> paths){
+    @NotNull
+    public static List<ImagePoints> fromPath(@NotNull final List<File> paths){
         return paths.parallelStream()
                 .filter(File::isFile)
                 .filter(CheckImage::checkImage)
@@ -51,7 +52,8 @@ public class ImagingConversion {
                 .collect(Collectors.toList());
     }
 
-    private static Stream<File> isMulti(final File file) throws IOException {
+    @NotNull
+    private static Stream<File> isMulti(@NotNull final File file) throws IOException {
         if (CheckImage.isTiff(file) && TIFFUtilities.getPages(ImageIO.createImageInputStream(file)).size() != 1) {
             final String dir = DirectoryCreator.createTemporaryDirectory(ImagingConversion.TMP_DIRECTORY_NAME);
             final List<File> files = ImagingConversion.split(file, new File( ImagingConversion.TMP_DIRECTORY+ "/" + dir),
@@ -62,7 +64,10 @@ public class ImagingConversion {
         }
     }
 
-    private static List<File> split(final File inputFile, final File outputDirectory, final String fileName) throws IOException {
+    @NotNull
+    private static List<File> split(@NotNull final File inputFile,
+                                    @NotNull final File outputDirectory,
+                                    @NotNull final String fileName) throws IOException {
         ImageInputStream input = null;
         final List<File> outputFiles = new ArrayList<>();
         try {

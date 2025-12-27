@@ -1,5 +1,6 @@
 package com.ds4h.model.alignment.automatic.pointDetector;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.akazeDetector.AKAZEDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.briskDetector.BRISKDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.freakDetector.FREAKDetector;
@@ -36,7 +37,9 @@ public enum Detectors {
      * @param factor        The threshold factor, it is always initialized with 0.
      * @see com.ds4h.model.alignment.automatic.pointDetector.PointDetector
      */
-    Detectors(final String name, final PointDetector pointDetector, final double factor) {
+    Detectors(@NotNull final String name,
+              @NotNull final PointDetector pointDetector,
+              final double factor) {
         this.name = name;
         this.pointDetector = pointDetector;
         this.thresholdFactor = factor;
@@ -84,6 +87,7 @@ public enum Detectors {
     /**
      * @return The Point Detector
      */
+    @NotNull
     public PointDetector pointDetector() {
         return this.pointDetector;
     }
@@ -91,6 +95,7 @@ public enum Detectors {
     /**
      * @return The name of the point detector.
      */
+    @NotNull
     @Override
     public String toString() {
         return this.name;

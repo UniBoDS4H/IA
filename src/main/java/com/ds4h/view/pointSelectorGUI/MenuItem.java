@@ -1,9 +1,6 @@
 package com.ds4h.view.pointSelectorGUI;
 
-import com.ds4h.model.imagePoints.ImagePoints;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.ds4h.model.image.imagePoints.ImagePoints;
 
 public class MenuItem {
     private final int index;
