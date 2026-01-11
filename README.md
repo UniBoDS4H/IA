@@ -39,7 +39,7 @@ inside the "plugins" folder of ImageJ/Fiji. You will find in the ImageJ/Fiji _Pl
 
 
 ## How to use It
-TO BE DONE
+[Video Tutorial](https://www.youtube.com/watch?v=B8luj5x0GCw)
 
 ## Acknowledgments
 We thanks all the University Students that helped in this project. In particular:
