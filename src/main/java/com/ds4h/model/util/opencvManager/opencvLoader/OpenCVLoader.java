@@ -3,16 +3,8 @@ package com.ds4h.model.util.opencvManager.opencvLoader;
 import ij.IJ;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.bytedeco.javacpp.Loader;
-import org.opencv.core.Core;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -89,7 +81,7 @@ public class OpenCVLoader {
 
     private static void loadLib(final String name, final String extension) {
         try {
-            if (!OpenCVLoader.alreadyLoaded()) {
+//            if (!OpenCVLoader.alreadyLoaded()) {
                 final InputStream in = OpenCVLoader.class.getResourceAsStream(OPENCV + name + extension);
                 final File fileOut = File.createTempFile(TMP_LIBRARY_NAME, extension);
                 try (final OutputStream out = FileUtils.openOutputStream(fileOut)) {
@@ -102,7 +94,7 @@ public class OpenCVLoader {
                 } catch (IOException e) {
                     IJ.showMessage(e.getMessage());
                 }
-            }
+//            }
         } catch (IOException e) {
             IJ.showMessage(e.getMessage());
         }
