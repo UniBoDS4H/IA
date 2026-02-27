@@ -171,3 +171,15 @@ How to use this project as a starting point
 This ensures that the final `.jar` file will also be copied to
 your ImageJ plugins folder everytime you run the Maven build.
 -->
+
+
+### How to install opencv jar
+Once you have cloned the repository, you have to run the following command by selecting the correct jar for your system:
+```bash
+ mvn install:install-file \
+  -Dfile=project/resources/YOUR_PLATFORM/opencv-455.jar \
+  -DgroupId=ds4h.org.opencv \
+  -DartifactId=opencv \
+  -Dversion=4.5.5 \
+  -Dpackaging=jar
+```
