@@ -38,11 +38,7 @@ public class OpenCVLoader {
             if (arch.equals(ARM) || arch.startsWith(ARMV) || arch.startsWith(AARCH)) {
                 OpenCVLoader.loadMacArm();
             } else {
-                try {
-                    OpenCVLoader.loadMacIntel();
-                }catch (IOException a){
-
-                }
+                OpenCVLoader.loadMacIntel();
             }
 
         }else if(OS.contains(LINUX)){
@@ -56,7 +52,7 @@ public class OpenCVLoader {
     private static void loadWindows(){
         OpenCVLoader.loadLib(WINDOWS_LIB, WINDOWS_FORMAT);
     }
-    private static void loadMacIntel()  throws IOException{
+    private static void loadMacIntel() {
         OpenCVLoader.loadLib(MAC_LIB_INTEL, MAC_FORMAT);
     }
     private static void loadMacArm(){
