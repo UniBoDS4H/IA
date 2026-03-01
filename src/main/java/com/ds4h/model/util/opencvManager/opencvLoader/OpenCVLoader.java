@@ -67,12 +67,11 @@ public class OpenCVLoader {
     }
 
     private static List<String> getResourceFiles(final String path) throws IOException {
-        List<String> fileList = new ArrayList<>();
-        try (InputStream inputStream = OpenCVLoader.class.getResourceAsStream(path);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        final List<String> fileList = new ArrayList<>();
+        try (final InputStream inputStream = OpenCVLoader.class.getResourceAsStream(path);
+             final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                IJ.log(line);
                 fileList.add(line);
             }
         }
