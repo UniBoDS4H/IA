@@ -102,7 +102,7 @@ public class OpenCVLoader {
         if(tmpDirectory.isDirectory()){
             final File[] files = tmpDirectory.listFiles();
             if(Objects.nonNull(files)) {
-                for (File file : files) {
+                for (final File file : files) {
                     if (file.isFile() && file.getName().contains(TMP_LIBRARY_NAME)) {
                         System.load(file.toString());
                         return true;
