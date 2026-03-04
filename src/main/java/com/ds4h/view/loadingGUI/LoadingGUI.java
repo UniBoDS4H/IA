@@ -1,5 +1,7 @@
 package com.ds4h.view.loadingGUI;
 
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import com.ds4h.view.displayInfo.DisplayInfo;
 import com.ds4h.view.standardGUI.StandardGUI;
 import ij.IJ;
@@ -13,6 +15,7 @@ import java.util.Objects;
 public class LoadingGUI extends JFrame implements StandardGUI {
 
     private final static String GIF_PATH = "/icons/loading.gif";
+    private final static Logger myLogger = LoggerFactory.getImageJLogger(LoadingGUI.class.getName());
     private final JLabel loadingLabel, text;
 
     private final LoadingType loadingType;
@@ -49,8 +52,6 @@ public class LoadingGUI extends JFrame implements StandardGUI {
     @Override
     public void addListeners() {
         this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-            }
         });
     }
 
@@ -63,7 +64,7 @@ public class LoadingGUI extends JFrame implements StandardGUI {
         this.text.setVerticalAlignment(JLabel.CENTER);
         this.text.setHorizontalAlignment(JLabel.CENTER);
         this.text.setText(this.loadingType.getDescription());
-        IJ.log("[LOADING GUI] text: " + this.text.getText());
+        myLogger.log(this.text.getText());
         if(this.loadingType == LoadingType.ALGORITHM){
             gbc.gridx = 0;
             gbc.gridy = 0;
