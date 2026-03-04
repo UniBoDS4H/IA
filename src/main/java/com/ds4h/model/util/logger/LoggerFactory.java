@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoggerFactory {
-    public static final String DEBUG_PROPERTY = "com.ds4h.model.util.logger.debug";
     private static final Map<String, Logger> myLoggersByClassName = new HashMap<>();
 
     private LoggerFactory() {}

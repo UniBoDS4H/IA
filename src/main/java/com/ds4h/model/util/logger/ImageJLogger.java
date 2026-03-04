@@ -13,21 +13,21 @@ public class ImageJLogger implements Logger {
 
     @Override
     public void log(String message) {
-        if (Boolean.getBoolean(System.getProperty(LoggerFactory.DEBUG_PROPERTY))) {
+        if (LoggerManager.isLoggingEnabled()) {
             IJ.log(formatMessage(INFO, message));
         }
     }
 
     @Override
     public void logError(String message) {
-        if (Boolean.getBoolean(System.getProperty(LoggerFactory.DEBUG_PROPERTY))) {
+        if (LoggerManager.isLoggingEnabled()) {
             IJ.showMessage(formatMessage(ERROR, message));
         }
     }
 
     @Override
     public void logWarning(String message) {
-        if (Boolean.getBoolean(System.getProperty(LoggerFactory.DEBUG_PROPERTY))) {
+        if (LoggerManager.isLoggingEnabled()) {
             IJ.showMessage(formatMessage(WARNING, message));
         }
     }
