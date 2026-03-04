@@ -1,0 +1,12 @@
+@echo off
+
+set DFILE=%cd%\project\resources\windows\opencv-455.jar
+
+mvn install:install-file ^
+  -Dfile="%DFILE%" ^
+  -DgroupId=ds4h.org.opencv ^
+  -DartifactId=opencv ^
+  -Dversion=4.5.5 ^
+  -Dpackaging=jar
+
+pause
