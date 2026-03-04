@@ -24,11 +24,12 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
     private Mat matrix = null;
     private int type = -1;
     private boolean improveMatrix = false;
+
     /**
      * Creates a new ImagePoints object with the specified path.
      * @param path the path of the image file.
      */
-    public ImagePoints(@NotNull final String path){
+    ImagePoints(@NotNull final String path){
         super(Objects.requireNonNull(path));
         this.path = path;
         this.address = -1;
@@ -60,23 +61,6 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
         this.matSize = new Size(this.cols, this.rows);
         this.address = -1;
         this.detectType();
-    }
-
-    /**
-     * Creates a new ImagePoints object with the specific path, and the Matrix address
-     * @param path the path to the image file.
-     * @param matAddress the address to the image matrix.
-     */
-    public ImagePoints(@NotNull final String path, final long matAddress) {
-        super(Objects.requireNonNull(path));
-        this.path = path;
-        this.address = matAddress;
-        this.matrix = new Mat(matAddress);
-        this.rows = this.matrix.rows();
-        this.cols = this.matrix.cols();
-        this.matSize = matrix.size();
-        this.type = matrix.type();
-        this.pointList = new ArrayList<>(5);
     }
 
     /**
