@@ -1,6 +1,7 @@
 package com.ds4h.model.util.projectManager.importProject;
 
 import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePointsFactory;
 import com.ds4h.model.util.imageManager.CheckImage;
 import com.ds4h.model.util.json.JSONFile;
 import com.ds4h.model.util.json.jsonDeserializer.JSONDeserializer;
@@ -47,7 +48,7 @@ public class ImportProject {
                 //If we have found the configuration json, we read it and we passing for each image its points.
                 JSONDeserializer.readImportProjectJSON(jsonFile).forEach((key, value) -> tmpFiles.forEach(file -> {
                     if (file.getName().equals(key)) {
-                        final ImagePoints imagePoints = new ImagePoints(file.getPath());
+                        final ImagePoints imagePoints = ImagePointsFactory.createFromFilePath(file.getPath());
                         value.forEach(imagePoints::add);
                         images.add(imagePoints);
                         if(JSONDeserializer.isTargetPresent() && JSONDeserializer.targetName().equals(file.getName())){
@@ -57,7 +58,7 @@ public class ImportProject {
                 }));
             }else{
                 tmpFiles.forEach(file -> {
-                    final ImagePoints ImagePoints = new ImagePoints(file.getPath());
+                    final ImagePoints ImagePoints = ImagePointsFactory.createFromFilePath(file.getPath());
                     images.add(ImagePoints);
                 });
             }

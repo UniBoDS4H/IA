@@ -3,6 +3,7 @@ package com.ds4h.model.util.imageManager;
 
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.image.imagePoints.ImagePointsFactory;
 import com.ds4h.model.util.directoryManager.directoryCreator.DirectoryCreator;
 import com.twelvemonkeys.contrib.tiff.TIFFUtilities;
 import org.apache.commons.io.FilenameUtils;
@@ -48,7 +49,7 @@ public class ImagingConversion {
                     }
                 })
                 .map(File::getPath)
-                .map(ImagePoints::new)
+                .map(ImagePointsFactory::createFromFilePath)
                 .collect(Collectors.toList());
     }
 
