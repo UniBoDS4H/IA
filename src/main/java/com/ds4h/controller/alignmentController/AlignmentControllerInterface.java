@@ -3,7 +3,6 @@ package com.ds4h.controller.alignmentController;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import ij.ImagePlus;
-import org.bytedeco.opencv.presets.opencv_core;
 
 import java.util.List;
 
