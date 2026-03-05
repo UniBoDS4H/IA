@@ -176,7 +176,7 @@ your ImageJ plugins folder everytime you run the Maven build.
 ### How to install opencv jar
 Once you have cloned the repository, you have to run the following command by selecting the correct jar for your system:
 ```bash
-./install-dependencies.sh arm_jar/linux_jar/x86_jar
+./install-dependencies.sh
 ```
 
 or if you are in windows:
