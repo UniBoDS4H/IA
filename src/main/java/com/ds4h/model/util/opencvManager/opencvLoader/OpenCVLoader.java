@@ -42,11 +42,7 @@ public class OpenCVLoader {
             }
 
         }else if(OS.contains(LINUX)){
-            try {
-                OpenCVLoader.loadLinux();
-            }catch (IOException a){
-                IJ.log("[ERROR] " + a.getMessage());
-            }
+            OpenCVLoader.loadLinux();
         }
     }
     private static void loadWindows(){
@@ -58,7 +54,7 @@ public class OpenCVLoader {
     private static void loadMacArm(){
         OpenCVLoader.loadLib(MAC_LIB_ARM, MAC_FORMAT);
     }
-    private static void loadLinux() throws IOException {
+    private static void loadLinux() {
         OpenCVLoader.loadLib(LINUX_LIB, LINUX_FORMAT);
     }
 
