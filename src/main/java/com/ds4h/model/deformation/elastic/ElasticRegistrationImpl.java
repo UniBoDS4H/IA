@@ -37,7 +37,7 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     @NotNull
     @Override
     public List<AlignedImage> transformImages(@NotNull final AnalyzableImage targetImage, @NotNull final List<AnalyzableImage> movingImages) {
-        IJ.log("[ELASTIC] Transforming Images");
+        myLogger.log("Transforming images");
         final List<AlignedImage> output = new LinkedList<>();
         movingImages.stream().filter(Objects::nonNull).forEach(image -> {
             final AlignedImage transformedImage = this.transformImage(image, targetImage);
@@ -50,8 +50,8 @@ public class ElasticRegistrationImpl implements ElasticRegistration {
     @Override
     public AlignedImage transformImage(@NotNull AnalyzableImage movingImage, @NotNull AnalyzableImage targetImage) {
         if (movingImage.totalPoints() > 0 && targetImage.totalPoints() > 0) {
-            IJ.log("[ELASTIC] Transforming Image");
             this.initilizeSources(movingImage, targetImage);
+            myLogger.log("Transforming images");
             final LandmarkTableModel landmarkTableModel = new LandmarkTableModel(2);
             this.addLandmarks(landmarkTableModel, movingImage, targetImage);
             return this.applyElasticRegistration(movingImage, targetImage, landmarkTableModel);
