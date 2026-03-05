@@ -68,7 +68,6 @@ public class MatCache {
      */
     public void releaseMatrix(){
         if(this.isAlreadyDetected()){
-            IJ.log("[MAT CACHE] Release Points");
             this.descriptor.release();
             this.descriptor = null;
             this.keyPointList.clear();
