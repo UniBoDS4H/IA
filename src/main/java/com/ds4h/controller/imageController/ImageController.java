@@ -100,7 +100,6 @@ public class ImageController {
                 this.alignmentControllerInterface.releaseImages();
                 break;
         }
-        System.gc();
     }
 
     @NotNull

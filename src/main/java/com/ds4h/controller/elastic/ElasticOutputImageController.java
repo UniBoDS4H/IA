@@ -46,6 +46,5 @@ public class ElasticOutputImageController implements AlignmentControllerInterfac
     @Override
     public void releaseImages() {
         this.alignedImageList.clear();
-        System.gc();
     }
 }

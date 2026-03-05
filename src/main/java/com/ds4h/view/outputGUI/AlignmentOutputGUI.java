@@ -82,12 +82,10 @@ public class AlignmentOutputGUI extends StackWindow {
 
     public void clearStack(){
         image.close();
-        System.gc();
     }
 
     private void createOutputIcons() {
         Thread t1 = new Thread(() -> {
-            System.gc();
             reuseItem.setEnabled(true);
         });
         t1.start();

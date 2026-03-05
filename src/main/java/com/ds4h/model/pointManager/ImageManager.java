@@ -77,7 +77,6 @@ public class ImageManager {
         if(Objects.nonNull(this.targetImage) && !this.targetImage.equals(image)) {
             this.imagesWithPoints.removeIf(img -> img.equals(image));
             image.close();
-            System.gc();
         }
     }
 

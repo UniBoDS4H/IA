@@ -41,8 +41,6 @@ public class ReuseSources {
                     final ImagePoints image = new ImagePoints(imagePlus.getAlignedImage().getFileInfo().getFilePath(), imagePlus.getProcessor());
                     image.setTitle(imagePlus.getName());
                     imagePlus.releaseImage();
-                    imagePlus = null;
-                    System.gc();
                     return image;
                 })
                 .collect(Collectors.toList());

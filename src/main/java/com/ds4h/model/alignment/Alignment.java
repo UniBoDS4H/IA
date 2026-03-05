@@ -266,7 +266,6 @@ public class Alignment implements Runnable{
     public void clearList(){
         this.alignedImages.forEach(AlignedImage::releaseImage);
         this.alignedImages.clear();
-        System.gc();
     }
 
 

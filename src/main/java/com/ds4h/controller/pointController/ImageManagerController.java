@@ -77,7 +77,6 @@ public class ImageManagerController {
      */
     public void reuseSource(final List<AlignedImage> alignedImages) throws OutOfMemoryError {
         ReuseSources.reuseSources(this.imageManager, alignedImages);
-        System.gc();
     }
 
     /**
@@ -130,7 +129,6 @@ public class ImageManagerController {
      */
     public void clearProject(){
         this.imageManager.clearProject();
-        System.gc();
     }
 
     public void setConvertType(final ConvertLutImageEnum convertType) {

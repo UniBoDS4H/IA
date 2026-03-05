@@ -71,7 +71,6 @@ public class MatCache {
             this.descriptor.release();
             this.descriptor = null;
             this.keyPointList.clear();
-            System.gc();
         }
     }
 }
