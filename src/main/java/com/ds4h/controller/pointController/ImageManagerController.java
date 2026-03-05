@@ -1,5 +1,6 @@
 package com.ds4h.controller.pointController;
 
+import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.pointManager.ImageManager;
 import com.ds4h.model.image.imagePoints.ImagePoints;
@@ -29,12 +30,11 @@ public class ImageManagerController {
     /**
      * Load all the selected FILES from the input.
      * @param paths all the selected files. This will be loaded if the files are images.
-     * @throws IllegalArgumentException if the selected file is not an image or the user is trying to load one single images where there are none in the project.
      * @throws IOException If the path does not exists.
      */
-    public void loadImages(final List<File> paths) throws IllegalArgumentException, IOException {
+    public void loadImages(@NotNull final List<File> paths) throws IOException {
         final List<ImagePoints> imagePointsList = ImagingConversion.fromPath(paths);
-        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && this.imageManager.getPointImages().size() > 0)) {
+        if(imagePointsList.size() > 1 || (imagePointsList.size() == 1 && !this.imageManager.getPointImages().isEmpty())) {
             this.imageManager.setConvertType(this.convertType);
             this.imageManager.addImages(imagePointsList);
             MemoryController.controlMemory(this.imageManager.getPointImages());
@@ -64,7 +64,7 @@ public class ImageManagerController {
      * Change the target image stored inside the Point Controller.
      * @param newTarget the new targetImage.
      */
-    public void changeTarget(final ImagePoints newTarget){
+    public void changeTarget(@NotNull final ImagePoints newTarget){
         if(Objects.nonNull(newTarget)) {
             this.imageManager.setAsTarget(newTarget);
         }
@@ -75,7 +75,7 @@ public class ImageManagerController {
      * @param alignedImages the new aligned images to be used for the new project.
      * @throws OutOfMemoryError if the project is bigger than the free memory.
      */
-    public void reuseSource(final List<AlignedImage> alignedImages) throws OutOfMemoryError {
+    public void reuseSource(@NotNull final List<AlignedImage> alignedImages) throws OutOfMemoryError {
         ReuseSources.reuseSources(this.imageManager, alignedImages);
     }
 
@@ -84,7 +84,7 @@ public class ImageManagerController {
      * @param image the image to check.
      * @return true if the input image is the target.
      */
-    public boolean isTarget(final ImagePoints image){
+    public boolean isTarget(@NotNull final ImagePoints image){
         return this.imageManager.getTargetImage().isPresent() && this.imageManager.getTargetImage().get().equals(image);
     }
 
@@ -92,7 +92,7 @@ public class ImageManagerController {
      * Remove the input image from the Point Controller.
      * @param image the image to be removed from the point controller.
      */
-    public void removeImage(final ImagePoints image){
+    public void removeImage(@NotNull final ImagePoints image){
         if(this.imageManager.getPointImages().contains(image)){
             image.releaseImage();
             this.imageManager.removeImage(image);
@@ -105,11 +105,13 @@ public class ImageManagerController {
      * @param img the image where all the points will be saved.
      * @return "True" if the operation went well.
      */
-    public boolean copyPoints(final List<Point> selectedPoints, final ImagePoints img) {
+    public boolean copyPoints(@NotNull final List<Point> selectedPoints,
+                              @NotNull final ImagePoints img) {
         boolean res = true;
         if(selectedPoints.isEmpty()){
             return false;
         }
+
         for (final Point p:selectedPoints) {
             if(this.insideImage(p,img)){
                 img.add(p);
@@ -120,7 +122,8 @@ public class ImageManagerController {
         return res;
     }
 
-    private boolean insideImage(final Point p, final ImagePoints img) {
+    private boolean insideImage(@NotNull final Point p,
+                                @NotNull final ImagePoints img) {
         return img.getRows() >= p.y && img.getCols() >= p.x;
     }
 
@@ -131,7 +134,7 @@ public class ImageManagerController {
         this.imageManager.clearProject();
     }
 
-    public void setConvertType(final ConvertLutImageEnum convertType) {
+    public void setConvertType(@NotNull final ConvertLutImageEnum convertType) {
         this.convertType = convertType;
     }
 }
