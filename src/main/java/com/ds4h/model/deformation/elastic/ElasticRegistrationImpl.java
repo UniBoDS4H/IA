@@ -8,6 +8,8 @@ import bigwarp.landmarks.LandmarkTableModel;
 import bigwarp.transforms.BigWarpTransform;
 import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.alignedImage.AlignedImage;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.IJ;
 import ij.ImagePlus;
 import net.imglib2.realtransform.BoundingBoxEstimation;
@@ -19,7 +21,9 @@ import org.opencv.core.Point;
 import java.util.*;
 
 public class ElasticRegistrationImpl implements ElasticRegistration {
+    private static final Logger myLogger = LoggerFactory.getImageJLogger(ElasticRegistrationImpl.class);
     private int max_points;
+
     public ElasticRegistrationImpl() {
         this.max_points = 4;
     }
