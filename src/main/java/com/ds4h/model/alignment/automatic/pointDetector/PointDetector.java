@@ -3,6 +3,8 @@ package com.ds4h.model.alignment.automatic.pointDetector;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.IJ;
 import ij.process.ImageProcessor;
 import org.opencv.core.*;
@@ -14,6 +16,7 @@ import java.util.List;
  *
  */
 public abstract class PointDetector {
+    private static final Logger LOGGER = LoggerFactory.getImageJLogger(PointDetector.class);
     public static final int LOWER_BOUND = 1;
     public static final int UPPER_BOUND = 8;
     public static final int DEFAULT = 4;
@@ -99,15 +102,13 @@ public abstract class PointDetector {
     @NotNull
     protected Mat createPyramid(@NotNull final Mat matrix, final int levels){
         Size lastSize = matrix.size();
-        IJ.log("[POINT DETECTOR] Resize original matrix by: " + levels + " times.");
+        LOGGER.log("Resize original matrix of: " + levels + " times.");
         for(int i = 1; i < levels; i++) {
             Imgproc.resize(matrix, matrix,
                     new Size(lastSize.width / 2, lastSize.height / 2),
                     Imgproc.INTER_AREA);
             lastSize = matrix.size();
         }
-        IJ.log("[POINT DETECTOR] Matrix:" + matrix + ".");
-        IJ.log("[POINT DETECTOR] Resize done.");
         return matrix;
     }
 
@@ -120,13 +121,12 @@ public abstract class PointDetector {
     protected Mat improveMatrix(@NotNull final Mat matrix){
         final double mean = Core.mean(matrix).val[0];
         final double percentage = (mean/255.0 * 100.0);
-        IJ.log("[MEAN] Percentage: " + percentage);
         final int ksize = 3;
 
         if(percentage >= 60.0){
             //Reduce the Noise
-            Mat filteredM = new Mat();
-            Mat destination = new Mat();
+            final Mat filteredM = new Mat();
+            final Mat destination = new Mat();
             Imgproc.bilateralFilter(matrix, filteredM, 5, mean, mean);
             //Edge detection
             Imgproc.Laplacian(filteredM, destination, CvType.CV_64F, ksize, 1, 0);
@@ -135,9 +135,6 @@ public abstract class PointDetector {
             Core.bitwise_and(matrix, destination, matrix);
             filteredM.release();
             destination.release();
-            filteredM = null;
-            destination = null;
-            System.gc();
             return matrix;
         }else{
             final Mat blur = new Mat();
@@ -149,7 +146,6 @@ public abstract class PointDetector {
             Core.magnitude(sobelx, sobely, blur);
             Core.normalize(blur, blur, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
             matrix.release();
-            System.gc();
             return blur;
         }
     }
@@ -165,7 +161,7 @@ public abstract class PointDetector {
     protected ImageProcessor createPyramid(@NotNull final ImagePoints image, final int levels){
         final ImageProcessor[] pyramid = new ImageProcessor[levels];
         pyramid[0] = image.getProcessor();
-        IJ.log("[POINT DETECTOR] Resize original ImageProcessor by: " + levels + " times");
+        LOGGER.log("[POINT DETECTOR] Resize original ImageProcessor by: " + levels + " times");
         for (int i = 1; i < levels; i++) {
             ImageProcessor ipDownsampled = pyramid[i - 1].resize(
                     pyramid[i - 1].getWidth() / 2,
@@ -181,7 +177,7 @@ public abstract class PointDetector {
                                 @NotNull final List<KeyPoint> targetKeyPoints,
                                 @NotNull final List<DMatch> matches) {
         final double scale = Math.pow(2, this.scalingFactor -1);
-        IJ.log("[POINT DETECTOR] The total amount of matches are: " + matches.size());
+        LOGGER.log("The total amount of matches are: " + matches.size());
         matches.stream()
                 .sorted((m1, m2) -> Float.compare(m1.distance, m2.distance))
                 .forEach(match -> {

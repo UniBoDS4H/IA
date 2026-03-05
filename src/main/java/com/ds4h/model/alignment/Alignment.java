@@ -6,6 +6,8 @@ import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.alignment.preprocessImage.TargetImagePreprocessing;
 import com.ds4h.model.pointManager.ImageManager;
 import com.ds4h.model.image.imagePoints.ImagePoints;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
@@ -22,6 +24,7 @@ import java.util.concurrent.*;
  * Every child class must implement the 'align' method.
  */
 public class Alignment implements Runnable{
+    private static final Logger LOGGER = LoggerFactory.getImageJLogger(Alignment.class);
     private ImagePoints targetImage;
     private final List<ImagePoints> imagesToAlign;
     private final List<AlignedImage> alignedImages;
@@ -52,6 +55,7 @@ public class Alignment implements Runnable{
     public void alignImages(@NotNull final ImageManager imageManager,
                             @NotNull final AlignmentAlgorithm algorithm,
                             @NotNull final AlignmentEnum type) throws RuntimeException {
+        LOGGER.log("Start rigid alignment of images.");
         if (imageManager.getTargetImage().isPresent()) {
             if (!this.isAlive()) {
                 this.targetImage = imageManager.getTargetImage().get();
@@ -88,7 +92,7 @@ public class Alignment implements Runnable{
                             @NotNull final AlignmentEnum type,
                             @NotNull final PointDetector pointDetector,
                             final double factor,
-                            final int scalingFactor) throws IllegalArgumentException, RuntimeException{
+                            final int scalingFactor) {
         if(factor >= 0 && scalingFactor >= 1) {
             this.pointDetector = (pointDetector);
             this.pointDetector.setFactor(factor);
@@ -106,8 +110,7 @@ public class Alignment implements Runnable{
      * Perspective accept the exact number of points.
      * @throws RuntimeException a
      */
-    private void manual() throws RuntimeException{
-
+    private void manual() {
         assert this.targetImage.getProcessor() != null;
         if(this.imagesToAlign.stream()
                 .map(ImagePoints::numberOfPoints)
@@ -123,23 +126,20 @@ public class Alignment implements Runnable{
                     this.algorithm,
                     this.targetImage.getProcessor());
             this.alignedImages.add(new AlignedImage(target.getImagePlus().getProcessor(), target.getName()));
-            IJ.log("[MANUAL] Start alignment.");
             this.imagesToAlign.forEach(img ->
                     this.alignedImages.add(this.algorithm.align(target, img, img.getProcessor()))
             );
-            IJ.log("[MANUAL] End alignment.");
+
             this.imagesToAlign.clear();
             this.targetImage = null;
-            System.gc();
         }
     }
 
     /**
      * Affine and Rigid accept more points than their limits
      * Perspective accept the exact number of points.
-     * @throws RuntimeException if something went wrong inside the Preprocess or during the Point detection.
      */
-    private void auto() throws RuntimeException{
+    private void auto() {
         int sameImages = 0;
         final Map<ImagePoints, ImagePoints> images = new HashMap<>();
         this.total += this.imagesToAlign.size();
@@ -155,23 +155,16 @@ public class Alignment implements Runnable{
                     this.targetImage.toImprove(),
                     this.targetImage.getProcessor());
             image.clearPoints();
-            IJ.log("[AUTOMATIC] Start Detection");
             this.pointDetector.detectPoint(target, image);
             this.status+=1; //detected points
-            IJ.log("[AUTOMATIC] End Detection");
-            IJ.log("[AUTOMATIC] Number of points T: " + target.numberOfPoints());
-            IJ.log("[AUTOMATIC] Number of points I: " + image.numberOfPoints());
 
             if(target.numberOfPoints() >= this.algorithm.getLowerBound()){
-                IJ.log("[AUTOMATIC] Inside ");
                 images.put(image, target);
                 this.total += 1;//this is for the warp;
                 if (target.numberOfPoints() < 3) {
-                    IJ.log("[AUTOMATIC] No RANSAC");
                     ransac = false;
                 }
             }else if(target.numberOfPoints() == this.algorithm.getLowerBound()){
-                IJ.log("[AUTOMATIC] Inside ");
                 images.put(image, target);
                 this.total += 1;//this is for the warp;
 
@@ -193,8 +186,6 @@ public class Alignment implements Runnable{
             throw new RuntimeException("No points detected, please Increase the \"Threshold Factor\", " +
                     "decrease the \"Scaling Factor\".");
         }else {
-
-            IJ.log("[AUTOMATIC] Starting preprocess");
             if(sameImages == 0 && !images.isEmpty()){
                 //if we find at least 3 points in every image we can use ransac otherwise first available
                 if(ransac){
@@ -213,23 +204,17 @@ public class Alignment implements Runnable{
                 this.alignedImages.addAll(Collections.nCopies(sameImages, target));
             }
             this.status+=1; //pre process
-            IJ.log("[AUTOMATIC] End preprocess");
-            IJ.log("[AUTOMATIC] Start aligning the images.");
             this.targetImage = null;
             images.forEach((key, value) -> {
                 value.getMatImage().release();
-                IJ.log("[AUTOMATIC] Target Size: " + value.getMatSize());
                 this.alignedImages.add(this.algorithm.align(value, key, key.getProcessor()));
                 this.status+=1; //warp image
-                IJ.log("[AUTOMATIC] Status: " + this.getStatus());
                 key.getMatImage().release();
                 value.clearPoints();
                 key.clearPoints();
             });
             this.status+=1;
             images.clear();
-            System.gc();
-            IJ.log("[AUTOMATIC] The alignment is done.");
         }
     }
 
@@ -250,7 +235,7 @@ public class Alignment implements Runnable{
      * @throws RuntimeException if there is a OutOfMemory exception or an error during the alignment.
      */
     @Override
-    public void run() throws RuntimeException{
+    public void run() {
         try{
             try {
                 if(Objects.nonNull(this.targetImage)) {
@@ -266,7 +251,6 @@ public class Alignment implements Runnable{
             } catch (final RuntimeException ex) {
                 this.thread = new Thread(this);
                 this.clearList();
-                IJ.log(ex.getMessage());
                 throw ex;
             }
         }catch (OutOfMemoryError e){
@@ -280,7 +264,6 @@ public class Alignment implements Runnable{
      * Release all the images and remove it from the heap.
      */
     public void clearList(){
-        IJ.log("[ALIGNMENT] Clear List");
         this.alignedImages.forEach(AlignedImage::releaseImage);
         this.alignedImages.clear();
         System.gc();
@@ -310,15 +293,12 @@ public class Alignment implements Runnable{
      * @return true if there is almost one RGB image, false otherwise
      */
     private boolean isOnly8Bit() {
-        boolean isOnly8Bit = true;
-
         for (final ImagePoints img : this.imagesToAlign) {
             if (img.getImagePlus().getType() == ImagePlus.COLOR_RGB) {
-                isOnly8Bit = false;
-                break;
+                return false;
             }
         }
 
-        return isOnly8Bit;
+        return true;
     }
 }
