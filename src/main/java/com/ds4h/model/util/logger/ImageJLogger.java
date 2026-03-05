@@ -34,6 +34,6 @@ public class ImageJLogger implements Logger {
 
     @NotNull
     private String formatMessage(@NotNull final String logType, @NotNull final String message) {
-        return String.format("[ %s ] %s: current message: %s", myClassName, logType, message);
+        return String.format("[ %s ] log type(%s) -> current message: %s", myClassName, logType, message);
     }
 }
