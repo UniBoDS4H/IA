@@ -10,6 +10,12 @@ public class LoggerFactory {
 
     private LoggerFactory() {}
 
+    @NotNull
+    public static Logger getImageJLogger(@NotNull final Class<?> clazz) {
+        return getImageJLogger(clazz.getName());
+    }
+
+    @NotNull
     public static Logger getImageJLogger(@NotNull final String className) {
         if (myLoggersByClassName.containsKey(className)) {
             return myLoggersByClassName.get(className);
