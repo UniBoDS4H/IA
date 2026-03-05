@@ -1,6 +1,6 @@
 @echo off
 
-set DFILE=%cd%\project\resources\windows\opencv-455.jar
+set DFILE=%cd%\src\main\resources\opencv\library\opencv-455.jar
 
 mvn install:install-file ^
   -Dfile="%DFILE%" ^

@@ -1,6 +1,5 @@
 #!/bin/bash
-PLATFORM=${1}
-DFILE="$(pwd)/src/main/resources/opencv/$PLATFORM/opencv-455.jar"
+DFILE="$(pwd)/src/main/resources/opencv/library/opencv-455.jar"
 
 mvn install:install-file \
   -Dfile="$DFILE" \
