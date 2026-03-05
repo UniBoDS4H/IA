@@ -3,7 +3,8 @@ import com.ds4h.model.image.AnalyzableImage;
 import com.ds4h.model.image.DataImage;
 import com.ds4h.model.image.PointRepository;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
-import ij.IJ;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.ImagePlus;
 import ij.process.*;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,6 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
                        @NotNull final ImageProcessor ip){
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
-        IJ.log("[IMAGE POINT] Processor: " + ip);
         this.improveMatrix = improve;
         this.path = path;
         this.rows = this.getHeight();
@@ -78,7 +78,6 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
         this.matSize = matrix.size();
         this.type = matrix.type();
         this.pointList = new ArrayList<>(5);
-        IJ.log("[IMAGE POINTS] Image created");
     }
 
     /**
@@ -91,7 +90,6 @@ public class ImagePoints extends ImagePlus implements AnalyzableImage {
         super(Objects.requireNonNull(path));
         this.setProcessor(ip);
         this.address = -1;
-        IJ.log("[IMAGE POINT] Processor: " + ip);
         this.path = path;
         this.rows = this.getHeight();
         this.cols = this.getWidth();
