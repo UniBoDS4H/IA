@@ -3,6 +3,8 @@ package com.ds4h.model.alignment.automatic.pointDetector.orbDetector;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.BFMatcher;
@@ -10,7 +12,7 @@ import org.opencv.features2d.ORB;
 import java.util.List;
 
 public class ORBDetector extends PointDetector {
-
+    private final static Logger LOGGER = LoggerFactory.getImageJLogger(ORBDetector.class);
     private final ORB detector = ORB.create();
     private final BFMatcher matcher = BFMatcher.create(BFMatcher.BRUTEFORCE);
 
@@ -28,7 +30,7 @@ public class ORBDetector extends PointDetector {
 
         // Start detection
         this.detector.detectAndCompute(grayImg, new Mat(),  keypoints1, descriptors1);
-        IJ.log("[ORB DETECTOR] Detected points for the first image.");
+        LOGGER.log("Detected keypoints for the first image");
         grayImg.release();
 
         if(!super.getMatCache().isAlreadyDetected()) {
