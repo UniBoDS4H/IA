@@ -3,15 +3,9 @@ package com.ds4h.model.alignment.automatic.pointDetector.siftDetector;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
-import ij.IJ;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.Feature2D;
-import org.opencv.features2d.Features2d;
 import org.opencv.features2d.SIFT;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +33,6 @@ public class SIFTDetector extends PointDetector {
         this.sift.detect(grayImg, keypoints1);
         this.sift.compute(grayImg, keypoints1, descriptors1);
 
-        IJ.log("[SIFT DETECTOR] Detected points for the first image.");
         grayImg.release();
         if(!super.getMatCache().isAlreadyDetected()) {
 
@@ -54,7 +47,6 @@ public class SIFTDetector extends PointDetector {
             super.getMatCache().setDetection(descriptors2, keypoints2);
             grayTarget.release();
         }
-        IJ.log("[SIFT DETECTOR] Detected points for the target image.");
 
         List<MatOfDMatch> knnMatches = new LinkedList<>();
         this.matcher.knnMatch(descriptors1, super.getMatCache().getDescriptor(), knnMatches, 2);
@@ -73,7 +65,6 @@ public class SIFTDetector extends PointDetector {
 
         this.addKeyPoints(imagePoint, targetImage, keypoints1List, keypoints2List, goodMatches);
 
-        IJ.log("[SIFT DETECTOR] End Detection.");
         knnMatches.clear();
     }
 }
