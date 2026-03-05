@@ -3,7 +3,6 @@ package com.ds4h.model.alignment.automatic.pointDetector.akazeDetector;
 import com.drew.lang.annotations.NotNull;
 import com.ds4h.model.alignment.automatic.pointDetector.PointDetector;
 import com.ds4h.model.image.AnalyzableImage;
-import ij.IJ;
 import org.opencv.core.*;
 import org.opencv.features2d.AKAZE;
 import org.opencv.features2d.DescriptorMatcher;
@@ -11,14 +10,11 @@ import org.opencv.features2d.DescriptorMatcher;
 import java.util.List;
 
 public class AKAZEDetector extends PointDetector {
-
     private final AKAZE detector = AKAZE.create();
-
     private final DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
 
     @Override
     public void detectPoint(@NotNull final AnalyzableImage targetImage, @NotNull final AnalyzableImage imagePoint) {
-
         final MatOfKeyPoint keypoints1 = new MatOfKeyPoint();
 
 
@@ -49,7 +45,6 @@ public class AKAZEDetector extends PointDetector {
 
 
         final MatOfDMatch matches = new MatOfDMatch();
-        IJ.log("[AKAZE DETECTOR] Before match.");
         matcher.match(descriptors1,
                 super.getMatCache().getDescriptor(),
                 matches);
