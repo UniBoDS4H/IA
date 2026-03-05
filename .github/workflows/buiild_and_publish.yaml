@@ -111,4 +111,4 @@ jobs:
             **Branch:** `${{ github.ref_name }}`
           draft: false
           prerelease: ${{ contains(steps.get_version.outputs.version, 'SNAPSHOT') }}
-          files: release-assets/**/*.jar
+          files: release-assets/**/*-all.jar
