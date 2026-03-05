@@ -106,6 +106,7 @@ jobs:
             Automatically generated from commit ${{ github.sha }}.
 
             ✅ Build passed on Linux, macOS, and Windows.
+            Please use the following jar for your imageJ and Fiji software.
 
             **Triggered by:** `${{ github.actor }}`
             **Branch:** `${{ github.ref_name }}`
