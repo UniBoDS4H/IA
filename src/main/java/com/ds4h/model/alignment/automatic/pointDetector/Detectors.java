@@ -8,14 +8,14 @@ import com.ds4h.model.alignment.automatic.pointDetector.kazeDetector.KAZEDetecto
 import com.ds4h.model.alignment.automatic.pointDetector.orbDetector.ORBDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.siftDetector.SIFTDetector;
 import com.ds4h.model.alignment.automatic.pointDetector.surfDetector.SURFDetector;
-import ij.IJ;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 
 /**
  * Inside this Enum, we have all the Point Detectors implemented. With the using of this Enum we can adjust the
  * scaling factor and the threshold factor for the detection of points.
  */
 public enum Detectors {
-
     AKAZE("AKAZE", new AKAZEDetector(), 0),
     BRISK("BRISK", new BRISKDetector(), 0),
     FREAK("FREAK", new FREAKDetector(), 0),
@@ -28,6 +28,7 @@ public enum Detectors {
     private final PointDetector pointDetector;
     private double thresholdFactor;
     private int scaling;
+    private static final Logger LOGGER = LoggerFactory.getImageJLogger(Detectors.class);
     public static final int LOWER_BOUND = PointDetector.LOWER_BOUND;
     public static final int UPPER_BOUND = PointDetector.UPPER_BOUND;
 
@@ -66,7 +67,7 @@ public enum Detectors {
     public void setScaling(final int scaling) {
         if (scaling >= Detectors.LOWER_BOUND && scaling <= Detectors.UPPER_BOUND) {
             this.scaling = scaling;
-            IJ.log("[DETECTORS] Set scaling: " + scaling);
+            LOGGER.log("Set scaling: " + scaling);
         }
     }
 
