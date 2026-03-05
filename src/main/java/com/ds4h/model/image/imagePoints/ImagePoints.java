@@ -1,10 +1,6 @@
 package com.ds4h.model.image.imagePoints;
 import com.ds4h.model.image.AnalyzableImage;
-import com.ds4h.model.image.DataImage;
-import com.ds4h.model.image.PointRepository;
 import com.ds4h.model.util.imageManager.ImageProcessorMatConverter;
-import com.ds4h.model.util.logger.Logger;
-import com.ds4h.model.util.logger.LoggerFactory;
 import ij.ImagePlus;
 import ij.process.*;
 import org.jetbrains.annotations.NotNull;
