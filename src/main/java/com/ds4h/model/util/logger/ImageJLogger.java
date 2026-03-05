@@ -21,14 +21,14 @@ public class ImageJLogger implements Logger {
     @Override
     public void logError(String message) {
         if (LoggerManager.isLoggingEnabled()) {
-            IJ.showMessage(formatMessage(ERROR, message));
+            IJ.log(formatMessage(ERROR, message));
         }
     }
 
     @Override
     public void logWarning(String message) {
         if (LoggerManager.isLoggingEnabled()) {
-            IJ.showMessage(formatMessage(WARNING, message));
+            IJ.log(formatMessage(WARNING, message));
         }
     }
 
