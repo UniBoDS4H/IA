@@ -44,7 +44,7 @@ public class AutomaticElasticConfigGUI extends JFrame implements StandardGUI {
                 final int value = Integer.parseInt(text);
                 this.controller.setNumberOfLandmarks(value);
             } catch (Exception e) {
-                IJ.log("Error setting number of landmarks is not a valid integer.");
+                // ignore
             }
         });
     }
