@@ -1,7 +1,6 @@
 package com.ds4h.model.util.directoryManager.directoryDeleter;
 
 import com.drew.lang.annotations.NotNull;
-import ij.IJ;
 
 import java.io.File;
 import java.util.Objects;
@@ -27,13 +26,9 @@ public class DirectoryDeleter {
             for (final File file : Objects.requireNonNull(directory.listFiles())) {
                 if (file.isDirectory() && file.getName().contains(directoryName)) {
                     for (final File image : Objects.requireNonNull(file.listFiles())) {
-                        if(image.delete()){
-                            IJ.log("Directory deleted.");
-                        }
+                        image.delete();
                     }
-                    if(file.delete()){
-                        IJ.log("Directory deleted.");
-                    }
+                    file.delete();
                 }
             }
         }
