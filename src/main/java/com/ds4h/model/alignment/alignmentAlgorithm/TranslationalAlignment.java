@@ -3,21 +3,21 @@ package com.ds4h.model.alignment.alignmentAlgorithm;
 import com.ds4h.model.image.alignedImage.AlignedImage;
 import com.ds4h.model.image.imagePoints.ImagePoints;
 import com.ds4h.model.util.imageManager.MatImageProcessorConverter;
-import ij.IJ;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.process.ImageProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
  * This class is used for the manual alignment using the Translation technique.
  */
 public class TranslationalAlignment implements AlignmentAlgorithm {
-
+    private static final Logger LOGGER = LoggerFactory.getImageJLogger(TranslationalAlignment.class);
     public static int LOWER_BOUND = 1;
     private boolean rotate;
     private boolean scale;
@@ -93,23 +93,18 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
                 final Mat alignedImage = new Mat();
                 final Mat transformationMatrix = this.getTransformationMatrix(imageToShift.getMatOfPoint(), targetImage.getMatOfPoint());
                 if(transformationMatrix.rows() <=2) {
-                    IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpAffine");
-                    IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
-                    System.gc();
+                    LOGGER.log("Starting the warpAffine");
                     Imgproc.warpAffine(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                 }
                 else{
-                    IJ.log("[TRANSLATIONAL ALIGNMENT] Starting the warpPerspective");
-                    IJ.log("[TRANSLATIONAL ALIGNMENT] Target Size: " + targetImage.getMatSize());
-                    System.gc();
+                    LOGGER.log("Starting the warpPerspective");
                     Imgproc.warpPerspective(imageToShift.getMatImage(), alignedImage, transformationMatrix, targetImage.getMatSize());
                 }
-                IJ.log("[TRANSLATIONAL] Final matrix: " + alignedImage);
+
                 final AlignedImage finalImg = new AlignedImage(transformationMatrix,
                         MatImageProcessorConverter.convert(alignedImage, ip),
                         imageToShift.getName());
                 ip = null;
-                System.gc();
                 return finalImg;
             }else{
                 throw new IllegalArgumentException("The number of corner inside the source image is different from the number of points" +
@@ -148,8 +143,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
     public Mat getTransformationMatrix(@NotNull final MatOfPoint2f srcPoints, @NotNull final MatOfPoint2f dstPoints){
         switch (this.getPointOverload()) {
             case FIRST_AVAILABLE:
-                MatOfPoint2f newSrcPoints = new MatOfPoint2f();
-                MatOfPoint2f newDstPoints = new MatOfPoint2f();
+                final MatOfPoint2f newSrcPoints = new MatOfPoint2f();
+                final MatOfPoint2f newDstPoints = new MatOfPoint2f();
                 if(srcPoints.toList().size() > this.getLowerBound()){
                     newSrcPoints.fromList(srcPoints.toList().subList(0, this.getLowerBound()));
                     newDstPoints.fromList(dstPoints.toList().subList(0, this.getLowerBound()));
@@ -186,21 +181,20 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
 
     @NotNull
     private Mat getMatWithTransformation(@NotNull Mat H) {
-        IJ.log("[TRANSLATIONAL] Matrix: " + H);
         double a = H.get(0,0)[0];
         double b = H.get(1,0)[0];
         double scaling = Math.sqrt(a*a + b*b);
         double theta = Math.acos(a/scaling);
         double x = H.get(0,2)[0];
         double y = H.get(1,2)[0];
-        Mat transformation = Mat.eye(2,3,H.type());
+        final Mat transformation = Mat.eye(2,3,H.type());
+
         if(this.translate){
-            IJ.log("[TRANSLATIONAL ALIGNMENT] Translate");
             transformation.put(0,2, x);
             transformation.put(1,2, y);
         }
+
         if(this.scale){
-            IJ.log("[TRANSLATIONAL ALIGNMENT] Scale");
             transformation.put(0,0,scaling);
             transformation.put(0,1,scaling);
             transformation.put(1,0,scaling);
@@ -211,8 +205,8 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             transformation.put(1,0,1);
             transformation.put(1,1,1);
         }
+
         if(this.rotate){
-            IJ.log("[TRANSLATIONAL ALIGNMENT] Rotate");
             transformation.put(0,0,transformation.get(0,0)[0]*Math.cos(theta));
             transformation.put(0,1,transformation.get(0,1)[0]*(-Math.sin(theta)));
             transformation.put(1,0,transformation.get(1,0)[0]*Math.sin(theta));
@@ -221,6 +215,7 @@ public class TranslationalAlignment implements AlignmentAlgorithm {
             transformation.put(0,1,0);
             transformation.put(1,0,0);
         }
+
         return transformation;
     }
 
