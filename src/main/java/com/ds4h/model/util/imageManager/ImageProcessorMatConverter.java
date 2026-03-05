@@ -1,6 +1,8 @@
 package com.ds4h.model.util.imageManager;
 
 import com.drew.lang.annotations.NotNull;
+import com.ds4h.model.util.logger.Logger;
+import com.ds4h.model.util.logger.LoggerFactory;
 import ij.IJ;
 import ij.process.*;
 import org.opencv.core.Core;
@@ -10,27 +12,25 @@ import org.opencv.core.Mat;
 import java.util.Objects;
 
 public class ImageProcessorMatConverter {
-
+    private final static Logger myLogger = LoggerFactory.getImageJLogger(ImageProcessorMatConverter.class);
     private ImageProcessorMatConverter(){
 
     }
 
     @NotNull
     private static Mat toMat(@NotNull final ShortProcessor sp){
-        IJ.log("[TO MAT - SHORTPROCESSOR] From ShortProcessor");
+        myLogger.log("From ShortProcessor");
         final Mat matrix = new Mat(sp.getHeight(), sp.getWidth(), CvType.CV_16U);
-        IJ.log("[TO MAT - SHORTPROCESSOR] Matrix: " + matrix);
         matrix.put(0,0, (short[]) sp.getPixels());
-        IJ.log("[TO MAT - SHORTPROCESSOR] Matrix created");
         return  matrix;
     }
 
     @NotNull
-    private static Mat toMat(@NotNull final ColorProcessor cp){
-        IJ.log("[TO MAT - COLORPROCESSOR] From ColorProcessor " + ((int[])cp.getPixels()).length ) ;
+    private static Mat toMat(@NotNull final ColorProcessor cp) {
+        myLogger.log("From ColorProcessor");
         final Mat matrix = new Mat(cp.getHeight(), cp.getWidth(), CvType.CV_8UC3);
         final int[] pixels = (int[]) cp.getPixels();
-        byte[] bData = new byte[cp.getWidth() * cp.getHeight() * 3];
+        final byte[] bData = new byte[cp.getWidth() * cp.getHeight() * 3];
 
         // convert int-encoded RGB values to byte array
         for (int i = 0; i < pixels.length; i++) {
@@ -38,29 +38,24 @@ public class ImageProcessorMatConverter {
             bData[i * 3 + 1] = (byte) ((pixels[i] >> 8) & 0xFF);	// grn
             bData[i * 3 + 2] = (byte) ((pixels[i]) & 0xFF);	// blu
         }
-        IJ.log("[TO MAT - COLORPROCESSOR] Matrix: " + matrix);
+
         matrix.put(0,0, bData);
-        IJ.log("[TO MAT - COLORPROCESSOR] Matrix created");
         return  matrix;
     }
 
     @NotNull
     private static Mat toMat(@NotNull final FloatProcessor fp){
-        IJ.log("[TO MAT - FLOATPROCESSOR] From FloatProcessor");
+        myLogger.log("From FloatProcessor");
         final Mat matrix = new Mat(fp.getHeight(), fp.getWidth(), CvType.CV_32FC1);
-        IJ.log("[TO MAT - FLOATPROCESSOR] Matrix: " + matrix);
         matrix.put(0,0, (float[]) fp.getPixels());
-        IJ.log("[TO MAT - FLOATPROCESSOR] Matrix created");
         return  matrix;
     }
 
     @NotNull
     private static Mat toMat(@NotNull final ByteProcessor bp){
-        IJ.log("[TO MAT - BYTEPROCESSOR] From ByteProcessor");
+        myLogger.log("From ByteProcessor");
         final Mat matrix = new Mat(bp.getHeight(), bp.getWidth(), CvType.CV_8U);
-        IJ.log("[TO MAT - BYTEPROCESSOR] Matrix: " + matrix);
         matrix.put(0,0, (byte[]) bp.getPixels());
-        IJ.log("[TO MAT - BYTEPROCESSOR] Matrix created");
         return  matrix;
     }
 
@@ -72,7 +67,7 @@ public class ImageProcessorMatConverter {
      */
     @NotNull
     public static Mat convert(@NotNull final ImageProcessor ip) throws IllegalArgumentException{
-        IJ.log("[IMAGE PROCESSOR CONVERTER] Ip: " + ip);
+        myLogger.log("Converting ImageProcessor");
         if(Objects.nonNull(ip)){
             if(ip instanceof ColorProcessor){
                 return ImageProcessorMatConverter.toMat((ColorProcessor) ip);
@@ -98,7 +93,6 @@ public class ImageProcessorMatConverter {
         if(Objects.nonNull(ip)) {
             final Mat matrix = ImageProcessorMatConverter.convert(ip);
             Core.normalize(matrix, matrix, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
-            IJ.log("[TO MAT] Converted: " + matrix);
             return matrix;
         }
         throw new IllegalArgumentException("The image processor is null. The conversion to gray can not be done.");
