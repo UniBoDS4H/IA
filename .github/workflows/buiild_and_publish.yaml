@@ -27,19 +27,6 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      # ── Linux & macOS ──────────────────────────
-      - name: Install dependencies (Linux & macOS)
-        if: runner.os != 'Windows'
-        run: |
-          chmod +x install-dependencies.sh
-          ./install-dependencies.sh
-
-      # ── Windows ────────────────────────────────
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: install-dependencies.bat
-        shell: cmd
-
       - name: Build with Maven
         run: mvn --batch-mode package -P uberjar
 
