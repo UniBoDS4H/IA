@@ -10,6 +10,8 @@ import com.ds4h.controller.opencvController.OpencvController;
 import com.ds4h.view.mainGUI.MainMenuGUI;
 import ij.IJ;
 import ij.plugin.PlugIn;
+import nu.pattern.OpenCV;
+
 import java.awt.*;
 
 /**
@@ -26,8 +28,7 @@ public class Image_Alignment implements PlugIn {
 	@Override
 	public void run(final String s) {
 		try {
-			OpencvController.loadLibrary();
-			IJ.log("[BEGIN] Heap Size: " + IJ.maxMemory());
+            OpenCV.loadShared();
 			EventQueue.invokeLater(MainMenuGUI::new);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
